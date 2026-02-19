@@ -1,0 +1,89 @@
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo-icon:hover {
+    transform: scale(1.05) rotate(5deg);
+}
+
+.logo-circle {
+    transition: stroke-dasharray 0.5s ease;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 0;
+    animation: rotateBorder 8s linear infinite;
+}
+
+.logo-text {
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.logo-dot {
+    animation: dotPulse 2s ease-in-out infinite;
+}
+
+.logo-dot:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.logo-dot:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+.logo-brand-text {
+    font-weight: 700;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+}
+
+/* Animations */
+@keyframes rotateBorder {
+    0% {
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: 566;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes dotPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(0.8);
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .logo-brand-text {
+        font-size: 0.85rem !important;
+    }
+}

@@ -1,0 +1,237 @@
+/* Header Responsive Styles */
+
+.app-header {
+    padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
+    background: var(--bg-card-glass);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 101;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+    flex-wrap: wrap;
+}
+
+.home-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
+    border-radius: 50px;
+    background: var(--bg-main);
+    border: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+    font-size: clamp(0.8rem, 2vw, 0.95rem);
+    text-decoration: none;
+    color: inherit;
+}
+
+.home-text {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.header-divider {
+    height: 30px;
+    width: 1px;
+    background: var(--border-light);
+}
+
+.app-title {
+    font-size: clamp(1rem, 4vw, 1.5rem);
+    font-weight: 700;
+    margin: 0;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Desktop Navigation */
+.desktop-nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--text-main);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--gradient-brand);
+    border-radius: 2px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.theme-toggle {
+    background: var(--bg-main);
+    padding: 0.75rem;
+    border-radius: 50%;
+    color: var(--text-main);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    transform: rotate(180deg);
+}
+
+.mobile-menu-btn {
+    display: none;
+    /* Hidden on desktop */
+    background: var(--bg-main);
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    color: var(--text-main);
+}
+
+/* Mobile Navigation Dropdown */
+.mobile-nav {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light);
+    margin-top: 1rem;
+}
+
+.mobile-nav-top-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+.mobile-nav-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 0.5rem 0;
+}
+
+.mobile-nav-link {
+    padding: 0.75rem 1rem;
+    background: var(--bg-main);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-main);
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mobile-nav-link.special-link {
+    background: var(--bg-body);
+    border: 1px solid var(--border-light);
+    justify-content: center;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+    background: var(--bg-hover);
+    color: var(--brand-primary);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 900px) {
+    .desktop-nav {
+        display: none;
+        /* Hide desktop nav on tablet/mobile */
+    }
+
+    .desktop-only {
+        display: none !important;
+        /* Force hide desktop only elements */
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+        /* Show hamburger button */
+    }
+}
+
+@media (max-width: 600px) {
+    .app-title {
+        display: none;
+    }
+
+    .home-text {
+        display: none;
+    }
+
+    .mobile-only-brand {
+        display: block !important;
+    }
+
+    .mobile-only-brand svg {
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+
+    .app-header {
+        padding: 0.75rem 1rem;
+    }
+
+    /* Ensure header left content doesn't overflow */
+    .header-left {
+        overflow: hidden;
+        flex: 1;
+        min-width: 0;
+        gap: 0.5rem;
+    }
+
+    .header-right {
+        gap: 0.5rem;
+    }
+}

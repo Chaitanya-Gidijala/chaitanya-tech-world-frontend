@@ -1,0 +1,25 @@
+/* Split Expenses App Responsive Styles */
+
+/* Dashboard layout handling - centering container provided inline in JSX */
+
+/* Mobile Responsive */
+
+
+/* Tab Button Responsive */
+.tab-button {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.3rem, 1vw, 0.5rem);
+    padding: clamp(0.6rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .tab-button span {
+        display: none;
+    }
+}

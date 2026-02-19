@@ -1,0 +1,134 @@
+global:
+  domain: chaitanyatechworld.com
+  environment: production
+
+# Frontend Configuration (React + Vite)
+frontend:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: chaitanyagidijala123/chaitanya-tech-world
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+
+# Backend API Configuration (Job Portal)
+backend-api:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: chaitanyagidijala123/job-portal-backend
+    tag: "1.0.0"
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+  env:
+    SPRING_APPLICATION_NAME: "JobPortal"
+    SERVER_PORT: "8080"
+    # Database Configuration
+    SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-service:3306/job_portal?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true"
+    SPRING_DATASOURCE_USERNAME: "root"
+    SPRING_DATASOURCE_PASSWORD: "root"
+    SPRING_DATASOURCE_DRIVER_CLASS_NAME: "com.mysql.cj.jdbc.Driver"
+    # JPA Configuration
+    SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.MySQL8Dialect"
+    SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+    SPRING_JPA_SHOW_SQL: "true"
+    # JWT Configuration
+    APP_JWT_SECRET: "daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb"
+    APP_JWT_EXPIRATION_MILLISECONDS: "604800000"
+    # Auth Service Configuration
+    APP_AUTH_SERVICE_URL: "http://security-service:8085"
+    APP_AUTH_SERVICE_BASE_URL: "http://security-service:8085/api/auth"
+    APP_AUTH_SERVICE_VALIDATE_TOKEN_ENDPOINT: "http://security-service:8085/api/auth/validate"
+    # CORS Configuration
+    APP_CORS_ALLOWED_ORIGINS: "http://localhost:5173,http://localhost:3000,https://chaitanyatechworld.com"
+
+# Security Service Configuration (Spring Security + JWT)
+security-service:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: chaitanyagidijala123/security-service
+    tag: "1.0.0"
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8085
+    targetPort: 8085
+  env:
+    SPRING_APPLICATION_NAME: "security-service"
+    SERVER_PORT: "8085"
+    # Database Configuration
+    SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-service:3306/security_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+    SPRING_DATASOURCE_USERNAME: "root"
+    SPRING_DATASOURCE_PASSWORD: "root"
+    SPRING_DATASOURCE_DRIVER_CLASS_NAME: "com.mysql.cj.jdbc.Driver"
+    # JPA Configuration
+    SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+    SPRING_JPA_SHOW_SQL: "true"
+    SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+    SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.MySQLDialect"
+    # JWT Configuration
+    APP_JWT_SECRET: "daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb"
+    APP_JWT_EXPIRATION_MILLISECONDS: "604800000"
+
+# MySQL Database Configuration
+mysql:
+  enabled: true
+  auth:
+    rootPassword: root
+    createDatabase: true
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+  initdbScripts:
+    init-databases.sql: |
+      CREATE DATABASE IF NOT EXISTS job_portal;
+      CREATE DATABASE IF NOT EXISTS security_db;
+
+# Ingress Configuration
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    # Add your ACM certificate ARN here after creating it
+    # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/CERT_ID
+  hosts:
+    - host: chaitanyatechworld.com
+      paths:
+        - path: /api/auth
+          pathType: Prefix
+          backend:
+            service:
+              name: security-service
+              port:
+                number: 8085
+        - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              name: backend-api
+              port:
+                number: 8080
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: frontend
+              port:
+                number: 80
+  tls:
+    - secretName: chaitanya-portal-tls
+      hosts:
+        - chaitanyatechworld.com
