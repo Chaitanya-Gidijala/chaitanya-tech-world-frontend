@@ -1,314 +1,257 @@
 import React, { useState } from 'react';
-import { Plus, Users, DollarSign, Tag, Share2, Clipboard, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Tag, Share2, X, CalendarDays, Layers } from 'lucide-react';
 import { splitExpensesConfig } from '../../../config/splitExpensesConfig';
+import '../SplitExpenses.css';
+
+const AVATAR_COLORS = [
+    '#6366f1', '#ec4899', '#14b8a6', '#f59e0b',
+    '#8b5cf6', '#22c55e', '#ef4444', '#3b82f6',
+];
+const avatarColor = (str) =>
+    AVATAR_COLORS[(str?.charCodeAt(0) || 0) % AVATAR_COLORS.length];
 
 const AddExpense = ({ users, onAddExpense }) => {
-    // Config
     const { currency, categories } = splitExpensesConfig;
 
-    // State
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState(categories[0].id);
     const [payer, setPayer] = useState('');
     const [involved, setInvolved] = useState([]);
-    const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Default today
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [showShareModal, setShowShareModal] = useState(false);
     const [lastExpense, setLastExpense] = useState(null);
 
-    // Handlers
-    const handleInvolvedChange = (user) => {
-        // Handle both string and object users for backward compatibility
-        const userId = typeof user === 'string' ? user : user.id;
+    const getUserId = (u) => typeof u === 'string' ? u : u.id;
+    const getUserName = (u) => typeof u === 'string' ? u : u.name;
 
-        setInvolved(prev => {
-            if (prev.includes(userId)) {
-                return prev.filter(id => id !== userId);
-            }
-            return [...prev, userId];
-        });
+    const handleInvolvedToggle = (u) => {
+        const id = getUserId(u);
+        setInvolved(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+    };
+
+    const selectAll = () =>
+        setInvolved(involved.length === users.length ? [] : users.map(getUserId));
+
+    const getWhatsAppLink = () => {
+        if (!lastExpense) return '';
+        const payerUser = users.find(u => getUserId(u) === lastExpense.payer);
+        const payerName = payerUser ? getUserName(payerUser) : 'Someone';
+        const split = (lastExpense.amount / lastExpense.involved.length).toFixed(2);
+        const text = `💸 *New Expense Shared*\n\n"${lastExpense.description}"\nTotal: ${currency}${lastExpense.amount}\n\nPaid by: ${payerName}\nSplit: ${currency}${split} / person\n\nPlease settle up soon!`;
+        return `https://wa.me/?text=${encodeURIComponent(text)}`;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!description || !amount || !payer || involved.length === 0) return;
-
         const expense = {
             id: Date.now(),
             description,
             amount: parseFloat(amount),
             category,
-            payer, // ID or Name depending on data
-            involved, // IDs or Names
-            date: new Date(date).toISOString()
+            payer,
+            involved,
+            date: new Date(date).toISOString(),
         };
-
         onAddExpense(expense);
         setLastExpense(expense);
         setShowShareModal(true);
-
-        // Reset
-        setDescription('');
-        setAmount('');
-        setInvolved([]);
-        setPayer('');
+        setDescription(''); setAmount(''); setInvolved([]); setPayer('');
         setDate(new Date().toISOString().split('T')[0]);
     };
 
-    // Select all helper
-    const selectAll = () => {
-        if (involved.length === users.length) {
-            setInvolved([]);
-        } else {
-            // Map to IDs or Names
-            setInvolved(users.map(u => typeof u === 'string' ? u : u.id));
-        }
-    };
-
-    // Generate WhatsApp Share Link
-    const getWhatsAppLink = () => {
-        if (!lastExpense) return '';
-        const payerName = users.find(u => (typeof u === 'string' ? u : u.id) === lastExpense.payer);
-        const name = typeof payerName === 'string' ? payerName : payerName?.name || 'Someone';
-        const splitAmount = (lastExpense.amount / lastExpense.involved.length).toFixed(2);
-
-        const text = `💸 *New Expense Shared*\n\n"${lastExpense.description}"\nTotal: ${currency}${lastExpense.amount}\n\nPaid by: ${name}\nSplit: ${currency}${splitAmount} / person\n\nPlease settle up soon!`;
-        return `https://wa.me/?text=${encodeURIComponent(text)}`;
-    };
+    const isValid = description && amount && payer && involved.length > 0;
 
     return (
-        <div className="glass-panel" style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '2rem', textAlign: 'center' }}>
-                Add <span className="text-gradient">Expense</span>
-            </h2>
-
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-
-                {/* Large Amount Input */}
-                <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
-                    <span style={{
-                        position: 'absolute', left: '25%', top: '50%', transform: 'translateY(-50%)',
-                        fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-primary)'
-                    }}>{currency}</span>
-                    <input
-                        type="number"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="0"
-                        style={{
-                            background: 'transparent',
-                            border: 'none',
-                            borderBottom: '2px solid var(--border-light)',
-                            fontSize: '3rem',
-                            fontWeight: '800',
-                            textAlign: 'center',
-                            width: '50%',
-                            color: 'var(--text-main)',
-                            outline: 'none',
-                            padding: '0.5rem'
-                        }}
-                    />
-                </div>
-
-                {/* Description & Category */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: '0.8rem' }}>
-                    <div style={{ position: 'relative' }}>
+        <div className="se-add-wrap">
+            <div className="se-card">
+                {/* Big amount input */}
+                <div className="se-amount-hero">
+                    <div className="se-amount-label">Amount</div>
+                    <div className="se-amount-row">
+                        <span className="se-currency-symbol">{currency}</span>
                         <input
-                            type="text"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="What was this for?"
-                            style={{
-                                width: '100%',
-                                padding: '1rem 1rem 1rem 2.8rem',
-                                background: 'var(--bg-body)',
-                                border: '1px solid var(--border-light)',
-                                borderRadius: '12px',
-                                color: 'var(--text-main)',
-                                fontSize: '1.1rem',
-                                outline: 'none'
-                            }}
-                        />
-                        <Tag size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                    </div>
-
-                    <div style={{ position: 'relative' }}>
-                        <input
-                            type="date"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            style={{
-                                width: '100%',
-                                padding: '1rem',
-                                background: 'var(--bg-body)',
-                                border: '1px solid var(--border-light)',
-                                borderRadius: '12px',
-                                color: 'var(--text-main)',
-                                fontSize: '1rem',
-                                outline: 'none',
-                                fontFamily: 'inherit'
-                            }}
+                            type="number"
+                            className="se-amount-input"
+                            value={amount}
+                            onChange={e => setAmount(e.target.value)}
+                            placeholder="0"
+                            min="0"
                         />
                     </div>
-
-                    <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        style={{
-                            padding: '1rem',
-                            background: 'var(--bg-body)',
-                            border: '1px solid var(--border-light)',
-                            borderRadius: '12px',
-                            color: 'var(--text-main)',
-                            outline: 'none',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        {categories.map(c => (
-                            <option key={c.id} value={c.id}>{c.label}</option>
-                        ))}
-                    </select>
                 </div>
 
-                {/* Payer Selection */}
-                <div>
-                    <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: '600', color: 'var(--text-muted)' }}>Who paid?</label>
-                    <div style={{ display: 'flex', gap: '0.8rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-                        {users.map(u => {
-                            const uId = typeof u === 'string' ? u : u.id;
-                            const uName = typeof u === 'string' ? u : u.name;
-                            const isSelected = payer === uId;
-
-                            return (
-                                <motion.button
-                                    key={uId}
-                                    type="button"
-                                    onClick={() => setPayer(uId)}
-                                    whileTap={{ scale: 0.95 }}
-                                    style={{
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '50px',
-                                        border: isSelected ? '2px solid var(--color-primary)' : '1px solid var(--border-light)',
-                                        background: isSelected ? 'hsla(var(--primary-base), 100%, 60%, 0.1)' : 'var(--bg-body)',
-                                        color: isSelected ? 'var(--color-primary)' : 'var(--text-muted)',
-                                        fontWeight: isSelected ? '700' : '500',
-                                        minWidth: 'auto',
-                                        whiteSpace: 'nowrap'
-                                    }}
+                <form className="se-form" onSubmit={handleSubmit}>
+                    {/* Description · Date · Category */}
+                    <div className="se-form-row-3">
+                        <div className="se-field">
+                            <label className="se-label">Description</label>
+                            <div className="se-input-icon-wrap">
+                                <Tag size={16} className="se-input-icon" />
+                                <input
+                                    type="text"
+                                    className="se-input se-input-with-icon"
+                                    placeholder="What was this for?"
+                                    value={description}
+                                    onChange={e => setDescription(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div className="se-field">
+                            <label className="se-label">Date</label>
+                            <div className="se-input-icon-wrap">
+                                <CalendarDays size={16} className="se-input-icon" />
+                                <input
+                                    type="date"
+                                    className="se-input se-input-with-icon"
+                                    value={date}
+                                    onChange={e => setDate(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="se-field">
+                            <label className="se-label">Category</label>
+                            <div className="se-input-icon-wrap">
+                                <Layers size={16} className="se-input-icon" />
+                                <select
+                                    className="se-select se-input-with-icon"
+                                    value={category}
+                                    onChange={e => setCategory(e.target.value)}
                                 >
-                                    {uName}
-                                </motion.button>
-                            )
-                        })}
-                        {users.length === 0 && <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Add members first</span>}
-                    </div>
-                </div>
-
-                {/* Involved Members */}
-                <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
-                        <label style={{ fontWeight: '600', color: 'var(--text-muted)' }}>split with whom?</label>
-                        <button type="button" onClick={selectAll} style={{ color: 'var(--color-primary)', fontSize: '0.9rem', fontWeight: '600' }}>
-                            {involved.length === users.length ? 'Clear All' : 'Select All'}
-                        </button>
+                                    {categories.map(c => (
+                                        <option key={c.id} value={c.id}>{c.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.8rem' }}>
-                        {users.map(u => {
-                            const uId = typeof u === 'string' ? u : u.id;
-                            const uName = typeof u === 'string' ? u : u.name;
-                            const isSelected = involved.includes(uId);
-
-                            return (
-                                <motion.div
-                                    key={uId}
-                                    onClick={() => handleInvolvedChange(u)}
-                                    whileTap={{ scale: 0.95 }}
-                                    style={{
-                                        padding: '0.8rem',
-                                        borderRadius: '12px',
-                                        border: isSelected ? '2px solid var(--color-primary)' : '1px solid var(--border-light)',
-                                        background: isSelected ? 'var(--color-primary)' : 'var(--bg-body)',
-                                        color: isSelected ? '#fff' : 'var(--text-muted)',
-                                        cursor: 'pointer',
-                                        textAlign: 'center',
-                                        fontWeight: '600',
-                                        transition: 'all 0.2s'
-                                    }}
-                                >
-                                    {uName}
-                                </motion.div>
-                            )
-                        })}
+                    {/* Who paid */}
+                    <div className="se-field">
+                        <label className="se-label">Who paid?</label>
+                        <div className="se-people-pills">
+                            {users.length === 0
+                                ? <span className="se-no-members">Add members in the Group tab first</span>
+                                : users.map(u => {
+                                    const id = getUserId(u);
+                                    const name = getUserName(u);
+                                    const sel = payer === id;
+                                    return (
+                                        <motion.button
+                                            key={id} type="button"
+                                            className={`se-person-pill ${sel ? 'selected' : ''}`}
+                                            onClick={() => setPayer(id)}
+                                            whileTap={{ scale: 0.94 }}
+                                        >
+                                            <div
+                                                className="se-avatar se-avatar-sm"
+                                                style={{ background: avatarColor(name) }}
+                                            >
+                                                {name.charAt(0).toUpperCase()}
+                                            </div>
+                                            {name}
+                                        </motion.button>
+                                    );
+                                })
+                            }
+                        </div>
                     </div>
-                </div>
 
-                {/* Submit Button */}
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="submit"
-                    disabled={!payer || !amount || !description || involved.length === 0}
-                    style={{
-                        marginTop: '1rem',
-                        padding: '1.2rem',
-                        borderRadius: '16px',
-                        background: 'var(--gradient-brand)',
-                        color: '#fff',
-                        fontSize: '1.1rem',
-                        fontWeight: '700',
-                        boxShadow: 'var(--shadow-glow)',
-                        opacity: (!payer || !amount || !description || involved.length === 0) ? 0.5 : 1,
-                        cursor: (!payer || !amount || !description || involved.length === 0) ? 'not-allowed' : 'pointer',
-                        display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem'
-                    }}
-                >
-                    <Plus size={24} /> Add Expense
-                </motion.button>
+                    {/* Split with */}
+                    <div className="se-field">
+                        <div className="se-people-label-row">
+                            <label className="se-label">Split with</label>
+                            {users.length > 0 && (
+                                <button type="button" className="se-select-all-btn" onClick={selectAll}>
+                                    {involved.length === users.length ? 'Clear All' : 'Select All'}
+                                </button>
+                            )}
+                        </div>
+                        <div className="se-people-pills">
+                            {users.length === 0
+                                ? <span className="se-no-members">No members yet</span>
+                                : users.map(u => {
+                                    const id = getUserId(u);
+                                    const name = getUserName(u);
+                                    const sel = involved.includes(id);
+                                    return (
+                                        <motion.button
+                                            key={id} type="button"
+                                            className={`se-person-pill ${sel ? 'selected' : ''}`}
+                                            onClick={() => handleInvolvedToggle(u)}
+                                            whileTap={{ scale: 0.94 }}
+                                        >
+                                            <div
+                                                className="se-avatar se-avatar-sm"
+                                                style={{ background: avatarColor(name) }}
+                                            >
+                                                {name.charAt(0).toUpperCase()}
+                                            </div>
+                                            {name}
+                                        </motion.button>
+                                    );
+                                })
+                            }
+                        </div>
+                    </div>
 
-            </form>
+                    {/* Per-person split preview */}
+                    {amount && involved.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            style={{
+                                padding: '0.85rem 1.25rem',
+                                borderRadius: '12px',
+                                background: 'hsla(260, 100%, 65%, 0.08)',
+                                border: '1px solid hsla(260, 100%, 65%, 0.2)',
+                                fontSize: '0.88rem',
+                                color: 'var(--text-muted)',
+                                textAlign: 'center',
+                            }}
+                        >
+                            Each person pays{' '}
+                            <strong style={{ color: 'var(--color-primary)', fontSize: '1rem' }}>
+                                {splitExpensesConfig.currency}{(parseFloat(amount) / involved.length).toFixed(2)}
+                            </strong>
+                            {' '}— split {involved.length} ways
+                        </motion.div>
+                    )}
 
-            {/* Share Modal (Simple Inline for now) */}
+                    <button type="submit" className="se-submit-btn" disabled={!isValid}>
+                        <Plus size={20} /> Add Expense
+                    </button>
+                </form>
+            </div>
+
+            {/* WhatsApp share toast */}
             <AnimatePresence>
                 {showShareModal && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
-                        style={{
-                            marginTop: '2rem',
-                            padding: '1.5rem',
-                            background: '#25D366', /* WhatsApp Green */
-                            borderRadius: '16px',
-                            color: '#fff',
-                            textAlign: 'center'
-                        }}
+                        className="se-wa-toast"
                     >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                            <h3 style={{ fontWeight: '800', fontSize: '1.2rem' }}>Expense Added!</h3>
-                            <button onClick={() => setShowShareModal(false)} style={{ color: '#fff' }}><X size={20} /></button>
+                        <div className="se-wa-toast-header">
+                            <h3 className="se-wa-toast-title">🎉 Expense Added!</h3>
+                            <button className="se-wa-toast-close" onClick={() => setShowShareModal(false)}>
+                                <X size={14} />
+                            </button>
                         </div>
-                        <p style={{ marginBottom: '1.5rem', opacity: 0.9 }}>Value split successfully. Notify the group now?</p>
-
+                        <p className="se-wa-toast-sub">
+                            Expense split successfully. Want to notify the group on WhatsApp?
+                        </p>
                         <a
                             href={getWhatsAppLink()}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                background: '#fff',
-                                color: '#25D366',
-                                padding: '0.8rem 2rem',
-                                borderRadius: '50px',
-                                fontWeight: '700',
-                                textDecoration: 'none',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                            }}
+                            className="se-wa-share-btn"
                         >
-                            <Share2 size={18} /> Share on WhatsApp
+                            <Share2 size={17} /> Share on WhatsApp
                         </a>
                     </motion.div>
                 )}

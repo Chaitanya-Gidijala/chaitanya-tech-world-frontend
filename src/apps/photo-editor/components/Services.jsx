@@ -1,95 +1,116 @@
 import React from 'react';
-import { Sparkles, Scissors, Wand, Palette, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { photoEditorConfig } from '../../../config/photoEditorConfig';
+import '../PhotoEditor.css';
+import {
+    Heart, Gift, Gem, Home, Building2, CalendarDays,
+    ImageIcon, Wallpaper, Globe, ArrowRight
+} from 'lucide-react';
 
-// Map string names to Components
-const IconMap = {
-    Sparkles,
-    Scissors,
-    Wand,
-    Palette,
-    Default: ImageIcon
+const services = [
+    {
+        Icon: Heart,
+        title: 'Wedding Invitations',
+        desc: 'Elegant, timeless wedding suites — save-the-dates, full invitation cards, digital & print-ready. Luxury typography meets your love story.',
+        cta: 'Order Now',
+    },
+    {
+        Icon: Gift,
+        title: 'Birthday Invitations',
+        desc: 'Vibrant, personalised birthday cards and e-invites. Fun or formal — every theme, any age, any style you imagine.',
+        cta: 'Create Yours',
+    },
+    {
+        Icon: Gem,
+        title: 'Engagement Invitations',
+        desc: 'Celebrate the big "Yes!" with sophisticated engagement invitations. Romantic designs that capture the joy of the moment.',
+        cta: 'Design Now',
+    },
+    {
+        Icon: Home,
+        title: 'Housewarming Invitations',
+        desc: 'Warm, welcoming invites for your new home celebration. Charming illustrations and clean layouts that set the perfect tone.',
+        cta: 'Get Started',
+    },
+    {
+        Icon: Building2,
+        title: 'Corporate Invitations',
+        desc: 'Polished, brand-aligned corporate event invitations for product launches, conferences, and annual functions.',
+        cta: 'Explore',
+    },
+    {
+        Icon: CalendarDays,
+        title: 'Custom Event Cards',
+        desc: "Baby showers, anniversaries, graduations — any occasion. Tell us your vision and we'll craft a one- of - a - kind invite.",
+        cta: 'Customise',
+    },
+    {
+        Icon: ImageIcon,
+        title: 'Banners & Posters',
+        desc: 'High-impact social media banners, YouTube channel art, event posters, and promotional flyers that demand attention.',
+        cta: 'Order Banner',
+    },
+    {
+        Icon: Wallpaper,
+        title: 'Wallpaper Design',
+        desc: 'Stunning desktop and mobile wallpapers — abstract art, brand-themed, motivational quotes, or completely custom.',
+        cta: 'Get Wallpaper',
+    },
+    {
+        Icon: Globe,
+        title: 'Website Development',
+        desc: 'Custom full-stack websites that are fast, responsive, and brand-aligned. From landing pages to complex web apps.',
+        cta: 'Build Site',
+    },
+];
+
+const card = {
+    hidden: { opacity: 0, y: 36 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.1
-        }
-    }
-};
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.6 }
-    }
-};
-
-const Services = () => {
-    return (
-        <section className="container" style={{ padding: '4rem 0' }}>
-            <motion.h2
+const Services = () => (
+    <section id="pe-services" className="pe-section pe-services">
+        <div className="container">
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                style={{
-                    fontSize: '2.5rem',
-                    marginBottom: '3rem',
-                    textAlign: 'center',
-                    fontWeight: '700'
-                }}
             >
-                My <span className="text-gradient">Services</span>
-            </motion.h2>
+                <div className="pe-tag" style={{ margin: '0 auto 1rem' }}>
+                    What I Offer
+                </div>
+                <h2 className="pe-section-title">
+                    Services &amp; <span className="text-gradient">Specialisations</span>
+                </h2>
+                <p className="pe-section-subtitle">
+                    From intimate wedding invitations to enterprise websites — premium quality work
+                    that makes every occasion and brand truly unforgettable.
+                </p>
+            </motion.div>
 
             <motion.div
-                variants={containerVariants}
+                className="pe-services-grid"
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: '2rem'
-                }}
+                viewport={{ once: true, margin: '-60px' }}
             >
-                {photoEditorConfig.services.map((service) => {
-                    const Icon = IconMap[service.icon] || IconMap.Default;
-
-                    return (
-                        <motion.div
-                            key={service.id}
-                            variants={itemVariants}
-                            whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                            className="glass-panel"
-                            style={{
-                                padding: '2rem',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '1rem',
-                                borderTop: '4px solid var(--color-primary)',
-                                height: '100%',
-                                background: 'linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 100%)'
-                            }}
-                        >
-                            <div style={{ color: 'var(--color-primary)' }}>
-                                <Icon size={40} strokeWidth={1.5} />
-                            </div>
-                            <h3 style={{ fontSize: '1.5rem', fontWeight: '600' }}>{service.title}</h3>
-                            <p style={{ color: 'var(--text-muted)', lineHeight: '1.6', flex: 1 }}>{service.description}</p>
-                        </motion.div>
-                    );
-                })}
+                {services.map(({ Icon, title, desc, cta }) => (
+                    <motion.div key={title} variants={card} className="pe-service-card">
+                        <div className="pe-service-icon-wrap">
+                            <Icon size={22} strokeWidth={1.8} />
+                        </div>
+                        <h3 className="pe-service-title">{title}</h3>
+                        <p className="pe-service-desc">{desc}</p>
+                        <button className="pe-service-cta">
+                            {cta} <ArrowRight size={13} />
+                        </button>
+                    </motion.div>
+                ))}
             </motion.div>
-        </section>
-    );
-};
+        </div>
+    </section>
+);
 
 export default Services;

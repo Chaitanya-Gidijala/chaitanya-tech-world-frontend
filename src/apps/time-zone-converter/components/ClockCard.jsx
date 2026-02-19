@@ -1,67 +1,59 @@
 import React from 'react';
-import { X, Clock } from 'lucide-react';
+import { X, Clock, Star, Globe2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatTime, formatDate, getTimeOffset } from '../utils';
+import '../TimeZone.css';
 
-const ClockCard = ({ zone, date, onRemove }) => {
+const ClockCard = ({ zone, date, onRemove, isFavorite, onToggleFavorite }) => {
+    const timeParts = formatTime(date, zone.value).split(' ');
+    const timeString = timeParts[0];
+    const ampm = timeParts[1];
+
     return (
         <motion.div
             layout
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="glass-panel"
-            style={{
-                padding: '1.5rem',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                position: 'relative',
-                minHeight: '180px',
-                border: '1px solid var(--color-primary-glow)'
-            }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className={`tz-card ${isFavorite ? 'favorite' : ''}`}
         >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                    <h3 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0 }}>
-                        {zone.city}
-                    </h3>
-                    <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                        {getTimeOffset(zone.value)}
-                    </span>
+            <div className="tz-card-header">
+                <div style={{ minWidth: 0, flex: 1 }}>
+                    <h3 className="tz-city">{zone.city}</h3>
+                    <div className="tz-offset">
+                        <Globe2 size={13} />
+                        <span className="tz-offset-badge">{getTimeOffset(zone.value) || zone.value}</span>
+                    </div>
                 </div>
-                <button
-                    onClick={() => onRemove(zone.value)}
-                    style={{
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--text-muted)',
-                        cursor: 'pointer',
-                        padding: '4px'
-                    }}
-                >
-                    <X size={18} />
-                </button>
+                <div style={{ display: 'flex', gap: '0.25rem' }}>
+                    <button
+                        className={`tz-fav-btn ${isFavorite ? 'active' : ''}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleFavorite(zone.value);
+                        }}
+                        title={isFavorite ? "Remove from Favorites" : "Mark as Favorite"}
+                    >
+                        <Star size={18} fill={isFavorite ? "currentColor" : "none"} />
+                    </button>
+                    <button
+                        className="tz-remove-btn"
+                        onClick={() => onRemove(zone.value)}
+                        title="Remove City"
+                    >
+                        <X size={18} />
+                    </button>
+                </div>
             </div>
 
             <div style={{ marginTop: 'auto' }}>
-                <div style={{
-                    fontSize: '2.5rem',
-                    fontWeight: '300',
-                    letterSpacing: '-1px',
-                    fontVariantNumeric: 'tabular-nums'
-                }}>
-                    {formatTime(date, zone.value)}
+                <div className="tz-time-group">
+                    <span className="tz-main-time">{timeString}</span>
+                    <span className="tz-ampm">{ampm}</span>
                 </div>
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    color: 'var(--text-muted)',
-                    fontSize: '0.9rem'
-                }}>
+                <div className="tz-date-row">
                     <Clock size={14} />
-                    {formatDate(date, zone.value)}
+                    <span>{formatDate(date, zone.value)}</span>
                 </div>
             </div>
         </motion.div>

@@ -12,6 +12,7 @@ import TripPlannerApp from './apps/trip-planner/TripPlannerApp';
 import HabitApp from './apps/habit-productivity/HabitApp';
 import JobPortalApp from './apps/job-portal/JobPortalApp';
 import LandingFooter from './components/LandingFooter';
+import ContactPage from './pages/ContactPage';
 
 function App() {
   const [theme, setTheme] = useState(getInitialTheme);
@@ -48,6 +49,7 @@ function App() {
           <Route path="/trip-planner/*" element={<TripPlannerApp />} />
           <Route path="/habit-productivity/*" element={<HabitApp />} />
           <Route path="/job-portal/*" element={<JobPortalApp />} />
+          <Route path="/contact" element={<ContactPage />} />
         </Routes>
       </main>
 

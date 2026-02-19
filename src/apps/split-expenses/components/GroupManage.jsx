@@ -1,200 +1,155 @@
 import React, { useState } from 'react';
-import { UserPlus, X, Users, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { UserPlus, X, Phone, Users, AlertCircle } from 'lucide-react';
+import '../SplitExpenses.css';
+
+const AVATAR_COLORS = [
+    '#6366f1', '#ec4899', '#14b8a6', '#f59e0b',
+    '#8b5cf6', '#22c55e', '#ef4444', '#3b82f6',
+];
+const avatarColor = (str) =>
+    AVATAR_COLORS[(str?.charCodeAt(0) || 0) % AVATAR_COLORS.length];
+
+const validateIndianPhone = (p) =>
+    /^(?:(?:\+|0{0,2})91(\s*[-]\s*)?|[0]?)?[6789]\d{9}$/.test(p);
 
 const GroupManage = ({ users, onAddUser, onRemoveUser }) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [error, setError] = useState('');
 
-    const validateIndianPhone = (phoneNum) => {
-        // Regex for Indian phone numbers:
-        // Optional country code (+91 or 91)
-        // Optional space or hyphen
-        // Starts with 6, 7, 8, or 9
-        // Total 10 digits
-        const regex = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
-        return regex.test(phoneNum);
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         setError('');
-
-        const trimmedPhone = phone.trim();
-        const trimmedName = name.trim();
-
-        if (trimmedName) {
-            // Validate Phone if provided
-            if (trimmedPhone && !validateIndianPhone(trimmedPhone)) {
-                setError('Please enter a valid Indian phone number');
-                return;
-            }
-
-            // Create user object instead of string
-            const newUser = {
-                id: Date.now().toString(),
-                name: trimmedName,
-                phone: trimmedPhone
-            };
-            onAddUser(newUser); // Parent app needs to handle object or string check
-            setName('');
-            setPhone('');
+        const trimName = name.trim();
+        const trimPhone = phone.trim();
+        if (!trimName) return;
+        if (trimPhone && !validateIndianPhone(trimPhone)) {
+            setError('Please enter a valid Indian phone number (10 digits starting with 6-9).');
+            return;
         }
+        onAddUser({ id: Date.now().toString(), name: trimName, phone: trimPhone });
+        setName(''); setPhone('');
     };
 
+    const getUserName = (u) => typeof u === 'string' ? u : u.name;
+    const getUserPhone = (u) => typeof u === 'object' ? u.phone : '';
+    const getUserKey = (u) => typeof u === 'string' ? u : u.id;
+
     return (
-        <div className="glass-panel" style={{ padding: '2rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-                <div style={{
-                    background: 'hsla(var(--primary-base), 100%, 60%, 0.1)',
-                    padding: '0.75rem', borderRadius: '50%', color: 'var(--color-primary)'
-                }}>
-                    <Users size={24} />
-                </div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Group Members</h2>
-            </div>
-
-            <form onSubmit={handleSubmit} style={{
-                display: 'grid',
-                gap: '1rem',
-                marginBottom: '2rem',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))'
-            }}>
-                <div style={{ gridColumn: '1/-1' }}>
-                    {error && (
-                        <p style={{ color: '#ef4444', fontSize: '0.9rem', marginBottom: '0.5rem', fontWeight: '500' }}>
-                            {error}
-                        </p>
-                    )}
-                </div>
-
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Name (e.g. Alice)"
-                    style={{
-                        background: 'var(--bg-body)',
-                        border: '1px solid var(--border-light)',
-                        padding: '1rem',
-                        borderRadius: '12px',
-                        color: 'var(--text-main)',
-                        outline: 'none',
-                        fontSize: '1rem'
-                    }}
-                />
-                <div style={{ position: 'relative' }}>
-                    <input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => {
-                            setPhone(e.target.value);
-                            setError('');
-                        }}
-                        placeholder="Phone (Optional)"
-                        style={{
-                            width: '100%',
-                            background: 'var(--bg-body)',
-                            border: error ? '1px solid #ef4444' : '1px solid var(--border-light)',
-                            padding: '1rem 1rem 1rem 2.5rem',
-                            borderRadius: '12px',
-                            color: 'var(--text-main)',
-                            outline: 'none',
-                            fontSize: '1rem'
-                        }}
-                    />
-                    <Phone size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+        <div className="se-group-wrap">
+            <div className="se-card">
+                {/* Header */}
+                <div className="se-card-header">
+                    <div className="se-card-header-left">
+                        <div className="se-card-icon"><Users size={20} strokeWidth={1.8} /></div>
+                        <h3 className="se-card-title">
+                            Group Members
+                            {users.length > 0 && (
+                                <span style={{
+                                    marginLeft: '0.6rem',
+                                    fontSize: '0.78rem',
+                                    fontWeight: 600,
+                                    color: 'var(--color-primary)',
+                                    background: 'hsla(260,100%,65%,0.12)',
+                                    padding: '0.15rem 0.55rem',
+                                    borderRadius: '50px',
+                                }}>
+                                    {users.length}
+                                </span>
+                            )}
+                        </h3>
+                    </div>
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={!name.trim()}
-                    style={{
-                        background: 'var(--color-primary)',
-                        color: '#fff',
-                        padding: '1rem',
-                        borderRadius: '12px',
-                        fontWeight: '600',
-                        opacity: name.trim() ? 1 : 0.5,
-                        cursor: name.trim() ? 'pointer' : 'not-allowed',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                    }}
-                >
-                    <UserPlus size={20} /> Add Member
-                </button>
-            </form>
+                {/* Add member form */}
+                {error && (
+                    <div className="se-error-msg">
+                        <AlertCircle size={14} /> {error}
+                    </div>
+                )}
+                <form className="se-add-member-form" onSubmit={handleSubmit}>
+                    <div className="se-field">
+                        <label className="se-label">Name *</label>
+                        <input
+                            type="text"
+                            className="se-input"
+                            placeholder="e.g. Alice"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                        />
+                    </div>
+                    <div className="se-field">
+                        <label className="se-label">Phone (optional)</label>
+                        <div className="se-input-icon-wrap">
+                            <Phone size={16} className="se-input-icon" />
+                            <input
+                                type="tel"
+                                className={`se-input se-input-with-icon ${error ? 'se-input-error' : ''}`}
+                                placeholder="+91 XXXXX XXXXX"
+                                value={phone}
+                                onChange={e => { setPhone(e.target.value); setError(''); }}
+                            />
+                        </div>
+                    </div>
+                    <div className="se-field">
+                        <label className="se-label" style={{ visibility: 'hidden' }}>Add</label>
+                        <button type="submit" className="se-add-member-btn" disabled={!name.trim()}>
+                            <UserPlus size={17} /> Add
+                        </button>
+                    </div>
+                </form>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
-                <AnimatePresence>
-                    {users.map((user) => {
-                        // Handle both legacy string format and new object format
-                        const userName = typeof user === 'string' ? user : user.name;
-                        const userPhone = typeof user === 'object' ? user.phone : '';
-
-                        return (
-                            <motion.div
-                                key={typeof user === 'string' ? user : user.id}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.9 }}
-                                className="glass-panel"
-                                style={{
-                                    padding: '1rem',
-                                    borderRadius: '16px',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    background: 'var(--bg-body)'
-                                }}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
-                                    <div style={{
-                                        width: '40px', height: '40px',
-                                        borderRadius: '50%',
-                                        background: `hsl(${Math.random() * 360}, 70%, 80%)`, // Dynamic avatar color
-                                        color: '#333',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        fontWeight: '700',
-                                        fontSize: '1.2rem'
-                                    }}>
-                                        {userName.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <span style={{ fontWeight: '600', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{userName}</span>
-                                        {userPhone && (
-                                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                <Phone size={10} /> {userPhone}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <button
-                                    onClick={() => onRemoveUser(user)}
-                                    title="Remove Member"
-                                    style={{
-                                        color: 'var(--text-muted)',
-                                        padding: '6px',
-                                        borderRadius: '50%',
-                                        transition: 'background 0.2s',
-                                        hover: { background: 'rgba(255,0,0,0.1)', color: 'red' }
-                                    }}
-                                >
-                                    <X size={18} />
-                                </button>
-                            </motion.div>
-                        );
-                    })}
-                </AnimatePresence>
-
-                {users.length === 0 && (
-                    <p style={{ gridColumn: '1/-1', color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>
-                        No members yet. Add people to start splitting!
-                    </p>
+                {/* Members grid */}
+                {users.length === 0 ? (
+                    <div className="se-empty" style={{ padding: '2.5rem 1rem' }}>
+                        <Users size={36} color="var(--text-muted)" />
+                        <span>No members yet.</span>
+                        <span style={{ fontSize: '0.82rem' }}>Add people above to start splitting expenses!</span>
+                    </div>
+                ) : (
+                    <div className="se-members-grid">
+                        <AnimatePresence>
+                            {users.map(u => {
+                                const uName = getUserName(u);
+                                const uPhone = getUserPhone(u);
+                                const uKey = getUserKey(u);
+                                return (
+                                    <motion.div
+                                        key={uKey}
+                                        initial={{ opacity: 0, scale: 0.88 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.2 } }}
+                                        className="se-member-card"
+                                    >
+                                        <div className="se-member-info">
+                                            <div
+                                                className="se-avatar"
+                                                style={{ background: avatarColor(uName) }}
+                                            >
+                                                {uName.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div style={{ minWidth: 0 }}>
+                                                <p className="se-member-name">{uName}</p>
+                                                {uPhone && (
+                                                    <p className="se-member-phone">
+                                                        <Phone size={10} /> {uPhone}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <button
+                                            className="se-remove-btn"
+                                            onClick={() => onRemoveUser(u)}
+                                            title="Remove member"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </motion.div>
+                                );
+                            })}
+                        </AnimatePresence>
+                    </div>
                 )}
             </div>
         </div>
