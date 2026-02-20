@@ -36,14 +36,14 @@ const contactCards = [
         href: profileConfig.socialLinks.linkedin,
         bg: 'linear-gradient(135deg, #0a66c2, #0284c7)',
     },
-    {
-        Icon: Instagram,
-        label: 'Instagram',
-        value: profileConfig.contact.instagramHandle,
-        hint: 'See my design work & updates',
-        href: profileConfig.socialLinks.instagram,
-        bg: 'linear-gradient(135deg, #e1306c, #f77737)',
-    },
+    // {
+    //     Icon: Instagram,
+    //     label: 'Instagram',
+    //     value: profileConfig.contact.instagramHandle,
+    //     hint: 'See my design work & updates',
+    //     href: profileConfig.socialLinks.instagram,
+    //     bg: 'linear-gradient(135deg, #e1306c, #f77737)',
+    // },
 ];
 
 const availability = [

@@ -28,24 +28,24 @@ const CtaBanner = () => (
                 </p>
 
                 <div className="pe-cta-btns">
-                    <a
-                        href={`mailto:${profileConfig.contact.email}`}
+                    <button
                         className="pe-cta-btn-white"
+                        onClick={() => window.open('/contact', '_blank')}
                     >
                         <Mail size={16} /> Get Custom Invitation
-                    </a>
+                    </button>
                     <button
                         className="pe-cta-btn-outline"
-                        onClick={() => document.getElementById('pe-webdev')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={() => window.open('/contact', '_blank')}
                     >
                         <Globe size={16} /> Build My Website
                     </button>
-                    <a
-                        href={`mailto:${profileConfig.contact.email}`}
+                    <button
                         className="pe-cta-btn-outline"
+                        onClick={() => window.open('/contact', '_blank')}
                     >
                         <Sparkles size={16} /> Request Custom Quote
-                    </a>
+                    </button>
                 </div>
             </motion.div>
         </div>

@@ -25,20 +25,6 @@
     }
 }
 
-@keyframes tz-pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
-    }
-
-    70% {
-        box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
-    }
-
-    100% {
-        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
-    }
-}
-
 /* ── Page wrapper ─────────────────────────────────────── */
 .tz-page {
     min-height: 100vh;
@@ -48,7 +34,6 @@
     padding-bottom: 5rem;
 }
 
-/* decorative grid */
 .tz-grid-bg {
     position: fixed;
     inset: 0;
@@ -56,43 +41,41 @@
         linear-gradient(var(--border-light) 1px, transparent 1px),
         linear-gradient(90deg, var(--border-light) 1px, transparent 1px);
     background-size: 50px 50px;
-    opacity: 0.25;
+    opacity: 0.15;
     z-index: 0;
     pointer-events: none;
 }
 
-/* decorative orbs */
 .tz-orb {
     position: fixed;
     border-radius: 50%;
     filter: blur(100px);
     pointer-events: none;
     z-index: 0;
-    animation: tz-float 12s ease-in-out infinite;
+    opacity: 0.5;
 }
 
 .tz-orb-1 {
-    width: 500px;
-    height: 500px;
-    top: -100px;
+    width: 600px;
+    height: 600px;
+    top: -200px;
     left: -100px;
-    background: hsla(260, 100%, 65%, 0.1);
+    background: hsla(260, 100%, 65%, 0.15);
 }
 
 .tz-orb-2 {
-    width: 400px;
-    height: 400px;
-    bottom: -50px;
-    right: -50px;
-    background: hsla(190, 100%, 55%, 0.08);
-    animation-delay: -6s;
+    width: 500px;
+    height: 500px;
+    bottom: -100px;
+    right: -100px;
+    background: hsla(190, 100%, 55%, 0.12);
 }
 
 /* ── Hero ─────────────────────────────────────────────── */
 .tz-hero {
     position: relative;
-    z-index: 1;
-    padding: 4rem 0 2.5rem;
+    z-index: 10;
+    padding: 3.5rem 0 2rem;
     text-align: center;
 }
 
@@ -100,159 +83,160 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.4rem 1rem;
+    padding: 0.4rem 0.9rem;
     border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    background: var(--gradient-brand);
     color: #fff;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 4px 12px hsla(260, 100%, 65%, 0.2);
 }
 
 .tz-hero-h1 {
-    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-size: clamp(2.5rem, 7vw, 3.8rem);
     font-weight: 900;
-    letter-spacing: -0.04em;
-    line-height: 1.1;
-    margin-bottom: 1rem;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
+    margin-bottom: 1.25rem;
 }
 
 .tz-shimmer {
     background: linear-gradient(120deg,
             var(--color-primary) 0%,
-            var(--color-secondary) 40%,
-            var(--color-tertiary) 70%,
+            var(--color-secondary) 42%,
+            var(--color-tertiary) 75%,
             var(--color-primary) 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: tz-shimmer 4s linear infinite;
+    animation: tz-shimmer 5s linear infinite;
 }
 
 .tz-hero-sub {
     color: var(--text-muted);
-    font-size: 1.1rem;
-    line-height: 1.7;
-    max-width: 540px;
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 520px;
     margin: 0 auto;
 }
 
-/* ── Mode selector ───────────────────────────────────── */
+/* ── Controls ───────────────────────────────────────── */
 .tz-controls {
     position: relative;
-    z-index: 1;
-    margin-bottom: 3rem;
+    z-index: 10;
+    margin-bottom: 3.5rem;
 }
 
 .tz-mode-tabs {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
-    background: var(--bg-card);
+    gap: 0.4rem;
+    background: var(--bg-card-glass);
     border: 1px solid var(--border-light);
     border-radius: 50px;
     padding: 0.4rem;
     width: fit-content;
-    margin: 0 auto 2rem;
-    backdrop-filter: blur(10px);
+    margin: 0 auto 2.5rem;
+    backdrop-filter: blur(20px);
 }
 
 .tz-mode-btn {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.75rem 1.75rem;
+    padding: 0.7rem 1.6rem;
     border-radius: 50px;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     border: none;
     cursor: pointer;
     background: transparent;
     color: var(--text-muted);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tz-mode-btn.active {
     background: var(--gradient-brand);
     color: #fff;
-    box-shadow: 0 4px 15px hsla(260, 100%, 65%, 0.3);
+    box-shadow: 0 6px 20px hsla(260, 100%, 65%, 0.3);
 }
 
-/* ── Config Panel (Specific Mode) ── */
+/* ── Config Panel ── */
 .tz-config-panel {
     background: var(--bg-card-glass);
     border: 1px solid var(--border-light);
-    border-radius: 24px;
+    border-radius: 28px;
     padding: 2rem;
-    backdrop-filter: blur(16px);
-    max-width: 900px;
+    backdrop-filter: blur(25px);
+    max-width: 960px;
     margin: 0 auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
 }
 
 .tz-config-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 1.25rem;
-    margin-bottom: 2rem;
-}
-
-.tz-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
 }
 
 .tz-label {
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.65rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: block;
 }
 
 .tz-input,
 .tz-select {
-    padding: 0.8rem 1rem;
-    border-radius: 12px;
-    border: 1.50px solid var(--border-light);
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    border-radius: 14px;
+    border: 1.5px solid var(--border-light);
     background: var(--bg-body);
     color: var(--text-main);
     font-family: inherit;
     font-size: 0.95rem;
+    font-weight: 600;
     outline: none;
-    transition: all 0.25s;
+    transition: 0.2s ease;
 }
 
 .tz-input:focus,
 .tz-select:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px hsla(260, 100%, 65%, 0.1);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 4px hsla(260, 100%, 65%, 0.08);
 }
 
 .tz-result-hero {
-    background: linear-gradient(135deg, hsla(260, 100%, 65%, 0.1), hsla(190, 100%, 55%, 0.05));
-    border: 1px solid hsla(260, 100%, 65%, 0.2);
-    border-radius: 20px;
-    padding: 2.5rem;
+    background: var(--gradient-glass);
+    border: 1px solid var(--border-light);
+    border-radius: 24px;
+    padding: 3rem;
     text-align: center;
     position: relative;
     overflow: hidden;
 }
 
 .tz-result-sub {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
 }
 
 .tz-result-time {
-    font-size: 4rem;
-    font-weight: 300;
-    letter-spacing: -2px;
+    font-size: 5rem;
+    font-weight: 200;
+    letter-spacing: -3px;
     background: var(--gradient-brand);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -261,130 +245,113 @@
 }
 
 .tz-result-date {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-top: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: 1rem;
     color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
 }
 
-/* ── Grid Section ── */
+/* ── Clocks Grid ── */
 .tz-clocks-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 2rem;
-    position: relative;
-    z-index: 1;
+    margin-top: 2rem;
 }
 
 .tz-clocks-title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 800;
-    letter-spacing: -0.03em;
-}
-
-.tz-add-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.5rem;
-    border-radius: 50px;
-    background: var(--gradient-brand);
-    color: #fff;
-    font-weight: 700;
-    font-size: 0.9rem;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 15px hsla(260, 100%, 65%, 0.2);
-    transition: all 0.3s;
-}
-
-.tz-add-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px hsla(260, 100%, 65%, 0.4);
+    letter-spacing: -0.02em;
 }
 
 .tz-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
-    position: relative;
-    z-index: 1;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
 }
 
-/* ── Clock Card ── */
+/* ── COMPACT CLOCK CARD ──────────────────────────────── */
 .tz-card {
     background: var(--bg-card-glass);
     border: 1px solid var(--border-light);
-    border-radius: 24px;
-    padding: 2rem;
-    backdrop-filter: blur(16px);
-    position: relative;
+    border-radius: 20px;
+    padding: 1.5rem;
+    backdrop-filter: blur(20px);
     display: flex;
     flex-direction: column;
-    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    min-height: 180px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tz-card:hover {
-    transform: translateY(-8px);
-    border-color: hsla(260, 100%, 65%, 0.3);
-    box-shadow: 0 20px 40px hsla(260, 100%, 60%, 0.1);
+    transform: translateY(-5px);
+    background: var(--bg-card);
+    border-color: var(--color-primary);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
 .tz-card.favorite {
     border-color: var(--color-primary);
-    background: linear-gradient(135deg, hsla(260, 100%, 65%, 0.08), hsla(260, 100%, 65%, 0.02));
+    background: hsla(260, 100%, 65%, 0.05);
 }
 
 .tz-card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .tz-city {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.25rem;
+    margin: 0;
+    line-height: 1.2;
 }
 
 .tz-offset {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text-muted);
     display: flex;
     align-items: center;
     gap: 0.4rem;
+    margin-top: 0.25rem;
 }
 
 .tz-offset-badge {
-    padding: 0.15rem 0.6rem;
-    border-radius: 50px;
-    background: var(--bg-body);
-    border: 1px solid var(--border-light);
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-muted);
 }
 
 .tz-fav-btn,
 .tz-remove-btn {
-    background: none;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: 0.2s;
+    background: transparent;
     border: none;
     cursor: pointer;
     color: var(--text-muted);
-    padding: 6px;
-    border-radius: 50%;
-    transition: all 0.2s;
 }
 
 .tz-fav-btn:hover {
-    color: var(--color-primary);
     background: hsla(260, 100%, 65%, 0.1);
+    color: var(--color-primary);
 }
 
 .tz-remove-btn:hover {
-    color: #ef4444;
     background: hsla(0, 100%, 65%, 0.1);
+    color: #ff4d4f;
 }
 
 .tz-fav-btn.active {
@@ -394,65 +361,64 @@
 .tz-time-group {
     display: flex;
     align-items: baseline;
-    gap: 0.4rem;
-    margin-bottom: 0.5rem;
+    gap: 0.3rem;
 }
 
 .tz-main-time {
-    font-size: 3.5rem;
+    font-size: 2.8rem;
     font-weight: 300;
-    letter-spacing: -1.5px;
+    letter-spacing: -1px;
     line-height: 1;
     background: var(--gradient-brand);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 .tz-ampm {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 800;
     color: var(--text-muted);
 }
 
 .tz-date-row {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    font-weight: 500;
+    gap: 0.4rem;
+    font-weight: 600;
 }
 
-/* ── Modal ── */
+/* ── PROFESSIONAL ADD MODAL ────────────────────────── */
 .tz-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(15px);
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 .tz-modal {
-    background: var(--bg-card-glass);
-    border: 1px solid var(--border-light);
-    border-radius: 28px;
+    background: var(--bg-card);
     width: 100%;
-    maxWidth: 600px;
-    maxHeight: 85vh;
+    max-width: 650px;
+    max-height: 80vh;
+    border-radius: 32px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--border-light);
 }
 
 .tz-modal-header {
-    padding: 2rem;
-    border-bottom: 1px solid var(--border-light);
+    padding: 2.5rem 2.5rem 1.5rem;
+    background: var(--bg-card-glass);
 }
 
 .tz-search-wrap {
@@ -465,68 +431,87 @@
     left: 1.25rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--text-muted);
+    color: var(--color-primary);
+    opacity: 0.6;
 }
 
 .tz-search-input {
     width: 100%;
-    padding: 1rem 1.25rem 1rem 3.5rem;
-    border-radius: 16px;
-    border: 1.5px solid var(--border-light);
+    padding: 1.1rem 1.25rem 1.1rem 3.5rem;
+    border-radius: 18px;
+    border: 2px solid var(--border-light);
     background: var(--bg-body);
     color: var(--text-main);
-    font-size: 1.05rem;
+    font-size: 1.1rem;
+    font-weight: 600;
     outline: none;
+    transition: 0.3s;
 }
 
 .tz-search-input:focus {
     border-color: var(--color-primary);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 5px hsla(260, 100%, 65%, 0.1);
 }
 
 .tz-modal-list {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 1rem 1.5rem 2rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) transparent;
 }
 
 .tz-zone-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.25rem;
-    border-radius: 16px;
-    background: var(--bg-body);
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-radius: 18px;
     border: 1px solid var(--border-light);
     margin-bottom: 0.75rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: 0.2s;
+    background: var(--bg-body);
 }
 
-.tz-zone-item:hover {
-    transform: translateX(5px);
+.tz-zone-item:hover:not(.added) {
     border-color: var(--color-primary);
     background: var(--bg-card);
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .tz-zone-item.added {
-    opacity: 0.5;
-    cursor: not-allowed;
+    opacity: 0.4;
+    cursor: default;
+    background: transparent;
+}
+
+.tz-item-info h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.tz-item-info p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
 }
 
 /* ── Responsive ── */
-@media (max-width: 1024px) {
+@media (max-width: 992px) {
     .tz-config-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
     }
 }
 
-@media (max-width: 767px) {
-    .tz-hero {
-        padding: 3rem 0;
-    }
-
+@media (max-width: 600px) {
     .tz-hero-h1 {
-        font-size: 2.8rem;
+        font-size: 2.2rem;
     }
 
     .tz-config-grid {
@@ -534,25 +519,22 @@
     }
 
     .tz-result-time {
-        font-size: 3rem;
+        font-size: 3.5rem;
     }
 
-    .tz-main-time {
-        font-size: 2.8rem;
+    .tz-result-hero {
+        padding: 2rem;
     }
 
     .tz-grid {
         grid-template-columns: 1fr;
     }
-}
 
-@media (max-width: 480px) {
-    .tz-mode-btn {
-        padding: 0.65rem 1rem;
-        font-size: 0.85rem;
+    .tz-modal-header {
+        padding: 1.5rem;
     }
 
-    .tz-result-time {
-        font-size: 2.5rem;
+    .tz-modal-list {
+        padding: 1rem;
     }
 }

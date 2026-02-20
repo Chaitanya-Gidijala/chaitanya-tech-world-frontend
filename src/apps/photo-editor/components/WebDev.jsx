@@ -90,7 +90,7 @@ const WebDev = () => (
                     <button
                         className="pe-btn-primary"
                         style={{ width: 'fit-content' }}
-                        onClick={() => document.getElementById('pe-cta')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={() => window.open('/contact', '_blank')}
                     >
                         <Globe size={16} /> Start My Project <ArrowRight size={15} />
                     </button>

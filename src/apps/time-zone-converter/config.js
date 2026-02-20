@@ -1,24 +1,35 @@
-export const AVAILABLE_ZONES = [
-    { value: 'UTC', label: 'UTC - Universal Time', city: 'UTC' },
-    { value: 'America/New_York', label: 'USA (EST) - New York', city: 'New York' },
-    { value: 'America/Los_Angeles', label: 'USA (PST) - Los Angeles', city: 'Los Angeles' },
-    { value: 'America/Chicago', label: 'USA (CST) - Chicago', city: 'Chicago' },
-    { value: 'America/Toronto', label: 'Canada (EST) - Toronto', city: 'Toronto' },
-    { value: 'Europe/London', label: 'UK (GMT) - London', city: 'London' },
-    { value: 'Europe/Paris', label: 'France (CET) - Paris', city: 'Paris' },
-    { value: 'Europe/Berlin', label: 'Germany (CET) - Berlin', city: 'Berlin' },
-    { value: 'Europe/Moscow', label: 'Russia (MSK) - Moscow', city: 'Moscow' },
-    { value: 'Asia/Kolkata', label: 'India (IST) - New Delhi', city: 'New Delhi' },
-    { value: 'Asia/Dubai', label: 'UAE (GST) - Dubai', city: 'Dubai' },
-    { value: 'Asia/Singapore', label: 'Singapore (SGT)', city: 'Singapore' },
-    { value: 'Asia/Tokyo', label: 'Japan (JST) - Tokyo', city: 'Tokyo' },
-    { value: 'Asia/Shanghai', label: 'China (CST) - Shanghai', city: 'Shanghai' },
-    { value: 'Australia/Sydney', label: 'Australia (AEST) - Sydney', city: 'Sydney' },
-    { value: 'Pacific/Auckland', label: 'New Zealand (NZST) - Auckland', city: 'Auckland' },
-];
+// Comprehensive list of time zones using Intl API
+const getExpandedZones = () => {
+    try {
+        const timeZones = Intl.supportedValuesOf('timeZone');
+        return timeZones.map(zone => {
+            const parts = zone.split('/');
+            const city = parts[parts.length - 1].replace(/_/g, ' ');
+            const region = parts[0];
+
+            return {
+                value: zone,
+                label: `${city} (${region})`,
+                city: city,
+                region: region
+            };
+        });
+    } catch (e) {
+        // Fallback for older browsers
+        return [
+            { value: 'Asia/Kolkata', label: 'New Delhi (Asia)', city: 'New Delhi', region: 'Asia' },
+            { value: 'America/New_York', label: 'New York (America)', city: 'New York', region: 'America' },
+            { value: 'Europe/London', label: 'London (Europe)', city: 'London', region: 'Europe' },
+            { value: 'Asia/Tokyo', label: 'Tokyo (Asia)', city: 'Tokyo', region: 'Asia' },
+            { value: 'Australia/Sydney', label: 'Sydney (Australia)', city: 'Sydney', region: 'Australia' }
+        ];
+    }
+};
+
+export const AVAILABLE_ZONES = getExpandedZones();
 
 export const DEFAULT_ZONES = [
-    { value: 'Asia/Kolkata', label: 'India (IST) - New Delhi', city: 'New Delhi' },
-    { value: 'America/New_York', label: 'USA (EST) - New York', city: 'New York' },
-    { value: 'Europe/London', label: 'UK (GMT) - London', city: 'London' },
+    { value: 'Asia/Kolkata', label: 'New Delhi (Asia)', city: 'New Delhi', region: 'Asia' },
+    { value: 'America/New_York', label: 'New York (America)', city: 'New York', region: 'America' },
+    { value: 'Europe/London', label: 'London (Europe)', city: 'London', region: 'Europe' },
 ];

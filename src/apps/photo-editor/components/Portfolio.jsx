@@ -146,11 +146,10 @@ const Portfolio = () => {
                                     {/* Hover overlay */}
                                     <div className="pe-portfolio-overlay">
                                         <a
-                                            href={p.link}
+                                            href="/contact"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="pe-portfolio-overlay-icon"
-                                            onClick={e => e.stopPropagation()}
                                         >
                                             <ExternalLink size={20} />
                                         </a>

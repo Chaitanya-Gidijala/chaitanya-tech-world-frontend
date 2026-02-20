@@ -103,7 +103,10 @@ const Services = () => (
                         </div>
                         <h3 className="pe-service-title">{title}</h3>
                         <p className="pe-service-desc">{desc}</p>
-                        <button className="pe-service-cta">
+                        <button
+                            className="pe-service-cta"
+                            onClick={() => window.open('/contact', '_blank')}
+                        >
                             {cta} <ArrowRight size={13} />
                         </button>
                     </motion.div>

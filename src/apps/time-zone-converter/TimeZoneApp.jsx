@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Globe, Clock, Plus, X, Star, Calendar, Search, ArrowRight, Sparkles, MapPin } from 'lucide-react';
+import { Globe, Clock, Plus, X, Star, Calendar, Search, ArrowRight, Sparkles, MapPin, CheckCircle2 } from 'lucide-react';
 import { AVAILABLE_ZONES, DEFAULT_ZONES } from './config';
 import { formatTime, formatDate } from './utils';
 import ClockCard from './components/ClockCard';
@@ -30,118 +30,127 @@ const TimeZoneApp = () => {
         }
     }, [conversionMode]);
 
-    // Load favorites from localStorage
+    // Save/Load selected zones and favorites
     useEffect(() => {
-        const saved = localStorage.getItem('timezone-favorites');
-        if (saved) {
-            setFavorites(JSON.parse(saved));
-        }
+        const savedZones = localStorage.getItem('timezone-selected-v2');
+        const savedFavs = localStorage.getItem('timezone-favorites-v2');
+        if (savedZones) setSelectedZones(JSON.parse(savedZones));
+        if (savedFavs) setFavorites(JSON.parse(savedFavs));
     }, []);
 
+    useEffect(() => {
+        localStorage.setItem('timezone-selected-v2', JSON.stringify(selectedZones));
+    }, [selectedZones]);
+
+    useEffect(() => {
+        localStorage.setItem('timezone-favorites-v2', JSON.stringify(favorites));
+    }, [favorites]);
+
     const toggleFavorite = (zoneValue) => {
-        const newFavorites = favorites.includes(zoneValue)
-            ? favorites.filter(f => f !== zoneValue)
-            : [...favorites, zoneValue];
-        setFavorites(newFavorites);
-        localStorage.setItem('timezone-favorites', JSON.stringify(newFavorites));
+        setFavorites(prev =>
+            prev.includes(zoneValue)
+                ? prev.filter(f => f !== zoneValue)
+                : [...prev, zoneValue]
+        );
     };
 
     const handleAddZone = (zone) => {
         if (!selectedZones.find(z => z.value === zone.value)) {
-            setSelectedZones([...selectedZones, zone]);
+            setSelectedZones(prev => [...prev, zone]);
         }
-        setShowAddModal(false);
-        setSearchTerm('');
     };
 
     const handleRemoveZone = (zoneValue) => {
-        setSelectedZones(selectedZones.filter(z => z.value !== zoneValue));
+        setSelectedZones(prev => prev.filter(z => z.value !== zoneValue));
     };
 
-    const getConvertedTime = () => {
+    // Refined Conversion Logic using Temporal-like calculation in vanilla JS
+    const displayDate = useMemo(() => {
         if (conversionMode === 'realtime') return now;
 
-        // Parse specific time and date
-        const [hours, minutes] = specificTime.split(':');
-        const [year, month, day] = specificDate.split('-');
+        const [hours, minutes] = specificTime.split(':').map(Number);
+        const [year, month, day] = specificDate.split('-').map(Number);
 
-        // We need to create the date in the context of the fromZone
-        const formatter = new Intl.DateTimeFormat('en-US', {
-            timeZone: fromZone.value,
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: false
+        // Create a date object in the source timezone
+        // The most reliable way in browsers is to construct a string and parse it as that zone
+        // But since we have specific parts, we'll use the offset difference approach
+        const tempLocal = new Date(year, month - 1, day, hours, minutes);
+
+        // Calculate the difference in milliseconds between local and fromZone
+        const tzDate = new Date(tempLocal.toLocaleString('en-US', { timeZone: fromZone.value }));
+        const diff = tzDate.getTime() - tempLocal.getTime();
+
+        return new Date(tempLocal.getTime() - diff);
+    }, [conversionMode, now, specificTime, specificDate, fromZone.value]);
+
+    const filteredZones = useMemo(() => {
+        if (!searchTerm) return []; // Don't show all initially for professional look
+        const lower = searchTerm.toLowerCase();
+        return AVAILABLE_ZONES.filter(zone =>
+            zone.city.toLowerCase().includes(lower) ||
+            zone.region.toLowerCase().includes(lower) ||
+            zone.value.toLowerCase().includes(lower)
+        ).slice(0, 50); // Limit results for performance
+    }, [searchTerm]);
+
+    // Sort zones to show favorites first
+    const sortedSelectedZones = useMemo(() => {
+        return [...selectedZones].sort((a, b) => {
+            const aFav = favorites.includes(a.value);
+            const bFav = favorites.includes(b.value);
+            if (aFav && !bFav) return -1;
+            if (!aFav && bFav) return 1;
+            return a.city.localeCompare(b.city);
         });
-
-        // This is tricky in vanilla JS without weightly libraries. 
-        // A better way: Calculate offset difference
-        const d = new Date();
-        const fromOffset = new Date(d.toLocaleString('en-US', { timeZone: fromZone.value })).getTime() - d.getTime();
-
-        const localInputDate = new Date(year, month - 1, day, hours, minutes);
-        // Correct for the source timezone offset
-        return new Date(localInputDate.getTime() - fromOffset);
-    };
-
-    const filteredZones = AVAILABLE_ZONES.filter(zone =>
-        zone.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        zone.city.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const displayDate = getConvertedTime();
+    }, [selectedZones, favorites]);
 
     return (
         <div className="tz-page">
-            {/* Background elements */}
             <div className="tz-grid-bg" />
             <div className="tz-orb tz-orb-1" />
             <div className="tz-orb tz-orb-2" />
 
-            {/* ── Hero ── */}
+            {/* ── Hero section ── */}
             <div className="container tz-hero">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
                 >
                     <div className="tz-hero-tag">
-                        <Sparkles size={12} /> Global Time Tracker
+                        <Globe size={13} /> Worldwide Sync
                     </div>
                     <h1 className="tz-hero-h1">
-                        Connect Across <span className="tz-shimmer">Boundaries</span>
+                        Global <span className="tz-shimmer">Time Intelligence</span>
                     </h1>
                     <p className="tz-hero-sub">
-                        Professional world clock and time zone converter. Track multiple cities
-                        simultaneously or plan meetings across different time zones.
+                        Professional-grade time conversion for digital nomads, global teams, and travelers.
+                        Stay synchronized across every timezone on Earth.
                     </p>
                 </motion.div>
             </div>
 
-            {/* ── Controls ── */}
+            {/* ── Mode Selection ── */}
             <div className="container tz-controls">
                 <div className="tz-mode-tabs">
                     <button
                         className={`tz-mode-btn ${conversionMode === 'realtime' ? 'active' : ''}`}
                         onClick={() => setConversionMode('realtime')}
                     >
-                        <Clock size={16} /> Real-time mode
+                        <Clock size={16} /> Live Clocks
                     </button>
                     <button
                         className={`tz-mode-btn ${conversionMode === 'specific' ? 'active' : ''}`}
                         onClick={() => setConversionMode('specific')}
                     >
-                        <Calendar size={16} /> Specific conversion
+                        <Calendar size={16} /> Meeting Planner
                     </button>
                 </div>
 
                 <AnimatePresence mode="wait">
                     {conversionMode === 'specific' && (
                         <motion.div
-                            key="specific-panel"
+                            key="meeting-panel"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
@@ -149,19 +158,19 @@ const TimeZoneApp = () => {
                         >
                             <div className="tz-config-grid">
                                 <div className="tz-field">
-                                    <label className="tz-label">Source Zone</label>
+                                    <label className="tz-label">I am in</label>
                                     <select
                                         className="tz-select"
                                         value={fromZone.value}
                                         onChange={(e) => setFromZone(AVAILABLE_ZONES.find(z => z.value === e.target.value))}
                                     >
-                                        {AVAILABLE_ZONES.map(z => (
-                                            <option key={z.value} value={z.value}>{z.city}</option>
+                                        {AVAILABLE_ZONES.filter(z => z.region !== 'Etc').map(z => (
+                                            <option key={z.value} value={z.value}>{z.city} ({z.region})</option>
                                         ))}
                                     </select>
                                 </div>
                                 <div className="tz-field">
-                                    <label className="tz-label">Date</label>
+                                    <label className="tz-label">On Date</label>
                                     <input
                                         type="date"
                                         className="tz-input"
@@ -170,7 +179,7 @@ const TimeZoneApp = () => {
                                     />
                                 </div>
                                 <div className="tz-field">
-                                    <label className="tz-label">Time</label>
+                                    <label className="tz-label">At Time</label>
                                     <input
                                         type="time"
                                         className="tz-input"
@@ -179,31 +188,26 @@ const TimeZoneApp = () => {
                                     />
                                 </div>
                                 <div className="tz-field">
-                                    <label className="tz-label">Target Zone</label>
+                                    <label className="tz-label">Converting to</label>
                                     <select
                                         className="tz-select"
                                         value={toZone.value}
                                         onChange={(e) => setToZone(AVAILABLE_ZONES.find(z => z.value === e.target.value))}
                                     >
-                                        {AVAILABLE_ZONES.map(z => (
-                                            <option key={z.value} value={z.value}>{z.city}</option>
+                                        {AVAILABLE_ZONES.filter(z => z.region !== 'Etc').map(z => (
+                                            <option key={z.value} value={z.value}>{z.city} ({z.region})</option>
                                         ))}
                                     </select>
                                 </div>
                             </div>
 
-                            <motion.div
-                                className="tz-result-hero"
-                                layoutId="result-hero"
-                            >
-                                <div className="tz-result-sub">
-                                    {specificTime} in {fromZone.city} equals
-                                </div>
+                            <motion.div className="tz-result-hero">
+                                <div className="tz-result-sub">Results for {toZone.city}</div>
                                 <div className="tz-result-time">
                                     {formatTime(displayDate, toZone.value)}
                                 </div>
                                 <div className="tz-result-date">
-                                    {formatDate(displayDate, toZone.value)} in {toZone.city}
+                                    <Sparkles size={16} /> {formatDate(displayDate, toZone.value)}
                                 </div>
                             </motion.div>
                         </motion.div>
@@ -211,20 +215,20 @@ const TimeZoneApp = () => {
                 </AnimatePresence>
             </div>
 
-            {/* ── World Clocks ── */}
+            {/* ── Main Clocks Display ── */}
             <div className="container">
                 <div className="tz-clocks-header">
                     <h2 className="tz-clocks-title">
-                        {conversionMode === 'realtime' ? 'Live World Clocks' : 'Time Conversions'}
+                        {conversionMode === 'realtime' ? 'Tracked Locations' : 'Global Comparison'}
                     </h2>
                     <button className="tz-add-btn" onClick={() => setShowAddModal(true)}>
-                        <Plus size={18} /> Add City
+                        <Plus size={18} strokeWidth={3} /> Add City
                     </button>
                 </div>
 
-                <div className="tz-grid">
+                <motion.div layout className="tz-grid">
                     <AnimatePresence mode="popLayout">
-                        {selectedZones.map(zone => (
+                        {sortedSelectedZones.map(zone => (
                             <ClockCard
                                 key={zone.value}
                                 zone={zone}
@@ -235,10 +239,10 @@ const TimeZoneApp = () => {
                             />
                         ))}
                     </AnimatePresence>
-                </div>
+                </motion.div>
             </div>
 
-            {/* ── Add Modal ── */}
+            {/* ── Enhanced Add City Modal ── */}
             <AnimatePresence>
                 {showAddModal && (
                     <motion.div
@@ -250,35 +254,43 @@ const TimeZoneApp = () => {
                     >
                         <motion.div
                             className="tz-modal"
-                            initial={{ scale: 0.9, y: 30 }}
+                            initial={{ scale: 0.95, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.9, y: 30 }}
+                            exit={{ scale: 0.95, y: 20 }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="tz-modal-header">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Add a New City</h3>
+                                    <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900 }}>Add Global City</h2>
                                     <button
                                         onClick={() => setShowAddModal(false)}
-                                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+                                        className="tz-remove-btn"
+                                        style={{ background: 'var(--bg-body)' }}
                                     >
-                                        <X size={24} />
+                                        <X size={20} />
                                     </button>
                                 </div>
                                 <div className="tz-search-wrap">
-                                    <Search size={18} className="tz-search-icon" />
+                                    <Search size={20} className="tz-search-icon" />
                                     <input
                                         type="text"
                                         className="tz-search-input"
-                                        placeholder="Search by city or country..."
+                                        placeholder="Type a city name (e.g. London, Dubai...)"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         autoFocus
                                     />
                                 </div>
                             </div>
+
                             <div className="tz-modal-list">
-                                {filteredZones.map(zone => {
+                                {!searchTerm && (
+                                    <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+                                        <Globe size={48} style={{ opacity: 0.1, marginBottom: '1rem' }} />
+                                        <p style={{ fontWeight: 600 }}>Start searching for any city in the world</p>
+                                    </div>
+                                )}
+                                {searchTerm && filteredZones.map(zone => {
                                     const isAdded = selectedZones.find(z => z.value === zone.value);
                                     return (
                                         <div
@@ -286,19 +298,21 @@ const TimeZoneApp = () => {
                                             className={`tz-zone-item ${isAdded ? 'added' : ''}`}
                                             onClick={() => !isAdded && handleAddZone(zone)}
                                         >
-                                            <div>
-                                                <div style={{ fontWeight: 700 }}>{zone.city}</div>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{zone.label}</div>
+                                            <div className="tz-item-info">
+                                                <h4>{zone.city}</h4>
+                                                <p>{zone.region} / {zone.value}</p>
                                             </div>
-                                            <div style={{ color: 'var(--color-primary)' }}>
-                                                {isAdded ? <Plus size={18} style={{ transform: 'rotate(45deg)', opacity: 0.5 }} /> : <ArrowRight size={18} />}
-                                            </div>
+                                            {isAdded ? (
+                                                <CheckCircle2 size={20} className="text-gradient" />
+                                            ) : (
+                                                <ArrowRight size={18} />
+                                            )}
                                         </div>
                                     );
                                 })}
-                                {filteredZones.length === 0 && (
+                                {searchTerm && filteredZones.length === 0 && (
                                     <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                                        No cities found matching your search.
+                                        No matches found for "{searchTerm}"
                                     </div>
                                 )}
                             </div>

@@ -9,9 +9,9 @@ const fade = { hidden: { opacity: 0, y: 28 }, visible: { opacity: 1, y: 0 } };
 const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
 
 const stats = [
-    { num: '120+', label: 'Designs Delivered' },
-    { num: '40+', label: 'Websites Built' },
-    { num: '3+', label: 'Years Experience' },
+    { num: '12+', label: 'Designs Delivered' },
+    { num: '3+', label: 'Websites Built' },
+    { num: '2+', label: 'Years Experience' },
     { num: '100%', label: 'Client Satisfaction' },
 ];
 
@@ -69,7 +69,7 @@ const Hero = () => (
                     </button>
                     <button
                         className="pe-btn-ghost"
-                        onClick={() => document.getElementById('pe-services')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={() => window.open('/contact', '_blank')}
                     >
                         Get Custom Invitation <ArrowRight size={15} />
                     </button>
