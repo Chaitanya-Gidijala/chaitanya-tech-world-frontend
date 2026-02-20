@@ -1,5 +1,5 @@
-const API_HOST = 'http://localhost:8080/api';
-const AUTH_HOST = 'http://localhost:8085/api/auth';
+const API_HOST = 'https://job-portal-backend.onrender.com/api';
+const AUTH_HOST = 'https://job-portal-backend.onrender.com/api/auth';
 
 const config = {
     // Legacy support (careful not to break existing jobService)

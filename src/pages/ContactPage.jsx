@@ -47,7 +47,7 @@ const contactCards = [
 ];
 
 const availability = [
-    { day: 'Monday – Friday', time: '9:00 AM – 6:00 PM IST', open: true },
+    { day: 'MondayF – riday', time: '9:00 AM – 6:00 PM IST', open: true },
     { day: 'Saturday', time: '10:00 AM – 2:00 PM IST', open: true },
     { day: 'Sunday', time: 'Closed', open: false },
 ];
