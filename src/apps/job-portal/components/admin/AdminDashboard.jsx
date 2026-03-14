@@ -395,31 +395,31 @@ const AdminDashboard = () => {
                         >
                             {activeTab === 'create' && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                    <div className="glass-panel" style={{ padding: '0.75rem', maxWidth: '800px' }}>
-                                        <div className="upload-mode-selector" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                            <button
-                                                onClick={() => setUploadMode('single')}
-                                                style={{
-                                                    flex: 1, minWidth: '150px', padding: '1rem', borderRadius: '12px', border: 'none',
-                                                    background: uploadMode === 'single' ? 'var(--jp-primary)' : 'transparent',
-                                                    color: uploadMode === 'single' ? 'white' : 'var(--jp-text-main)',
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', fontWeight: 700, cursor: 'pointer'
-                                                }}
-                                            >
-                                                <PlusCircle size={18} /> Single Upload
-                                            </button>
-                                            <button
-                                                onClick={() => setUploadMode('batch')}
-                                                style={{
-                                                    flex: 1, minWidth: '150px', padding: '1rem', borderRadius: '12px', border: 'none',
-                                                    background: uploadMode === 'batch' ? 'var(--jp-primary)' : 'transparent',
-                                                    color: uploadMode === 'batch' ? 'white' : 'var(--jp-text-main)',
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', fontWeight: 700, cursor: 'pointer'
-                                                }}
-                                            >
-                                                <Layers size={18} /> Batch Builder
-                                            </button>
-                                        </div>
+                                    <div className="glass-panel" style={{ padding: '0.75rem', maxWidth: '800px', display: 'flex', gap: '0.5rem', flexWrap: 'wrap', background: 'var(--jp-glass-bg)', backdropFilter: 'blur(12px)' }}>
+                                        <button
+                                            onClick={() => setUploadMode('single')}
+                                            style={{
+                                                flex: 1, minWidth: '150px', padding: '1rem', borderRadius: '12px', border: 'none',
+                                                background: uploadMode === 'single' ? 'linear-gradient(135deg, var(--jp-primary), var(--jp-secondary))' : 'transparent',
+                                                color: uploadMode === 'single' ? 'white' : 'var(--jp-text-main)',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', fontWeight: 700, cursor: 'pointer',
+                                                transition: 'all 0.3s ease', boxShadow: uploadMode === 'single' ? '0 8px 16px rgba(99, 102, 241, 0.25)' : 'none'
+                                            }}
+                                        >
+                                            <PlusCircle size={18} /> Single Upload
+                                        </button>
+                                        <button
+                                            onClick={() => setUploadMode('batch')}
+                                            style={{
+                                                flex: 1, minWidth: '150px', padding: '1rem', borderRadius: '12px', border: 'none',
+                                                background: uploadMode === 'batch' ? 'linear-gradient(135deg, var(--jp-primary), var(--jp-secondary))' : 'transparent',
+                                                color: uploadMode === 'batch' ? 'white' : 'var(--jp-text-main)',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', fontWeight: 700, cursor: 'pointer',
+                                                transition: 'all 0.3s ease', boxShadow: uploadMode === 'batch' ? '0 8px 16px rgba(99, 102, 241, 0.25)' : 'none'
+                                            }}
+                                        >
+                                            <Layers size={18} /> Batch Builder
+                                        </button>
                                     </div>
 
                                     {uploadMode === 'single' ? (
@@ -590,18 +590,24 @@ const AdminDashboard = () => {
                             {activeTab === 'analytics' && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-                                        <div className="glass-panel" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'linear-gradient(135deg, hsl(260, 100%, 65%), hsl(260, 100%, 55%))', color: 'white', border: 'none' }}>
-                                            <Eye size={32} />
-                                            <div><h3 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800 }}>{stats.totalViews}</h3><p style={{ margin: 0, opacity: 0.9 }}>Page Views</p></div>
-                                        </div>
-                                        <div className="glass-panel" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                                            <Users size={32} style={{ color: 'var(--jp-secondary)' }} />
-                                            <div><h3 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800 }}>{stats.uniqueVisitors}</h3><p style={{ margin: 0, color: 'var(--jp-text-muted)' }}>Unique Visitors</p></div>
-                                        </div>
-                                        <div className="glass-panel" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                                            <Globe size={32} style={{ color: '#10b981' }} />
-                                            <div><h3 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800 }}>Global</h3><p style={{ margin: 0, color: 'var(--jp-text-muted)' }}>Traffic Tracking</p></div>
-                                        </div>
+                                        <motion.div whileHover={{ y: -5 }} className="glass-panel" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'linear-gradient(135deg, var(--jp-primary), var(--jp-secondary))', color: 'white', border: 'none', boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)' }}>
+                                            <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Eye size={32} />
+                                            </div>
+                                            <div><h3 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800 }}>{stats.totalViews}</h3><p style={{ margin: 0, opacity: 0.9, fontWeight: 600 }}>Total Page Views</p></div>
+                                        </motion.div>
+                                        <motion.div whileHover={{ y: -5 }} className="glass-panel" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'var(--jp-glass-bg)', backdropFilter: 'blur(12px)', border: '1px solid var(--jp-glass-border)' }}>
+                                            <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(236, 72, 153, 0.1)', color: 'var(--jp-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Users size={32} />
+                                            </div>
+                                            <div><h3 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800, color: 'var(--jp-text-main)' }}>{stats.uniqueVisitors}</h3><p style={{ margin: 0, color: 'var(--jp-text-muted)', fontWeight: 600 }}>Unique Visitors</p></div>
+                                        </motion.div>
+                                        <motion.div whileHover={{ y: -5 }} className="glass-panel" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'var(--jp-glass-bg)', backdropFilter: 'blur(12px)', border: '1px solid var(--jp-glass-border)' }}>
+                                            <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Globe size={32} />
+                                            </div>
+                                            <div><h3 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800, color: 'var(--jp-text-main)' }}>Global</h3><p style={{ margin: 0, color: 'var(--jp-text-muted)', fontWeight: 600 }}>Traffic Analytics</p></div>
+                                        </motion.div>
                                     </div>
 
                                     {/* Browser Distribution */}

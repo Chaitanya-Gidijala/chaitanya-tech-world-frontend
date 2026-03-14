@@ -6,7 +6,7 @@ const AdminHeader = ({ user, onLogout, sidebarOpen, onToggleSidebar }) => {
     return (
         <header style={{
             height: '70px',
-            background: 'var(--jp-card-bg)',
+            background: 'var(--jp-glass-bg)',
             borderBottom: '1px solid var(--jp-border)',
             display: 'flex',
             alignItems: 'center',
@@ -16,7 +16,8 @@ const AdminHeader = ({ user, onLogout, sidebarOpen, onToggleSidebar }) => {
             top: 0,
             zIndex: 90,
             transition: 'all 0.3s ease',
-            backdropFilter: 'blur(10px)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
             flexWrap: 'nowrap',
             overflow: 'hidden'
         }}>

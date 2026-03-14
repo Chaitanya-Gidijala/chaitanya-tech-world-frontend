@@ -133,16 +133,16 @@ const ManageJobs = ({ jobs, onEdit, onDelete, editingJobId }) => {
                 <div>
                     {/* Desktop Table View */}
                     <div className="manage-jobs-desktop">
-                        <div style={{ overflowX: 'auto', background: 'var(--jp-card-bg)', borderRadius: '12px', border: '1px solid var(--jp-border)', boxShadow: 'var(--jp-shadow)' }}>
+                        <div style={{ overflowX: 'auto', background: 'var(--jp-glass-bg)', backdropFilter: 'blur(10px)', borderRadius: '16px', border: '1px solid var(--jp-glass-border)', boxShadow: 'var(--jp-shadow)' }}>
                             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem', color: 'var(--jp-text-main)' }}>
-                                <thead style={{ background: 'var(--jp-bg-secondary)', borderBottom: '1px solid var(--jp-border)' }}>
+                                <thead style={{ background: 'rgba(0,0,0,0.02)', borderBottom: '2px solid var(--jp-border)' }}>
                                     <tr>
-                                        <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: 'var(--jp-text-muted)' }}>ID</th>
-                                        <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: 'var(--jp-text-muted)' }}>Job Title</th>
-                                        <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: 'var(--jp-text-muted)' }}>Company</th>
-                                        <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: 'var(--jp-text-muted)' }}>Details</th>
-                                        <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 600, color: 'var(--jp-text-muted)' }}>Salary</th>
-                                        <th style={{ padding: '1rem', textAlign: 'right', fontWeight: 600, color: 'var(--jp-text-muted)' }}>Actions</th>
+                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>ID</th>
+                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Job Title</th>
+                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Company</th>
+                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Details</th>
+                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Salary</th>
+                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'right', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -167,8 +167,8 @@ const ManageJobs = ({ jobs, onEdit, onDelete, editingJobId }) => {
                                             <td style={{ padding: '1rem', verticalAlign: 'top', color: 'var(--jp-primary)', fontWeight: 600 }}>{job.salary}</td>
                                             <td style={{ padding: '1rem', verticalAlign: 'top', textAlign: 'right' }}>
                                                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                                    <button onClick={() => onEdit(job)} style={{ padding: '0.4rem', borderRadius: '6px', background: 'var(--jp-bg-secondary)', color: 'var(--jp-text-main)', border: 'none', cursor: 'pointer' }}><Edit2 size={16} /></button>
-                                                    <button onClick={() => onDelete(job)} style={{ padding: '0.4rem', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: 'none', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                                                    <button onClick={() => onEdit(job)} style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--jp-primary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}><Edit2 size={16} /></button>
+                                                    <button onClick={() => onDelete(job)} style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}><Trash2 size={16} /></button>
                                                 </div>
                                             </td>
                                         </tr>

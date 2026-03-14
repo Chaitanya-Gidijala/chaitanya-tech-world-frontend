@@ -123,6 +123,31 @@ a {
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
+/* Global Form Element Text Colors */
+input, select, textarea {
+    color: var(--jp-text-main);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--jp-text-muted);
+    opacity: 0.6;
+}
+
+[data-theme='dark'] input, 
+[data-theme='dark'] select, 
+[data-theme='dark'] textarea,
+.glass-panel input,
+.glass-panel select,
+.glass-panel textarea {
+    color: var(--jp-text-main);
+}
+
+[data-theme='dark'] input::placeholder, 
+[data-theme='dark'] textarea::placeholder {
+    color: var(--jp-text-muted);
+    opacity: 0.6;
+}
+
 /* Layout */
 .jp-container {
     max-width: 1200px;
