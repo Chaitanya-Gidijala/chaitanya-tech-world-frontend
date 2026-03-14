@@ -1,5 +1,5 @@
 const API_HOST = 'https://job-portal-backend-world.onrender.com/api';
-const AUTH_HOST = 'https://job-portal-backend-world.onrender.com/api/auth';
+const AUTH_HOST = 'https://chaitanya-tech-world-security-service.onrender.com/api/auth';
 
 const config = {
     // Legacy support (careful not to break existing jobService)

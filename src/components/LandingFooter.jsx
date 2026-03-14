@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
     Mail, Instagram, Linkedin, Twitter, ArrowUp,
     Camera, Wallet, Globe, Map, Github, Brain,
-    Briefcase, Sparkles, ExternalLink, Phone, Heart
+    Briefcase, Sparkles, ExternalLink, Phone, Heart, FileText
 } from 'lucide-react';
 import { profileConfig } from '../config/profileConfig';
 import './LandingFooter.css';
@@ -14,19 +14,16 @@ import './LandingFooter.css';
 
 const apps = [
     { name: 'Photo Editor', path: '/photo-editor', Icon: Camera },
-    { name: 'Split Expenses', path: '/split-expenses', Icon: Wallet },
-    { name: 'Time Zone', path: '/time-zone-converter', Icon: Globe },
-    { name: 'Trip Planner', path: '/trip-planner', Icon: Map },
-    { name: 'Habit Hub', path: '/habit-productivity', Icon: Brain },
     { name: 'Job Portal', path: '/job-portal', Icon: Briefcase },
+    { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },
 ];
 
 const quickLinks = [
     { label: 'Home', path: '/' },
-    { label: 'Photo Editor', path: '/photo-editor' },
+    { label: 'AI Resume Builder', path: '/ai-resume-builder' },
     { label: 'Job Portal', path: '/job-portal' },
     { label: 'Prep Hub', path: '/job-portal/prep' },
-    { label: 'Habit Hub', path: '/habit-productivity' },
+    { label: 'Contact', path: '/contact' },
 ];
 
 const socials = [
@@ -250,18 +247,18 @@ const LandingFooter = () => {
                     <div className="footer-copyright-block">
                         <p className="footer-copyright-line">
                             <span>©{new Date().getFullYear()}</span>
-                            <strong style={{ color: 'var(--text-main)', margin: '0 0.25rem' }}>
+                            <span className="footer-brand-shine" style={{ margin: '0 0.25rem', fontWeight: 800 }}>
                                 Chaitanya Tech World
-                            </strong>
+                            </span>
                             <span>· All rights reserved.</span>
                         </p>
                         <p className="footer-made-by-line">
                             <span>Made with</span>
                             <Heart size={12} style={{ color: '#f43f5e', fill: '#f43f5e', margin: '0 0.2rem' }} />
                             <span>by</span>
-                            <strong style={{ color: 'var(--color-primary)', margin: '0 0.2rem', fontWeight: 700 }}>
+                            <span className="footer-creator-shine" style={{ margin: '0 0.2rem', fontWeight: 800 }}>
                                 Chaitanya Gidijala
-                            </strong>
+                            </span>
                         </p>
                     </div>
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Sun, Moon, Menu, X, Camera, Briefcase, BookOpen, Wallet, Globe, Map, Brain, Mail } from 'lucide-react';
+import { Home, Sun, Moon, Menu, X, Camera, Briefcase, BookOpen, Wallet, Globe, Map, Brain, Mail, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from './Logo';
 import './AppHeader.css';
@@ -13,23 +13,17 @@ const AppHeader = ({ theme, onToggleTheme }) => {
     // Get app name based on route
     const getAppName = () => {
         if (location.pathname.startsWith('/photo-editor')) return 'Photo Editor';
-        if (location.pathname.startsWith('/split-expenses')) return 'Split Expenses';
-        if (location.pathname.startsWith('/time-zone-converter')) return 'Time Zone Converter';
-        if (location.pathname.startsWith('/trip-planner')) return 'Trip Planner';
-        if (location.pathname.startsWith('/habit-productivity')) return 'Habit Hub';
         if (location.pathname.startsWith('/job-portal')) return 'Job Portal';
+        if (location.pathname.startsWith('/ai-resume-builder')) return 'AI Resume Builder';
         if (location.pathname === '/contact') return 'Contact';
         return 'Chaitanya Tech World';
     };
 
     const apps = [
         { name: 'Photo Editor', path: '/photo-editor', Icon: Camera },
-        { name: 'Split Expenses', path: '/split-expenses', Icon: Wallet },
-        { name: 'Time Zone', path: '/time-zone-converter', Icon: Globe },
-        { name: 'Trip Planner', path: '/trip-planner', Icon: Map },
-        { name: 'Habit Hub', path: '/habit-productivity', Icon: Brain },
         { name: 'Job Portal', path: '/job-portal', Icon: Briefcase },
         { name: 'Prep Hub', path: '/job-portal/prep', Icon: BookOpen },
+        { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },
     ];
 
     if (isLanding) return null; // Don't show header on landing page

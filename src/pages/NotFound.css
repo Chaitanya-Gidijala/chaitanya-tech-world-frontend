@@ -1,0 +1,94 @@
+.not-found-wrapper {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: 2rem;
+}
+
+.not-found-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.background-square {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background-color: var(--color-primary);
+    opacity: 0.15;
+    border-radius: 2px;
+}
+
+.not-found-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.not-found-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.not-found-title {
+    font-size: clamp(3rem, 10vw, 6rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+    line-height: 1;
+}
+
+.not-found-desc {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 500px;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+}
+
+.not-found-btn {
+    background-color: #ff69b4; /* Pinkish color matching screenshot */
+    color: white;
+    padding: 0.85rem 2rem;
+    border-radius: 4px; /* More rectangular as per screenshot */
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255, 105, 180, 0.4);
+}
+
+.not-found-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.6);
+    background-color: #ff85c2;
+}
+
+/* Light Mode specific adjustments if needed */
+[data-theme='light'] .background-square {
+    opacity: 0.1;
+}
+
+[data-theme='light'] .not-found-btn {
+    background-color: #ec4899; /* Tailwind pink-500 */
+}

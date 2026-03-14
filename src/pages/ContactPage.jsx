@@ -282,7 +282,7 @@ const ContactPage = () => {
                                         </p>
 
                                         {/* Service type pills */}
-                                        <div className="cp-service-pills">
+                                        {/* <div className="cp-service-pills">
                                             {serviceOptions.map(s => (
                                                 <button
                                                     key={s}
@@ -293,7 +293,7 @@ const ContactPage = () => {
                                                     {s}
                                                 </button>
                                             ))}
-                                        </div>
+                                        </div> */}
 
                                         <form ref={formRef} className="cp-form" onSubmit={handleSubmit}>
                                             {/* Name + Email */}

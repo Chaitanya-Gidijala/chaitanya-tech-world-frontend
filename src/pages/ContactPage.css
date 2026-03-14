@@ -151,7 +151,7 @@
 }
 
 .cp-hero-h1 {
-    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-size: clamp(2rem, 6vw, 4rem);
     font-weight: 900;
     letter-spacing: -0.04em;
     line-height: 1.1;
@@ -786,7 +786,7 @@
     }
 
     .cp-hero-h1 {
-        font-size: clamp(2rem, 8vw, 2.8rem);
+        font-size: clamp(1.5rem, 8vw, 2.8rem);
     }
 
     .cp-form-panel {
@@ -814,5 +814,9 @@
 
     .cp-contact-card {
         padding: 1.1rem;
+    }
+
+    .cp-hero-h1 {
+        font-size: clamp(1rem, 8vw, 2.8rem);
     }
 }

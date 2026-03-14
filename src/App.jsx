@@ -6,13 +6,11 @@ import { getInitialTheme, THEME_KEY } from './config/theme';
 import './styles/global.css';
 
 import PhotoEditorApp from './apps/photo-editor/PhotoEditorApp';
-import SplitExpensesApp from './apps/split-expenses/SplitExpensesApp';
-import TimeZoneApp from './apps/time-zone-converter/TimeZoneApp';
-import TripPlannerApp from './apps/trip-planner/TripPlannerApp';
-import HabitApp from './apps/habit-productivity/HabitApp';
 import JobPortalApp from './apps/job-portal/JobPortalApp';
+import AIResumeBuilderApp from './apps/ai-resume-builder/AIResumeBuilderApp';
 import LandingFooter from './components/LandingFooter';
 import ContactPage from './pages/ContactPage';
+import NotFound from './pages/NotFound';
 
 function App() {
   const [theme, setTheme] = useState(getInitialTheme);
@@ -44,12 +42,10 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/photo-editor/*" element={<PhotoEditorApp />} />
-          <Route path="/split-expenses/*" element={<SplitExpensesApp />} />
-          <Route path="/time-zone-converter/*" element={<TimeZoneApp />} />
-          <Route path="/trip-planner/*" element={<TripPlannerApp />} />
-          <Route path="/habit-productivity/*" element={<HabitApp />} />
           <Route path="/job-portal/*" element={<JobPortalApp />} />
+          <Route path="/ai-resume-builder/*" element={<AIResumeBuilderApp />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 

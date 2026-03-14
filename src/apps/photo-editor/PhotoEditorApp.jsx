@@ -1,4 +1,5 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import Hero from './components/Hero';
 import Services from './components/Services';
@@ -7,9 +8,10 @@ import WebDev from './components/WebDev';
 import Process from './components/Process';
 import Testimonials from './components/Testimonials';
 import CtaBanner from './components/CtaBanner';
+import GalleryPage from './components/GalleryPage';
 import './PhotoEditor.css';
 
-const PhotoEditorApp = () => {
+const Home = () => {
     const { scrollYProgress } = useScroll();
     const scaleX = useSpring(scrollYProgress, {
         stiffness: 100,
@@ -19,7 +21,6 @@ const PhotoEditorApp = () => {
 
     return (
         <div style={{ minHeight: '100vh', position: 'relative' }}>
-
             {/* Scroll progress bar */}
             <motion.div
                 style={{
@@ -40,8 +41,17 @@ const PhotoEditorApp = () => {
             <Process />
             {/* <Testimonials /> */}
             <CtaBanner />
-
         </div>
+    );
+};
+
+const PhotoEditorApp = () => {
+    return (
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/service/:id" element={<GalleryPage type="service" />} />
+            <Route path="/project/:id" element={<GalleryPage type="project" />} />
+        </Routes>
     );
 };
 

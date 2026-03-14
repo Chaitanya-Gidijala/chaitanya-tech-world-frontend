@@ -104,6 +104,8 @@
     flex-shrink: 1;
     min-width: 0;
     transition: font-size 0.3s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media (max-width: 600px) {
@@ -121,7 +123,7 @@
 
 @media (max-width: 360px) {
     .brand-heading {
-        font-size: 1rem !important;
+        font-size: 1.172rem !important;
     }
 }
 

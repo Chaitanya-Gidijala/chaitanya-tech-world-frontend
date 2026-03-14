@@ -157,6 +157,22 @@
     filter: drop-shadow(0 0 10px hsla(260, 100%, 65%, 0.5));
 }
 
+.footer-creator-shine {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline;
+}
+
+[data-theme="light"] .footer-creator-shine {
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.35));
+}
+
+[data-theme="dark"] .footer-creator-shine {
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+}
+
 /* ── Availability badge ── */
 .footer-availability-badge {
     display: inline-flex;
@@ -496,7 +512,6 @@ a.footer-contact-item:hover .footer-contact-icon {
 .footer-made-by-line {
     color: var(--text-muted);
     font-size: 0.82rem;
-    opacity: 0.75;
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -565,10 +580,18 @@ a.footer-contact-item:hover .footer-contact-icon {
     .footer-cta-banner {
         margin: 1.5rem 0 2rem;
     }
+
+    .footer-col-title {
+        font-size: 1rem !important;
+    }
 }
 
 /* ── Small Mobile: ≤480px ── */
 @media (max-width: 480px) {
+    .footer-contact-value {
+        font-size: 0.8rem;
+    }
+
     .footer-grid {
         grid-template-columns: 1fr;
         gap: 1.75rem;
@@ -580,6 +603,7 @@ a.footer-contact-item:hover .footer-contact-icon {
 
     .footer-brand-desc {
         max-width: 100%;
+        font-size: 0.9rem;
     }
 
     .footer-apps-list {
@@ -621,6 +645,6 @@ a.footer-contact-item:hover .footer-contact-icon {
     }
 
     .footer-brand-title {
-        font-size: 1.2rem !important;
+        font-size: 1.1rem !important;
     }
 }
