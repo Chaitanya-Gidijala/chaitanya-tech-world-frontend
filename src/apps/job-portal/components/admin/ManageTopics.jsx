@@ -1,87 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { PlusCircle, Search, Trash2, Edit2, UploadCloud, Save, CheckCircle2, AlertCircle, Hash } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { PlusCircle, Search, Trash2, Edit2, UploadCloud, Save, X } from 'lucide-react';
 import { getTopics, createTopic, updateTopic, deleteTopic, createTopicsBatch } from '../../services/prepService';
 import { useToast } from '../common/Toast';
+import './AdminLayout.css';
 
 const ManageTopics = ({ refreshTrigger }) => {
     const [topics, setTopics] = useState([]);
     const { showToast } = useToast();
     const [isLoading, setIsLoading] = useState(true);
-    const [viewMode, setViewMode] = useState('list'); // 'list', 'create', 'batch'
-
+    const [viewMode, setViewMode] = useState('list');
     const [searchTerm, setSearchTerm] = useState('');
     const [formData, setFormData] = useState({ id: '', name: '', icon: '' });
     const [editingTopicId, setEditingTopicId] = useState(null);
     const [batchJson, setBatchJson] = useState('');
 
-    useEffect(() => {
-        loadData();
-    }, [refreshTrigger]);
+    useEffect(() => { loadData(); }, [refreshTrigger]);
 
     const loadData = async () => {
         setIsLoading(true);
-        try {
-            const data = await getTopics();
-            setTopics(data);
-        } catch (err) {
-            console.error("Failed to load topics", err);
-            showToast('Failed to load topics.', 'error');
-        } finally {
-            setIsLoading(false);
-        }
+        try { setTopics(await getTopics()); }
+        catch { showToast('Failed to load topics.', 'error'); }
+        finally { setIsLoading(false); }
     };
-
-
 
     const handleSave = async (e) => {
         e.preventDefault();
         try {
-            if (editingTopicId) {
-                await updateTopic(editingTopicId, formData);
-                showToast('Topic updated successfully!', 'success');
-            } else {
-                await createTopic(formData);
-                showToast('Topic created successfully!', 'success');
-            }
-            setViewMode('list');
-            setEditingTopicId(null);
-            resetForm();
-            loadData();
-        } catch (err) {
-            showToast('Failed to save topic.', 'error');
-        }
+            if (editingTopicId) { await updateTopic(editingTopicId, formData); showToast('Topic updated!', 'success'); }
+            else { await createTopic(formData); showToast('Topic created!', 'success'); }
+            setViewMode('list'); setEditingTopicId(null); setFormData({ id: '', name: '', icon: '' }); loadData();
+        } catch { showToast('Failed to save topic.', 'error'); }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm(`Are you sure you want to delete topic "${id}"?`)) return;
-        try {
-            await deleteTopic(id);
-            showToast('Topic deleted.', 'success');
-            loadData();
-        } catch (err) {
-            showToast('Failed to delete topic. It may be in use.', 'error');
-        }
+        if (!window.confirm(`Delete topic "${id}"?`)) return;
+        try { await deleteTopic(id); showToast('Topic deleted.', 'success'); loadData(); }
+        catch { showToast('Delete failed. Topic may be in use.', 'error'); }
     };
 
     const handleBatchUpload = async (e) => {
         e.preventDefault();
         try {
             const data = JSON.parse(batchJson);
-            if (!Array.isArray(data)) throw new Error('Data must be an array.');
-
+            if (!Array.isArray(data)) throw new Error('Must be array');
             await createTopicsBatch(data);
-            showToast(`${data.length} topics uploaded successfully!`, 'success');
-            setBatchJson('');
-            setViewMode('list');
-            loadData();
-        } catch (err) {
-            showToast('Invalid JSON or upload failed.', 'error');
-        }
-    };
-
-    const resetForm = () => {
-        setFormData({ id: '', name: '', icon: '' });
+            showToast(`${data.length} topics uploaded!`, 'success');
+            setBatchJson(''); setViewMode('list'); loadData();
+        } catch { showToast('Invalid JSON or upload failed.', 'error'); }
     };
 
     const openEdit = (t) => {
@@ -90,193 +56,125 @@ const ManageTopics = ({ refreshTrigger }) => {
         setViewMode('create');
     };
 
-    const filteredTopics = topics.filter(t =>
+    const filtered = topics.filter(t =>
         t.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         t.id?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    if (isLoading) return <div className="jp-spinner"></div>;
-
     return (
-        <div style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0 }}>Manage Topics</h2>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                    <button onClick={() => { setViewMode('list'); }} style={{ padding: '0.6rem 1rem', borderRadius: '10px', background: viewMode === 'list' ? 'var(--jp-primary)' : 'var(--jp-bg-secondary)', color: viewMode === 'list' ? 'white' : 'var(--jp-text-main)', border: 'none', fontWeight: 600 }}>List</button>
-                    <button onClick={() => { setViewMode('create'); resetForm(); }} style={{ padding: '0.6rem 1rem', borderRadius: '10px', background: viewMode === 'create' ? 'var(--jp-primary)' : 'var(--jp-bg-secondary)', color: viewMode === 'create' ? 'white' : 'var(--jp-text-main)', border: 'none', fontWeight: 600 }}>+ Add New</button>
-                    <button onClick={() => { setViewMode('batch'); }} style={{ padding: '0.6rem 1rem', borderRadius: '10px', background: viewMode === 'batch' ? 'var(--jp-primary)' : 'var(--jp-bg-secondary)', color: viewMode === 'batch' ? 'white' : 'var(--jp-text-main)', border: 'none', fontWeight: 600 }}>Batch Upload</button>
-                </div>
+        <div>
+            {/* Mode bar */}
+            <div className="adm-mode-switcher">
+                <button className={`adm-mode-btn ${viewMode === 'list' ? 'active' : ''}`} onClick={() => setViewMode('list')}>List</button>
+                <button className={`adm-mode-btn ${viewMode === 'create' ? 'active' : ''}`} onClick={() => { setViewMode('create'); setFormData({ id:'',name:'',icon:'' }); setEditingTopicId(null); }}>+ Add New</button>
+                <button className={`adm-mode-btn ${viewMode === 'batch' ? 'active' : ''}`} onClick={() => setViewMode('batch')}>Batch Upload</button>
             </div>
 
-
-
+            {/* LIST */}
             {viewMode === 'list' && (
-                <div className="animate-in fade-in zoom-in duration-300">
-                    <div style={{ position: 'relative', marginBottom: '2rem', maxWidth: '400px' }}>
-                        <Search style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--jp-text-muted)' }} size={18} />
-                        <input
-                            value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
-                            placeholder="Search topics..."
-                            style={{
-                                width: '100%',
-                                padding: '0.875rem 1rem 0.875rem 3rem',
-                                borderRadius: '12px',
-                                border: '1px solid var(--jp-border)',
-                                background: 'var(--jp-bg-secondary)',
-                                color: 'var(--jp-text-main)',
-                                fontSize: '0.95rem',
-                                outline: 'none'
-                            }}
-                        />
-                    </div>
-
-                    {/* Main Content Area: Responsive View */}
-                    <div>
-                        {/* Desktop Table View */}
-                        <div className="manage-tp-desktop">
-                            <div style={{ overflowX: 'auto', background: 'var(--jp-glass-bg)', backdropFilter: 'blur(10px)', borderRadius: '16px', border: '1px solid var(--jp-glass-border)', boxShadow: 'var(--jp-shadow)' }}>
-                                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem', color: 'var(--jp-text-main)' }}>
-                                    <thead style={{ background: 'rgba(0,0,0,0.02)', borderBottom: '2px solid var(--jp-border)' }}>
-                                        <tr>
-                                            <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>ID</th>
-                                            <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Icon</th>
-                                            <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Name</th>
-                                            <th style={{ padding: '1.2rem 1rem', textAlign: 'right', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredTopics.map((t) => (
-                                            <tr key={t.id} style={{ borderBottom: '1px solid var(--jp-border)' }}>
-                                                <td style={{ padding: '1rem', verticalAlign: 'middle', fontFamily: 'monospace', fontSize: '0.85rem', color: 'var(--jp-text-muted)' }}>{t.id}</td>
-                                                <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
-                                                    <div style={{
-                                                        width: '40px',
-                                                        height: '40px',
-                                                        borderRadius: '10px',
-                                                        background: 'var(--jp-bg-secondary)',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        fontSize: '1.25rem',
-                                                        border: '1px solid var(--jp-border)'
-                                                    }}>
-                                                        {t.icon || '📌'}
-                                                    </div>
-                                                </td>
-                                                <td style={{ padding: '1rem', verticalAlign: 'middle', fontWeight: 600, fontSize: '1rem' }}>{t.name}</td>
-                                                <td style={{ padding: '1rem', verticalAlign: 'middle', textAlign: 'right' }}>
-                                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                                        <button onClick={() => openEdit(t)} style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--jp-primary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s ease' }}><Edit2 size={16} /></button>
-                                                        <button onClick={() => handleDelete(t.id)} style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: 'none', cursor: 'pointer', transition: 'all 0.2s ease' }}><Trash2 size={16} /></button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                <div>
+                    <div className="adm-toolbar">
+                        <div className="adm-toolbar-left">
+                            <div className="adm-search-wrap">
+                                <Search className="adm-search-icon" size={16} />
+                                <input className="adm-search-input" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Search topics..." />
                             </div>
                         </div>
+                        <div className="adm-toolbar-right">
+                            <span className="adm-badge adm-badge-neutral">{filtered.length} topics</span>
+                        </div>
+                    </div>
 
-                        {/* Mobile Card View */}
-                        <div className="manage-tp-mobile">
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '1rem' }}>
-                                {filteredTopics.map((t) => (
-                                    <div key={t.id} className="glass-panel" style={{
-                                        padding: '1.25rem',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        textAlign: 'center',
-                                        gap: '1rem',
-                                        position: 'relative',
-                                        background: 'var(--jp-card-bg)',
-                                        border: '1px solid var(--jp-border)'
-                                    }}>
-                                        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', display: 'flex', gap: '0.4rem' }}>
-                                            <button onClick={() => openEdit(t)} style={{ padding: '0.4rem', borderRadius: '6px', background: 'var(--jp-bg-secondary)', border: 'none', color: 'var(--jp-text-main)', display: 'flex' }}><Edit2 size={14} /></button>
-                                            <button onClick={() => handleDelete(t.id)} style={{ padding: '0.4rem', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', display: 'flex' }}><Trash2 size={14} /></button>
+                    {isLoading ? (
+                        <div className="adm-loading-center"><div className="adm-spinner" style={{width:28,height:28,border:'3px solid var(--jp-border)',borderTop:'3px solid var(--jp-primary)',borderRadius:'50%'}} /></div>
+                    ) : filtered.length === 0 ? (
+                        <div className="adm-empty"><div className="adm-empty-icon">📌</div><h3>No topics found</h3><p>Create your first topic to get started.</p></div>
+                    ) : (
+                        <>
+                            {/* Desktop table */}
+                            <div className="adm-table-card">
+                                <div className="adm-table-scroll">
+                                    <table className="adm-table">
+                                        <thead><tr><th>ID</th><th>Icon</th><th>Name</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            {filtered.map((t, i) => (
+                                                <motion.tr key={t.id} initial={{opacity:0}} animate={{opacity:1}} transition={{delay:i*0.04}}>
+                                                    <td><span className="adm-mono">{t.id}</span></td>
+                                                    <td><span style={{fontSize:'1.5rem'}}>{t.icon || '📌'}</span></td>
+                                                    <td><span className="adm-cell-primary">{t.name}</span></td>
+                                                    <td><div className="adm-cell-actions"><button onClick={() => openEdit(t)} className="adm-btn-icon"><Edit2 size={15} /></button><button onClick={() => handleDelete(t.id)} className="adm-btn-icon delete"><Trash2 size={15} /></button></div></td>
+                                                </motion.tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {/* Mobile cards */}
+                            <div className="adm-card-grid">
+                                {filtered.map((t, i) => (
+                                    <motion.div key={t.id} initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} transition={{delay:i*0.05}} className="adm-card">
+                                        <div className="adm-card-header">
+                                            <div className="adm-card-title-group">
+                                                <span style={{fontSize:'2rem'}}>{t.icon || '📌'}</span>
+                                                <div><h3 className="adm-card-title">{t.name}</h3><p className="adm-card-subtitle"><span className="adm-mono">{t.id}</span></p></div>
+                                            </div>
+                                            <div className="adm-card-actions">
+                                                <button onClick={() => openEdit(t)} className="adm-btn-icon"><Edit2 size={15} /></button>
+                                                <button onClick={() => handleDelete(t.id)} className="adm-btn-icon delete"><Trash2 size={15} /></button>
+                                            </div>
                                         </div>
-                                        <div style={{
-                                            width: '56px',
-                                            height: '56px',
-                                            borderRadius: '14px',
-                                            background: 'var(--jp-bg-secondary)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontSize: '1.75rem',
-                                            border: '1px solid var(--jp-border)',
-                                            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)'
-                                        }}>
-                                            {t.icon || '📌'}
-                                        </div>
-                                        <div style={{ width: '100%' }}>
-                                            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--jp-text-main)', marginBottom: '0.2rem' }}>{t.name}</div>
-                                            <div style={{ fontSize: '0.7rem', color: 'var(--jp-text-muted)', fontFamily: 'monospace', opacity: 0.8 }}>ID: {t.id}</div>
-                                        </div>
-                                    </div>
+                                    </motion.div>
                                 ))}
-                                {filteredTopics.length === 0 && (
-                                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '2rem', color: 'var(--jp-text-muted)' }}>No topics found.</div>
-                                )}
                             </div>
-                        </div>
-
-                        <style>{`
-                            @media (min-width: 769px) { .manage-tp-mobile { display: none !important; } }
-                            @media (max-width: 768px) { .manage-tp-desktop { display: none !important; } }
-                        `}</style>
-                    </div>
+                        </>
+                    )}
                 </div>
             )}
 
+            {/* CREATE / EDIT */}
             {viewMode === 'create' && (
-                <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel" style={{ padding: '2rem', maxWidth: '500px', margin: '0 auto' }}>
-                    <h3 style={{ marginTop: 0 }}>{editingTopicId ? 'Edit Topic' : 'Add New Topic'}</h3>
-                    <form onSubmit={handleSave} style={{ display: 'grid', gap: '1.5rem' }}>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Topic ID *</label>
-                            <input required value={formData.id} onChange={e => setFormData({ ...formData, id: e.target.value })} disabled={!!editingTopicId} placeholder="e.g. spring-boot" style={{ width: '100%', padding: '0.8rem', borderRadius: '10px', background: editingTopicId ? 'rgba(0,0,0,0.05)' : 'var(--jp-bg-secondary)', border: '1px solid var(--jp-border)', color: 'var(--jp-text-main)', cursor: editingTopicId ? 'not-allowed' : 'text' }} />
-                            {editingTopicId && <p style={{ fontSize: '0.8rem', color: 'var(--jp-text-muted)', margin: '0.3rem 0 0' }}>ID cannot be changed once created.</p>}
+                <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} className="adm-card-panel adm-form" style={{maxWidth:520}}>
+                    <div className="adm-form-step-header">
+                        <span className="adm-step-badge"><PlusCircle size={14} /></span>
+                        <h3 className="adm-step-title">{editingTopicId ? 'Edit Topic' : 'Add New Topic'}</h3>
+                    </div>
+                    <form onSubmit={handleSave} className="adm-form">
+                        <div className="adm-field">
+                            <label className="adm-label">Topic ID *</label>
+                            <input required value={formData.id} onChange={e => setFormData({...formData, id: e.target.value})} disabled={!!editingTopicId} placeholder="e.g. spring-boot" className="adm-input" />
+                            {editingTopicId && <p style={{fontSize:'0.75rem',color:'var(--jp-text-muted)',margin:'0.25rem 0 0'}}>ID cannot be changed after creation.</p>}
                         </div>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Name *</label>
-                            <input required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Spring Boot" style={{ width: '100%', padding: '0.8rem', borderRadius: '10px', background: 'var(--jp-bg-secondary)', border: '1px solid var(--jp-border)', color: 'var(--jp-text-main)' }} />
+                        <div className="adm-field">
+                            <label className="adm-label">Name *</label>
+                            <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. Spring Boot" className="adm-input" />
                         </div>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Icon (Emoji)</label>
-                            <input value={formData.icon} onChange={e => setFormData({ ...formData, icon: e.target.value })} placeholder="e.g. 🍃" style={{ width: '100%', padding: '0.8rem', borderRadius: '10px', background: 'var(--jp-bg-secondary)', border: '1px solid var(--jp-border)', color: 'var(--jp-text-main)' }} />
+                        <div className="adm-field">
+                            <label className="adm-label">Icon (Emoji)</label>
+                            <input value={formData.icon} onChange={e => setFormData({...formData, icon: e.target.value})} placeholder="e.g. 🍃" className="adm-input" />
                         </div>
-
-                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                            <button type="button" onClick={() => setViewMode('list')} style={{ padding: '0.8rem 1.5rem', borderRadius: '10px', background: 'var(--jp-bg-secondary)', color: 'var(--jp-text-main)', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                            <button type="submit" style={{ padding: '0.8rem 1.5rem', borderRadius: '10px', background: 'var(--jp-primary)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Save size={18} /> Save Topic</button>
+                        <div className="adm-modal-footer" style={{padding:0,border:'none',justifyContent:'flex-end'}}>
+                            <button type="button" onClick={() => setViewMode('list')} className="adm-btn adm-btn-secondary"><X size={15} /> Cancel</button>
+                            <button type="submit" className="adm-btn adm-btn-primary"><Save size={15} /> Save Topic</button>
                         </div>
                     </form>
                 </motion.div>
             )}
 
+            {/* BATCH */}
             {viewMode === 'batch' && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-panel" style={{ padding: '2rem' }}>
-                    <h3 style={{ marginTop: 0 }}>Batch Upload Topics</h3>
-                    <p style={{ color: 'var(--jp-text-muted)', marginBottom: '1.5rem' }}>Paste a JSON array of topic objects below.</p>
-                    <div style={{ background: '#1e293b', padding: '1rem', borderRadius: '8px', fontFamily: 'monospace', fontSize: '0.85rem', color: '#e2e8f0', marginBottom: '1.5rem', overflowX: 'auto' }}>
-                        {`[
-  {
-    "id": "java",
-    "name": "Java",
-    "icon": "☕"
-  },
-  ...
-]`}
+                <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} className="adm-card-panel adm-form">
+                    <div className="adm-form-step-header">
+                        <span className="adm-step-badge"><UploadCloud size={14} /></span>
+                        <h3 className="adm-step-title">Batch Upload Topics</h3>
                     </div>
-                    <form onSubmit={handleBatchUpload}>
-                        <textarea required value={batchJson} onChange={e => setBatchJson(e.target.value)} rows={10} placeholder="Paste your JSON here..." style={{ width: '100%', padding: '1rem', borderRadius: '10px', background: 'var(--jp-bg-secondary)', border: '1px solid var(--jp-border)', color: 'var(--jp-text-main)', fontFamily: 'monospace', marginBottom: '1.5rem' }} />
-                        <button type="submit" style={{ padding: '0.8rem 1.5rem', borderRadius: '10px', background: 'var(--jp-primary)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <UploadCloud size={18} /> Upload Batch
-                        </button>
-                    </form>
+                    <p className="adm-page-subtitle">Paste a JSON array of topic objects.</p>
+                    <div className="adm-field">
+                        <label className="adm-label">JSON Array</label>
+                        <textarea required value={batchJson} onChange={e => setBatchJson(e.target.value)} rows={8} placeholder={`[\n  { "id": "java", "name": "Java", "icon": "☕" },\n  ...\n]`} className="adm-input adm-textarea adm-json-textarea" />
+                    </div>
+                    <div className="adm-form-footer">
+                        <button onClick={handleBatchUpload} className="adm-btn adm-btn-primary"><UploadCloud size={16} /> Upload Batch</button>
+                    </div>
                 </motion.div>
             )}
         </div>

@@ -114,6 +114,24 @@
     background: hsla(320, 100%, 60%, 0.06);
 }
 
+/* ── Particles ────────────────────────────────────────────── */
+.cp-particles {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.cp-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--color-primary);
+}
+
 /* Grid bg */
 .cp-grid-bg {
     position: fixed;
@@ -122,10 +140,11 @@
         linear-gradient(var(--border-light) 1px, transparent 1px),
         linear-gradient(90deg, var(--border-light) 1px, transparent 1px);
     background-size: 64px 64px;
-    opacity: 0.35;
+    opacity: 0.25;
     z-index: 0;
     pointer-events: none;
 }
+
 
 /* ── Hero banner ──────────────────────────────────────────── */
 .cp-hero {
@@ -610,6 +629,7 @@
 
 /* ── Success state ── */
 .cp-success {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -617,9 +637,37 @@
     text-align: center;
     gap: 1.25rem;
     padding: 3rem 1rem;
+    min-height: 400px;
+}
+
+.cp-success-confetti {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cp-confetti-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary);
+}
+
+.cp-confetti-dot:nth-child(even) {
+    background: var(--color-secondary);
+}
+
+.cp-confetti-dot:nth-child(3n) {
+    background: #fbbf24;
 }
 
 .cp-success-icon {
+    position: relative;
+    z-index: 1;
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -804,19 +852,67 @@
 
 @media (max-width: 480px) {
     .cp-hero {
-        padding: 2.5rem 0 2rem;
+        padding: 2rem 0 1.5rem;
     }
 
     .cp-form-panel {
         padding: 1.25rem;
-        border-radius: 18px;
+        border-radius: 20px;
     }
 
     .cp-contact-card {
-        padding: 1.1rem;
+        padding: 1rem;
+        border-radius: 16px;
+    }
+
+    .cp-card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+    }
+
+    .cp-card-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .cp-card-value {
+        font-size: 0.88rem;
     }
 
     .cp-hero-h1 {
-        font-size: clamp(1rem, 8vw, 2.8rem);
+        font-size: clamp(1.4rem, 9vw, 2.4rem);
+        letter-spacing: -0.02em;
+    }
+
+    .cp-submit {
+        padding: 0.85rem 1.5rem;
+        font-size: 0.92rem;
+        gap: 0.5rem;
+    }
+
+    .cp-input, .cp-textarea, .cp-select {
+        padding: 0.75rem 0.9rem;
+        font-size: 0.88rem;
+    }
+
+    .cp-success-icon {
+        width: 64px;
+        height: 64px;
+    }
+    
+    .cp-success-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .cp-success-reset {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.8rem;
+        gap: 0.4rem;
+    }
+
+    .cp-success-sub {
+        font-size: 0.88rem;
     }
 }

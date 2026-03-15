@@ -1,4 +1,4 @@
-import config from '../config';
+import config from '../../../config/apiConfig';
 
 const getHeaders = () => {
     return {
@@ -10,7 +10,7 @@ const getHeaders = () => {
 // Increment the visitor count with metadata
 export const incrementVisitorCount = async (metadata = {}) => {
     try {
-        const response = await fetch(`${config.API_BASE_URL}/analytics/visit`, {
+        const response = await fetch(config.endpoints.analytics.visit, {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify(metadata)
@@ -39,7 +39,7 @@ export const incrementVisitorCount = async (metadata = {}) => {
 // Get the total visitor count and insights
 export const getVisitorStats = async () => {
     try {
-        const response = await fetch(`${config.API_BASE_URL}/analytics/stats`, {
+        const response = await fetch(config.endpoints.analytics.stats, {
             headers: getHeaders()
         });
         if (!response.ok) throw new Error('Failed to ensure analytics stats');

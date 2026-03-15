@@ -9,8 +9,8 @@ const AdminSettings = () => {
     const [activeSection, setActiveSection] = useState('general');
 
     const [settings, setSettings] = useState({
-        siteName: 'FindSharp Portal',
-        adminEmail: 'admin@findsharp.com',
+        siteName: 'Chaitanya Tech World',
+        adminEmail: 'admin@chaitanya.com',
         notifications: true,
         darkMode: true,
         maintenanceMode: false,

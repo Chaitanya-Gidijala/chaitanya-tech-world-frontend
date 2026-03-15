@@ -8,12 +8,7 @@ import {
 const fade = { hidden: { opacity: 0, y: 28 }, visible: { opacity: 1, y: 0 } };
 const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
 
-const stats = [
-    { num: '12+', label: 'Designs Delivered' },
-    { num: '3+', label: 'Websites Built' },
-    { num: '2+', label: 'Years Experience' },
-    { num: '100%', label: 'Client Satisfaction' },
-];
+import { heroStats as stats } from '../../../config/photoEditorData';
 
 const Hero = () => (
     <section className="pe-hero">

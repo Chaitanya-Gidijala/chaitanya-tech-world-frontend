@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    PlusCircle,
-    Layers,
-    Send,
-    XCircle,
-    RefreshCw,
-    Settings,
-    Users,
-    Eye,
-    Globe,
-    Search,
-    Menu,
-    X
+    PlusCircle, Layers, Send, XCircle, RefreshCw,
+    Users, Eye, Globe, X, Menu, Moon, Sun, LogOut,
+    ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { postJob, postBatchJobs, getAllJobs, updateJob, deleteJob } from '../../services/jobService';
@@ -27,9 +18,27 @@ import ManageQuestions from './ManageQuestions';
 import ManageTopics from './ManageTopics';
 import ManageResources from './ManageResources';
 import ManageQuizzes from './ManageQuizzes';
-import AdminHeader from './AdminHeader';
-import AdminFooter from './AdminFooter';
 import AdminSettings from './AdminSettings';
+import ManageInquiries from './ManageInquiries';
+import './AdminLayout.css';
+
+const tabTitles = {
+    create: 'Post a Job',
+    manage: 'Manage Jobs',
+    questions: 'Questions',
+    topics: 'Topics',
+    resources: 'Resources',
+    quizzes: 'Quizzes',
+    analytics: 'Analytics',
+    inquiries: 'Inquiries',
+    settings: 'Settings',
+};
+
+const FORM_DEFAULTS = {
+    jobTitle: '', company: '', location: '', jobDetails: '',
+    experienceRequired: '', experience: 'Fresher',
+    applyLink: '', salary: 'Negotiable', companyLogo: '', jobType: 'Full-time'
+};
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -38,68 +47,43 @@ const AdminDashboard = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [stats, setStats] = useState({ totalViews: 0, uniqueVisitors: 0, browserStats: {} });
     const [batchJson, setBatchJson] = useState('');
-
-    // CRUD State
     const [jobs, setJobs] = useState([]);
     const [editingJobId, setEditingJobId] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [jobToDelete, setJobToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
-
-    // Batch Builder State
     const [batchJobs, setBatchJobs] = useState([]);
+    const [activeTab, setActiveTab] = useState('create');
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [jobData, setJobData] = useState(FORM_DEFAULTS);
+    const [isDark, setIsDark] = useState(() => document.documentElement.getAttribute('data-theme') === 'dark');
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth <= 768) {
-                setSidebarOpen(false);
-            } else {
-                setSidebarOpen(true);
-            }
+            if (window.innerWidth > 1024) setSidebarOpen(true);
+            else if (window.innerWidth <= 768) setSidebarOpen(false);
         };
         window.addEventListener('resize', handleResize);
         handleResize();
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const [activeTab, setActiveTab] = useState('create');
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-    const [jobData, setJobData] = useState({
-        jobTitle: '',
-        company: '',
-        location: '',
-        jobDetails: '',
-        experienceRequired: '',
-        experience: 'Fresher',
-        applyLink: '',
-        salary: 'Negotiable',
-        companyLogo: '',
-        jobType: 'Full-time'
-    });
+    useEffect(() => { loadJobs(); }, []);
 
     useEffect(() => {
-        loadJobs();
-        loadStats();
-    }, []);
+        if (activeTab === 'analytics') getVisitorStats().then(setStats).catch(console.error);
+    }, [activeTab]);
 
-    const loadStats = async () => {
-        try {
-            const data = await getVisitorStats();
-            setStats(data);
-        } catch (err) {
-            console.error('Failed to load stats:', err);
-        }
+    const toggleTheme = () => {
+        const newTheme = !isDark ? 'dark' : 'light';
+        setIsDark(!isDark);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('jp-theme', newTheme);
     };
 
     const loadJobs = async () => {
-        try {
-            const fetchedJobs = await getAllJobs();
-            setJobs(fetchedJobs);
-        } catch (err) {
-            console.error('Failed to load jobs:', err);
-        }
+        try { const j = await getAllJobs(); setJobs(j); } catch (err) { console.error(err); }
     };
 
     const handleFormChange = (e) => {
@@ -110,74 +94,40 @@ const AdminDashboard = () => {
     const handleEdit = (job) => {
         setEditingJobId(job.id);
         setJobData({
-            jobTitle: job.jobTitle || '',
-            company: job.company || '',
-            location: job.location || '',
-            jobDetails: job.jobDetails || '',
-            experienceRequired: job.experienceRequired || '',
-            experience: job.experience || 'Fresher',
-            applyLink: job.applyLink || '',
-            salary: job.salary || 'Negotiable',
-            companyLogo: job.companyLogo || '',
-            jobType: job.jobType || 'Full-time'
+            jobTitle: job.jobTitle || '', company: job.company || '',
+            location: job.location || '', jobDetails: job.jobDetails || '',
+            experienceRequired: job.experienceRequired || '', experience: job.experience || 'Fresher',
+            applyLink: job.applyLink || '', salary: job.salary || 'Negotiable',
+            companyLogo: job.companyLogo || '', jobType: job.jobType || 'Full-time'
         });
         setActiveTab('create');
         setUploadMode('single');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const handleCancelEdit = () => {
-        setEditingJobId(null);
-        resetForm();
-    };
+    const handleCancelEdit = () => { setEditingJobId(null); setJobData(FORM_DEFAULTS); };
 
-    const resetForm = () => {
-        setJobData({
-            jobTitle: '',
-            company: '',
-            location: '',
-            jobDetails: '',
-            experienceRequired: '',
-            experience: 'Fresher',
-            applyLink: '',
-            salary: 'Negotiable',
-            companyLogo: '',
-            jobType: 'Full-time'
-        });
-    };
-
-    const handleDeleteClick = (job) => {
-        setJobToDelete(job);
-        setShowDeleteModal(true);
-    };
+    const handleDeleteClick = (job) => { setJobToDelete(job); setShowDeleteModal(true); };
 
     const handleDeleteConfirm = async () => {
         if (!jobToDelete) return;
         setIsDeleting(true);
         try {
             await deleteJob(jobToDelete.id);
-            showToast(`Job "${jobToDelete.jobTitle}" deleted!`, 'success');
+            showToast(`"${jobToDelete.jobTitle}" deleted!`, 'success');
             setShowDeleteModal(false);
             setJobToDelete(null);
             if (editingJobId === jobToDelete.id) handleCancelEdit();
             await loadJobs();
-        } catch (err) {
-            showToast('Failed to delete job.', 'error');
-        } finally {
-            setIsDeleting(false);
-        }
-    };
-
-    const handleLogout = () => {
-        logout();
-        navigate('/job-portal/admin/login');
+        } catch { showToast('Delete failed.', 'error'); }
+        finally { setIsDeleting(false); }
     };
 
     const handleSubmitSingle = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const payload = { ...jobData, postedAt: new Date().toISOString() };
         try {
+            const payload = { ...jobData, postedAt: new Date().toISOString() };
             if (editingJobId) {
                 await updateJob(editingJobId, payload);
                 showToast('Job updated!', 'success');
@@ -186,396 +136,245 @@ const AdminDashboard = () => {
                 await postJob(payload);
                 showToast('Job posted!', 'success');
             }
-            resetForm();
+            setJobData(FORM_DEFAULTS);
             await loadJobs();
-        } catch (err) {
-            showToast('Action failed.', 'error');
-        } finally {
-            setIsLoading(false);
-        }
+        } catch { showToast('Action failed.', 'error'); }
+        finally { setIsLoading(false); }
     };
 
-    const handleAddToBatch = (e) => {
-        if (e) e.preventDefault();
-
-        // Basic validation
+    const handleAddToBatch = () => {
         if (!jobData.jobTitle || !jobData.company || !jobData.applyLink) {
-            showToast('Please fill Title, Company and Apply Link.', 'warning');
+            showToast('Fill Title, Company & Apply Link.', 'warning');
             return;
         }
-
-        const newBatchJob = { ...jobData, id: Date.now() }; // Temporary ID for list management
-        setBatchJobs(prev => [newBatchJob, ...prev]);
-        resetForm();
-        showToast('Job added to batch list!', 'info');
+        setBatchJobs(prev => [{ ...jobData, id: Date.now() }, ...prev]);
+        setJobData(FORM_DEFAULTS);
+        showToast('Added to batch!', 'info');
     };
 
-    const handleRemoveFromBatch = (id) => {
-        setBatchJobs(prev => prev.filter(job => job.id !== id));
-    };
+    const handleRemoveFromBatch = (id) => setBatchJobs(prev => prev.filter(j => j.id !== id));
 
-    const handleSubmitBatch = async (e) => {
-        if (e) e.preventDefault();
-
+    const handleSubmitBatch = async () => {
         let jobsToPublish = [];
-
         try {
             if (batchJson.trim()) {
-                // If there's JSON in the textarea, parse it
                 const parsed = JSON.parse(batchJson);
                 if (!Array.isArray(parsed)) throw new Error('Expected JSON array');
                 jobsToPublish = parsed;
             } else if (batchJobs.length > 0) {
-                // Otherwise use the interactive builder list
-                // Clean payload: remove temporary UI 'id' and add current timestamp
                 const now = new Date().toISOString();
-                jobsToPublish = batchJobs.map(({ id, ...rest }) => ({
-                    ...rest,
-                    postedAt: now
-                }));
+                jobsToPublish = batchJobs.map(({ id, ...rest }) => ({ ...rest, postedAt: now }));
             } else {
-                showToast('No jobs to publish. Add jobs to list or paste JSON.', 'warning');
+                showToast('No jobs to publish.', 'warning');
                 return;
             }
-
             setIsLoading(true);
             await postBatchJobs(jobsToPublish);
-            showToast(`${jobsToPublish.length} jobs published successfully!`, 'success');
+            showToast(`${jobsToPublish.length} jobs published!`, 'success');
             setBatchJobs([]);
             setBatchJson('');
             await loadJobs();
         } catch (err) {
-            showToast(err.message === 'Expected JSON array' ? 'JSON must be an array of jobs.' : 'Publishing failed.', 'error');
-        } finally {
-            setIsLoading(false);
-        }
+            showToast(err.message === 'Expected JSON array' ? 'JSON must be an array.' : 'Publishing failed.', 'error');
+        } finally { setIsLoading(false); }
     };
 
     const handleRefresh = async () => {
-        if (activeTab === 'manage' || activeTab === 'create') {
-            await loadJobs();
-        } else {
-            setRefreshTrigger(prev => prev + 1);
-        }
+        if (activeTab === 'manage' || activeTab === 'create') await loadJobs();
+        else setRefreshTrigger(p => p + 1);
     };
 
-    useEffect(() => {
-        if (activeTab === 'analytics') {
-            getVisitorStats().then(setStats).catch(console.error);
-        }
-    }, [activeTab]);
+    const handleLogout = () => {
+        logout();
+        navigate('/job-portal/admin/login');
+    };
+
+    const title = editingJobId ? 'Edit Job' : tabTitles[activeTab] || 'Dashboard';
 
     return (
-        <div style={{ minHeight: '100vh', background: 'var(--jp-bg)' }}>
-            <AdminSidebar
-                activeTab={activeTab}
-                onTabChange={(tab) => {
-                    setActiveTab(tab);
-                    if (window.innerWidth <= 768) setSidebarOpen(false);
-                }}
-                isOpen={sidebarOpen}
-                onToggle={() => setSidebarOpen(!sidebarOpen)}
-            />
-
-            <div className={`admin-main-layout ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`} style={{
-                transition: 'margin-left 0.3s ease',
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: '100vh',
-                position: 'relative',
-                zIndex: 1
-            }}>
-                <AdminHeader
-                    onLogout={handleLogout}
-                    sidebarOpen={sidebarOpen}
-                    onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-                />
-
-                <DeleteConfirmModal
-                    isOpen={showDeleteModal}
-                    onClose={() => setShowDeleteModal(false)}
-                    onConfirm={handleDeleteConfirm}
-                    jobTitle={jobToDelete?.jobTitle || ''}
-                    isDeleting={isDeleting}
-                />
-
-                <main
-                    className="jp-admin-content"
-                    style={{
-                        flex: 1,
-                        padding: window.innerWidth <= 768 ? '1rem' : '2rem',
-                        paddingBottom: window.innerWidth <= 768 ? '5rem' : '2rem', // Space for mobile toggle
-                        minHeight: 'calc(100vh - 140px)'
-                    }}
-                >
-                    {/* Mobile Floating Toggle */}
-                    <motion.button
-                        className="mobile-floating-toggle"
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        style={{
-                            position: 'fixed',
-                            bottom: '1.5rem',
-                            right: '1.5rem',
-                            width: '56px',
-                            height: '56px',
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, var(--jp-primary), var(--jp-secondary))',
-                            color: 'white',
-                            border: 'none',
-                            boxShadow: '0 8px 16px rgba(99, 102, 241, 0.4)',
-                            display: 'none',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            zIndex: 2000, // Above everything
-                            cursor: 'pointer'
-                        }}
+        <div className="adm-root">
+            {/* ── TOP NAV BAR ── */}
+            <header className="adm-topbar">
+                <div className="adm-topbar-left">
+                    <button
+                        className="adm-topbar-toggle"
+                        onClick={() => setSidebarOpen(p => !p)}
+                        aria-label="Toggle sidebar"
                     >
-                        {sidebarOpen ? <X size={26} /> : <Menu size={26} />}
-                    </motion.button>
-                    {/* Header Section */}
-                    <div className="dashboard-header-strip" style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: window.innerWidth <= 768 ? '1.25rem' : '2rem',
-                        flexWrap: 'wrap',
-                        gap: '0.75rem'
-                    }}>
+                        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                    </button>
+                    <a href="/" className="adm-topbar-brand">
+                        <img src="/CTW.svg" alt="CTW" className="adm-topbar-logo" />
+                        <span className="adm-topbar-brand-name">Chaitanya Tech World</span>
+                    </a>
+                </div>
+                <div className="adm-topbar-right">
+                    <button className="adm-topbar-icon-btn" onClick={toggleTheme} title="Toggle theme">
+                        {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                    </button>
+                    <button className="adm-topbar-icon-btn" onClick={handleRefresh} title="Refresh">
+                        <RefreshCw size={18} className={isLoading ? 'adm-spinner' : ''} />
+                    </button>
+                    <button className="adm-topbar-logout" onClick={handleLogout}>
+                        <LogOut size={16} /> Logout
+                    </button>
+                </div>
+            </header>
+
+            {/* ── BODY: sidebar + content ── */}
+            <div className="adm-body">
+                {/* SIDEBAR */}
+                <AdminSidebar
+                    activeTab={activeTab}
+                    onTabChange={(tab) => {
+                        setActiveTab(tab);
+                        if (window.innerWidth <= 768) setSidebarOpen(false);
+                    }}
+                    isOpen={sidebarOpen}
+                    onToggle={() => setSidebarOpen(p => !p)}
+                />
+
+                {/* Mobile backdrop */}
+                {sidebarOpen && window.innerWidth <= 768 && (
+                    <div className="adm-backdrop visible" onClick={() => setSidebarOpen(false)} />
+                )}
+
+                {/* MAIN CONTENT */}
+                <main className={`adm-content ${sidebarOpen ? 'sidebar-visible' : 'sidebar-hidden'}`}>
+                    <DeleteConfirmModal
+                        isOpen={showDeleteModal}
+                        onClose={() => setShowDeleteModal(false)}
+                        onConfirm={handleDeleteConfirm}
+                        jobTitle={jobToDelete?.jobTitle || ''}
+                        isDeleting={isDeleting}
+                    />
+
+                    {/* Page header */}
+                    <div className="adm-page-header">
                         <div>
-                            <h1 className="admin-page-title" style={{
-                                margin: 0,
-                                fontWeight: 800,
-                                background: 'linear-gradient(135deg, var(--jp-primary), var(--jp-secondary))',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                backgroundClip: 'text'
-                            }}>
-                                {editingJobId ? 'Edit Job' : (activeTab === 'create' ? 'Post New Job' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1))}
-                            </h1>
-                            <p className="admin-page-subtitle" style={{ color: 'var(--jp-text-muted)', fontSize: '0.850rem', marginTop: '0.15rem' }}>
-                                {editingJobId ? 'Modify existing job details' : 'Manage your portal content.'}
+                            <h1 className="adm-page-title">{title}</h1>
+                            <p className="adm-page-subtitle">
+                                {editingJobId ? 'Modify job details below' : 'Manage your portal content efficiently'}
                             </p>
                         </div>
-
-                        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                        <div className="adm-page-actions">
                             {editingJobId && (
-                                <button className="jp-btn-secondary" onClick={handleCancelEdit}>
-                                    Cancel Edit
+                                <button className="adm-btn adm-btn-secondary" onClick={handleCancelEdit}>
+                                    <X size={15} /> Cancel Edit
                                 </button>
                             )}
-                            <motion.button
-                                onClick={handleRefresh}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="jp-btn-secondary refresh-btn"
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    padding: '0.6rem 1rem',
-                                    borderRadius: '10px'
-                                }}
-                            >
-                                <RefreshCw size={18} className={isLoading ? 'jp-spin' : ''} />
-                                <span className="refresh-text">Refresh Data</span>
-                            </motion.button>
                         </div>
                     </div>
 
-                    {/* Content Area */}
+                    {/* Tab content */}
                     <AnimatePresence mode="wait">
                         <motion.div
-                            key={activeTab + editingJobId}
+                            key={activeTab + (editingJobId || '')}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.16 }}
                         >
+                            {/* ── CREATE / EDIT JOB ── */}
                             {activeTab === 'create' && (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                    <div className="glass-panel" style={{ padding: '0.75rem', maxWidth: '800px', display: 'flex', gap: '0.5rem', flexWrap: 'wrap', background: 'var(--jp-glass-bg)', backdropFilter: 'blur(12px)' }}>
-                                        <button
-                                            onClick={() => setUploadMode('single')}
-                                            style={{
-                                                flex: 1, minWidth: '150px', padding: '1rem', borderRadius: '12px', border: 'none',
-                                                background: uploadMode === 'single' ? 'linear-gradient(135deg, var(--jp-primary), var(--jp-secondary))' : 'transparent',
-                                                color: uploadMode === 'single' ? 'white' : 'var(--jp-text-main)',
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', fontWeight: 700, cursor: 'pointer',
-                                                transition: 'all 0.3s ease', boxShadow: uploadMode === 'single' ? '0 8px 16px rgba(99, 102, 241, 0.25)' : 'none'
-                                            }}
-                                        >
-                                            <PlusCircle size={18} /> Single Upload
+                                <div>
+                                    <div className="adm-mode-switcher">
+                                        <button className={`adm-mode-btn ${uploadMode === 'single' ? 'active' : ''}`} onClick={() => setUploadMode('single')}>
+                                            <PlusCircle size={16} /> Single Upload
                                         </button>
-                                        <button
-                                            onClick={() => setUploadMode('batch')}
-                                            style={{
-                                                flex: 1, minWidth: '150px', padding: '1rem', borderRadius: '12px', border: 'none',
-                                                background: uploadMode === 'batch' ? 'linear-gradient(135deg, var(--jp-primary), var(--jp-secondary))' : 'transparent',
-                                                color: uploadMode === 'batch' ? 'white' : 'var(--jp-text-main)',
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', fontWeight: 700, cursor: 'pointer',
-                                                transition: 'all 0.3s ease', boxShadow: uploadMode === 'batch' ? '0 8px 16px rgba(99, 102, 241, 0.25)' : 'none'
-                                            }}
-                                        >
-                                            <Layers size={18} /> Batch Builder
+                                        <button className={`adm-mode-btn ${uploadMode === 'batch' ? 'active' : ''}`} onClick={() => setUploadMode('batch')}>
+                                            <Layers size={16} /> Batch Builder
                                         </button>
                                     </div>
 
                                     {uploadMode === 'single' ? (
-                                        <motion.form onSubmit={handleSubmitSingle} className="glass-panel" style={{ padding: window.innerWidth <= 768 ? '1.5rem' : '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-                                                <div className="jp-input-group">
-                                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Job Title</label>
-                                                    <input name="jobTitle" value={jobData.jobTitle} onChange={handleFormChange} required placeholder="e.g. Senior Developer" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                </div>
-                                                <div className="jp-input-group">
-                                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Company Name</label>
-                                                    <input name="company" value={jobData.company} onChange={handleFormChange} required placeholder="e.g. Tech Corp" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                </div>
-                                                <div className="jp-input-group">
-                                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Company Logo URL</label>
-                                                    <input name="companyLogo" value={jobData.companyLogo} onChange={handleFormChange} placeholder="https://logo-url.com/logo.png" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                </div>
-                                                <div className="jp-input-group">
-                                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Location</label>
-                                                    <input name="location" value={jobData.location} onChange={handleFormChange} required placeholder="e.g. Remote / City" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                </div>
-                                                <div className="jp-input-group">
-                                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Salary</label>
-                                                    <input name="salary" value={jobData.salary} onChange={handleFormChange} placeholder="e.g. ₹5L - ₹8L" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                </div>
-                                                <div className="jp-input-group">
-                                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Job Type</label>
-                                                    <select name="jobType" value={jobData.jobType} onChange={handleFormChange} className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)', color: 'inherit' }}>
-                                                        <option value="Full-time">Full Time</option>
-                                                        <option value="Part-time">Part Time</option>
-                                                        <option value="Contract">Contract</option>
-                                                        <option value="Remote">Remote</option>
-                                                    </select>
-                                                </div>
-                                                <div className="jp-input-group">
-                                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Experience</label>
-                                                    <input name="experienceRequired" value={jobData.experienceRequired} onChange={handleFormChange} placeholder="e.g. 2-4 yrs" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                </div>
-                                                <div className="jp-input-group">
-                                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Apply Link</label>
-                                                    <input name="applyLink" value={jobData.applyLink} onChange={handleFormChange} required placeholder="https://..." className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                </div>
+                                        <form className="adm-card-panel adm-form" onSubmit={handleSubmitSingle}>
+                                            <div className="adm-form-grid">
+                                                <div className="adm-field"><label className="adm-label">Job Title *</label><input name="jobTitle" value={jobData.jobTitle} onChange={handleFormChange} required placeholder="e.g. Senior Developer" className="adm-input" /></div>
+                                                <div className="adm-field"><label className="adm-label">Company Name *</label><input name="company" value={jobData.company} onChange={handleFormChange} required placeholder="e.g. Tech Corp" className="adm-input" /></div>
+                                                <div className="adm-field"><label className="adm-label">Company Logo URL</label><input name="companyLogo" value={jobData.companyLogo} onChange={handleFormChange} placeholder="https://logo.png" className="adm-input" /></div>
+                                                <div className="adm-field"><label className="adm-label">Location *</label><input name="location" value={jobData.location} onChange={handleFormChange} required placeholder="e.g. Remote / Hyderabad" className="adm-input" /></div>
+                                                <div className="adm-field"><label className="adm-label">Salary</label><input name="salary" value={jobData.salary} onChange={handleFormChange} placeholder="e.g. ₹5L – ₹8L" className="adm-input" /></div>
+                                                <div className="adm-field"><label className="adm-label">Job Type</label><select name="jobType" value={jobData.jobType} onChange={handleFormChange} className="adm-input"><option value="Full-time">Full Time</option><option value="Part-time">Part Time</option><option value="Contract">Contract</option><option value="Remote">Remote</option></select></div>
+                                                <div className="adm-field"><label className="adm-label">Experience Required</label><input name="experienceRequired" value={jobData.experienceRequired} onChange={handleFormChange} placeholder="e.g. 2–4 years" className="adm-input" /></div>
+                                                <div className="adm-field"><label className="adm-label">Apply Link *</label><input name="applyLink" value={jobData.applyLink} onChange={handleFormChange} required placeholder="https://..." className="adm-input" /></div>
                                             </div>
-                                            <div className="jp-input-group">
-                                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Job Details</label>
-                                                <RichTextEditor value={jobData.jobDetails} onChange={(content) => setJobData(prev => ({ ...prev, jobDetails: content }))} />
+                                            <div className="adm-field">
+                                                <label className="adm-label">Job Details / Description</label>
+                                                <RichTextEditor value={jobData.jobDetails} onChange={(c) => setJobData(p => ({ ...p, jobDetails: c }))} />
                                             </div>
-                                            <button type="submit" disabled={isLoading} className="jp-btn-primary" style={{ height: '54px', fontSize: '1.1rem', marginTop: '1rem' }}>
-                                                {isLoading ? <RefreshCw className="jp-spin" size={20} /> : (editingJobId ? 'Update Job' : 'Publish Job')}
-                                            </button>
-                                        </motion.form>
+                                            <div className="adm-form-footer">
+                                                <button type="submit" disabled={isLoading} className="adm-btn adm-btn-primary adm-btn-wide">
+                                                    {isLoading ? <><RefreshCw size={16} className="adm-spinner" /> Saving…</> : <><Send size={16} /> {editingJobId ? 'Update Job' : 'Publish Job'}</>}
+                                                </button>
+                                            </div>
+                                        </form>
                                     ) : (
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                            {/* Step 1: Add Job to Batch */}
-                                            <div className="glass-panel" style={{ padding: window.innerWidth <= 768 ? '1.5rem' : '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: '1px solid var(--jp-border)', paddingBottom: '1rem' }}>
-                                                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--jp-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>1</div>
-                                                    <h3 style={{ margin: 0 }}>Define Job for Batch</h3>
+                                        <div className="adm-batch-outer">
+                                            {/* Step 1 */}
+                                            <div className="adm-card-panel adm-form">
+                                                <div className="adm-form-step-header">
+                                                    <span className="adm-step-badge">1</span>
+                                                    <h3 className="adm-step-title">Define a Job for the Batch</h3>
                                                 </div>
-
-                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-                                                    <div className="jp-input-group">
-                                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Job Title</label>
-                                                        <input name="jobTitle" value={jobData.jobTitle} onChange={handleFormChange} placeholder="e.g. Senior Developer" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                    </div>
-                                                    <div className="jp-input-group">
-                                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Company Name</label>
-                                                        <input name="company" value={jobData.company} onChange={handleFormChange} placeholder="e.g. Tech Corp" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                    </div>
-                                                    <div className="jp-input-group">
-                                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Company Logo URL</label>
-                                                        <input name="companyLogo" value={jobData.companyLogo} onChange={handleFormChange} placeholder="https://logo-url.com/logo.png" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                    </div>
-                                                    <div className="jp-input-group">
-                                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Location</label>
-                                                        <input name="location" value={jobData.location} onChange={handleFormChange} placeholder="e.g. Remote / City" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                    </div>
-                                                    <div className="jp-input-group">
-                                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Salary</label>
-                                                        <input name="salary" value={jobData.salary} onChange={handleFormChange} placeholder="e.g. ₹5L - ₹8L" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                    </div>
-                                                    <div className="jp-input-group">
-                                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Job Type</label>
-                                                        <select name="jobType" value={jobData.jobType} onChange={handleFormChange} className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)', color: 'inherit' }}>
-                                                            <option value="Full-time">Full Time</option>
-                                                            <option value="Part-time">Part Time</option>
-                                                            <option value="Contract">Contract</option>
-                                                            <option value="Remote">Remote</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="jp-input-group">
-                                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Experience</label>
-                                                        <input name="experienceRequired" value={jobData.experienceRequired} onChange={handleFormChange} placeholder="e.g. 2-4 yrs" className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                    </div>
-                                                    <div className="jp-input-group">
-                                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Apply Link</label>
-                                                        <input name="applyLink" value={jobData.applyLink} onChange={handleFormChange} placeholder="https://..." className="jp-search-field" style={{ width: '100%', background: 'var(--jp-bg-secondary)', padding: '0.8rem', borderRadius: '10px', border: '1px solid var(--jp-border)' }} />
-                                                    </div>
+                                                <div className="adm-form-grid">
+                                                    <div className="adm-field"><label className="adm-label">Job Title</label><input name="jobTitle" value={jobData.jobTitle} onChange={handleFormChange} placeholder="e.g. Senior Developer" className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Company</label><input name="company" value={jobData.company} onChange={handleFormChange} placeholder="e.g. Tech Corp" className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Location</label><input name="location" value={jobData.location} onChange={handleFormChange} placeholder="e.g. Remote" className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Salary</label><input name="salary" value={jobData.salary} onChange={handleFormChange} placeholder="e.g. ₹5L – ₹8L" className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Job Type</label><select name="jobType" value={jobData.jobType} onChange={handleFormChange} className="adm-input"><option value="Full-time">Full Time</option><option value="Part-time">Part Time</option><option value="Contract">Contract</option><option value="Remote">Remote</option></select></div>
+                                                    <div className="adm-field"><label className="adm-label">Apply Link</label><input name="applyLink" value={jobData.applyLink} onChange={handleFormChange} placeholder="https://..." className="adm-input" /></div>
                                                 </div>
-
-                                                <div className="jp-input-group">
-                                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Job Details</label>
-                                                    <RichTextEditor value={jobData.jobDetails} onChange={(content) => setJobData(prev => ({ ...prev, jobDetails: content }))} />
+                                                <div className="adm-field">
+                                                    <label className="adm-label">Job Details</label>
+                                                    <RichTextEditor value={jobData.jobDetails} onChange={(c) => setJobData(p => ({ ...p, jobDetails: c }))} />
                                                 </div>
-
-                                                <button onClick={handleAddToBatch} className="jp-btn-secondary" style={{ height: '54px', border: '2px dashed var(--jp-primary)', color: 'var(--jp-primary)', fontWeight: 700 }}>
-                                                    <PlusCircle size={20} style={{ marginRight: '0.5rem' }} /> Add to Batch List
+                                                <button type="button" onClick={handleAddToBatch} className="adm-btn adm-btn-dashed adm-btn-wide">
+                                                    <PlusCircle size={16} /> Add to Batch List
                                                 </button>
                                             </div>
 
-                                            {/* Step 2: Review and Publish */}
+                                            {/* Step 2 review */}
                                             {batchJobs.length > 0 && (
-                                                <div className="glass-panel" style={{ padding: window.innerWidth <= 768 ? '1.5rem' : '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--jp-border)', paddingBottom: '1rem' }}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--jp-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>2</div>
-                                                            <h3 style={{ margin: 0 }}>Review List ({batchJobs.length})</h3>
+                                                <div className="adm-card-panel">
+                                                    <div className="adm-batch-review-header">
+                                                        <div className="adm-form-step-header" style={{border:'none',padding:0,marginBottom:0}}>
+                                                            <span className="adm-step-badge">2</span>
+                                                            <h3 className="adm-step-title">Review Batch ({batchJobs.length})</h3>
                                                         </div>
-                                                        <button onClick={handleSubmitBatch} disabled={isLoading} className="jp-btn-primary" style={{ padding: '0.6rem 1.5rem', borderRadius: '10px' }}>
-                                                            {isLoading ? <RefreshCw className="jp-spin" size={18} /> : 'Publish All'}
+                                                        <button onClick={handleSubmitBatch} disabled={isLoading} className="adm-btn adm-btn-primary">
+                                                            {isLoading ? <RefreshCw size={15} className="adm-spinner" /> : <Send size={15} />} Publish All
                                                         </button>
                                                     </div>
-
-                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '400px', overflowY: 'auto', paddingRight: '0.5rem' }}>
-                                                        {batchJobs.map((job) => (
-                                                            <div key={job.id} style={{ padding: '1rem', background: 'var(--jp-bg-secondary)', borderRadius: '12px', border: '1px solid var(--jp-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                                    <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'white', border: '1px solid var(--jp-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                                                        {job.companyLogo ? <img src={job.companyLogo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} /> : <Briefcase size={20} style={{ color: 'var(--jp-text-muted)' }} />}
-                                                                    </div>
+                                                    <div className="adm-batch-list">
+                                                        {batchJobs.map(job => (
+                                                            <div key={job.id} className="adm-batch-item">
+                                                                <div className="adm-batch-item-info">
+                                                                    <div className="adm-company-logo">{job.companyLogo ? <img src={job.companyLogo} alt="" /> : '🏢'}</div>
                                                                     <div>
-                                                                        <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{job.jobTitle}</div>
-                                                                        <div style={{ fontSize: '0.8rem', color: 'var(--jp-text-muted)' }}>{job.company} • {job.location}</div>
+                                                                        <p className="adm-batch-item-title">{job.jobTitle}</p>
+                                                                        <p className="adm-batch-item-meta">{job.company} · {job.location}</p>
                                                                     </div>
                                                                 </div>
-                                                                <button onClick={() => handleRemoveFromBatch(job.id)} style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: 'none', cursor: 'pointer' }}>
-                                                                    <XCircle size={18} />
-                                                                </button>
+                                                                <button onClick={() => handleRemoveFromBatch(job.id)} className="adm-btn-icon delete"><XCircle size={15} /></button>
                                                             </div>
                                                         ))}
                                                     </div>
                                                 </div>
                                             )}
 
-                                            {/* Step 3: Advanced JSON Option */}
-                                            <div className="glass-panel" style={{ padding: '2.5rem' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-                                                    <Layers size={24} style={{ color: 'var(--jp-primary)' }} />
-                                                    <h3 style={{ margin: 0 }}>Advanced: Batch JSON Paste</h3>
+                                            {/* Step 3 JSON */}
+                                            <div className="adm-card-panel adm-form">
+                                                <div className="adm-form-step-header">
+                                                    <span className="adm-step-badge">3</span>
+                                                    <h3 className="adm-step-title">Paste JSON Array</h3>
                                                 </div>
-                                                <p style={{ fontSize: '0.9rem', color: 'var(--jp-text-muted)', marginBottom: '1rem' }}>
-                                                    Already have a JSON array of jobs? Paste it here to skip the builder.
-                                                </p>
-                                                <textarea value={batchJson} onChange={(e) => setBatchJson(e.target.value)} placeholder='Paste JSON array here...' style={{ width: '100%', height: '200px', background: 'var(--jp-bg-secondary)', border: '1px solid var(--jp-border)', borderRadius: '12px', padding: '1.5rem', color: 'var(--jp-text-main)', fontFamily: 'monospace', marginBottom: '1.5rem', outline: 'none' }} />
-                                                <button onClick={handleSubmitBatch} disabled={isLoading} className="jp-btn-primary" style={{ width: '100%', height: '54px' }}>
-                                                    {isLoading ? <RefreshCw className="jp-spin" size={20} /> : 'Publish from JSON'}
+                                                <div className="adm-field">
+                                                    <label className="adm-label">JSON Array</label>
+                                                    <textarea value={batchJson} onChange={(e) => setBatchJson(e.target.value)} placeholder='[{"jobTitle": "Developer", ...}]' className="adm-input adm-textarea adm-json-textarea" />
+                                                </div>
+                                                <button onClick={handleSubmitBatch} disabled={isLoading} className="adm-btn adm-btn-primary adm-btn-wide">
+                                                    {isLoading ? <><RefreshCw size={16} className="adm-spinner" /> Publishing…</> : <><Send size={16} /> Publish from JSON</>}
                                                 </button>
                                             </div>
                                         </div>
@@ -583,135 +382,82 @@ const AdminDashboard = () => {
                                 </div>
                             )}
 
-                            {activeTab === 'manage' && (
-                                <ManageJobs jobs={jobs} onEdit={handleEdit} onDelete={handleDeleteClick} editingJobId={editingJobId} />
-                            )}
+                            {activeTab === 'manage' && <ManageJobs jobs={jobs} onEdit={handleEdit} onDelete={handleDeleteClick} editingJobId={editingJobId} />}
 
+                            {/* ── ANALYTICS ── */}
                             {activeTab === 'analytics' && (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-                                        <motion.div whileHover={{ y: -5 }} className="glass-panel" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'linear-gradient(135deg, var(--jp-primary), var(--jp-secondary))', color: 'white', border: 'none', boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)' }}>
-                                            <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Eye size={32} />
-                                            </div>
-                                            <div><h3 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800 }}>{stats.totalViews}</h3><p style={{ margin: 0, opacity: 0.9, fontWeight: 600 }}>Total Page Views</p></div>
-                                        </motion.div>
-                                        <motion.div whileHover={{ y: -5 }} className="glass-panel" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'var(--jp-glass-bg)', backdropFilter: 'blur(12px)', border: '1px solid var(--jp-glass-border)' }}>
-                                            <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(236, 72, 153, 0.1)', color: 'var(--jp-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Users size={32} />
-                                            </div>
-                                            <div><h3 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800, color: 'var(--jp-text-main)' }}>{stats.uniqueVisitors}</h3><p style={{ margin: 0, color: 'var(--jp-text-muted)', fontWeight: 600 }}>Unique Visitors</p></div>
-                                        </motion.div>
-                                        <motion.div whileHover={{ y: -5 }} className="glass-panel" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'var(--jp-glass-bg)', backdropFilter: 'blur(12px)', border: '1px solid var(--jp-glass-border)' }}>
-                                            <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Globe size={32} />
-                                            </div>
-                                            <div><h3 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800, color: 'var(--jp-text-main)' }}>Global</h3><p style={{ margin: 0, color: 'var(--jp-text-muted)', fontWeight: 600 }}>Traffic Analytics</p></div>
-                                        </motion.div>
-                                    </div>
-
-                                    {/* Browser Distribution */}
-                                    <div className="glass-panel" style={{ padding: '2.5rem' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-                                            <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--jp-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Globe size={24} />
-                                            </div>
-                                            <div>
-                                                <h3 style={{ margin: 0 }}>Traffic Overview</h3>
-                                                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--jp-text-muted)' }}>Distribution by Browser & Device</p>
+                                <div className="adm-analytics-section">
+                                    <div className="adm-stats-grid">
+                                        <div className="adm-stat-card accent">
+                                            <div className="adm-stat-icon"><Eye size={22} /></div>
+                                            <div className="adm-stat-info">
+                                                <h4 className="adm-stat-value">{stats.totalViews}</h4>
+                                                <p className="adm-stat-label">Total Views</p>
                                             </div>
                                         </div>
-
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2.5rem' }}>
-                                            <div>
-                                                <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--jp-text-muted)', marginBottom: '1.5rem' }}>Browsers</h4>
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                                                    {Object.entries(stats.browserStats || {}).length > 0 ? (
-                                                        Object.entries(stats.browserStats)
-                                                            .sort((a, b) => b[1] - a[1])
-                                                            .map(([browser, count]) => {
-                                                                const percentage = Math.round((count / stats.totalViews) * 100) || 0;
-                                                                return (
-                                                                    <div key={browser}>
-                                                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-                                                                            <span style={{ fontWeight: 600 }}>{browser}</span>
-                                                                            <span style={{ color: 'var(--jp-text-muted)' }}>{count} hits ({percentage}%)</span>
-                                                                        </div>
-                                                                        <div style={{ height: '8px', background: 'var(--jp-bg-secondary)', borderRadius: '4px', overflow: 'hidden' }}>
-                                                                            <motion.div
-                                                                                initial={{ width: 0 }}
-                                                                                animate={{ width: `${percentage}%` }}
-                                                                                style={{ height: '100%', background: 'var(--jp-primary)', borderRadius: '4px' }}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                );
-                                                            })
-                                                    ) : (
-                                                        <p style={{ color: 'var(--jp-text-muted)', fontSize: '0.9rem' }}>No browser data collected yet.</p>
-                                                    )}
-                                                </div>
+                                        <div className="adm-stat-card">
+                                            <div className="adm-stat-icon" style={{background:'rgba(236,72,153,0.1)',color:'var(--jp-secondary)'}}>
+                                                <Users size={22} />
                                             </div>
-
-                                            <div style={{ background: 'var(--jp-bg-secondary)', padding: '2rem', borderRadius: '20px', border: '1px solid var(--jp-border)' }}>
-                                                <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--jp-text-muted)', marginBottom: '1.5rem' }}>Top Platforms</h4>
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                                    <div style={{ padding: '1rem', background: 'var(--jp-card-bg)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                        <span style={{ fontWeight: 600 }}>Desktop Users</span>
-                                                        <span style={{ padding: '0.25rem 0.75rem', borderRadius: '20px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontSize: '0.8rem', fontWeight: 700 }}>Most Active</span>
-                                                    </div>
-                                                    <div style={{ padding: '1rem', background: 'var(--jp-card-bg)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                        <span style={{ fontWeight: 600 }}>Mobile Users</span>
-                                                        <span style={{ padding: '0.25rem 0.75rem', borderRadius: '20px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--jp-primary)', fontSize: '0.8rem', fontWeight: 700 }}>Trending</span>
-                                                    </div>
-                                                </div>
-                                                <p style={{ marginTop: '1.5rem', fontSize: '0.8rem', color: 'var(--jp-text-muted)', lineHeight: 1.5 }}>
-                                                    Real-time tracking is enabled. Data is refreshed every time you hit the dashboard.
-                                                </p>
+                                            <div className="adm-stat-info">
+                                                <h4 className="adm-stat-value">{stats.uniqueVisitors}</h4>
+                                                <p className="adm-stat-label">Unique Visitors</p>
+                                            </div>
+                                        </div>
+                                        <div className="adm-stat-card">
+                                            <div className="adm-stat-icon" style={{background:'rgba(16,185,129,0.1)',color:'#10b981'}}>
+                                                <Globe size={22} />
+                                            </div>
+                                            <div className="adm-stat-info">
+                                                <h4 className="adm-stat-value">Global</h4>
+                                                <p className="adm-stat-label">Traffic Reach</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="adm-analytics-grid">
+                                        <div className="adm-analytics-card">
+                                            <div className="adm-analytics-header">
+                                                <div className="adm-analytics-icon"><Globe size={18} /></div>
+                                                <div><h3 className="adm-analytics-title">Browser Distribution</h3><p className="adm-analytics-subtitle">Hits by browser</p></div>
+                                            </div>
+                                            <div className="adm-progress-row">
+                                                {Object.entries(stats.browserStats || {}).length > 0
+                                                    ? Object.entries(stats.browserStats).sort((a,b)=>b[1]-a[1]).map(([browser,count]) => {
+                                                        const pct = Math.round((count / stats.totalViews) * 100) || 0;
+                                                        return (
+                                                            <div key={browser} className="adm-progress-item">
+                                                                <div className="adm-progress-meta"><span className="adm-progress-name">{browser}</span><span className="adm-progress-pct">{count} ({pct}%)</span></div>
+                                                                <div className="adm-progress-bg"><motion.div initial={{width:0}} animate={{width:`${pct}%`}} className="adm-progress-fill" /></div>
+                                                            </div>
+                                                        );
+                                                    })
+                                                    : <p className="adm-page-subtitle">No browser data yet.</p>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="adm-analytics-card">
+                                            <div className="adm-analytics-header">
+                                                <div className="adm-analytics-icon"><Users size={18} /></div>
+                                                <div><h3 className="adm-analytics-title">Platform Breakdown</h3><p className="adm-analytics-subtitle">Desktop vs Mobile</p></div>
+                                            </div>
+                                            <div className="adm-platform-list">
+                                                <div className="adm-platform-item"><span className="adm-progress-name">Desktop Users</span><span className="adm-badge adm-badge-success">Most Active</span></div>
+                                                <div className="adm-platform-item"><span className="adm-progress-name">Mobile Users</span><span className="adm-badge adm-badge-primary">Trending</span></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             )}
 
-                            {activeTab === 'questions' && <ManageQuestions refreshTrigger={refreshTrigger} />}
-                            {activeTab === 'topics' && <ManageTopics refreshTrigger={refreshTrigger} />}
-                            {activeTab === 'resources' && <ManageResources refreshTrigger={refreshTrigger} />}
-                            {activeTab === 'quizzes' && <ManageQuizzes refreshTrigger={refreshTrigger} />}
-
-                            {activeTab === 'settings' && <AdminSettings />}
+                            {activeTab === 'questions'  && <ManageQuestions  refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'topics'     && <ManageTopics     refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'resources'  && <ManageResources  refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'quizzes'    && <ManageQuizzes    refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'inquiries'  && <ManageInquiries  refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'settings'   && <AdminSettings />}
                         </motion.div>
                     </AnimatePresence>
                 </main>
-
-                <AdminFooter sidebarOpen={sidebarOpen} />
-
-                <style>{`
-                .admin-page-title { font-size: 2.5rem; }
-                @media (min-width: 769px) {
-                    .admin-main-layout.sidebar-open { 
-                        margin-left: 280px !important; 
-                    }
-                    .admin-main-layout.sidebar-closed { 
-                        margin-left: 0 !important; 
-                    }
-                }
-                @media (max-width: 768px) {
-                    .admin-main-layout { margin-left: 0 !important; }
-                    .admin-page-title { font-size: 1.5rem !important; }
-                    .admin-page-subtitle { font-size: 0.8rem !important; }
-                    .dashboard-header-strip { 
-                        flex-direction: row !important; 
-                        align-items: center !important; 
-                        justify-content: space-between !important;
-                    }
-                    .refresh-text { display: none; }
-                    .refresh-btn { padding: 0.6rem !important; aspect-ratio: 1; border-radius: 50% !important; }
-                    .dashboard-header-strip button { width: auto !important; }
-                    .mobile-floating-toggle { display: flex !important; }
-                    .mobile-menu-toggle { display: none !important; } /* Hide the one in the header on mobile as we now have the FAB */
-                }
-            `}</style>
             </div>
         </div>
     );

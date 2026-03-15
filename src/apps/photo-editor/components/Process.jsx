@@ -5,38 +5,7 @@ import {
     MessageCircle, Pencil, Eye, RefreshCcw, CheckCircle2
 } from 'lucide-react';
 
-const steps = [
-    {
-        num: '01',
-        Icon: MessageCircle,
-        title: 'Consultation',
-        desc: 'We discuss your vision, requirements, and style preferences in detail.',
-    },
-    {
-        num: '02',
-        Icon: Pencil,
-        title: 'Concept Creation',
-        desc: 'Initial concepts and mood board crafted based on your brief.',
-    },
-    {
-        num: '03',
-        Icon: Eye,
-        title: 'Design Preview',
-        desc: 'Share the first draft for your review with a visual walkthrough.',
-    },
-    {
-        num: '04',
-        Icon: RefreshCcw,
-        title: 'Revisions',
-        desc: "Refine until it's perfect — up to 3 revision rounds included.",
-    },
-    {
-        num: '05',
-        Icon: CheckCircle2,
-        title: 'Final Delivery',
-        desc: 'Production-ready files delivered in all required formats.',
-    },
-];
+import { processSteps as steps } from '../../../config/photoEditorData';
 
 const Process = () => (
     <section className="pe-section pe-process">

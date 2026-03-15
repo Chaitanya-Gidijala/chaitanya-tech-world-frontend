@@ -1,224 +1,158 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Edit2, Trash2, Search, Briefcase, MapPin, ExternalLink, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Edit2, Trash2, Search, Briefcase, MapPin, Clock } from 'lucide-react';
+import './AdminLayout.css';
 
 const ManageJobs = ({ jobs, onEdit, onDelete, editingJobId }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('all');
 
     const filteredJobs = jobs.filter(job => {
-        const matchesSearch =
-            job.jobTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            job.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            job.location?.toLowerCase().includes(searchTerm.toLowerCase());
-
-        const matchesFilter = filterType === 'all' || job.jobType === filterType;
-
-        return matchesSearch && matchesFilter;
+        const matchSearch = [job.jobTitle, job.company, job.location]
+            .some(v => v?.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchFilter = filterType === 'all' || job.jobType === filterType;
+        return matchSearch && matchFilter;
     });
 
     const getPostedTime = (dateString) => {
         if (!dateString) return 'Recently';
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-        if (diffInDays === 0) return 'Today';
-        if (diffInDays === 1) return 'Yesterday';
-        return `${diffInDays} days ago`;
+        const diff = Math.floor((new Date() - new Date(dateString)) / 86400000);
+        if (diff === 0) return 'Today';
+        if (diff === 1) return 'Yesterday';
+        return `${diff} days ago`;
     };
 
     return (
         <div>
-            {/* Header */}
-            <div style={{ marginBottom: '2rem' }}>
-                {/* <h2 style={{
-                    fontSize: '1.75rem',
-                    fontWeight: 700,
-                    marginBottom: '0.5rem',
-                    background: 'linear-gradient(135deg, var(--jp-primary), var(--jp-secondary))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                }}>
-                    Manage Jobs
-                </h2> */}
-                <p style={{ color: 'var(--jp-text-muted)' }}>
-                    {jobs.length} total job{jobs.length !== 1 ? 's' : ''} • {filteredJobs.length} shown
-                </p>
-            </div>
-
-            {/* Filters */}
-            <div style={{
-                display: 'flex',
-                gap: '1rem',
-                marginBottom: '2rem',
-                flexWrap: 'wrap'
-            }}>
-                {/* Search */}
-                <div style={{
-                    flex: '1 1 300px',
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'center'
-                }}>
-                    <Search
-                        size={18}
-                        style={{
-                            position: 'absolute',
-                            left: '1rem',
-                            color: 'var(--jp-text-muted)'
-                        }}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Search by title, company, or location..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{
-                            width: '100%',
-                            padding: '0.875rem 1rem 0.875rem 3rem',
-                            borderRadius: '12px',
-                            border: '1px solid var(--jp-border)',
-                            background: 'var(--jp-bg-secondary)',
-                            color: 'var(--jp-text-main)',
-                            fontSize: '0.95rem',
-                            outline: 'none'
-                        }}
-                    />
+            {/* Toolbar */}
+            <div className="adm-toolbar">
+                <div className="adm-toolbar-left">
+                    <div className="adm-search-wrap">
+                        <Search className="adm-search-icon" size={16} />
+                        <input
+                            type="text"
+                            placeholder="Search jobs..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            className="adm-search-input"
+                        />
+                    </div>
+                    <select value={filterType} onChange={e => setFilterType(e.target.value)} className="adm-select">
+                        <option value="all">All Types</option>
+                        <option value="Full-time">Full Time</option>
+                        <option value="Part-time">Part Time</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Remote">Remote</option>
+                    </select>
                 </div>
-
-                {/* Filter by Type */}
-                <select
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value)}
-                    style={{
-                        padding: '0.875rem 1rem',
-                        borderRadius: '12px',
-                        border: '1px solid var(--jp-border)',
-                        background: 'var(--jp-bg-secondary)',
-                        color: 'var(--jp-text-main)',
-                        fontSize: '0.95rem',
-                        cursor: 'pointer',
-                        minWidth: '150px'
-                    }}
-                >
-                    <option value="all">All Types</option>
-                    <option value="Full-time">Full Time</option>
-                    <option value="Part-time">Part Time</option>
-                    <option value="Contract">Contract</option>
-                    <option value="Remote">Remote</option>
-                </select>
+                <div className="adm-toolbar-right">
+                    <span className="adm-badge adm-badge-neutral">
+                        {filteredJobs.length} / {jobs.length} jobs
+                    </span>
+                </div>
             </div>
 
-            {/* Job List */}
             {filteredJobs.length === 0 ? (
-                <div style={{
-                    textAlign: 'center',
-                    padding: '4rem 2rem',
-                    background: 'var(--jp-bg-secondary)',
-                    borderRadius: '16px',
-                    border: '1px dashed var(--jp-border)'
-                }}>
-                    <Briefcase size={48} style={{ color: 'var(--jp-text-muted)', marginBottom: '1rem' }} />
-                    <h3 style={{ color: 'var(--jp-text-main)', marginBottom: '0.5rem' }}>
-                        No jobs found
-                    </h3>
-                    <p style={{ color: 'var(--jp-text-muted)' }}>
-                        {searchTerm || filterType !== 'all'
-                            ? 'Try adjusting your search or filters'
-                            : 'Create your first job to get started'}
-                    </p>
+                <div className="adm-empty">
+                    <div className="adm-empty-icon"><Briefcase size={26} /></div>
+                    <h3>No jobs found</h3>
+                    <p>{searchTerm || filterType !== 'all' ? 'Try adjusting filters' : 'Create your first job to get started'}</p>
                 </div>
             ) : (
-                <div>
-                    {/* Desktop Table View */}
-                    <div className="manage-jobs-desktop">
-                        <div style={{ overflowX: 'auto', background: 'var(--jp-glass-bg)', backdropFilter: 'blur(10px)', borderRadius: '16px', border: '1px solid var(--jp-glass-border)', boxShadow: 'var(--jp-shadow)' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem', color: 'var(--jp-text-main)' }}>
-                                <thead style={{ background: 'rgba(0,0,0,0.02)', borderBottom: '2px solid var(--jp-border)' }}>
+                <>
+                    {/* Desktop table */}
+                    <div className="adm-table-card">
+                        <div className="adm-table-scroll">
+                            <table className="adm-table">
+                                <thead>
                                     <tr>
-                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>ID</th>
-                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Job Title</th>
-                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Company</th>
-                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Details</th>
-                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'left', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Salary</th>
-                                        <th style={{ padding: '1.2rem 1rem', textAlign: 'right', fontWeight: 700, color: 'var(--jp-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>Actions</th>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Company</th>
+                                        <th>Details</th>
+                                        <th>Salary</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {filteredJobs.map((job) => (
-                                        <tr key={job.id} style={{ borderBottom: '1px solid var(--jp-border)', background: editingJobId === job.id ? 'rgba(99, 102, 241, 0.05)' : 'transparent' }}>
-                                            <td style={{ padding: '1rem', verticalAlign: 'top', fontFamily: 'monospace', fontSize: '0.8rem', color: 'var(--jp-text-muted)' }}>{String(job.id).substring(0, 8)}...</td>
-                                            <td style={{ padding: '1rem', verticalAlign: 'top', fontWeight: 600 }}>{job.jobTitle}</td>
-                                            <td style={{ padding: '1rem', verticalAlign: 'top' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                                    <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'white', border: '1px solid var(--jp-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                                        {job.companyLogo ? <img src={job.companyLogo} alt={job.company} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} /> : <span style={{ fontSize: '1.2rem' }}>🏢</span>}
+                                <AnimatePresence mode="popLayout" component="tbody">
+                                    {filteredJobs.map((job, i) => (
+                                        <motion.tr
+                                            key={job.id}
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: i * 0.03 }}
+                                            className={editingJobId === job.id ? 'is-editing' : ''}
+                                        >
+                                            <td><span className="adm-mono">{String(job.id).substring(0, 8)}…</span></td>
+                                            <td><span className="adm-cell-primary">{job.jobTitle}</span></td>
+                                            <td>
+                                                <div className="adm-cell-title-group">
+                                                    <div className="adm-company-logo">
+                                                        {job.companyLogo ? <img src={job.companyLogo} alt={job.company} /> : '🏢'}
                                                     </div>
-                                                    <span style={{ fontWeight: 600 }}>{job.company}</span>
+                                                    <span className="adm-cell-primary">{job.company}</span>
                                                 </div>
                                             </td>
-                                            <td style={{ padding: '1rem', verticalAlign: 'top' }}>
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                                                    <span style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--jp-text-muted)' }}><MapPin size={14} /> {job.location}</span>
-                                                    <span style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--jp-text-muted)' }}><Briefcase size={14} /> {job.jobType}</span>
+                                            <td>
+                                                <div className="adm-cell-meta">
+                                                    <span className="adm-cell-meta-row"><MapPin size={13} />{job.location}</span>
+                                                    <span className="adm-cell-meta-row"><Briefcase size={13} />{job.jobType}</span>
                                                 </div>
                                             </td>
-                                            <td style={{ padding: '1rem', verticalAlign: 'top', color: 'var(--jp-primary)', fontWeight: 600 }}>{job.salary}</td>
-                                            <td style={{ padding: '1rem', verticalAlign: 'top', textAlign: 'right' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                                    <button onClick={() => onEdit(job)} style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--jp-primary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}><Edit2 size={16} /></button>
-                                                    <button onClick={() => onDelete(job)} style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}><Trash2 size={16} /></button>
+                                            <td><span className="adm-salary">{job.salary}</span></td>
+                                            <td>
+                                                <div className="adm-cell-actions">
+                                                    <button onClick={() => onEdit(job)} className="adm-btn-icon" title="Edit"><Edit2 size={15} /></button>
+                                                    <button onClick={() => onDelete(job)} className="adm-btn-icon delete" title="Delete"><Trash2 size={15} /></button>
                                                 </div>
                                             </td>
-                                        </tr>
+                                        </motion.tr>
                                     ))}
-                                </tbody>
+                                </AnimatePresence>
                             </table>
                         </div>
                     </div>
 
-                    {/* Mobile Card View */}
-                    <div className="manage-jobs-mobile">
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
-                            {filteredJobs.map((job) => (
-                                <div key={job.id} className="glass-panel" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <div style={{ display: 'flex', gap: '1rem' }}>
-                                            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'white', border: '1px solid var(--jp-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-                                                {job.companyLogo ? <img src={job.companyLogo} alt={job.company} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} /> : <span style={{ fontSize: '1.4rem' }}>🏢</span>}
-                                            </div>
-                                            <div>
-                                                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: 'var(--jp-text-main)' }}>{job.jobTitle}</h3>
-                                                <p style={{ margin: '0.2rem 0 0', fontSize: '0.9rem', color: 'var(--jp-text-muted)', fontWeight: 600 }}>{job.company}</p>
-                                            </div>
+                    {/* Mobile cards */}
+                    <div className="adm-card-grid">
+                        {filteredJobs.map((job, i) => (
+                            <motion.div
+                                key={job.id}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.04 }}
+                                className={`adm-card ${editingJobId === job.id ? 'is-editing' : ''}`}
+                            >
+                                <div className="adm-card-header">
+                                    <div className="adm-card-title-group">
+                                        <div className="adm-company-logo">
+                                            {job.companyLogo ? <img src={job.companyLogo} alt={job.company} /> : '🏢'}
                                         </div>
-                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                            <button onClick={() => onEdit(job)} style={{ padding: '0.5rem', borderRadius: '8px', background: 'var(--jp-bg-secondary)', border: 'none', color: 'var(--jp-text-main)', display: 'flex' }}><Edit2 size={16} /></button>
-                                            <button onClick={() => onDelete(job)} style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', display: 'flex' }}><Trash2 size={16} /></button>
+                                        <div>
+                                            <h3 className="adm-card-title">{job.jobTitle}</h3>
+                                            <p className="adm-card-subtitle">{job.company}</p>
                                         </div>
                                     </div>
-
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '0.75rem', fontSize: '0.85rem', paddingTop: '0.5rem', borderTop: '1px solid var(--jp-border)' }}>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--jp-text-muted)' }}><MapPin size={14} /> {job.location}</div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--jp-text-muted)' }}><Briefcase size={14} /> {job.jobType}</div>
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'flex-end' }}>
-                                            <div style={{ fontWeight: 800, color: 'var(--jp-primary)', fontSize: '0.95rem' }}>{job.salary}</div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--jp-text-muted)', fontSize: '0.75rem' }}><Clock size={14} /> {getPostedTime(job.createdAt || job.createdDate || job.postedAt)}</div>
-                                        </div>
+                                    <div className="adm-card-actions">
+                                        <button onClick={() => onEdit(job)} className="adm-btn-icon"><Edit2 size={15} /></button>
+                                        <button onClick={() => onDelete(job)} className="adm-btn-icon delete"><Trash2 size={15} /></button>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                                <div className="adm-card-divider" />
+                                <div className="adm-card-footer">
+                                    <div>
+                                        <div className="adm-card-meta-row"><MapPin size={12} />{job.location}</div>
+                                        <div className="adm-card-meta-row"><Briefcase size={12} />{job.jobType}</div>
+                                    </div>
+                                    <div>
+                                        <div className="adm-salary">{job.salary}</div>
+                                        <div className="adm-card-meta-row"><Clock size={12} />{getPostedTime(job.createdAt || job.postedAt)}</div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
                     </div>
-
-                    <style>{`
-                        @media (min-width: 769px) { .manage-jobs-mobile { display: none !important; } }
-                        @media (max-width: 768px) { .manage-jobs-desktop { display: none !important; } }
-                    `}</style>
-                </div>
+                </>
             )}
         </div>
     );

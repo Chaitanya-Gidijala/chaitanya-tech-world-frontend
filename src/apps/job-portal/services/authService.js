@@ -1,9 +1,9 @@
-import config from '../config';
+import config from '../../../config/apiConfig';
 
 const AUTH_KEY = 'jp_admin_token';
 
 export const login = async (usernameOrEmail, password) => {
-    const response = await fetch(`${config.AUTH_API_URL}/login`, {
+    const response = await fetch(config.endpoints.auth.login, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

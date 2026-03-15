@@ -3,48 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import '../PhotoEditor.css';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 
-const testimonials = [
-    {
-        name: 'Priya S.',
-        role: 'Bride — Wedding Invitation Client',
-        initials: 'PS',
-        color: '#c084fc',
-        text: '"My wedding invitations were absolutely stunning. Every guest complimented them. The attention to detail and the luxury feel was exactly what I dreamed of. Highly recommend!"',
-        stars: 5,
-    },
-    {
-        name: 'Rohan M.',
-        role: 'Startup Founder — Website Client',
-        initials: 'RM',
-        color: '#60a5fa',
-        text: '"Chaitanya built our product landing page from scratch. Clean code, blazing fast, and the design wowed our investors. Delivered ahead of schedule with zero issues."',
-        stars: 5,
-    },
-    {
-        name: 'Sneha K.',
-        role: 'Event Organiser — Design Client',
-        initials: 'SK',
-        color: '#f472b6',
-        text: '"The birthday invitation suite was vibrant and perfectly on-theme. Quick turnaround, multiple revisions accommodated, and the final files were print-ready. Brilliant work!"',
-        stars: 5,
-    },
-    {
-        name: 'Arjun D.',
-        role: 'Restaurant Owner — Branding Client',
-        initials: 'AD',
-        color: '#34d399',
-        text: "Complete branding package — logo, menu design, social media templates. The work transformed our restaurant's visual identity.We've seen more footfall since the rebrand.",
-        stars: 5,
-    },
-    {
-        name: 'Kavya R.',
-        role: 'Blogger — Portfolio Website',
-        initials: 'KR',
-        color: '#fb923c',
-        text: '"My new portfolio site is everything I envisioned and more. Dark/light mode, smooth animations, and it loads so fast. My clients are seriously impressed."',
-        stars: 5,
-    },
-];
+import { testimonials } from '../../../config/photoEditorData';
 
 // How many cards visible at once (changes per breakpoint via CSS)
 const VISIBLE = 3;

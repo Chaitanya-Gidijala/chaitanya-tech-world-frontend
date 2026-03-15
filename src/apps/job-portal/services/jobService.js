@@ -1,4 +1,4 @@
-import config from '../config';
+import config from '../../../config/apiConfig';
 import { JOB_RESOURCES } from '../data/jobResources';
 
 import { getToken } from './authService';
@@ -16,7 +16,7 @@ const getHeaders = () => {
 };
 
 export const postJob = async (jobData) => {
-    const response = await fetch(`${config.API_BASE_URL}`, {
+    const response = await fetch(config.endpoints.jobs.base, {
         method: 'POST',
         headers: getHeaders(),
         body: JSON.stringify(jobData),
@@ -26,7 +26,7 @@ export const postJob = async (jobData) => {
 };
 
 export const postBatchJobs = async (jobsArray) => {
-    const response = await fetch(`${config.API_BASE_URL}/batch`, {
+    const response = await fetch(config.endpoints.jobs.batch, {
         method: 'POST',
         headers: getHeaders(),
         body: JSON.stringify(jobsArray),
@@ -37,7 +37,7 @@ export const postBatchJobs = async (jobsArray) => {
 
 export const getJobByTitle = async (title) => {
     try {
-        const response = await fetch(`${config.API_BASE_URL}/title/${title}`, {
+        const response = await fetch(config.endpoints.jobs.byTitle(title), {
             headers: getHeaders()
         });
         if (!response.ok) throw new Error('Failed to fetch job by title');
@@ -51,8 +51,8 @@ export const getJobByTitle = async (title) => {
 
 export const getJobByTitleAndId = async (title, id) => {
     try {
-        // New API endpoint: /api/jobs/title/{jobTitle}/id/{id}
-        const response = await fetch(`${config.API_BASE_URL}/title/${title}/id/${id}`, {
+        // Use endpoint from config: /api/jobs/title/{jobTitle}/id/{id}
+        const response = await fetch(config.endpoints.jobs.byTitleAndId(title, id), {
             headers: getHeaders()
         });
         if (!response.ok) throw new Error('Failed to fetch job by title and id');
@@ -107,7 +107,7 @@ const MOCK_JOBS = [
 
 export const getAllJobs = async () => {
     try {
-        const response = await fetch(`${config.API_BASE_URL}`, {
+        const response = await fetch(config.endpoints.jobs.base, {
             headers: getHeaders()
         });
         if (!response.ok) throw new Error('Failed to fetch jobs');
@@ -124,7 +124,7 @@ export const getAllJobs = async () => {
 
 export const getJobById = async (id) => {
     try {
-        const response = await fetch(`${config.API_BASE_URL}/${id}`, {
+        const response = await fetch(config.endpoints.jobs.byId(id), {
             headers: getHeaders()
         });
         if (!response.ok) throw new Error('Failed to fetch job');
@@ -158,7 +158,7 @@ export const searchJobs = async (criteria) => {
         if (criteria.location) params.append('location', criteria.location);
         // Add other criteria as needed
 
-        const response = await fetch(`${config.API_BASE_URL}/search?${params.toString()}`, {
+        const response = await fetch(`${config.endpoints.jobs.search}?${params.toString()}`, {
             headers: getHeaders()
         });
         if (!response.ok) throw new Error('Failed to search jobs');
@@ -179,7 +179,7 @@ export const searchJobs = async (criteria) => {
 
 export const getLatestJobs = async () => {
     try {
-        const response = await fetch(`${config.API_BASE_URL}/latest`, {
+        const response = await fetch(config.endpoints.jobs.latest, {
             headers: getHeaders()
         });
         if (!response.ok) throw new Error('Failed to fetch latest jobs');
@@ -194,7 +194,7 @@ export const getLatestJobs = async () => {
 };
 
 export const updateJob = async (id, jobData) => {
-    const response = await fetch(`${config.API_BASE_URL}/${id}`, {
+    const response = await fetch(config.endpoints.jobs.byId(id), {
         method: 'PUT',
         headers: getHeaders(),
         body: JSON.stringify(jobData),
@@ -205,7 +205,7 @@ export const updateJob = async (id, jobData) => {
 };
 
 export const deleteJob = async (id) => {
-    const response = await fetch(`${config.API_BASE_URL}/${id}`, {
+    const response = await fetch(config.endpoints.jobs.byId(id), {
         method: 'DELETE',
         headers: getHeaders(),
     });

@@ -1,4 +1,4 @@
-import config from '../config';
+import config from '../../../config/apiConfig';
 import { getToken } from './authService';
 
 const getHeaders = () => {
@@ -147,7 +147,7 @@ export const createTopic = async (data) => {
 
 export const updateTopic = async (id, data) => {
     const payload = { ...data, id };
-    const response = await fetch(`${config.endpoints.topics.base}/${id}`, {
+    const response = await fetch(config.endpoints.topics.byId(id), {
         method: 'PUT',
         headers: getHeaders(),
         body: JSON.stringify(payload)
@@ -157,7 +157,7 @@ export const updateTopic = async (id, data) => {
 };
 
 export const deleteTopic = async (id) => {
-    const response = await fetch(`${config.endpoints.topics.base}/${id}`, {
+    const response = await fetch(config.endpoints.topics.byId(id), {
         method: 'DELETE',
         headers: getHeaders()
     });
@@ -216,7 +216,7 @@ export const createQuestion = async (data) => {
 
 export const updateQuestion = async (id, data) => {
     const payload = { ...data, id };
-    const response = await fetch(`${config.endpoints.interviewQuestions.base}/${id}`, {
+    const response = await fetch(config.endpoints.interviewQuestions.byId(id), {
         method: 'PUT',
         headers: getHeaders(),
         body: JSON.stringify(payload)
@@ -226,7 +226,7 @@ export const updateQuestion = async (id, data) => {
 };
 
 export const deleteQuestion = async (id) => {
-    const response = await fetch(`${config.endpoints.interviewQuestions.base}/${id}`, {
+    const response = await fetch(config.endpoints.interviewQuestions.byId(id), {
         method: 'DELETE',
         headers: getHeaders()
     });
@@ -285,7 +285,7 @@ export const updateResource = async (id, data) => {
         url: `${config.endpoints.learningResources.base}/${id}`,
         payload: payload
     });
-    const response = await fetch(`${config.endpoints.learningResources.base}/${id}`, {
+    const response = await fetch(config.endpoints.learningResources.byId(id), {
         method: 'PUT',
         headers: getHeaders(),
         body: JSON.stringify(payload)
@@ -298,7 +298,7 @@ export const updateResource = async (id, data) => {
 };
 
 export const deleteResource = async (id) => {
-    const response = await fetch(`${config.endpoints.learningResources.base}/${id}`, {
+    const response = await fetch(config.endpoints.learningResources.byId(id), {
         method: 'DELETE',
         headers: getHeaders()
     });
@@ -338,7 +338,7 @@ export const getAllQuizzes = async (page = 0, size = 10, tag = '') => {
 
 export const getQuizById = async (id) => {
     try {
-        const response = await fetch(`${config.endpoints.quizzes.base}/${id}`, { headers: getHeaders() });
+        const response = await fetch(config.endpoints.quizzes.byId(id), { headers: getHeaders() });
         if (!response.ok) throw new Error('Failed to fetch quiz');
         return await response.json();
     } catch (error) {
@@ -359,7 +359,7 @@ export const createQuiz = async (data) => {
 
 export const updateQuiz = async (id, data) => {
     const payload = { ...data, id };
-    const response = await fetch(`${config.endpoints.quizzes.base}/${id}`, {
+    const response = await fetch(config.endpoints.quizzes.byId(id), {
         method: 'PUT',
         headers: getHeaders(),
         body: JSON.stringify(payload)
@@ -369,7 +369,7 @@ export const updateQuiz = async (id, data) => {
 };
 
 export const deleteQuiz = async (id) => {
-    const response = await fetch(`${config.endpoints.quizzes.base}/${id}`, {
+    const response = await fetch(config.endpoints.quizzes.byId(id), {
         method: 'DELETE',
         headers: getHeaders()
     });

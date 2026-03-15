@@ -1,78 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import '../PhotoEditor.css';
-import {
-    Heart, Gift, Gem, Home, Building2, CalendarDays,
-    ImageIcon, Wallpaper, Globe, ArrowRight
-} from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 import { useNavigate } from 'react-router-dom';
-
-export const services = [
-    {
-        id: 'wedding-invitations',
-        Icon: Heart,
-        title: 'Wedding Invitations',
-        desc: 'Elegant, timeless wedding suites — save-the-dates, full invitation cards, digital & print-ready. Luxury typography meets your love story.',
-        cta: 'Order Now',
-    },
-    {
-        id: 'birthday-invitations',
-        Icon: Gift,
-        title: 'Birthday Invitations',
-        desc: 'Vibrant, personalised birthday cards and e-invites. Fun or formal — every theme, any age, any style you imagine.',
-        cta: 'Create Yours',
-    },
-    {
-        id: 'engagement-invitations',
-        Icon: Gem,
-        title: 'Engagement Invitations',
-        desc: 'Celebrate the big "Yes!" with sophisticated engagement invitations. Romantic designs that capture the joy of the moment.',
-        cta: 'Design Now',
-    },
-    {
-        id: 'housewarming-invitations',
-        Icon: Home,
-        title: 'Housewarming Invitations',
-        desc: 'Warm, welcoming invites for your new home celebration. Charming illustrations and clean layouts that set the perfect tone.',
-        cta: 'Get Started',
-    },
-    {
-        id: 'corporate-invitations',
-        Icon: Building2,
-        title: 'Corporate Invitations',
-        desc: 'Polished, brand-aligned corporate event invitations for product launches, conferences, and annual functions.',
-        cta: 'Explore',
-    },
-    {
-        id: 'custom-event-cards',
-        Icon: CalendarDays,
-        title: 'Custom Event Cards',
-        desc: "Baby showers, anniversaries, graduations — any occasion. Tell us your vision and we'll craft a one- of - a - kind invite.",
-        cta: 'Customise',
-    },
-    {
-        id: 'banners-posters',
-        Icon: ImageIcon,
-        title: 'Banners & Posters',
-        desc: 'High-impact social media banners, YouTube channel art, event posters, and promotional flyers that demand attention.',
-        cta: 'Order Banner',
-    },
-    {
-        id: 'wallpaper-design',
-        Icon: Wallpaper,
-        title: 'Wallpaper Design',
-        desc: 'Stunning desktop and mobile wallpapers — abstract art, brand-themed, motivational quotes, or completely custom.',
-        cta: 'Get Wallpaper',
-    },
-    {
-        id: 'website-development',
-        Icon: Globe,
-        title: 'Website Development',
-        desc: 'Custom full-stack websites that are fast, responsive, and brand-aligned. From landing pages to complex web apps.',
-        cta: 'Build Site',
-    },
-];
+import { services } from '../../../config/photoEditorData';
 
 const card = {
     hidden: { opacity: 0, y: 36 },

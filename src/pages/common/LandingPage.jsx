@@ -6,8 +6,8 @@ import {
     Zap, Shield, Cpu, Code2, Sparkles, Star, Users, Database, Layout, Smartphone,
     Code, Activity, Terminal, Hash, Layers, CheckCircle2, Rocket, PiggyBank, FileText
 } from 'lucide-react';
-import { incrementVisitorCount } from '../apps/job-portal/services/analyticsService';
-import '../styles/LandingPage.css';
+import { incrementVisitorCount } from '../../apps/job-portal/services/analyticsService';
+import '../../styles/LandingPage.css';
 
 const FloatingSymbols = () => {
     const symbols = [

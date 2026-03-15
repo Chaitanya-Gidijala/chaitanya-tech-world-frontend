@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import Hero from './components/Hero';
-import Services from './components/Services';
 import Portfolio from './components/Portfolio';
 import WebDev from './components/WebDev';
 import Process from './components/Process';
@@ -35,7 +34,6 @@ const Home = () => {
             />
 
             <Hero />
-            <Services />
             <Portfolio />
             <WebDev />
             <Process />

@@ -5,15 +5,15 @@ import {
     ArrowLeft, Star, CheckCircle2, Sparkles, Clock, Award,
     Shield, Zap, ArrowRight, Phone, Mail, X, ChevronLeft, ChevronRight,
     Heart, Gift, Gem, Home, Building2, CalendarDays, ImageIcon, Wallpaper, Globe,
-    Layers, Palette, Printer, Package, MessageSquare, Users, Eye, Download
+    Layers, Palette, Printer, Package, MessageSquare, Users, Eye, Download,
+    ShoppingCart, Utensils, PenTool, CreditCard
 } from 'lucide-react';
-import { services } from './Services';
-import { projects } from './Portfolio';
+import { services, projects } from '../../../config/photoEditorData';
 import '../PhotoEditor.css';
 
 /* ── Per‑service rich data ──────────────────────────────── */
 const SERVICE_DATA = {
-    'engagement-invitations': {
+    'engagement-invitations-cards': {
         tagline: 'Celebrate the Big "Yes!"',
         heroImg: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1920&q=80',
         accentColor: '#e91e8c',
@@ -27,9 +27,9 @@ const SERVICE_DATA = {
             { icon: Eye, title: 'Unlimited Previews', desc: 'Review and request changes until every detail is perfect.' },
         ],
         packages: [
-            { name: 'Classic', price: '₹499', features: ['1 Design Concept', 'Print-Ready PDF', '3 Revisions', '48-hr Delivery'], popular: false },
-            { name: 'Premium', price: '₹999', features: ['3 Design Concepts', 'Print + Digital Files', 'Unlimited Revisions', '24-hr Delivery', 'Matching RSVP Card'], popular: true },
-            { name: 'Luxury', price: '₹1,999', features: ['5 Concepts + Mockups', 'Full Suite (Invite, RSVP, Thank-You)', 'Priority Support', 'Same-Day Delivery', 'Social Media Kit'], popular: false },
+            { name: 'Classic', price: '₹299', features: ['1 Design Concept', 'Print-Ready PDF', '3 Revisions', '48-hr Delivery'], popular: false },
+            { name: 'Premium', price: '₹499', features: ['3 Design Concepts', 'Print + Digital Files', 'Unlimited Revisions', '24-hr Delivery', 'Matching RSVP Card'], popular: true },
+            { name: 'Luxury', price: '₹999', features: ['5 Concepts + Mockups', 'Full Suite (Invite, RSVP, Thank-You)', 'Priority Support', 'Same-Day Delivery', 'Social Media Kit'], popular: false },
         ],
         gallery: [
             'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=800&q=80',
@@ -47,7 +47,7 @@ const SERVICE_DATA = {
             { q: 'What formats do I receive?', a: 'Print-ready PDF (300 DPI) and web-optimised JPG/PNG for digital sharing.' },
         ],
     },
-    'wedding-invitations': {
+    'wedding-invitations-cards': {
         tagline: 'Begin Forever in Style',
         heroImg: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1920&q=80',
         accentColor: '#c8822a',
@@ -61,9 +61,9 @@ const SERVICE_DATA = {
             { icon: Package, title: 'Complete Stationery', desc: 'Menu cards, table numbers, program booklets — we do it all.' },
         ],
         packages: [
-            { name: 'Intimate', price: '₹799', features: ['1 Invite Design', 'Digital PDF', '3 Revisions', '48-hr Delivery'], popular: false },
-            { name: 'Grand', price: '₹1,799', features: ['3 Concepts', 'Full Print Suite', 'Unlimited Revisions', '24-hr Delivery', 'Envelope Liner Design'], popular: true },
-            { name: 'Royal', price: '₹3,499', features: ['Complete Wedding Suite', '5 Concepts + Mockups', 'Priority Support', 'Same-Day Delivery', 'Social Media Set'], popular: false },
+            { name: 'Intimate', price: '₹399', features: ['1 Invite Design', 'Digital PDF', '3 Revisions', '48-hr Delivery'], popular: false },
+            { name: 'Grand', price: '₹799', features: ['3 Concepts', 'Full Print Suite', 'Unlimited Revisions', '24-hr Delivery', 'Envelope Liner Design'], popular: true },
+            { name: 'Royal', price: '₹1,499', features: ['Complete Wedding Suite', '5 Concepts + Mockups', 'Priority Support', 'Same-Day Delivery', 'Social Media Set'], popular: false },
         ],
         gallery: [
             'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80',
@@ -80,7 +80,7 @@ const SERVICE_DATA = {
             { q: 'Do you design for Indian weddings?', a: 'Absolutely — traditional, fusion, or modern minimalist, we handle all cultural styles.' },
         ],
     },
-    'birthday-invitations': {
+    'birthday-invitations-cards': {
         tagline: 'Make Every Birthday Unforgettable',
         heroImg: 'https://images.unsplash.com/photo-1530103862676-de8892ebeea0?auto=format&fit=crop&w=1920&q=80',
         accentColor: '#7c3aed',
@@ -94,9 +94,9 @@ const SERVICE_DATA = {
             { icon: Eye, title: 'Free Preview', desc: 'See your design before paying the remainder.' },
         ],
         packages: [
-            { name: 'Fun', price: '₹299', features: ['1 Design', 'Digital JPG', '2 Revisions', '48-hr Delivery'], popular: false },
-            { name: 'Party', price: '₹699', features: ['3 Designs', 'Print + Digital', 'Unlimited Revisions', '24-hr Delivery', 'Matching Banner'], popular: true },
-            { name: 'Bash', price: '₹1,299', features: ['5 Concepts', 'Full Party Kit', 'Priority Queue', 'Same-Day', 'Social Media Story Set'], popular: false },
+            { name: 'Fun', price: '₹99', features: ['1 Design', 'Digital JPG', '2 Revisions', '48-hr Delivery'], popular: false },
+            { name: 'Party', price: '₹299', features: ['3 Designs', 'Print + Digital', 'Unlimited Revisions', '24-hr Delivery', 'Matching Banner'], popular: true },
+            { name: 'Bash', price: '₹499', features: ['5 Concepts', 'Full Party Kit', 'Priority Queue', 'Same-Day', 'Social Media Story Set'], popular: false },
         ],
         gallery: [
             'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=800&q=80',
@@ -113,7 +113,7 @@ const SERVICE_DATA = {
             { q: 'What file formats do I get?', a: 'JPG for WhatsApp sharing, PDF for printing, PNG with transparent background.' },
         ],
     },
-    'housewarming-invitations': {
+    'housewarming-invitations-cards': {
         tagline: 'Welcome Guests to Your New Chapter',
         heroImg: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1920&q=80',
         accentColor: '#059669',
@@ -127,9 +127,9 @@ const SERVICE_DATA = {
             { icon: Eye, title: 'Preview First', desc: 'Approve a proof before we send the final files.' },
         ],
         packages: [
-            { name: 'Cosy', price: '₹399', features: ['1 Design', 'Digital PDF', '3 Revisions', '48-hr Delivery'], popular: false },
-            { name: 'Warm', price: '₹799', features: ['3 Designs', 'Print + Digital', 'Unlimited Revisions', '24-hr Delivery', 'Direction Card'], popular: true },
-            { name: 'Grand', price: '₹1,499', features: ['Complete Suite', '5 Concepts', 'Priority Support', 'Same-Day', 'Social Story Set'], popular: false },
+            { name: 'Cosy', price: '₹99', features: ['1 Design', 'Digital PDF', '3 Revisions', '48-hr Delivery'], popular: false },
+            { name: 'Warm', price: '₹199', features: ['3 Designs', 'Print + Digital', 'Unlimited Revisions', '24-hr Delivery', 'Direction Card'], popular: true },
+            { name: 'Grand', price: '₹399', features: ['Complete Suite', '5 Concepts', 'Priority Support', 'Same-Day', 'Social Story Set'], popular: false },
         ],
         gallery: [
             'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
@@ -145,7 +145,7 @@ const SERVICE_DATA = {
             { q: 'Can I include a map or directions?', a: 'Yes! Direction cards and location maps can be added on Warm and Grand plans.' },
         ],
     },
-    'corporate-invitations': {
+    'corporate-invitations-cards': {
         tagline: 'Impress Clients & Stakeholders',
         heroImg: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1920&q=80',
         accentColor: '#1e40af',
@@ -159,8 +159,8 @@ const SERVICE_DATA = {
             { icon: Clock, title: 'Deadline-Driven', desc: 'Corporate timelines respected — no exceptions.' },
         ],
         packages: [
-            { name: 'Standard', price: '₹999', features: ['1 Invite Design', 'Brand Aligned', '3 Revisions', '48-hr Delivery'], popular: false },
-            { name: 'Business', price: '₹2,499', features: ['3 Concepts', 'Full Event Kit', 'Unlimited Revisions', '24-hr Delivery', 'Email Banner'], popular: true },
+            { name: 'Standard', price: '₹499', features: ['1 Invite Design', 'Brand Aligned', '3 Revisions', '48-hr Delivery'], popular: false },
+            { name: 'Business', price: '₹1,499', features: ['3 Concepts', 'Full Event Kit', 'Unlimited Revisions', '24-hr Delivery', 'Email Banner'], popular: true },
             { name: 'Enterprise', price: 'Custom', features: ['Full Brand Package', 'Dedicated Designer', 'Priority Support', 'Same-Day', 'NDA Included'], popular: false },
         ],
         gallery: [
@@ -224,7 +224,7 @@ const SERVICE_DATA = {
             { icon: Eye, title: 'Brand-Safe', desc: 'On-brand colours and messaging, every time.' },
         ],
         packages: [
-            { name: 'Single', price: '₹399', features: ['1 Banner/Poster', 'Any Size', '3 Revisions', '48-hr Delivery'], popular: false },
+            { name: 'Single', price: '₹199', features: ['1 Banner/Poster', 'Any Size', '3 Revisions', '48-hr Delivery'], popular: false },
             { name: 'Campaign', price: '₹999', features: ['5 Creatives', 'Print + Social', 'Unlimited Revisions', '24-hr Delivery', 'Brand Consistency'], popular: true },
             { name: 'Full Kit', price: '₹1,999', features: ['Unlimited Creatives', 'All Platforms', 'Priority Queue', 'Same-Day', 'Source Files'], popular: false },
         ],
@@ -288,7 +288,7 @@ const SERVICE_DATA = {
             { icon: Clock, title: 'Agile Delivery', desc: 'Sprint-based development with weekly demos.' },
         ],
         packages: [
-            { name: 'Landing', price: '₹4,999', features: ['Single Page Site', 'Mobile Responsive', 'Contact Form', '7-day Delivery'], popular: false },
+            { name: 'Landing', price: '₹3,999', features: ['Single Page Site', 'Mobile Responsive', 'Contact Form', '7-day Delivery'], popular: false },
             { name: 'Business', price: '₹14,999', features: ['5-Page Site', 'CMS Integration', 'SEO Setup', '14-day Delivery', 'Analytics'], popular: true },
             { name: 'Enterprise', price: 'Custom', features: ['Full Web App', 'API Integrations', 'Auth System', 'Dedicated PM', '90-day Support'], popular: false },
         ],
@@ -305,6 +305,138 @@ const SERVICE_DATA = {
         faq: [
             { q: 'Do you provide hosting?', a: 'Yes, we can assist with Vercel, Netlify or VPS hosting setup.' },
             { q: 'Will the site be mobile friendly?', a: 'Every site is 100% mobile-first responsive.' },
+        ],
+    },
+    'shopping-applications': {
+        tagline: 'E-Commerce Built for Growth',
+        heroImg: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1920&q=80',
+        accentColor: '#10b981',
+        accentGradient: 'linear-gradient(135deg,#10b981,#34d399)',
+        features: [
+            { icon: ShoppingCart, title: 'Seamless UI', desc: 'Intuitive user flows that reduce cart abandonment.' },
+            { icon: Zap, title: 'High Performance', desc: 'Fast loading times essential for mobile shoppers.' },
+            { icon: Shield, title: 'Secure Checkouts', desc: 'Designed to integrate with industry-standard payment gateways.' },
+            { icon: Palette, title: 'Brand Focused', desc: 'Custom tailored aesthetics that build trust and loyalty.' },
+            { icon: Package, title: 'Inventory Management', desc: 'Clear layouts for products, variations, and filtering.' },
+            { icon: Eye, title: 'Conversion Optimized', desc: 'Strategic placement of CTAs and trust signals.' },
+        ],
+        packages: [
+            { name: 'Starter', price: '₹9,999', features: ['UI/UX Design', 'Up to 10 Screens', 'Mobile Responsive', '14-day Delivery'], popular: false },
+            { name: 'Pro', price: '₹24,999', features: ['Full App Design', 'Prototyping', 'Design System', '30-day Delivery', 'Dark Mode'], popular: true },
+            { name: 'Enterprise', price: 'Custom', features: ['Complete Platform', 'User Research', 'Custom Animations', 'Dedicated Team', 'Priority Support'], popular: false },
+        ],
+        gallery: [
+            'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1523206489230-c012c64b2b48?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1556741533-6e4a05e1a179?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&w=800&q=80',
+        ],
+        stats: [{ val: '50+', label: 'Apps Designed' }, { val: '4.9★', label: 'Rating' }, { val: '3x', label: 'Conversion Avg' }, { val: '100%', label: 'Responsive' }],
+        process: ['Wireframing', 'Visual Design', 'Prototyping', 'Handoff'],
+        faq: [
+            { q: 'Do you also develop the app?', a: 'Yes, we offer both UI/UX design and full-stack development services.' },
+            { q: 'Will I get the source files?', a: 'Absolutely, you will receive Figma/XD source files upon completion.' },
+        ],
+    },
+    'restaurant-branding': {
+        tagline: 'Appetizing Brand Identities',
+        heroImg: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80',
+        accentColor: '#f59e0b',
+        accentGradient: 'linear-gradient(135deg,#f59e0b,#fbbf24)',
+        features: [
+            { icon: Utensils, title: 'Menu Design', desc: 'Appetizing layous that highlight your best dishes.' },
+            { icon: Palette, title: 'Brand Vibe', desc: 'Colors and typography that match your culinary style.' },
+            { icon: ImageIcon, title: 'Social Media', desc: 'Mouth-watering templates for Instagram and Facebook.' },
+            { icon: Printer, title: 'Print Collateral', desc: 'Table tents, coasters, business cards, and flyers.' },
+            { icon: Eye, title: 'Food Photography Edits', desc: 'Enhancing your food photos to look their absolute best.' },
+            { icon: Building2, title: 'Signage', desc: 'Eye-catching outdoor and indoor signs.' },
+        ],
+        packages: [
+            { name: 'Bistro', price: '₹3,999', features: ['Menu Design', 'Logo Refinement', '2 Social Templates', '7-day Delivery'], popular: false },
+            { name: 'Restaurant', price: '₹12,999', features: ['Full Menu', 'Complete Brand Kit', 'Print Collateral', '14-day Delivery', 'Photo Edits'], popular: true },
+            { name: 'Franchise', price: 'Custom', features: ['Brand Guidelines', 'Multiple Formats', 'Signage Design', 'Priority Support', 'Full Suite'], popular: false },
+        ],
+        gallery: [
+            'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1521017430536-f84bcdf85ec1?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
+        ],
+        stats: [{ val: '120+', label: 'Restaurants' }, { val: '4.9★', label: 'Rating' }, { val: '100%', label: 'Delicious' }, { val: '5 yrs', label: 'Experience' }],
+        process: ['Tasting/Briefing', 'Concept Creation', 'Refinement', 'Final Delivery'],
+        faq: [
+            { q: 'Can you design digital menu boards?', a: 'Yes, we design for both print menus and digital displays.' },
+            { q: 'Do you take food photos?', a: 'We offer advanced photo editing for your existing food photography.' },
+        ],
+    },
+    'logo-designs': {
+        tagline: 'Timeless Brand Marks',
+        heroImg: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=1920&q=80',
+        accentColor: '#3b82f6',
+        accentGradient: 'linear-gradient(135deg,#3b82f6,#60a5fa)',
+        features: [
+            { icon: PenTool, title: 'Custom Vectors', desc: '100% original, scalable vector designs.' },
+            { icon: Palette, title: 'Color Psychology', desc: 'Strategic color selection to evoke the right emotions.' },
+            { icon: Layers, title: 'Versatile', desc: 'Looks great on a billboard or a business card.' },
+            { icon: Package, title: 'Brand Guidelines', desc: 'Rules for using your new logo correctly.' },
+            { icon: Download, title: 'All Formats', desc: 'AI, EPS, SVG, PNG, and JPG files included.' },
+            { icon: Shield, title: 'Full Ownership', desc: 'You retain full copyright of the final design.' },
+        ],
+        packages: [
+            { name: 'Startup', price: '₹999', features: ['2 Concepts', 'High-Res Files', '3 Revisions', '4-day Delivery'], popular: false },
+            { name: 'Business', price: '₹4,999', features: ['4 Concepts', 'Source Files', 'Unlimited Revisions', '7-day Delivery', 'Social Media Kit'], popular: true },
+            { name: 'Brand', price: '₹6,999', features: ['6 Concepts', 'Brand Book', 'Stationery Design', 'Priority Support', 'Full Rights'], popular: false },
+        ],
+        gallery: [
+            'https://images.unsplash.com/photo-1629904853716-f0bc54fea4fc?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=800&q=80',
+        ],
+        stats: [{ val: '500+', label: 'Logos Crafted' }, { val: '4.8★', label: 'Rating' }, { val: '4 days', label: 'Avg Turnaround' }, { val: '100%', label: 'Vector' }],
+        process: ['Discovery', 'Sketching', 'Vectorizing', 'Finalizing'],
+        faq: [
+            { q: 'Will I get the vector source files?', a: 'Yes, source files (AI/EPS) are included in Business and Brand packages.' },
+            { q: 'Can you refresh my existing logo?', a: 'Absolutely, we offer logo modernization and refinement services.' },
+        ],
+    },
+    'business-cards': {
+        tagline: 'Leave a Lasting Impression',
+        heroImg: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=1920&q=80',
+        accentColor: '#111827',
+        accentGradient: 'linear-gradient(135deg,#1f2937,#4b5563)',
+        features: [
+            { icon: CreditCard, title: 'Premium Layouts', desc: 'Minimalist, luxury, or highly creative designs.' },
+            { icon: Printer, title: 'Print-Ready', desc: 'Perfectly sized with bleed and crop marks.' },
+            { icon: Layers, title: 'Double-Sided', desc: 'Make use of the front and back for maximum impact.' },
+            { icon: Star, title: 'Special Finishes', desc: 'Designed with foil-stamping and spot-UV in mind.' },
+            { icon: Users, title: 'Team Packages', desc: 'Consistent designs for your entire organization.' },
+            { icon: Download, title: 'Digital Cards', desc: 'vCard or digital alternatives for networking.' },
+        ],
+        packages: [
+            { name: 'Basic', price: '₹499', features: ['1 Concept', 'Single-Sided', 'Print-Ready PDF', '2-day Delivery'], popular: false },
+            { name: 'Professional', price: '₹1,999', features: ['3 Concepts', 'Double-Sided', 'Unlimited Revisions', '3-day Delivery', 'Source Files'], popular: true },
+            { name: 'Corporate', price: '₹4,999', features: ['Up to 10 Employees', 'Luxury Concepts', 'Priority Delivery', 'Digital vCard', 'Full Suite'], popular: false },
+        ],
+        gallery: [
+            'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1505356822725-08ad25f3ffe4?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1614713568393-db826a7e0892?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1572044162444-ad60f128bdea?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1563214539-775b81ae2cc1?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=800&q=80',
+        ],
+        stats: [{ val: '2,000+', label: 'Cards Designed' }, { val: '4.9★', label: 'Rating' }, { val: '48 hr', label: 'Delivery' }, { val: '100%', label: 'Professional' }],
+        process: ['Details Gathering', 'Layout Design', 'Revisions', 'Print Files Sent'],
+        faq: [
+            { q: 'Do you offer printing services?', a: 'We provide print-ready files that you can take to any professional printer.' },
+            { q: 'Can you design a logo for my card?', a: 'Logo design is a separate service, but we can bundle it if needed.' },
         ],
     },
 };

@@ -5,7 +5,7 @@ import {
     Camera, Wallet, Globe, Map, Github, Brain,
     Briefcase, Sparkles, ExternalLink, Phone, Heart, FileText
 } from 'lucide-react';
-import { profileConfig } from '../config/profileConfig';
+import { profileConfig } from '../../config/profileConfig';
 import './LandingFooter.css';
 
 /* ──────────────────────────────────────────────
