@@ -160,10 +160,7 @@ const AdminHeader = ({ user, onLogout, sidebarOpen, onToggleSidebar }) => {
                         justify-content: center;
                     }
                     .navbar-branding span {
-                        font-size: 0.95rem !important;
-                    }
-                    .navbar-branding span span {
-                        display: none; /* Hide 'ADMIN' text on very small screens to save space */
+                        display: none; /* Hide brand name on mobile to save space */
                     }
                     .header-left-group {
                         gap: 0.5rem !important;

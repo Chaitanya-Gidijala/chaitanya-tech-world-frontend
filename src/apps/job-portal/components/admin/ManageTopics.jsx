@@ -151,6 +151,19 @@ const ManageTopics = ({ refreshTrigger }) => {
                         <div className="adm-field">
                             <label className="adm-label">Icon (Emoji)</label>
                             <input value={formData.icon} onChange={e => setFormData({...formData, icon: e.target.value})} placeholder="e.g. 🍃" className="adm-input" />
+                            <div className="adm-emoji-picker" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.6rem', padding: '0.6rem', background: 'var(--jp-bg-secondary)', borderRadius: '8px' }}>
+                                {['⚛️', '🍃', '☕', '🟨', '🔷', '🟢', '🐍', '🐳', '☸️', '☁️', '🗄️', '📱', '🌐', '🧪', '🛡️', '⚙️', '🦀', '🍎', '🐧', '🔥', '🚀', '🎨'].map(e => (
+                                    <button
+                                        key={e}
+                                        type="button"
+                                        onClick={() => setFormData({...formData, icon: e})}
+                                        style={{ fontSize: '1.2rem', padding: '0.4rem', border: '1px solid var(--jp-border)', background: 'var(--jp-card-bg)', borderRadius: '6px', cursor: 'pointer' }}
+                                        title="Click to select"
+                                    >
+                                        {e}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                         <div className="adm-modal-footer" style={{padding:0,border:'none',justifyContent:'flex-end'}}>
                             <button type="button" onClick={() => setViewMode('list')} className="adm-btn adm-btn-secondary"><X size={15} /> Cancel</button>

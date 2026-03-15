@@ -1061,6 +1061,7 @@
     transition: var(--adm-transition);
     box-sizing: border-box;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .adm-input:focus {
@@ -1391,7 +1392,7 @@
     gap: 1.125rem;
 }
 
-.adm-progress-item {}
+
 
 .adm-progress-meta {
     display: flex;
@@ -1475,7 +1476,7 @@
     gap: 1rem;
 }
 
-.adm-setting-info {}
+
 .adm-setting-name {
     font-size: 0.875rem;
     font-weight: 600;
@@ -2371,7 +2372,7 @@ table.adm-table > tbody { display: table-row-group; }
     }
 
     .adm-topbar-brand-name {
-        font-size: 0.875rem;
+        display: none;
     }
 
     .adm-topbar-logout span, .adm-topbar-logout {
