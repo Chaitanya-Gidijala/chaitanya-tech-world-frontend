@@ -1,0 +1,96 @@
+CHAITANYA GIDIJALA
+Srikakulam, Andhra Pradesh - 532168 | +91-73370-72766
+chaitugidijala@gmail.com | LinkedIn | GitHub
+
+JAVA FULL STACK DEVELOPER
+
+PROFESSIONAL SUMMARY
+Java Full Stack Developer with 2 years of experience building enterprise-scale applications using Java, Spring Boot, and modern web technologies. Proven expertise in developing microservices architectures, RESTful APIs, and containerized applications deployed on Docker and Kubernetes. Strong background in backend development with Spring Boot, Hibernate/JPA, and MySQL, complemented by frontend experience in React, Bootstrap, and JavaScript. Adept at designing scalable solutions that improve system efficiency and reduce manual effort.
+
+TECHNICAL SKILLS
+• Languages: Java (Core, Advanced), JavaScript, TypeScript, SQL
+• Backend: Spring Boot, Spring MVC, Spring Data JPA, Hibernate, RESTful APIs, Microservices
+• Frontend: React, HTML5, CSS3, Bootstrap 5, Thymeleaf, JavaScript, ES6+
+• Databases: MySQL, JDBC, JPA
+• Integration: webMethods Integration Server, ESB, Adapters, Flow Services, Document Types
+• DevOps: Docker, Kubernetes, Helm, Jenkins, Ansible, Git, GitHub Actions
+• Tools: IntelliJ IDEA, Eclipse, VS Code, Postman, Swagger/OpenAPI, MySQL Workbench, SOAP UI
+• Concepts: Microservices Architecture, Design Patterns, OOP, Data Structures, Agile/Scrum
+
+PROFESSIONAL EXPERIENCE
+
+Software Developer | Capgemini                                                                                     August 2024 – Present
+Hyderabad, India
+
+Client: GE Aerospace - Enterprise Application Integration
+
+Spearheaded enterprise integration solutions connecting legacy and modern systems across multiple regions (US, UK, India), enabling seamless data exchange for global aerospace operations.
+
+Key Achievements:
+• Developed 15+ Flow Services and Document Types in webMethods Integration Server, reducing data transformation time by 40%
+• Built ESB-based integrations using Adapters and Triggers, enabling real-time communication between 8+ business applications
+• Implemented error handling and logging mechanisms, improving production issue resolution time by 60%
+• Automated deployment pipelines using webMethods Deployer, reducing manual deployment effort by 75%
+• Collaborated with cross-functional teams to deliver SOC2-compliant integration solutions meeting data governance standards
+
+Java Full Stack Developer | Capgemini                                                                           October 2024 – March 2025
+Pune, India
+
+Project: Capgemini Job Portal (Internal Enterprise Platform)
+
+Led full-stack development of an internal job portal connecting Capgemini recruiters with 5,000+ candidates, streamlining hiring workflows across delivery centers.
+
+Key Achievements:
+• Developed 6 microservices using Spring Boot for job postings, applications, resume parsing, and candidate management
+• Built responsive frontend using React, Bootstrap 5, and Thymeleaf, improving recruiter productivity by 45%
+• Designed RESTful APIs with 99.9% uptime, handling 2,000+ daily API requests from HR teams
+• Implemented JWT authentication with role-based access control (RBAC) for recruiters, candidates, and admins
+• Integrated MySQL database using Hibernate/JPA, reducing query response time by 50% through indexed queries
+• Containerized application using Docker and deployed on Kubernetes with Helm charts for auto-scaling
+• Created admin dashboard with real-time analytics for tracking applications, interview schedules, and hiring metrics
+• Implemented automated email notifications using JavaMail for application status updates
+
+PROJECTS
+
+
+AI Resume Builder | Personal Project
+• Built a React-based resume generator with PDF export functionality using jsPDF
+• Integrated Framer Motion for smooth animations and responsive UI components
+• Deployed on Vercel with CI/CD pipeline
+
+E-Commerce Photo Editor Platform | Personal Project
+• Developed a multi-service platform with React, React Router, and Bootstrap
+• Implemented dark/light theme toggle with localStorage persistence
+• Built gallery and portfolio sections with lazy loading and image optimization
+
+EDUCATION
+
+Master of Computer Applications (MCA)                                                     2024 – Present
+Andhra University, Visakhapatnam
+
+Bachelor of Science in Computer Science                                                   2019 – 2022
+Dr. B.R. Ambedkar University | Sri GCSR College, Rajam
+CGPA: 8.2/10.0
+
+Intermediate (MPC)                                                                                          2017 – 2019
+State Board Government Junior College, Rajam
+CGPA: 7.17/10.0
+
+SSC (Secondary School Certificate)                                                    2016 – 2017
+Zilla Parishad High School, Mandavakuriti
+CGPA: 8.2/10.0
+
+CERTIFICATIONS
+• webMethods OCEAN Certification Level 1 | Capgemini | 2025
+• Java OCEAN Certification Level 1 & 2 | Capgemini | 2025
+• Java Full Stack Development | Frontlines Media Edutech | 2023-2024
+• Core Java Development | Frontlines Media Edutech | 2023-2024
+
+LANGUAGES
+• English (Professional Fluency)
+• Telugu (Native)
+
+ADDITIONAL INFORMATION
+• Open Source: Active GitHub contributor with 10+ repositories
+• Continuous Learning: Currently pursuing MCA to deepen computer science fundamentals
+• Availability: Immediate joiner for full-time opportunities

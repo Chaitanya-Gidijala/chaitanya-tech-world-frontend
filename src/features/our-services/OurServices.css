@@ -1,0 +1,225 @@
+/* 
+   ctw- design system for Our Services page 
+   Premium Dark Luxury Aesthetics 
+*/
+
+:root {
+    --ctw-bg: #030014;
+    --ctw-card-bg: rgba(10, 10, 20, 0.7);
+    --ctw-border: rgba(255, 255, 255, 0.1);
+    --ctw-accent: #7c3aed;
+    --ctw-accent-secondary: #00d4ff;
+    --ctw-text: #ffffff;
+    --ctw-text-muted: #a0a0b0;
+    --ctw-gradient-main: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%);
+}
+
+.ctw-root {
+    background: var(--ctw-bg);
+    color: var(--ctw-text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding-top: 80px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Ambient Blobs */
+.ctw-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+    opacity: 0.15;
+    pointer-events: none;
+}
+.ctw-blob-1 { width: 500px; height: 500px; background: #7c3aed; top: -100px; right: -100px; }
+.ctw-blob-2 { width: 400px; height: 400px; background: #00d4ff; bottom: -50px; left: -50px; }
+.ctw-blob-3 { width: 300px; height: 300px; background: #ff00c8; top: 40%; left: 30%; }
+
+.ctw-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* NAV */
+.ctw-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 80px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+.ctw-nav--scrolled {
+    background: rgba(3, 0, 20, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--ctw-border);
+    height: 70px;
+}
+.ctw-nav__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 2rem;
+}
+.ctw-nav__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.ctw-nav__logo-icon {
+    font-size: 1.5rem;
+}
+.ctw-nav__links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    list-style: none;
+}
+.ctw-nav__link {
+    background: none;
+    border: none;
+    color: var(--ctw-text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.ctw-nav__link:hover { color: #fff; }
+
+/* HERO */
+.ctw-hero {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    padding: 6rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.ctw-hero__badge {
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 99px;
+    font-size: 0.875rem;
+    display: inline-flex;
+    margin-bottom: 1.5rem;
+}
+.ctw-hero__headline {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+}
+.ctw-hero__gradient {
+    background: var(--ctw-gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.ctw-hero__sub {
+    font-size: 1.25rem;
+    color: var(--ctw-text-muted);
+    max-width: 600px;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+}
+.ctw-hero__actions {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* CARDS */
+.ctw-service-card {
+    background: var(--ctw-card-bg);
+    border: 1px solid var(--ctw-border);
+    border-radius: 24px;
+    padding: 2.5rem;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+.ctw-service-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--card-color);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px var(--card-color);
+}
+.ctw-services__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+/* BUTTONS */
+.ctw-btn {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+}
+.ctw-btn--primary {
+    background: var(--ctw-gradient-main);
+    color: #fff;
+}
+.ctw-btn--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(124, 58, 237, 0.4);
+}
+.ctw-btn--ghost {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border: 1px solid var(--ctw-border);
+}
+
+/* Animations */
+.ctw-animate-in {
+    animation: ctw-fade-up 0.8s forwards ease-out;
+}
+@keyframes ctw-fade-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile responsive fixes */
+@media (max-width: 1024px) {
+    .ctw-hero { grid-template-columns: 1fr; text-align: center; }
+    .ctw-hero__headline { font-size: 3rem; }
+    .ctw-services__grid { grid-template-columns: repeat(2, 1fr); }
+    .ctw-nav__links { display: none; }
+}
+@media (max-width: 768px) {
+    .ctw-services__grid { grid-template-columns: 1fr; }
+}
+
+.ctw-whatsapp-float {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: #25d366;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: transform 0.3s;
+}
+.ctw-whatsapp-float:hover { transform: scale(1.1); }

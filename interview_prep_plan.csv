@@ -1,0 +1,57 @@
+Week,Day,Topic,Sub-topics,Date,Time Slot,Duration (Hours),Status
+Week 1,1,Core Java - Basics & OOPs,"Classes, Objects, Inheritance, Polymorphism, Abstraction, Encapsulation",20-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 1,2,Java Collections Framework,"List, Set, Map, HashMap internals, ConcurrentHashMap, FailFast iterators",21-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 1,3,Java 8+ Features,"Streams, Lambda, Functional Interfaces, Optional, Method References",22-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 1,4,Exception Handling & Multithreading,"Try-catch, Custom exceptions, Thread lifecycle, Sync, Volatile",23-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 1,5,Java Memory Management,"Heap, Stack, GC algorithms, Memory leaks, JVM tuning basics",24-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 1,6,JDBC & Database Connectivity,"Connection pooling, PreparedStatement, Transaction management",25-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 1,7,Week 1 Review + Mock Coding,50+ DSA problems revision,26-03-2026,7:00 AM - 10:00 AM,3,Not Started
+Week 2,8,Spring Framework Core,"IoC, DI, Bean lifecycle, ApplicationContext, Annotations",27-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 2,9,Spring Boot Fundamentals,"Auto-configuration, Starters, Actuator, Profiles, Externalized config",28-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 2,10,Spring Data JPA & Hibernate,"Entity mapping, Relationships, Caching, N+1 problem, Transactions",29-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 2,11,Spring REST APIs,"@RestController, RequestMapping, Exception handling, Validation",30-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 2,12,Spring Security,"Authentication, Authorization, JWT, OAuth2, RBAC",31-03-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 2,13,Spring Boot Testing,"@SpringBootTest, MockMvc, TestContainers, Integration tests",01-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 2,14,Week 2 Review + Mini Project,Build a CRUD API with Spring Boot + Security,02-04-2026,7:00 AM - 11:00 AM,4,Not Started
+Week 3,15,Microservices Fundamentals,"Monolith vs Microservices, Service decomposition, Domain-driven design",03-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 3,16,Service Communication,"REST, gRPC, Feign Client, Circuit Breaker pattern",04-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 3,17,Service Discovery & Config,"Eureka, Consul, Spring Cloud Config, Config Server",05-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 3,18,API Gateway Pattern,"Spring Cloud Gateway, Route filters, Rate limiting",06-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 3,19,Distributed Tracing,"Sleuth, Zipkin, Micrometer, Centralized logging",07-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 3,20,Resilience Patterns,"Retry, Fallback, Bulkhead, Timeout (Resilience4j)",08-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 3,21,Week 3 Review + Architecture Design,Design a microservices system for Job Portal,09-04-2026,7:00 AM - 11:00 AM,4,Not Started
+Week 4,22,MySQL Fundamentals,"Normalization, Indexes, Constraints, Keys",10-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 4,23,Advanced SQL Queries,"Joins, Subqueries, Window functions, CTEs",11-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 4,24,Query Optimization,"Execution plans, Index types, Query profiling",12-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 4,25,Transactions & Locking,"ACID properties, Isolation levels, Deadlocks",13-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 4,26,Hibernate Advanced,"L1/L2 cache, Fetch types, Lazy vs Eager",14-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 4,27,Database Design,"Schema design for microservices, Sharding basics",15-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 4,28,Week 4 Review + SQL Practice,30+ SQL query problems,16-04-2026,7:00 AM - 10:00 AM,3,Not Started
+Week 5,29,React Fundamentals,"JSX, Components, Props, State, Lifecycle",17-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 5,30,React Hooks,"useState, useEffect, useContext, useReducer, useMemo, useCallback",18-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 5,31,React Router,"v6/v7 routing, Protected routes, Lazy loading",19-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 5,32,State Management,"Context API, Redux Toolkit (basics)",20-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 5,33,API Integration,"Axios, Fetch, Error handling, Loading states",21-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 5,34,UI/UX with Bootstrap,"Responsive design, Grid system, Components",22-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 5,35,Week 5 Review + React Project,Build a dashboard with CRUD operations,23-04-2026,7:00 AM - 11:00 AM,4,Not Started
+Week 6,36,Docker Fundamentals,"Images, Containers, Dockerfile, Multi-stage builds",24-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 6,37,Docker Compose,"Services, Networks, Volumes, Environment configs",25-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 6,38,Kubernetes Basics,"Pods, Deployments, Services, ReplicaSets",26-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 6,39,Kubernetes Advanced,"ConfigMaps, Secrets, Ingress, HPA",27-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 6,40,Helm Charts,"Chart structure, Values, Templates, Release management",28-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 6,41,CI/CD with Jenkins,"Pipelines, Stages, Agents, Shared libraries",29-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 6,42,GitHub Actions,"Workflows, Jobs, Steps, Secrets, Caching",30-04-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 6,43,Week 6 Review + Dockerize Project,Containerize your Spring Boot + React app,01-05-2026,7:00 AM - 11:00 AM,4,Not Started
+Week 7,44,webMethods Integration,"Flow Services, Document Types, Adapters",02-05-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 7,45,ESB Patterns,"Message routing, Transformation, Orchestration",03-05-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 7,46,API Management,"REST/SOAP, WSDL, Swagger, Rate limiting",04-05-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 7,47,System Design Fundamentals,"Load balancing, Caching, CDN, DB replication",05-05-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 7,48,System Design Patterns,"Leader election, Consensus, CAP theorem",06-05-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 7,49,Low-Level Design,"Design patterns (Singleton, Factory, Strategy, Observer)",07-05-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 7,50,Week 7 Review + Design Practice,"Design URL shortener, Chat system",08-05-2026,7:00 AM - 11:00 AM,4,Not Started
+Week 8,51,DSA Problem Solving,"Arrays, Strings, HashMaps (Top 20 problems)",09-05-2026,7:00 AM - 10:00 AM,3,Not Started
+Week 8,52,DSA Problem Solving,"Linked List, Trees, Graphs (Top 20 problems)",10-05-2026,7:00 AM - 10:00 AM,3,Not Started
+Week 8,53,Behavioral Questions,"STAR method, Project deep-dive, Conflict resolution",11-05-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 8,54,Resume & Project Prep,"Explain your projects, Challenges faced, Impact metrics",12-05-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 8,55,Mock Interview 1,Technical round (Java + Spring Boot),13-05-2026,7:00 AM - 9:00 AM,2,Not Started
+Week 8,56,Mock Interview 2,System Design + DevOps + Behavioral,14-05-2026,7:00 AM - 9:00 AM,2,Not Started

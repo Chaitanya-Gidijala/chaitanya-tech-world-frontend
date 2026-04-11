@@ -1,0 +1,83 @@
+KANISHKA PRAMUDULA
+================================================================================
+Srikakulam, A.P-532168 | +91-7093020429 | kanipramudula@gmail.com | LinkedIn
+
+PROFESSIONAL SUMMARY
+--------------------------------------------------------------------------------
+Production Support Engineer with 3.5+ years driving 24/7 operational excellence for Citi Bank's critical banking infrastructure. Reduced MTTR by 40% through systematic root cause analysis. Maintained 99.8% system availability across 50+ business-critical applications. Recognized with 3 internal awards for leading high-severity incident resolution under extreme pressure. Trusted liaison between clients, vendors, and technical teams during mission-critical outages affecting millions in daily transactions.
+
+PROFESSIONAL EXPERIENCE
+--------------------------------------------------------------------------------
+SOFTWARE ENGINEER - LTIMINDTREE
+October 2022 - Present | Hyderabad
+Client: Citi Bank | Investment Banking Division
+
+Incident Management & Resolution
+• Resolved 200+ monthly incidents with 95% within SLA, maintaining zero critical SLA breaches across 3 years
+• Led bridge calls for 15+ high-severity P1 incidents, achieving average MTTR of 45 minutes vs. 75-minute baseline
+• Performed 50+ root cause analyses, preventing recurring outages and reducing incident volume by 30% year-over-year
+• Managed escalations with 10+ external vendors (Bloomberg, Reuters, DTCC, Morgan Stanley, ASX, LSE, TRACE), reducing vendor response time by 25%
+
+System Availability & Monitoring
+• Monitored 50+ Autosys jobs nightly, achieving 99.8% batch success rate and zero missed business-critical deadlines
+• Executed 300+ change requests via UDeploy with 100% success rate, zero production rollbacks
+• Implemented health check protocols that reduced proactive issue detection time by 60%, preventing downstream business impact
+
+Client & Stakeholder Management
+• Served as primary client communication point during P1/P2 incidents, providing real-time updates to 20+ stakeholders
+• Built trust-based relationships with Citi Bank clients, earning 3 formal appreciation recognitions for crisis handling
+• Documented runbooks for 100+ common issues, reducing L1 resolution time by 35%
+
+AWARDS & RECOGNITION
+--------------------------------------------------------------------------------
+Team Player Award (2025)    - Resolved P1 incident during market hours in 30 minutes
+Super Crew Award (2024)     - Managed vendor coordination during $2B+ daily settlement outage
+Super Crew Award (2025)     - Led 4-vendor bridge, restored service 40% faster than SLA
+
+TECHNICAL SKILLS
+--------------------------------------------------------------------------------
+Monitoring & Automation     Autosys, ITRS Geneos, ServiceNow
+Databases                  Oracle SQL, MS SQL Server
+Operating Systems          UNIX/Linux, Windows
+Deployment Tools           UDeploy, Tectia SSH
+ITIL Processes             Incident Management, Change Management, Problem Management
+
+DOMAIN EXPERTISE
+--------------------------------------------------------------------------------
+Investment Banking Operations
+• Settlement systems (DTCC, ASX, LSE connectivity)
+• Market data feeds (Bloomberg, Reuters real-time data)
+• Trade lifecycle management
+• Regulatory reporting (TRACE, transaction reporting)
+
+EDUCATION
+--------------------------------------------------------------------------------
+Master of Computer Applications (MCA)                    In Progress
+Andhra University, Vishakhapatnam
+
+Bachelor's Degree - Computer Science                      2019 - 2022
+Dr. B.R. Ambedkar University | 88% | Sri GCSR College, Rajam
+
+Intermediate - Science (MPC)                              2017 - 2019
+State Board | 98% | Sri Chaitanya, Rajam
+
+SSC - Science                                             2016 - 2017
+State Board | 92% | Ravindra Bharathi
+
+KEY DIFFERENTIATORS
+--------------------------------------------------------------------------------
+✓ Crisis-proven - Led 15+ P1 incident bridges under pressure; zero SLA breaches
+✓ Vendor Management Expertise - Coordinated with 10+ Tier-1 financial vendors
+✓ Award-winning Performance - 3 awards in 3 years for incident resolution
+✓ ITIL Foundation - Incident, Change, and Problem Management processes
+
+LANGUAGE COMPETENCIES
+--------------------------------------------------------------------------------
+Telugu   : Native Language
+English  : Fluent (Speaking, Reading, Writing)
+
+================================================================================
+I hereby declare that the above information provided by me is true to the best
+of my knowledge and belief.
+                                                    (Kanishka Pramudula)
+================================================================================

@@ -13,7 +13,7 @@ import './LandingFooter.css';
 ────────────────────────────────────────────── */
 
 const apps = [
-    { name: 'Photo Editor', path: '/photo-editor', Icon: Camera },
+    { name: 'Our Services', path: '/services', Icon: Camera },
     { name: 'Job Portal', path: '/job-portal', Icon: Briefcase },
     { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },
 ];
@@ -22,7 +22,6 @@ const quickLinks = [
     { label: 'Home', path: '/' },
     { label: 'AI Resume Builder', path: '/ai-resume-builder' },
     { label: 'Job Portal', path: '/job-portal' },
-    { label: 'Prep Hub', path: '/job-portal/prep' },
     { label: 'Contact', path: '/contact' },
 ];
 

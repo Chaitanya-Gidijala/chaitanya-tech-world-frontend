@@ -1,0 +1,15 @@
+
+> chaitanya-tech-world@0.0.0 build
+> vite build
+
+[36mvite v7.2.6 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 110 modules transformed.
+Γ£ù Build failed in 1.95s
+error during build:
+Could not resolve "../../apps/job-portal/services/analyticsService" from "src/pages/common/LandingPage.jsx"
+file: E:/myproject/findsharp/chiatanya-tech-world/src/pages/common/LandingPage.jsx
+    at getRollupError (file:///E:/myproject/findsharp/chiatanya-tech-world/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
+    at error (file:///E:/myproject/findsharp/chiatanya-tech-world/node_modules/rollup/dist/es/shared/parseAst.js:397:42)
+    at ModuleLoader.handleInvalidResolvedId (file:///E:/myproject/findsharp/chiatanya-tech-world/node_modules/rollup/dist/es/shared/node-entry.js:21590:24)
+    at file:///E:/myproject/findsharp/chiatanya-tech-world/node_modules/rollup/dist/es/shared/node-entry.js:21550:26

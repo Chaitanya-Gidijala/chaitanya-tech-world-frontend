@@ -589,7 +589,7 @@ a.footer-contact-item:hover .footer-contact-icon {
 /* ── Small Mobile: ≤480px ── */
 @media (max-width: 480px) {
     .footer-contact-value {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
 
     .footer-grid {
@@ -603,11 +603,32 @@ a.footer-contact-item:hover .footer-contact-icon {
 
     .footer-brand-desc {
         max-width: 100%;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
-    .footer-apps-list {
-        grid-template-columns: 1fr 1fr !important;
+    /* Force 2 columns for all lists */
+    .footer-apps-list,
+    .footer-quick-links-list,
+    .footer-contact-card {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+        width: 100% !important;
+    }
+
+    .footer-contact-card {
+        padding: 0.75rem !important;
+        gap: 0.85rem !important;
+    }
+
+    .footer-contact-item {
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .footer-app-link, .footer-quick-link {
+        font-size: 0.8rem !important;
+        padding: 0.35rem 0 !important;
     }
 
     .footer-bottom-bar {
@@ -634,14 +655,20 @@ a.footer-contact-item:hover .footer-contact-icon {
     }
 
     .footer-cta-sub {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+    }
+
+    .footer-col-title {
+        font-size: 0.75rem !important;
     }
 }
 
 /* ── Very Small Mobile: ≤380px ── */
 @media (max-width: 380px) {
-    .footer-apps-list {
-        grid-template-columns: 1fr !important;
+    .footer-apps-list,
+    .footer-quick-links-list,
+    .footer-contact-card {
+        grid-template-columns: repeat(2, 1fr) !important;
     }
 
     .footer-brand-title {

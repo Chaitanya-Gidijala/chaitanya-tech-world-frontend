@@ -154,7 +154,7 @@ const ContactPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSending(true);
-        
+
         const payload = {
             name: form.name,
             email: form.email,
@@ -174,15 +174,16 @@ const ContactPage = () => {
             });
 
             if (response.ok) {
+                // Success is now nearly instant due to backend async decoupling
                 setSent(true);
             } else {
                 const errorData = await response.text();
                 console.error('Server error:', errorData);
-                alert('Oops! Something went wrong on the server. Please try again later.');
+                alert('Oops! Something went wrong. Please try again later.');
             }
         } catch (error) {
             console.error('Network error:', error);
-            alert('Could not connect to the server. Please check your internet or try again later.');
+            alert('Could not connect to the server.');
         } finally {
             setSending(false);
         }
@@ -202,18 +203,18 @@ const ContactPage = () => {
         <div className="cp-page">
             <ParticleBackground />
             <div className="cp-grid-bg" />
-            
-            <motion.div 
+
+            <motion.div
                 className="cp-orb cp-orb-1"
                 animate={{ scale: [1, 1.2, 1], x: [0, 50, 0], y: [0, 30, 0] }}
                 transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
             />
-            <motion.div 
+            <motion.div
                 className="cp-orb cp-orb-2"
                 animate={{ scale: [1, 1.3, 1], x: [0, -40, 0], y: [0, -50, 0] }}
                 transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: -5 }}
             />
-            <motion.div 
+            <motion.div
                 className="cp-orb cp-orb-3"
                 animate={{ opacity: [0.06, 0.12, 0.06], scale: [0.8, 1.1, 0.8] }}
                 transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: -2 }}
@@ -270,7 +271,7 @@ const ContactPage = () => {
                                 <div className="cp-availability-title">
                                     <Clock size={14} />
                                     <span>Working Hours</span>
-                                    <span style={{ fontSize: '0.72rem', color: '#22c55e', fontWeight: 600, marginLeft: 'auto' }}>
+                                    <span style={{ fontSize: '0.6rem', color: '#22c55e', fontWeight: 600, marginLeft: 'auto' }}>
                                         <span className="cp-online-dot" /> Online Now
                                     </span>
                                 </div>
@@ -291,11 +292,11 @@ const ContactPage = () => {
                         <div className="cp-form-panel">
                             <AnimatePresence mode="wait">
                                 {sent ? (
-                                    <motion.div 
-                                        key="success" 
-                                        className="cp-success" 
-                                        initial={{ opacity: 0 }} 
-                                        animate={{ opacity: 1 }} 
+                                    <motion.div
+                                        key="success"
+                                        className="cp-success"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                     >
                                         <div className="cp-success-confetti">
@@ -304,7 +305,7 @@ const ContactPage = () => {
                                                     key={i}
                                                     className="cp-confetti-dot"
                                                     initial={{ scale: 0, x: 0, y: 0 }}
-                                                    animate={{ 
+                                                    animate={{
                                                         scale: [0, 1, 0],
                                                         x: (Math.random() - 0.5) * 200,
                                                         y: (Math.random() - 0.5) * 200,
@@ -314,16 +315,16 @@ const ContactPage = () => {
                                             ))}
                                         </div>
 
-                                        <motion.div 
-                                            className="cp-success-icon" 
-                                            initial={{ scale: 0, rotate: -20 }} 
-                                            animate={{ scale: 1, rotate: 0 }} 
+                                        <motion.div
+                                            className="cp-success-icon"
+                                            initial={{ scale: 0, rotate: -20 }}
+                                            animate={{ scale: 1, rotate: 0 }}
                                             transition={{ type: 'spring', stiffness: 260, damping: 15, delay: 0.1 }}
                                         >
                                             <CheckCircle2 size={42} strokeWidth={2.5} />
                                         </motion.div>
 
-                                        <motion.h2 
+                                        <motion.h2
                                             className="cp-success-title"
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
@@ -332,17 +333,17 @@ const ContactPage = () => {
                                             Message Sent! 🎉
                                         </motion.h2>
 
-                                        <motion.p 
+                                        <motion.p
                                             className="cp-success-sub"
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.35 }}
                                         >
-                                            I'll review your message and reply within 6 hours. <br/> Excited to work together!
+                                            I'll review your message and reply within 6 hours. <br /> Excited to work together!
                                         </motion.p>
 
-                                        <motion.button 
-                                            className="cp-success-reset" 
+                                        <motion.button
+                                            className="cp-success-reset"
                                             onClick={resetForm}
                                             initial={{ opacity: 0, scale: 0.8 }}
                                             animate={{ opacity: 1, scale: 1 }}

@@ -9,16 +9,21 @@
   --color-primary-glow: hsl(var(--primary-base), 100%, 80%);
   --color-secondary: hsl(var(--secondary-base), 100%, 50%);
   --color-tertiary: hsl(var(--tertiary-base), 100%, 50%);
-  
+
+  /* Semantic Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
   --bg-body: hsl(240, 20%, 98%);
   --bg-card: hsl(0, 0%, 100%);
   --bg-card-glass: hsla(0, 0%, 100%, 0.7);
-  
+
   --text-main: hsl(240, 40%, 10%);
   --text-muted: hsl(240, 20%, 40%);
-  
+
   --border-light: hsla(240, 20%, 80%, 0.5);
-  
+
   --shadow-sm: 0 4px 6px hsla(240, 20%, 80%, 0.3);
   --shadow-lg: 0 10px 30px hsla(var(--primary-base), 50%, 40%, 0.2);
   --shadow-glow: 0 0 20px hsla(var(--primary-base), 100%, 60%, 0.3);
@@ -35,6 +40,11 @@
   --color-secondary: hsl(var(--secondary-base), 100%, 60%);
   --color-tertiary: hsl(var(--tertiary-base), 100%, 60%);
 
+  /* Semantic Colors - Dark Theme */
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+
   --bg-body: hsl(240, 30%, 8%);
   --bg-card: hsl(240, 30%, 12%);
   --bg-card-glass: hsla(240, 30%, 12%, 0.6);
@@ -47,6 +57,6 @@
   --shadow-sm: 0 4px 6px hsla(0, 0%, 0%, 0.5);
   --shadow-lg: 0 10px 30px hsla(0, 0%, 0%, 0.6);
   --shadow-glow: 0 0 25px hsla(var(--primary-base), 100%, 60%, 0.4);
-  
+
   --gradient-glass: linear-gradient(145deg, hsla(240,30%,15%,0.8), hsla(240,30%,10%,0.6));
 }

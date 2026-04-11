@@ -108,24 +108,24 @@
     text-overflow: ellipsis;
 }
 
-@media (max-width: 600px) {
-    .brand-heading {
-        font-size: 0.875rem !important;
-        /* Override global h1 */
-    }
-}
-
-@media (max-width: 480px) {
+@media (max-width: 650px) {
     .brand-heading {
         font-size: 1rem !important;
     }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 400px) {
     .brand-heading {
-        font-size: 1.172rem !important;
+        font-size: 0.9rem !important;
     }
 }
+
+@media (max-width: 320px) {
+    .brand-heading {
+        font-size: 0.8rem !important;
+    }
+}
+
 
 /* ── RIGHT ZONE: theme toggle + hamburger ── */
 .header-right {
@@ -243,8 +243,8 @@
 }
 
 .side-nav-close {
-    width: 33px;
-    height: 33px;
+    width: 30px;
+    height: 30px;
     padding: 0 !important;
     border-radius: 20px;
     border: 1px solid var(--border-light);
@@ -284,7 +284,7 @@
 
 .side-nav-title {
     font-size: 1rem !important;
-    font-weight: 800;
+    font-weight: 600;
     margin: 0;
     background: var(--gradient-brand);
     -webkit-background-clip: text;
@@ -301,30 +301,30 @@
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 2.25rem;
+    gap: 1rem;
 }
 
 /* Custom Scrollbar */
 .side-nav-content::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
 }
 
 .side-nav-content::-webkit-scrollbar-thumb {
     background: var(--border-light);
-    border-radius: 10px;
+    border-radius: 80px;
 }
 
 .side-nav-section {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    /* gap: 0.1rem; */
 }
 
 .section-label {
-    font-size: 0.95rem !important;
+    font-size: 0.9rem !important;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    /* letter-spacing: 0.1em; */
     color: var(--color-primary);
     opacity: 0.8;
     margin: 0 0.3rem;
@@ -340,7 +340,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 0.555rem 1rem;
+    padding: 0.5rem 1rem;
     border-radius: 14px;
     color: var(--text-muted);
     text-decoration: none;
@@ -388,7 +388,7 @@
 }
 
 .side-nav-footer {
-    padding: 1.5rem;
+    padding: 0.5rem;
     text-align: center;
     border-top: 1px solid var(--border-light);
     background: var(--bg-card-glass);
@@ -396,12 +396,12 @@
 }
 
 .footer-version {
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.6rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     opacity: 0.6;
-    color: var(--text-muted);
+    /* color: var(--color-primary); */
 }
 
 /* Remove old mobile nav items */

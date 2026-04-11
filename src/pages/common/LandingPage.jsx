@@ -6,8 +6,8 @@ import {
     Zap, Shield, Cpu, Code2, Sparkles, Star, Users, Database, Layout, Smartphone,
     Code, Activity, Terminal, Hash, Layers, CheckCircle2, Rocket, PiggyBank, FileText
 } from 'lucide-react';
-import { incrementVisitorCount } from '../../apps/job-portal/services/analyticsService';
-import '../../styles/LandingPage.css';
+import { incrementVisitorCount } from '@/features/job-portal/services/analyticsService';
+import './LandingPage.css';
 
 const FloatingSymbols = () => {
     const symbols = [
@@ -162,32 +162,33 @@ const LandingPage = () => {
                 <div className="lp-apps-grid">
                     {/* App items mapped here for cleaner code */}
                     {[
+
                         {
                             title: 'AI Resume Builder',
                             desc: 'Build ATS-optimised, professional resumes in minutes with 8 stunning templates.',
                             icon: FileText,
                             color: '#7c3aed',
                             path: '/ai-resume-builder',
-                            delay: 0.05,
-                            featured: true,
-                            badge: '✨ New'
-                        },
-                        {
-                            title: 'Job Portal',
-                            desc: 'Premium job board with AI-driven matching and interview prep tools.',
-                            icon: Briefcase,
-                            color: '#3b82f6',
-                            path: '/job-portal',
                             delay: 0.1,
                             featured: true
                         },
                         {
-                            title: 'Photo Editor',
-                            desc: 'Non-destructive image processing with professional grade filters.',
-                            icon: Camera,
+                            title: 'Job Portal',
+                            desc: 'Premium job board with AI-driven matching and career growth tools.',
+                            icon: Briefcase,
+                            color: '#3b82f6',
+                            path: '/job-portal',
+                            delay: 0.2,
+                            featured: true
+                        },
+                        {
+                            title: 'Our Services',
+                            desc: 'Premium digital solutions — from high-end restorations to bespoke web development.',
+                            icon: Sparkles,
                             color: '#8b5cf6',
-                            path: '/photo-editor',
-                            delay: 0.2
+                            path: '/services',
+                            delay: 0.3,
+                            featured: true
                         }
                     ].map((app, i) => (
                         <Link to={app.path} key={i}>

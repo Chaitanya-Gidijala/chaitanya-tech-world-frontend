@@ -1,0 +1,722 @@
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    Search, ChevronDown, ChevronLeft, ChevronRight,
+    BookOpen, Terminal, Bookmark, Share2, X,
+    LayoutGrid, List, Sun, Moon, Lightbulb, Zap, Code2,
+    Database, Globe, Lock, Cpu, GitBranch, Filter
+} from 'lucide-react';
+import '../../styles/InterviewQuestions.css';
+
+/* ──────────────────────────────────────────────
+   CONSTANTS
+──────────────────────────────────────────────── */
+const DEMO_QUESTIONS = [
+    {
+        id: 'd1', question: 'Explain React Fiber and its reconciliation algorithm.',
+        answer: 'React Fiber is a complete rewrite of the React core algorithm that enables incremental rendering. It splits rendering work into chunks spread over multiple frames, making complex UIs feel smoother. The reconciler compares a virtual DOM tree to the actual DOM and applies only the necessary changes — a process called diffing. Fiber introduces priority-based scheduling so high-priority updates (like animations) preempt low-priority ones (like data fetching).',
+        difficulty: 'HARD', tags: ['React', 'Core'],
+        keyPoints: ['Enables incremental rendering via time-slicing', 'Priority-based task scheduling', 'Enables Concurrent Mode and Suspense', 'Diffing runs in phases: render & commit']
+    },
+    {
+        id: 'd2', question: 'What is the Event Loop in Node.js?',
+        answer: 'The event loop allows Node.js to perform non-blocking I/O operations despite being single-threaded. When an async operation is initiated (e.g., reading a file), Node delegates it to the OS and registers a callback. The event loop continuously checks if operations are done and runs their callbacks. It cycles through phases: Timers, Pending Callbacks, I/O Poll, Check (setImmediate), and Close Callbacks.',
+        difficulty: 'INTERMEDIATE', tags: ['Node.js', 'Runtime'],
+        keyPoints: ['Single-threaded non-blocking I/O', '6 phases: timers → I/O → check → close', 'libuv provides the thread pool for heavy tasks', 'process.nextTick runs before each phase']
+    },
+    {
+        id: 'd3', question: 'How does Dependency Injection work in Spring Boot?',
+        answer: 'Dependency Injection (DI) is a design pattern implementing Inversion of Control — objects receive their dependencies from an external container instead of creating them. Spring\'s IoC container manages bean lifecycle. You use @Component, @Service, or @Repository to register beans, and @Autowired or constructor injection to wire them. Constructor injection is preferred for immutability and testability.',
+        difficulty: 'INTERMEDIATE', tags: ['Java', 'Spring'],
+        keyPoints: ['IoC container manages all bean lifecycles', 'Constructor injection > field injection', '@Autowired, @Qualifier for wiring', 'Enables easy mocking in unit tests']
+    },
+    {
+        id: 'd4', question: 'ACID vs BASE properties in Database Systems.',
+        answer: 'ACID (Atomicity, Consistency, Isolation, Durability) is the gold standard for relational databases — every transaction is treated as a single unit that either fully succeeds or fully rolls back. BASE (Basically Available, Soft state, Eventual consistency) is the trade-off in distributed NoSQL systems that prioritize availability and partition tolerance over strict data consistency, allowing stale reads temporarily.',
+        difficulty: 'HARD', tags: ['SQL', 'NoSQL'],
+        keyPoints: ['ACID → strong consistency, used in RDBMS', 'BASE → high availability, used in NoSQL', 'CAP theorem: you can only guarantee 2 of 3', 'Eventual consistency ≠ no consistency']
+    },
+    {
+        id: 'd5', question: 'Explain JWT authentication and its workflow.',
+        answer: 'JSON Web Token (JWT) is a compact, URL-safe token format with three base64-encoded parts: Header (algorithm), Payload (claims), and Signature. Workflow: user logs in → server creates and signs a JWT with a secret → client stores the JWT → client sends it in the Authorization header on every request → server verifies the signature without hitting the database.',
+        difficulty: 'EASY', tags: ['Auth', 'Web'],
+        keyPoints: ['Stateless — no session storage needed', 'Three parts: header.payload.signature', 'Use short expiry + refresh tokens', 'Never store sensitive data in payload (it\'s base64, not encrypted)']
+    },
+    {
+        id: 'd6', question: 'What are the main differences between Python 2 and Python 3?',
+        answer: 'Python 3 introduced print() as a function, true division (3/2 = 1.5 vs 1), native Unicode strings, and superior async support via asyncio. It also improved error handling with exception chaining, removed outdated modules, and made iterators the default (range instead of xrange). Python 2 reached end-of-life in January 2020.',
+        difficulty: 'EASY', tags: ['Python', 'System'],
+        keyPoints: ['print() is a function in Py3', 'Integer division changed: 3/2 = 1.5', 'Strings are Unicode by default', 'asyncio, f-strings, type hints are Py3 only']
+    },
+    {
+        id: 'd7', question: 'What is the difference between TCP and UDP?',
+        answer: 'TCP (Transmission Control Protocol) is connection-oriented — it performs a 3-way handshake, ensures data delivery via acknowledgments, retransmits lost packets, and guarantees order. UDP (User Datagram Protocol) is connectionless — it fires packets without handshaking or guarantees, trading reliability for raw speed.',
+        difficulty: 'INTERMEDIATE', tags: ['Networking', 'System'],
+        keyPoints: ['TCP → reliable, ordered, connection-based', 'UDP → fast, no guarantees, connectionless', 'TCP uses 3-way handshake (SYN, SYN-ACK, ACK)', 'Use UDP for streaming, DNS, gaming']
+    },
+    {
+        id: 'd8', question: 'Explain Big O Notation and time complexity.',
+        answer: 'Big O notation describes the upper-bound growth rate of an algorithm\'s runtime as input size n grows. Common complexities: O(1) constant, O(log n) logarithmic (binary search), O(n) linear (simple loop), O(n log n) linearithmic (merge sort), O(n²) quadratic (bubble sort), O(2ⁿ) exponential (subset enumeration). Always analyze the worst-case scenario unless stated otherwise.',
+        difficulty: 'EASY', tags: ['DSA', 'Core'],
+        keyPoints: ['Describes worst-case growth, not exact time', 'Drop constants: O(2n) = O(n)', 'Space complexity matters too', 'Binary search is O(log n) — halves input each step']
+    }
+];
+
+const TOPIC_ICONS = {
+    React: '⚛️', 'Node.js': '🟩', Java: '☕', Python: '🐍',
+    SQL: '🗄️', NoSQL: '📦', Auth: '🔐', Web: '🌐',
+    DSA: '📊', Networking: '🕸️', System: '⚙️', Spring: '🍃',
+    Docker: '🐳', AWS: '☁️', Git: '🌿', TypeScript: '📘',
+};
+
+const TOPIC_CATEGORIES = [
+    { name: 'React', icon: '⚛️', count: 48 },
+    { name: 'Node.js', icon: '🟩', count: 35 },
+    { name: 'Python', icon: '🐍', count: 52 },
+    { name: 'Java', icon: '☕', count: 41 },
+    { name: 'SQL', icon: '🗄️', count: 39 },
+    { name: 'DSA', icon: '📊', count: 60 },
+    { name: 'System', icon: '⚙️', count: 28 },
+    { name: 'Auth', icon: '🔐', count: 22 },
+    { name: 'Docker', icon: '🐳', count: 19 },
+    { name: 'AWS', icon: '☁️', count: 31 },
+    { name: 'Git', icon: '🌿', count: 17 },
+    { name: 'Web', icon: '🌐', count: 44 },
+];
+
+/* ──────────────────────────────────────────────
+   SMALL SUBCOMPONENTS
+──────────────────────────────────────────────── */
+const DiffBadge = ({ difficulty }) => {
+    const map = { EASY: 'easy', INTERMEDIATE: 'intermediate', HARD: 'hard' };
+    const label = { EASY: 'Easy', INTERMEDIATE: 'Mid', HARD: 'Expert' };
+    return (
+        <span className={`iq-badge iq-badge-${map[difficulty] || 'easy'}`}>
+            {label[difficulty] || difficulty}
+        </span>
+    );
+};
+
+const HighlightText = ({ text, highlight }) => {
+    if (!highlight.trim()) return <span>{text}</span>;
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return (
+        <span>
+            {parts.map((part, i) => (
+                part.toLowerCase() === highlight.toLowerCase() ?
+                    <mark key={i} className="iq-search-highlight">{part}</mark> :
+                    part
+            ))}
+        </span>
+    );
+};
+
+const QuestionRow = ({ q, active, onClick, index, searchTerm }) => (
+    <motion.div
+        className={`iq-q-row ${active ? 'active' : ''}`}
+        onClick={() => onClick(q)}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: index * 0.03 }}
+    >
+        <div className="iq-q-row-meta">
+            <DiffBadge difficulty={q.difficulty} />
+            {q.tags?.slice(0, 2).map((t, i) => (
+                <span key={i} className="iq-tag">{t}</span>
+            ))}
+        </div>
+        <p className="iq-q-row-title">
+            <HighlightText text={q.question} highlight={searchTerm} />
+        </p>
+    </motion.div>
+);
+
+const GridCard = ({ q, onClick, index, searchTerm }) => (
+    <motion.div
+        className="iq-grid-card"
+        onClick={() => onClick(q)}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ delay: index * 0.04 }}
+    >
+        <div className="iq-grid-card-top">
+            <DiffBadge difficulty={q.difficulty} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                {q.tags?.slice(0, 2).map((t, i) => <span key={i} className="iq-tag">{t}</span>)}
+            </div>
+        </div>
+        <p className="iq-grid-card-q">
+            <HighlightText text={q.question} highlight={searchTerm} />
+        </p>
+        <p className="iq-grid-card-preview">{q.answer}</p>
+        <div className="iq-grid-card-footer">
+            <span style={{ fontFamily: 'var(--iq-font-mono)', fontSize: '0.68rem', color: 'var(--iq-text-muted)' }}>
+                View answer →
+            </span>
+        </div>
+    </motion.div>
+);
+
+/* ──────────────────────────────────────────────
+   READER PANE (Pro Flashcard UI)
+──────────────────────────────────────────────── */
+const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => {
+    const [isRevealed, setIsRevealed] = useState(false);
+
+    // Reset reveal when question changes
+    useEffect(() => {
+        setIsRevealed(false);
+    }, [q?.id]);
+
+    if (!q) return (
+        <div className="iq-reader-pane" style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center', color: 'var(--iq-text-muted)', padding: '2rem' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem', opacity: 0.3 }}>📖</div>
+                <p style={{ fontFamily: 'var(--iq-font-mono)', fontSize: '0.8rem' }}>Select a question to unlock knowledge</p>
+            </div>
+        </div>
+    );
+
+    const idx = questions.findIndex(x => x.id === q.id);
+    const isBookmarked = bookmarks.includes(q.id);
+
+    return (
+        <div className="iq-reader-pane">
+            {/* Header */}
+            <div className="iq-reader-header">
+                <div className="iq-reader-meta-row">
+                    <DiffBadge difficulty={q.difficulty} />
+                    {q.tags?.map((t, i) => <span key={i} className="iq-tag">{t}</span>)}
+                    <span style={{
+                        fontFamily: 'var(--iq-font-mono)', fontSize: '0.65rem',
+                        color: 'var(--iq-text-muted)', marginLeft: 'auto'
+                    }}>
+                        {idx + 1} / {questions.length}
+                    </span>
+                </div>
+                <h2 className="iq-reader-q">{q.question}</h2>
+            </div>
+
+            {/* Scrollable body */}
+            <div className="iq-reader-scroll">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={q.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {/* Answer with Reveal Logic */}
+                        <div className="iq-answer-section">
+                            <div className="iq-answer-label">
+                                <div className="iq-answer-label-icon"><Zap size={10} /></div>
+                                Expert Answer
+                            </div>
+                            
+                            {!isRevealed ? (
+                                <div className="iq-reveal-card" onClick={() => setIsRevealed(true)}>
+                                    <div className="iq-reveal-inner">
+                                        <Lightbulb size={24} style={{ marginBottom: '0.5rem' }} />
+                                        <p>Click to reveal explanation</p>
+                                        <span>Test your knowledge first!</span>
+                                    </div>
+                                    <div className="iq-blur-text">
+                                        {q.answer.substring(0, 100)}...
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="iq-answer-text iq-fade-in">{q.answer}</p>
+                            )}
+                        </div>
+
+                        {/* Key Points */}
+                        {q.keyPoints && (
+                            <div className="iq-key-points">
+                                <p className="iq-key-points-title">⚡ Key Takeaways</p>
+                                <ul>
+                                    {q.keyPoints.map((pt, i) => <li key={i}>{pt}</li>)}
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* Interview Tip */}
+                        <div className="iq-key-points" style={{
+                            borderLeftColor: 'var(--iq-accent)',
+                            marginTop: '1.25rem'
+                        }}>
+                            <p className="iq-key-points-title" style={{ color: 'var(--iq-accent)' }}>
+                                💡 Interview Tip
+                            </p>
+                            <p className="iq-answer-text" style={{ fontSize: '0.82rem' }}>
+                                When answering this question, structure your response using the STAR method: briefly define the concept, explain how it works, give a real-world example, and mention trade-offs or alternatives. Interviewers appreciate concise, structured thinking.
+                            </p>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+
+            {/* Footer nav */}
+            <div className="iq-reader-footer">
+                <div className="iq-nav-btns">
+                    <button className="iq-nav-btn" onClick={() => onNavigate(idx - 1)} disabled={idx === 0}>
+                        <ChevronLeft size={14} /> Prev
+                    </button>
+                    <button className="iq-nav-btn" onClick={() => onNavigate(idx + 1)} disabled={idx === questions.length - 1}>
+                        Next <ChevronRight size={14} />
+                    </button>
+                </div>
+                <div className="iq-action-btns">
+                    <button
+                        className={`iq-icon-btn ${isBookmarked ? 'bookmarked' : ''}`}
+                        onClick={() => toggleBookmark(q.id)}
+                        title="Bookmark"
+                    >
+                        <Bookmark size={15} fill={isBookmarked ? 'currentColor' : 'none'} />
+                    </button>
+                    <button className="iq-icon-btn" title="Share" onClick={() => {
+                        navigator.clipboard?.writeText(q.question);
+                    }}>
+                        <Share2 size={15} />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+/* ──────────────────────────────────────────────
+   MOBILE MODAL
+──────────────────────────────────────────────── */
+const MobileModal = ({ q, onClose, bookmarks, toggleBookmark }) => {
+    if (!q) return null;
+    const isBookmarked = bookmarks.includes(q.id);
+
+    return (
+        <>
+            <div className="iq-modal-overlay" onClick={onClose} style={{ display: 'block' }} />
+            <motion.div
+                className="iq-modal"
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+            >
+                <div className="iq-modal-header">
+                    <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                            <DiffBadge difficulty={q.difficulty} />
+                            {q.tags?.slice(0, 2).map((t, i) => <span key={i} className="iq-tag">{t}</span>)}
+                        </div>
+                        <h2 className="iq-reader-q" style={{ fontSize: '1.1rem' }}>{q.question}</h2>
+                    </div>
+                    <button className="iq-modal-close" onClick={onClose}><X size={16} /></button>
+                </div>
+
+                <div className="iq-answer-label">
+                    <div className="iq-answer-label-icon"><BookOpen size={10} /></div>
+                    Explanation
+                </div>
+                <p className="iq-answer-text" style={{ marginBottom: '1.25rem' }}>{q.answer}</p>
+
+                {q.keyPoints && (
+                    <div className="iq-key-points">
+                        <p className="iq-key-points-title">⚡ Key Takeaways</p>
+                        <ul>{q.keyPoints.map((pt, i) => <li key={i}>{pt}</li>)}</ul>
+                    </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                    <button
+                        className={`iq-icon-btn ${isBookmarked ? 'bookmarked' : ''}`}
+                        onClick={() => toggleBookmark(q.id)}
+                        style={{ padding: '0.6rem 1rem', gap: '0.4rem', fontFamily: 'var(--iq-font-mono)', fontSize: '0.75rem' }}
+                    >
+                        <Bookmark size={14} fill={isBookmarked ? 'currentColor' : 'none'} />
+                        {isBookmarked ? 'Saved' : 'Save'}
+                    </button>
+                </div>
+            </motion.div>
+        </>
+    );
+};
+
+/* ──────────────────────────────────────────────
+   MAIN COMPONENT
+──────────────────────────────────────────────── */
+const InterviewQuestionsPage = () => {
+    // Theme
+    const [theme, setTheme] = useState('dark');
+
+    // Data
+    const [questions, setQuestions] = useState(DEMO_QUESTIONS);
+    const [topics] = useState(TOPIC_CATEGORIES);
+    const [loading, setLoading] = useState(false);
+
+    // Filters
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedTag, setSelectedTag] = useState('All');
+    const [difficulty, setDifficulty] = useState('All');
+
+    // UI state
+    const [activeQuestion, setActiveQuestion] = useState(DEMO_QUESTIONS[0]);
+    const [viewMode, setViewMode] = useState('split'); // 'split' | 'grid'
+    const [mobileModalOpen, setMobileModalOpen] = useState(false);
+    const [bookmarks, setBookmarks] = useState([]);
+
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(0);
+    const pageSize = 12;
+
+    // Apply theme
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+    }, [theme]);
+
+    // (Replace this with your real API call)
+    const fetchQuestions = useCallback(async () => {
+        setLoading(true);
+        try {
+            // const data = await getAllQuestions(currentPage, pageSize, selectedTag, difficulty);
+            // setQuestions(data.content);
+            // Simulate API delay
+            await new Promise(r => setTimeout(r, 300));
+            let filtered = DEMO_QUESTIONS;
+            if (selectedTag !== 'All') filtered = filtered.filter(q => q.tags?.includes(selectedTag));
+            if (difficulty !== 'All') filtered = filtered.filter(q => q.difficulty === difficulty);
+            setQuestions(filtered);
+        } catch (e) {
+            setQuestions(DEMO_QUESTIONS);
+        } finally {
+            setLoading(false);
+        }
+    }, [currentPage, selectedTag, difficulty]);
+
+    useEffect(() => { fetchQuestions(); }, [fetchQuestions]);
+
+    const filteredQuestions = useMemo(() => {
+        if (!searchTerm) return questions;
+        const term = searchTerm.toLowerCase();
+        return questions.filter(q =>
+            q.question.toLowerCase().includes(term) ||
+            q.tags?.some(t => t.toLowerCase().includes(term))
+        );
+    }, [questions, searchTerm]);
+
+    const handleQuestionClick = (q) => {
+        setActiveQuestion(q);
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) {
+            setMobileModalOpen(true);
+        } else {
+            // Auto-switch to split view on desktop so user can see the answer
+            setViewMode('split');
+            // Scroll to top of body to ensure they see the reader
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+    };
+
+    const handleNavigate = (newIdx) => {
+        if (newIdx >= 0 && newIdx < filteredQuestions.length) {
+            setActiveQuestion(filteredQuestions[newIdx]);
+        }
+    };
+
+    const toggleBookmark = (id) => {
+        setBookmarks(prev => prev.includes(id) ? prev.filter(b => b !== id) : [...prev, id]);
+    };
+
+    const toggleTag = (tag) => {
+        setSelectedTag(prev => prev === tag ? 'All' : tag);
+        setCurrentPage(0);
+    };
+
+    const totalPages = Math.ceil(filteredQuestions.length / pageSize);
+    const paginatedQ = filteredQuestions.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
+    const stats = {
+        total: questions.length,
+        easy: questions.filter(q => q.difficulty === 'EASY').length,
+        mid: questions.filter(q => q.difficulty === 'INTERMEDIATE').length,
+        hard: questions.filter(q => q.difficulty === 'HARD').length,
+    };
+
+    if (loading && questions.length === 0) {
+        return <div className="iq-shell"><div className="iq-spinner" /></div>;
+    }
+
+    return (
+        <div className="iq-shell">
+            {/* ── THEME TOGGLE ── */}
+            <button className="iq-theme-toggle" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
+                {theme === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
+                {theme === 'dark' ? 'Light' : 'Dark'}
+            </button>
+
+            {/* ── HEADER ── */}
+            <header className="iq-header">
+                <div className="iq-header-meta">
+                    <span className="iq-breadcrumb">Academy <span>/</span> Prep</span>
+                    <span className="iq-header-chip">
+                        Live Question Bank
+                    </span>
+                </div>
+
+                <h1 className="iq-main-title">
+                    Technical <em>Interview</em><br />Question Bank
+                </h1>
+
+                <p className="iq-subtitle">
+                    Master your engineering interviews with curated questions, deep-dive explanations, and key takeaways reviewed by senior engineers.
+                </p>
+
+                <div className="iq-stats-bar">
+                    <div className="iq-stat">
+                        <span className="iq-stat-num">{stats.total}+</span>
+                        <span className="iq-stat-label">Questions</span>
+                    </div>
+                    <div className="iq-stat-divider" />
+                    <div className="iq-stat">
+                        <span className="iq-stat-num" style={{ color: 'var(--iq-easy)' }}>{stats.easy}</span>
+                        <span className="iq-stat-label">Beginner</span>
+                    </div>
+                    <div className="iq-stat-divider" />
+                    <div className="iq-stat">
+                        <span className="iq-stat-num" style={{ color: 'var(--iq-mid)' }}>{stats.mid}</span>
+                        <span className="iq-stat-label">Intermediate</span>
+                    </div>
+                    <div className="iq-stat-divider" />
+                    <div className="iq-stat">
+                        <span className="iq-stat-num" style={{ color: 'var(--iq-hard)' }}>{stats.hard}</span>
+                        <span className="iq-stat-label">Expert</span>
+                    </div>
+                    <div className="iq-stat-divider" />
+                    <div className="iq-stat">
+                        <span className="iq-stat-num">{bookmarks.length}</span>
+                        <span className="iq-stat-label">Bookmarked</span>
+                    </div>
+                </div>
+            </header>
+
+            {/* ── CONTROLS BAR ── */}
+            <div className="iq-controls-wrap">
+                <div className="iq-controls-inner">
+                    {/* Search */}
+                    <div className="iq-search-wrap">
+                        <Search className="iq-search-icon" size={16} />
+                        <input
+                            type="text"
+                            className="iq-input"
+                            placeholder="Search by concept, tag, or keyword..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+
+                    {/* Difficulty */}
+                    <div className="iq-select-wrap">
+                        <select className="iq-select" value={difficulty} onChange={e => setDifficulty(e.target.value)}>
+                            <option value="All">All Levels</option>
+                            <option value="EASY">Beginner</option>
+                            <option value="INTERMEDIATE">Intermediate</option>
+                            <option value="HARD">Expert</option>
+                        </select>
+                        <ChevronDown className="iq-select-chevron" size={14} />
+                    </div>
+
+                    {/* Tech chips */}
+                    <div className="iq-tech-filters">
+                        {topics.slice(0, 7).map(t => (
+                            <button
+                                key={t.name}
+                                className={`iq-tech-chip ${selectedTag === t.name ? 'active' : ''}`}
+                                onClick={() => toggleTag(t.name)}
+                            >
+                                {t.icon} {t.name}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* View toggle */}
+                    <div className="iq-view-toggle">
+                        <button className={`iq-view-btn ${viewMode === 'split' ? 'active' : ''}`} onClick={() => setViewMode('split')} title="Split view">
+                            <List size={15} />
+                        </button>
+                        <button className={`iq-view-btn ${viewMode === 'grid' ? 'active' : ''}`} onClick={() => setViewMode('grid')} title="Grid view">
+                            <LayoutGrid size={15} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* ── BODY ── */}
+            <main className="iq-body">
+
+                {/* TOPIC BROWSER SECTION */}
+                <section className="iq-topics-section">
+                    <div className="iq-section-label">
+                        <span className="iq-section-label-text">Browse by Topic</span>
+                        <div className="iq-section-label-line" />
+                    </div>
+                    
+                    {/* Desktop/Tablet Grid */}
+                    <div className="iq-topics-grid">
+                        {topics.map(t => (
+                            <div
+                                key={t.name}
+                                className={`iq-topic-card ${selectedTag === t.name ? 'active' : ''}`}
+                                onClick={() => toggleTag(t.name)}
+                            >
+                                <span className="iq-topic-icon">{t.icon}</span>
+                                <span className="iq-topic-name">{t.name}</span>
+                                <span className="iq-topic-count">{t.count} Qs</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Mobile Dropdown */}
+                    <div className="iq-topics-mobile">
+                        <div className="iq-select-wrap" style={{ width: '100%' }}>
+                            <select 
+                                className="iq-select" 
+                                style={{ width: '100%', height: '48px', fontSize: '0.9rem' }}
+                                value={selectedTag}
+                                onChange={(e) => toggleTag(e.target.value)}
+                            >
+                                <option value="All">All Technologies</option>
+                                {topics.map(t => (
+                                    <option key={t.name} value={t.name}>
+                                        {t.icon} {t.name} ({t.count} questions)
+                                    </option>
+                                ))}
+                            </select>
+                            <ChevronDown className="iq-select-chevron" size={16} />
+                        </div>
+                    </div>
+                </section>
+
+                {/* PROGRESS TRACKER */}
+                <section className="iq-progress-section">
+                    <div className="iq-section-label">
+                        <span className="iq-section-label-text">Your Progress</span>
+                        <div className="iq-section-label-line" />
+                    </div>
+                    <div className="iq-progress-bar-wrap">
+                        <div className="iq-progress-levels">
+                            {[
+                                { label: 'Beginner', cls: 'easy', color: 'var(--iq-easy)', val: stats.easy, of: stats.total },
+                                { label: 'Intermediate', cls: 'mid', color: 'var(--iq-mid)', val: stats.mid, of: stats.total },
+                                { label: 'Expert', cls: 'hard', color: 'var(--iq-hard)', val: stats.hard, of: stats.total },
+                            ].map(lvl => (
+                                <div key={lvl.label} className="iq-progress-level">
+                                    <div className="iq-progress-level-meta">
+                                        <span className="iq-progress-level-name" style={{ color: lvl.color }}>{lvl.label}</span>
+                                        <span className="iq-progress-level-pct">{lvl.val} / {lvl.of}</span>
+                                    </div>
+                                    <div className="iq-progress-track">
+                                        <div className={`iq-progress-fill ${lvl.cls}`} style={{ width: `${Math.round((lvl.val / Math.max(lvl.of, 1)) * 100)}%` }} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="iq-progress-cta">
+                            <span className="iq-progress-total">{stats.total}</span>
+                            <span className="iq-progress-total-label">Total Questions</span>
+                        </div>
+                    </div>
+                </section>
+
+                {/* ── MAIN QUESTIONS SECTION ── */}
+                <div className="iq-section-label">
+                    <span className="iq-section-label-text">
+                        {selectedTag !== 'All' ? selectedTag : 'All Questions'}
+                        {' '}— {filteredQuestions.length} results
+                    </span>
+                    <div className="iq-section-label-line" />
+                </div>
+
+                {filteredQuestions.length === 0 ? (
+                    <div className="iq-empty">
+                        <div className="iq-empty-icon">🔍</div>
+                        <p className="iq-empty-text">No questions match your filters.</p>
+                    </div>
+                ) : viewMode === 'split' ? (
+                    /* ── SPLIT VIEW ── */
+                    <div className="iq-split">
+                        {/* Left list */}
+                        <div className="iq-list-pane">
+                            <div className="iq-list-header">
+                                <span style={{ fontFamily: 'var(--iq-font-display)', fontSize: '0.9rem', fontWeight: 700 }}>Questions</span>
+                                <span className="iq-list-count"><span>{filteredQuestions.length}</span> found</span>
+                            </div>
+                            <div className="iq-list-scroll">
+                                <AnimatePresence>
+                                    {filteredQuestions.map((q, i) => (
+                                        <QuestionRow
+                                            key={q.id}
+                                            q={q}
+                                            index={i}
+                                            searchTerm={searchTerm}
+                                            active={activeQuestion?.id === q.id}
+                                            onClick={handleQuestionClick}
+                                        />
+                                    ))}
+                                </AnimatePresence>
+                            </div>
+                        </div>
+
+                        {/* Right reader */}
+                        <ReaderPane
+                            q={activeQuestion}
+                            questions={filteredQuestions}
+                            onNavigate={handleNavigate}
+                            bookmarks={bookmarks}
+                            toggleBookmark={toggleBookmark}
+                        />
+                    </div>
+                ) : (
+                    /* ── GRID VIEW ── */
+                    <div className="iq-grid-view">
+                        <AnimatePresence>
+                            {paginatedQ.map((q, i) => (
+                                <GridCard key={q.id} q={q} index={i} searchTerm={searchTerm} onClick={handleQuestionClick} />
+                            ))}
+                        </AnimatePresence>
+                    </div>
+                )}
+
+                {/* PAGINATION (grid only) */}
+                {viewMode === 'grid' && totalPages > 1 && (
+                    <div className="iq-pagination">
+                        <button className="iq-page-btn" onClick={() => setCurrentPage(p => Math.max(0, p - 1))} disabled={currentPage === 0}>
+                            <ChevronLeft size={14} />
+                        </button>
+                        {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => (
+                            <button key={i} className={`iq-page-btn ${currentPage === i ? 'active' : ''}`} onClick={() => setCurrentPage(i)}>
+                                {i + 1}
+                            </button>
+                        ))}
+                        <button className="iq-page-btn" onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))} disabled={currentPage === totalPages - 1}>
+                            <ChevronRight size={14} />
+                        </button>
+                    </div>
+                )}
+            </main>
+
+            {/* ── MOBILE MODAL ── */}
+            <AnimatePresence>
+                {mobileModalOpen && (
+                    <MobileModal
+                        q={activeQuestion}
+                        onClose={() => setMobileModalOpen(false)}
+                        bookmarks={bookmarks}
+                        toggleBookmark={toggleBookmark}
+                    />
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
+export default InterviewQuestionsPage;

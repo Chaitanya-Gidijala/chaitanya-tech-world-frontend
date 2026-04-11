@@ -1,5 +1,5 @@
 const API_HOST = import.meta.env.VITE_API_HOST || 'http://localhost:8080/api';
-const AUTH_HOST = import.meta.env.VITE_AUTH_HOST || 'http://localhost:8085/api';
+const AUTH_HOST = import.meta.env.VITE_AUTH_HOST || 'http://localhost:8085/api/v1/auth';
 
 const config = {
     API_BASE_URL: API_HOST,
@@ -51,7 +51,12 @@ const config = {
             stats: `${API_HOST}/analytics/stats`
         },
         auth: {
-            login: `${AUTH_HOST}/login`
+            login: `${AUTH_HOST}/login`,
+            register: `${AUTH_HOST}/register`
+        },
+        users: {
+            base: `${AUTH_HOST.replace('/auth', '/users')}`,
+            count: `${AUTH_HOST.replace('/auth', '/users')}/count`
         }
     }
 };

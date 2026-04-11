@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Sun, Moon, Menu, X, Camera, Briefcase, BookOpen, Wallet, Globe, Map, Brain, Mail, FileText } from 'lucide-react';
+import { Home, Sun, Moon, Menu, X, Camera, Briefcase, Wallet, Globe, Map, Brain, Mail, FileText, Users, LogIn, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isAuthenticated, logout } from '@/features/job-portal/services/authService';
 import Logo from './Logo';
 import './AppHeader.css';
 
@@ -12,7 +13,7 @@ const AppHeader = ({ theme, onToggleTheme }) => {
 
     // Get app name based on route
     const getAppName = () => {
-        if (location.pathname.startsWith('/photo-editor')) return 'Photo Editor';
+        if (location.pathname.startsWith('/services') || location.pathname.startsWith('/our-services')) return 'Our Services';
         if (location.pathname.startsWith('/job-portal')) return 'Job Portal';
         if (location.pathname.startsWith('/ai-resume-builder')) return 'AI Resume Builder';
         if (location.pathname === '/contact') return 'Contact';
@@ -20,9 +21,8 @@ const AppHeader = ({ theme, onToggleTheme }) => {
     };
 
     const apps = [
-        { name: 'Photo Editor', path: '/photo-editor', Icon: Camera },
+        { name: 'Our Services', path: '/services', Icon: Camera },
         { name: 'Job Portal', path: '/job-portal', Icon: Briefcase },
-        { name: 'Prep Hub', path: '/job-portal/prep', Icon: BookOpen },
         { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },
     ];
 
@@ -102,12 +102,12 @@ const AppHeader = ({ theme, onToggleTheme }) => {
                                 <div className="side-nav-section">
                                     <h3 className="section-label">Main Menu</h3>
                                     <Link to="/" className="side-nav-item" onClick={closeMobileMenu}>
-                                        <div className="item-icon-new"><Home size={20} /></div>
+                                        <div className="item-icon-new"><Home size={17} /></div>
                                         <span>Home Page</span>
                                     </Link>
                                     <button className="side-nav-item" onClick={onToggleTheme}>
                                         <div className="item-icon-new">
-                                            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                                            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
                                         </div>
                                         <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
                                     </button>
@@ -116,9 +116,39 @@ const AppHeader = ({ theme, onToggleTheme }) => {
                                         className={`side-nav-item ${location.pathname === '/contact' ? 'active' : ''}`}
                                         onClick={closeMobileMenu}
                                     >
-                                        <div className="item-icon-new"><Mail size={20} /></div>
+                                        <div className="item-icon-new"><Mail size={17} /></div>
                                         <span>Contact Me</span>
                                     </Link>
+                                </div>
+
+                                <div className="side-nav-section">
+                                    <h3 className="section-label">Account</h3>
+                                    {!isAuthenticated() ? (
+                                        <>
+                                            <Link to="/login" className="side-nav-item" onClick={closeMobileMenu}>
+                                                <div className="item-icon-new"><Users size={17} /></div>
+                                                <span>Login</span>
+                                            </Link>
+                                            <Link to="/signup" className="side-nav-item" onClick={closeMobileMenu}>
+                                                <div className="item-icon-new"><LogIn size={17} /></div>
+                                                <span>Sign Up Free</span>
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Link to="/profile" className="side-nav-item" onClick={closeMobileMenu}>
+                                                <div className="item-icon-new"><Users size={17} /></div>
+                                                <span>My Profile</span>
+                                            </Link>
+                                            <button 
+                                                className="side-nav-item" 
+                                                onClick={() => { logout(); closeMobileMenu(); window.location.reload(); }}
+                                            >
+                                                <div className="item-icon-new"><LogIn size={17} /></div>
+                                                <span>Sign Out</span>
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
 
                                 <div className="side-nav-section">
@@ -131,7 +161,7 @@ const AppHeader = ({ theme, onToggleTheme }) => {
                                                 className={`side-nav-item ${location.pathname.startsWith(app.path) ? 'active' : ''}`}
                                                 onClick={closeMobileMenu}
                                             >
-                                                <div className="item-icon-new"><app.Icon size={20} /></div>
+                                                <div className="item-icon-new"><app.Icon size={17} /></div>
                                                 <span>{app.name}</span>
                                             </Link>
                                         ))}
@@ -140,7 +170,9 @@ const AppHeader = ({ theme, onToggleTheme }) => {
                             </div>
 
                             <div className="side-nav-footer">
-                                <span className="footer-version">v2.0.4 Premium</span>
+                                <span className="footer-version">
+                                    By Chaitanya Gidijala <Heart size={10} fill="currentColor" style={{ marginLeft: '4px', display: 'inline' }} />
+                                </span>
                             </div>
                         </motion.div>
                     </motion.div>

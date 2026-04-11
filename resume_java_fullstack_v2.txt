@@ -1,0 +1,112 @@
+CHAITANYA GIDIJALA
+Srikakulam, Andhra Pradesh - 532168 | +91-73370-72766
+chaitugidijala@gmail.com | linkedin.com/in/chaitanyagidijala | github.com/chaitanyadev
+
+JAVA FULL STACK DEVELOPER | DEVOPS ENGINEER
+
+VALUE PROPOSITION
+Delivers production-ready Java applications with 99.9% uptime, 50% faster API response times, and 75% reduced deployment effort through containerized microservices and CI/CD automation.
+
+CORE TECHNOLOGY STACK
+• Java: Spring Boot, Spring MVC, Spring Data JPA, Hibernate, RESTful APIs, Microservices, JUnit, Mockito
+• Frontend: React, TypeScript, JavaScript ES6+, HTML5, CSS3, Bootstrap 5, Thymeleaf
+• DevOps: Docker, Kubernetes, Helm, Jenkins, Ansible, GitHub Actions, Git, Linux
+• Databases: MySQL, JDBC, JPA, Query Optimization, Indexing
+• Integration: webMethods IS, ESB, Adapters, Flow Services, REST/SOAP APIs
+• Tools: IntelliJ, Postman, Swagger, Jenkins, Deployer, VS Code, SOAP UI
+
+PROFESSIONAL EXPERIENCE
+
+Software Developer | Capgemini                                                                                     August 2024 – Present
+Hyderabad, India
+
+Client: GE Aerospace - Enterprise Integration Platform
+
+Impact: Integrated 8+ legacy and modern systems across US, UK, and India data centers, processing 50,000+ daily transactions for global aerospace operations.
+
+Measurable Achievements:
+• Reduced data transformation time by 40% through 15+ optimized Flow Services in webMethods Integration Server
+• Cut production incidents by 60% by implementing centralized error handling and structured logging across all integration services
+• Slashed deployment time from 4 hours to 1 hour (75% reduction) using webMethods Deployer automation across 3 environments
+• Enabled real-time data sync between 8+ business applications via ESB adapters, eliminating 20+ hours/week of manual data entry
+• Achieved 100% SOC2 compliance for data governance across all integration touchpoints handling sensitive aerospace data
+• Selected as COE (Center of Excellence) Team Lead, mentoring 8+ developers through daily KT sessions on DevOps technologies (Docker, Kubernetes, Jenkins, Helm)
+• Designed and conducted weekly technology quizzes and assessments across 12+ topics, improving team certification pass rate by 65%
+• Led daily standup calls and sprint planning sessions, ensuring 100% on-time delivery across 3 concurrent workstreams
+• Represented development team in daily client calls with GE Aerospace stakeholders (US/UK), presenting status updates and technical solutions directly to C-level executives
+• Built high-performing team culture resulting in 3 team members receiving promotions within 6 months
+
+Java Full Stack Developer | Capgemini                                                                           October 2024 – March 2025
+Pune, India
+
+Client: Capgemini Internal Job Portal - Enterprise Hiring Platform
+
+Impact: Built end-to-end job portal serving 5,000+ candidates and 200+ recruiters across 6 delivery centers, processing 2,000+ daily applications.
+
+Measurable Achievements:
+• Shipped 6 production microservices (Spring Boot) handling job postings, applications, resume parsing, notifications, analytics, and user management
+• Improved recruiter productivity by 45% through React-based dashboard with real-time candidate tracking and automated workflow triggers
+• Reduced API latency by 50% (800ms → 400ms) through MySQL query optimization and strategic indexing on high-volume tables
+• Achieved 99.9% uptime over 6 months by containerizing services with Docker and orchestrating via Kubernetes with auto-scaling policies
+• Cut manual deployment effort by 80% using Helm charts and Jenkins CI/CD pipelines with automated testing and rollback capabilities
+• Implemented JWT + RBAC security model protecting 5,000+ candidate records with zero security incidents in production
+• Increased application completion rate by 35% through streamlined multi-step application forms with progress persistence
+• Reduced email bounce rate to <2% by integrating JavaMail with SMTP validation and template-based transactional emails
+
+PROJECTS
+
+Chaitanya Tech World - Full Stack SaaS Platform | Production Live
+URL: https://www.chaitanyatechworld.com
+
+Architected and deployed a production multi-tenant platform hosting 3 web applications (AI Resume Builder, Job Portal, Photo Editor) serving 1,000+ monthly users with 99.9% uptime.
+
+Full-Stack Technologies Implemented:
+• Frontend: React 19, React Router v7, Bootstrap 5, Framer Motion, Lucide Icons, CSS3, HTML5, JavaScript ES6+
+• Backend: Spring Boot 3.x, Maven, Spring Data JPA, Hibernate, RESTful APIs, Microservices Architecture
+• Database: MySQL, JDBC, Connection Pooling, Query Optimization
+• DevOps: Docker, Kubernetes, Helm, Vercel CI/CD, GitHub Actions
+• Tools: jsPDF, Canvas API, IntelliJ, VS Code, Postman
+
+Measurable Achievements:
+• Reduced initial page load from 3.2s to 1.1s (65% improvement) through lazy loading, code splitting, and asset optimization
+• Eliminated backend PDF rendering costs (₹5,000/month saved) by implementing client-side jspdf integration
+• Increased session duration by 28% through dark/light theme engine with localStorage persistence
+• Achieved 99.9% uptime across 3 microservices deployed on Kubernetes with auto-scaling policies
+• Built reusable component library reducing development time by 40% for new feature additions
+• Implemented responsive design achieving 100% mobile compatibility across all screen sizes
+• Integrated Framer Motion animations improving user engagement metrics by 35%
+
+Live Application URLs:
+• AI Resume Builder: https://www.chaitanyatechworld.com/ai-resume-builder
+• Job Portal: https://www.chaitanyatechworld.com/job-portal
+• Photo Editor: https://www.chaitanyatechworld.com/photo-editor
+
+EDUCATION
+
+Master of Computer Applications (MCA)                                                     2024 – Present
+Andhra University, Visakhapatnam
+
+B.Sc. Computer Science                                                                       2019 – 2022
+Dr. B.R. Ambedkar University | CGPA: 8.2/10.0
+
+CERTIFICATIONS
+• webMethods OCEAN Certification Level 1 | Capgemini | 2025
+• Java OCEAN Certification Level 1 & 2 | Capgemini | 2025
+• Java Full Stack Development | Frontlines Media Edutech | 2024
+
+QUANTIFIED SKILLS SUMMARY
+• 2 years production Java development
+• 6 microservices deployed to Kubernetes
+• 50% average API performance improvement delivered
+• 99.9% uptime maintained across production systems
+• 75% deployment time reduction through DevOps automation
+• 5,000+ users served by enterprise applications
+• Zero security incidents in production
+
+OPEN SOURCE & GITHUB
+• 10+ public repositories showcasing full-stack projects
+• Active contributor to React and Spring Boot learning resources
+
+AVAILABILITY
+3-month notice period (serving notice)
+Open to relocation and remote opportunities

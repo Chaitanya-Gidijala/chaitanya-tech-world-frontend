@@ -1,0 +1,391 @@
+/* ==========================================================
+   JobDetails.css — Premium Job Description Page
+   Focus: High-end typography, clean layout, glass elements
+   ========================================================== */
+
+:root {
+    --jd-primary: #6366f1;
+    --jd-primary-light: #818cf8;
+    --jd-secondary: #ec4899;
+    --jd-text-main: #1e293b;
+    --jd-text-muted: #64748b;
+    --jd-bg: #f8fafc;
+    --jd-card-bg: #ffffff;
+    --jd-border: #e2e8f0;
+    --jd-glass: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme='dark'] {
+    --jd-text-main: #f1f5f9;
+    --jd-text-muted: #94a3b8;
+    --jd-bg: #0f172a;
+    --jd-card-bg: #1e293b;
+    --jd-border: #334155;
+    --jd-glass: rgba(30, 41, 59, 0.7);
+}
+
+.jd-shell {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    box-sizing: border-box;
+}
+
+
+/* ── BACK NAVIGATION ── */
+.jd-nav-bar {
+    margin-bottom: 2rem;
+}
+
+.jd-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--jd-text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.jd-back-btn:hover {
+    color: var(--jd-primary);
+}
+
+/* ── HERO SECTION ── */
+.jd-hero {
+    background: var(--jd-card-bg);
+    border: 1px solid var(--jd-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+
+.jd-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.jd-logo-box {
+    width: 64px;
+    height: 64px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--jd-border);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+
+[data-theme='dark'] .jd-logo-box {
+    background: #1e293b;
+}
+
+.jd-logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.jd-header-info {
+    flex: 1;
+}
+
+.jd-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.jd-main-title {
+    font-size: 1.4rem;
+    font-weight: 850;
+    color: var(--jd-text-main);
+    margin: 0 0 0.4rem 0;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    flex-shrink: 1;
+}
+
+.jd-company-link {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--jd-primary);
+    margin-bottom: 0.85rem;
+    display: block;
+    text-decoration: none;
+}
+
+
+.jd-meta-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.jd-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.85rem;
+    background: var(--jd-bg);
+    border: 1px solid var(--jd-border);
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--jd-text-muted);
+}
+
+
+.jd-pill.type {
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--jd-primary);
+    border-color: rgba(99, 102, 241, 0.1);
+}
+
+/* ── CONTENT GRID ── */
+.jd-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 2.5rem;
+    align-items: flex-start;
+}
+
+.jd-body-section {
+    background: var(--jd-card-bg);
+    border: 1px solid var(--jd-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+
+.jd-section-label {
+    font-size: 0.95rem;
+    font-weight: 850;
+    color: var(--jd-text-main);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+
+.jd-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--jd-border);
+}
+
+.jd-description-text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--jd-text-main);
+    opacity: 0.9;
+}
+
+
+.jd-description-text p {
+    margin-bottom: 1.25rem;
+}
+
+.jd-description-text ul, .jd-description-text ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.jd-description-text li {
+    margin-bottom: 0.75rem;
+}
+
+/* ── SIDEBAR ── */
+.jd-sidebar {
+    position: sticky;
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.jd-summary-box {
+    background: var(--jd-card-bg);
+    border: 1px solid var(--jd-border);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.jd-salary-row {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.jd-salary-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--jd-text-muted);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.jd-salary-val {
+    font-size: 1.25rem;
+    font-weight: 850;
+    color: var(--jd-primary);
+}
+
+.jd-action-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.jd-btn-apply {
+    width: 100%;
+    height: 44px;
+    background: linear-gradient(135deg, var(--jd-primary) 0%, var(--jd-secondary) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 16px -5px rgba(99, 102, 241, 0.3);
+}
+
+.jd-btn-apply:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -5px rgba(99, 102, 241, 0.4);
+}
+
+.jd-btn-share {
+    width: 100%;
+    height: 44px;
+    background: var(--jd-bg);
+    border: 1px solid var(--jd-border);
+    border-radius: 12px;
+    color: var(--jd-text-main);
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.jd-btn-share:hover {
+    background: #ffffff;
+    border-color: var(--jd-primary);
+    color: var(--jd-primary);
+}
+
+.jd-prep-banner {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 20px;
+    padding: 1.75rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.jd-prep-banner h4 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    position: relative;
+    z-index: 1;
+}
+
+.jd-prep-banner p {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.jd-btn-hub {
+    background: white;
+    color: #1e293b;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.jd-btn-hub:hover {
+    transform: scale(1.03);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 992px) {
+    .jd-grid-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .jd-sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 640px) {
+    .jd-shell {
+        padding: 1.5rem 1rem;
+    }
+    
+    .jd-hero {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 2rem 1.5rem;
+    }
+    
+    .jd-title-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .jd-main-title {
+        font-size: 1.75rem;
+    }
+    
+    .jd-body-section {
+        padding: 1.5rem;
+    }
+    
+    .jd-meta-pills {
+        justify-content: center;
+    }
+}

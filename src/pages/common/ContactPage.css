@@ -152,6 +152,7 @@
     z-index: 1;
     padding: 5rem 0 3.5rem;
     text-align: center;
+    margin-top: 1rem !important;
 }
 
 .cp-hero-tag {
@@ -170,7 +171,7 @@
 }
 
 .cp-hero-h1 {
-    font-size: clamp(2rem, 6vw, 4rem);
+    font-size: clamp(2rem, 6vw, 3rem);
     font-weight: 900;
     letter-spacing: -0.04em;
     line-height: 1.1;
@@ -203,7 +204,8 @@
 .cp-body {
     position: relative;
     z-index: 1;
-    padding-bottom: 6rem;
+    padding-bottom: 3rem !important;
+    padding-top: 3rem !important;
 }
 
 .cp-grid {
@@ -355,10 +357,11 @@
 }
 
 .cp-avail-row {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 100px 1fr 60px;
+    gap: 0.75rem;
     align-items: center;
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
     border-bottom: 1px solid var(--border-light);
     font-size: 0.85rem;
 }
@@ -376,21 +379,27 @@
 }
 
 .cp-avail-open {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 700;
-    padding: 0.2rem 0.55rem;
-    border-radius: 50px;
-    background: hsla(142, 71%, 45%, 0.15);
+    padding: 0.25rem 0;
+    border-radius: 6px;
+    background: hsla(142, 71%, 45%, 0.12);
     color: #22c55e;
+    text-align: center;
+    display: block;
+    width: 100%;
 }
 
 .cp-avail-closed {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 700;
-    padding: 0.2rem 0.55rem;
-    border-radius: 50px;
-    background: hsla(0, 70%, 50%, 0.12);
+    padding: 0.25rem 0;
+    border-radius: 6px;
+    background: hsla(0, 70%, 50%, 0.1);
     color: #ef4444;
+    text-align: center;
+    display: block;
+    width: 100%;
 }
 
 /* ================================================================
@@ -734,6 +743,8 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
+    margin-bottom: 2rem;
+
 }
 
 .cp-quick-card {
@@ -825,12 +836,15 @@
 
     .cp-quick-grid {
         grid-template-columns: repeat(3, 1fr);
+        margin-bottom: 2rem;
+
     }
 }
 
 @media (max-width: 767px) {
     .cp-hero {
         padding: 3.5rem 0 2.5rem;
+        margin-top: 1rem !important;
     }
 
     .cp-hero-h1 {
@@ -847,12 +861,14 @@
 
     .cp-quick-grid {
         grid-template-columns: 1fr;
+        margin-bottom: 2rem;
     }
 }
 
 @media (max-width: 480px) {
     .cp-hero {
         padding: 2rem 0 1.5rem;
+        margin-top: 1rem !important;
     }
 
     .cp-form-panel {
@@ -886,21 +902,23 @@
     }
 
     .cp-submit {
-        padding: 0.85rem 1.5rem;
-        font-size: 0.92rem;
-        gap: 0.5rem;
+        padding: 0.65rem 1.4rem;
+        font-size: 0.72rem;
+        gap: 0.3rem;
     }
 
-    .cp-input, .cp-textarea, .cp-select {
-        padding: 0.75rem 0.9rem;
-        font-size: 0.88rem;
+    .cp-input,
+    .cp-textarea,
+    .cp-select {
+        padding: 0.35rem 0.9rem;
+        font-size: 0.68rem;
     }
 
     .cp-success-icon {
         width: 64px;
         height: 64px;
     }
-    
+
     .cp-success-icon svg {
         width: 28px;
         height: 28px;
@@ -914,5 +932,77 @@
 
     .cp-success-sub {
         font-size: 0.88rem;
+    }
+
+    .cp-hero-sub {
+        font-size: 0.8rem !important;
+    }
+
+    .cp-form-title {
+        font-size: 1.2rem !important;
+    }
+
+    .cp-form-subtitle {
+        font-size: 0.8rem !important;
+    }
+
+    .cp-label {
+        font-size: 0.7rem !important;
+    }
+
+    .cp-budget-display {
+        font-size: 0.9rem !important;
+    }
+
+    .cp-card-label {
+        font-size: 0.7rem !important;
+    }
+
+    .cp-card-value {
+        font-size: 0.8rem !important;
+    }
+
+    .cp-availability-title {
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+        align-items: left;
+        gap: 0.2rem;
+    }
+
+    .cp-avail-row {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 0.4rem !important;
+        font-size: 0.62rem !important;
+        padding: 0.75rem 0 !important;
+    }
+
+    .cp-avail-day {
+        font-weight: 500;
+        width: 32%;
+        flex-shrink: 0;
+    }
+
+    .cp-avail-time {
+        text-align: center;
+        flex: 1;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+    }
+
+    .cp-avail-open,
+    .cp-avail-closed {
+        width: 50px !important;
+        padding: 0.2rem 0 !important;
+        font-size: 0.58rem !important;
+        flex-shrink: 0;
+    }
+
+    .cp-quick-card {
+        padding: 1rem;
     }
 }
