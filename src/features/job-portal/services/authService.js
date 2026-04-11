@@ -14,12 +14,21 @@ export const login = async (usernameOrEmail, password) => {
         body: JSON.stringify({ usernameOrEmail, password }),
     });
 
-    const result = await response.json();
+    let result = {};
+    const text = await response.text();
+    
+    if (text) {
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            console.error('Failed to parse response JSON:', text);
+            throw new Error(`Server returned invalid response (Status: ${response.status})`);
+        }
+    }
 
     if (!response.ok) {
         console.error('Login failed:', response.status, result);
-        // Throw the real message from the backend if available
-        throw new Error(result.message || 'Invalid credentials');
+        throw new Error(result.message || result.error || `Login failed with status: ${response.status} ${text? "" : "(Empty response)"}`);
     }
 
     // Backend returns ApiResponse<JwtAuthResponse>
@@ -58,11 +67,21 @@ export const register = async (name, email, password) => {
         }),
     });
 
-    const result = await response.json();
+    let result = {};
+    const text = await response.text();
+    
+    if (text) {
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            console.error('Failed to parse registration response:', text);
+            throw new Error(`Registration failed: Server error (Status: ${response.status})`);
+        }
+    }
 
     if (!response.ok) {
         console.error('Registration failed:', response.status, result);
-        throw new Error(result.message || 'Registration failed');
+        throw new Error(result.message || result.error || 'Registration failed');
     }
 
     return result;

@@ -4,7 +4,8 @@ const AUTH_HOST = import.meta.env.VITE_AUTH_HOST || 'http://localhost:8085/api/v
 const config = {
     API_BASE_URL: API_HOST,
     AUTH_API_URL: AUTH_HOST,
-    
+
+
     endpoints: {
         jobs: {
             base: `${API_HOST}/jobs`,
