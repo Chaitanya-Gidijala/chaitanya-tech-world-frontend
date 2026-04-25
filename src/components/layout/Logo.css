@@ -84,6 +84,6 @@
 /* Responsive */
 @media (max-width: 600px) {
     .logo-brand-text {
-        font-size: 0.85rem !important;
+        font-size: 1.1rem !important;
     }
 }

@@ -910,8 +910,8 @@
     .cp-input,
     .cp-textarea,
     .cp-select {
-        padding: 0.35rem 0.9rem;
-        font-size: 0.68rem;
+        padding: 0.75rem 0.9rem;
+        font-size: 0.85rem;
     }
 
     .cp-success-icon {

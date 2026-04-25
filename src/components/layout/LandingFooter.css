@@ -641,6 +641,11 @@ a.footer-contact-item:hover .footer-contact-icon {
         align-items: center;
     }
 
+    .footer-copyright-line,
+    .footer-made-by-line {
+        justify-content: center;
+    }
+
     .footer-scroll-btn {
         width: 100%;
         justify-content: center;
