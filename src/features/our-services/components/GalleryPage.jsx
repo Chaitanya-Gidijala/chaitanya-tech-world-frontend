@@ -11,7 +11,7 @@ import {
 import { services, projects } from '../config/photoEditorData';
 import '../styles/OurServices_v1.css';
 
-/* â”€â”€ Perâ€‘service rich data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* -- Per-service rich data -------------------------------- */
 const SERVICE_DATA = {
     'engagement-invitations-cards': {
         tagline: 'Celebrate the Big "Yes!"',
@@ -19,10 +19,10 @@ const SERVICE_DATA = {
         accentColor: '#e91e8c',
         accentGradient: 'linear-gradient(135deg,#e91e8c,#ff6b9d)',
         features: [
-            { icon: Palette, title: 'Romantic Designs', desc: 'Blush, gold, floral, minimal â€” pick a theme that tells your love story.' },
+            { icon: Palette, title: 'Romantic Designs', desc: 'Blush, gold, floral, minimal - pick a theme that tells your love story.' },
             { icon: Printer, title: 'Print-Ready Files', desc: 'High-res 300 DPI files perfectly sized for professional printing.' },
             { icon: Download, title: 'Digital E-invites', desc: 'Shareable JPG/PDF cards optimised for WhatsApp & social media.' },
-            { icon: MessageSquare, title: 'Custom Wording', desc: 'Every word personalised â€” bilingual options available on request.' },
+            { icon: MessageSquare, title: 'Custom Wording', desc: 'Every word personalised - bilingual options available on request.' },
             { icon: Clock, title: '48-hr Turnaround', desc: 'Rush deliveries available. We never miss your special date.' },
             { icon: Eye, title: 'Unlimited Previews', desc: 'Review and request changes until every detail is perfect.' },
         ],
@@ -39,7 +39,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1601314985946-4f0b90202f53?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '2,400+', label: 'Couples Served' }, { val: '4.9â˜…', label: 'Star Rating' }, { val: '48 hr', label: 'Avg Delivery' }, { val: '100%', label: 'Satisfaction' }],
+        stats: [{ val: '20+', label: 'Couples Served' }, { val: '4.9★', label: 'Star Rating' }, { val: '48 hr', label: 'Avg Delivery' }, { val: '100%', label: 'Satisfaction' }],
         process: ['Brief & Vision', 'Concept Design', 'Your Feedback', 'Final Delivery'],
         faq: [
             { q: 'How many revisions are included?', a: 'Classic: 3, Premium: Unlimited, Luxury: Unlimited.' },
@@ -53,12 +53,12 @@ const SERVICE_DATA = {
         accentColor: '#c8822a',
         accentGradient: 'linear-gradient(135deg,#c8822a,#f0c060)',
         features: [
-            { icon: Palette, title: 'Bespoke Suites', desc: 'Save-the-dates, full invitations, RSVP cards & thank-you notes â€” complete wedding suite.' },
+            { icon: Palette, title: 'Bespoke Suites', desc: 'Save-the-dates, full invitations, RSVP cards & thank-you notes - complete wedding suite.' },
             { icon: Printer, title: 'Luxury Print Files', desc: '300 DPI files ready for offset, letterpress or foil printing.' },
             { icon: Download, title: 'Digital Invites', desc: 'Beautiful animated digital versions for social sharing.' },
             { icon: MessageSquare, title: 'Multi-language', desc: 'English, Hindi, Telugu, Tamil and more.' },
             { icon: Clock, title: 'On-time Every Time', desc: 'Rush delivery guaranteed for urgent wedding timelines.' },
-            { icon: Package, title: 'Complete Stationery', desc: 'Menu cards, table numbers, program booklets â€” we do it all.' },
+            { icon: Package, title: 'Complete Stationery', desc: 'Menu cards, table numbers, program booklets - we do it all.' },
         ],
         packages: [
             { name: 'Intimate', price: '₹399', features: ['1 Invite Design', 'Digital PDF', '3 Revisions', '48-hr Delivery'], popular: false },
@@ -73,11 +73,11 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '5,000+', label: 'Weddings Designed' }, { val: '4.9â˜…', label: 'Star Rating' }, { val: '6 yrs', label: 'Experience' }, { val: '100%', label: 'Love Guaranteed' }],
+        stats: [{ val: '15+', label: 'Weddings Designed' }, { val: '4.9★', label: 'Star Rating' }, { val: '2 yrs', label: 'Experience' }, { val: '100%', label: 'Love Guaranteed' }],
         process: ['Consultation', 'Mood Board', 'Design & Proof', 'Final Files'],
         faq: [
             { q: 'Can I see a physical proof?', a: 'Yes, we send a PDF proof before final delivery. Physical samples available on the Royal plan.' },
-            { q: 'Do you design for Indian weddings?', a: 'Absolutely â€” traditional, fusion, or modern minimalist, we handle all cultural styles.' },
+            { q: 'Do you design for Indian weddings?', a: 'Absolutely - traditional, fusion, or modern minimalist, we handle all cultural styles.' },
         ],
     },
     'birthday-invitations-cards': {
@@ -86,7 +86,7 @@ const SERVICE_DATA = {
         accentColor: '#7c3aed',
         accentGradient: 'linear-gradient(135deg,#7c3aed,#ec4899)',
         features: [
-            { icon: Sparkles, title: 'Any Theme', desc: "From princesses to superheroes, 1st birthdays to 100th â€” we cover every theme." },
+            { icon: Sparkles, title: 'Any Theme', desc: "From princesses to superheroes, 1st birthdays to 100th - we cover every theme." },
             { icon: Palette, title: 'Vibrant Designs', desc: 'Colourful, playful and premium designs that stand out.' },
             { icon: Download, title: 'E-invite Ready', desc: 'WhatsApp & Instagram-ready files for instant sharing.' },
             { icon: Clock, title: 'Fast Turnaround', desc: '24-hr rush available so you\'re never caught off-guard.' },
@@ -106,7 +106,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1596464716127-f2a82984de30?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '3,200+', label: 'Happy Clients' }, { val: '4.8â˜…', label: 'Rating' }, { val: '24 hr', label: 'Rush Delivery' }, { val: '50+', label: 'Themes' }],
+        stats: [{ val: '25+', label: 'Happy Clients' }, { val: '4.8★', label: 'Rating' }, { val: '24 hr', label: 'Rush Delivery' }, { val: '50+', label: 'Themes' }],
         process: ['Pick Theme', 'Design Draft', 'Review', 'Celebrate!'],
         faq: [
             { q: 'Can I add a photo to the invitation?', a: 'Yes! Photo-based invitations are available on all plans.' },
@@ -120,7 +120,7 @@ const SERVICE_DATA = {
         accentGradient: 'linear-gradient(135deg,#059669,#34d399)',
         features: [
             { icon: Home, title: 'Warm Aesthetics', desc: 'Cosy illustrations and architectural touches that say "home."' },
-            { icon: Palette, title: 'Luxury to Minimal', desc: 'Vastu-themed traditional or sleek modern â€” you choose the vibe.' },
+            { icon: Palette, title: 'Luxury to Minimal', desc: 'Vastu-themed traditional or sleek modern - you choose the vibe.' },
             { icon: Package, title: 'Complete Set', desc: 'Invitation + directional cards + thank-you notes.' },
             { icon: Download, title: 'Digital Ready', desc: 'WhatsApp-friendly sizes ready to forward to guests.' },
             { icon: Clock, title: 'Quick Delivery', desc: '48-hour standard; 24-hr rush available.' },
@@ -139,7 +139,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1583847268964-b28e50b712b7?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '1,800+', label: 'Homes Celebrated' }, { val: '4.9â˜…', label: 'Rating' }, { val: '48 hr', label: 'Delivery' }, { val: '100%', label: 'Satisfaction' }],
+        stats: [{ val: '10+', label: 'Homes Celebrated' }, { val: '4.9★', label: 'Rating' }, { val: '48 hr', label: 'Delivery' }, { val: '100%', label: 'Satisfaction' }],
         process: ['Discuss Vision', 'Design Draft', 'Your Changes', 'Files Delivered'],
         faq: [
             { q: 'Can I include a map or directions?', a: 'Yes! Direction cards and location maps can be added on Warm and Grand plans.' },
@@ -153,10 +153,10 @@ const SERVICE_DATA = {
         features: [
             { icon: Building2, title: 'Brand-Aligned', desc: 'We match your brand guidelines, logo colours and typography to the letter.' },
             { icon: Layers, title: 'Event Types', desc: 'Product launches, conferences, galas, AGMs, award nights.' },
-            { icon: Package, title: 'Full Stationery', desc: 'Invitations, agenda cards, name badges, banners â€” end to end.' },
+            { icon: Package, title: 'Full Stationery', desc: 'Invitations, agenda cards, name badges, banners - end to end.' },
             { icon: Printer, title: 'Print-Optimal', desc: 'CMYK colour mode with bleed & crop marks for professional print.' },
             { icon: Shield, title: 'NDA Available', desc: 'We sign NDAs for confidential brand launches on request.' },
-            { icon: Clock, title: 'Deadline-Driven', desc: 'Corporate timelines respected â€” no exceptions.' },
+            { icon: Clock, title: 'Deadline-Driven', desc: 'Corporate timelines respected - no exceptions.' },
         ],
         packages: [
             { name: 'Standard', price: '₹499', features: ['1 Invite Design', 'Brand Aligned', '3 Revisions', '48-hr Delivery'], popular: false },
@@ -171,11 +171,11 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1559339352-1791c0021ee2?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '900+', label: 'Brands Served' }, { val: '4.9â˜…', label: 'Rating' }, { val: '24 hr', label: 'Rush Delivery' }, { val: '5 yrs', label: 'Experience' }],
+        stats: [{ val: '12+', label: 'Brands Served' }, { val: '4.9★', label: 'Rating' }, { val: '24 hr', label: 'Rush Delivery' }, { val: '2 yrs', label: 'Experience' }],
         process: ['Brand Brief', 'Design Build', 'Stakeholder Review', 'Print-Ready'],
         faq: [
             { q: 'Can you match our existing brand guidelines?', a: 'Absolutely. Share your brand kit and we\'ll ensure pixel-perfect brand consistency.' },
-            { q: 'Do you handle bulk printing orders?', a: 'We partner with premium print houses â€” ask us for a printing quote.' },
+            { q: 'Do you handle bulk printing orders?', a: 'We partner with premium print houses - ask us for a printing quote.' },
         ],
     },
     'custom-event-cards': {
@@ -184,7 +184,7 @@ const SERVICE_DATA = {
         accentColor: '#d97706',
         accentGradient: 'linear-gradient(135deg,#d97706,#fbbf24)',
         features: [
-            { icon: CalendarDays, title: 'Every Occasion', desc: 'Baby showers, anniversaries, graduations, farewells â€” nothing is too unique.' },
+            { icon: CalendarDays, title: 'Every Occasion', desc: 'Baby showers, anniversaries, graduations, farewells - nothing is too unique.' },
             { icon: Palette, title: '100% Custom', desc: 'Your brief is our canvas. Bring any idea and we\'ll make it reality.' },
             { icon: Users, title: 'Group Discounts', desc: 'Order for large events with bulk-pricing available.' },
             { icon: Download, title: 'Multi-Format', desc: 'Digital + print-ready files included in all packages.' },
@@ -204,7 +204,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1561726053-488f58b0ab7f?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1596464716127-f2a82984de30?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '4,000+', label: 'Events Designed' }, { val: '4.9â˜…', label: 'Rating' }, { val: '48 hr', label: 'Standard' }, { val: 'Any', label: 'Occasion' }],
+        stats: [{ val: '30+', label: 'Events Designed' }, { val: '4.9★', label: 'Rating' }, { val: '48 hr', label: 'Standard' }, { val: 'Any', label: 'Occasion' }],
         process: ['Share Brief', 'Design Magic', 'Tweaks & Review', 'Delivered!'],
         faq: [
             { q: 'Can I send a rough sketch or reference image?', a: 'Yes! We love references. Send anything that inspires you.' },
@@ -216,10 +216,10 @@ const SERVICE_DATA = {
         accentColor: '#dc2626',
         accentGradient: 'linear-gradient(135deg,#dc2626,#f97316)',
         features: [
-            { icon: ImageIcon, title: 'All Formats', desc: 'Social banners, YouTube art, Flex hoardings, A4/A3 posters â€” every size.' },
+            { icon: ImageIcon, title: 'All Formats', desc: 'Social banners, YouTube art, Flex hoardings, A4/A3 posters - every size.' },
             { icon: Zap, title: 'High-Impact', desc: 'Bold compositions that stop the scroll and drive action.' },
             { icon: Printer, title: 'Flex-Ready', desc: 'Large-format print files in CMYK with correct bleed.' },
-            { icon: Package, title: 'Social Media Kit', desc: 'Posts, stories, covers â€” full kit in one order.' },
+            { icon: Package, title: 'Social Media Kit', desc: 'Posts, stories, covers - full kit in one order.' },
             { icon: Clock, title: 'Rapid Execution', desc: '24-hr turnaround for urgent campaigns.' },
             { icon: Eye, title: 'Brand-Safe', desc: 'On-brand colours and messaging, every time.' },
         ],
@@ -236,10 +236,10 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1533135091724-62cb5553b49c?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '8,000+', label: 'Designs Delivered' }, { val: '4.9â˜…', label: 'Rating' }, { val: '24 hr', label: 'Rush' }, { val: '100%', label: 'Brand-Safe' }],
+        stats: [{ val: '40+', label: 'Designs Delivered' }, { val: '4.9★', label: 'Rating' }, { val: '24 hr', label: 'Rush' }, { val: '100%', label: 'Brand-Safe' }],
         process: ['Brief & Sizes', 'Design Creation', 'Your Approval', 'All Files Sent'],
         faq: [
-            { q: 'What file format for flex printing?', a: 'We deliver AI/PDF/TIFF in CMYK at 300 DPI with 3mm bleed â€” print-house ready.' },
+            { q: 'What file format for flex printing?', a: 'We deliver AI/PDF/TIFF in CMYK at 300 DPI with 3mm bleed - print-house ready.' },
         ],
     },
     'wallpaper-design': {
@@ -248,7 +248,7 @@ const SERVICE_DATA = {
         accentColor: '#6d28d9',
         accentGradient: 'linear-gradient(135deg,#6d28d9,#7c3aed)',
         features: [
-            { icon: Wallpaper, title: 'Any Device', desc: 'Desktop 4K, mobile, tablet, dual-monitor â€” all aspect ratios.' },
+            { icon: Wallpaper, title: 'Any Device', desc: 'Desktop 4K, mobile, tablet, dual-monitor - all aspect ratios.' },
             { icon: Palette, title: 'Every Style', desc: 'Abstract, minimal, dark, neon, nature, brand-themed.' },
             { icon: Package, title: 'Bulk Packs', desc: 'Monthly wallpaper packs for content creators and brands.' },
             { icon: Download, title: 'Instant Download', desc: 'High-res PNG/JPG ready to set on any device.' },
@@ -268,7 +268,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1574169208507-84376144848b?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '12K+', label: 'Downloads' }, { val: '4.8â˜…', label: 'Rating' }, { val: '24 hr', label: 'Delivery' }, { val: '4K', label: 'Max Res' }],
+        stats: [{ val: '50+', label: 'Downloads' }, { val: '4.8★', label: 'Rating' }, { val: '24 hr', label: 'Delivery' }, { val: '4K', label: 'Max Res' }],
         process: ['Choose Style', 'Design Draft', 'Review & Adjust', 'Download!'],
         faq: [
             { q: `Can I get a wallpaper for my brand's office screens?`, a: 'Yes! Corporate brand-themed wallpacks are a popular option.' },
@@ -280,11 +280,11 @@ const SERVICE_DATA = {
         accentColor: '#0891b2',
         accentGradient: 'linear-gradient(135deg,#0891b2,#06b6d4)',
         features: [
-            { icon: Globe, title: 'Full-Stack Dev', desc: 'React, Next.js, Node, Spring Boot â€” modern stack, scalable architecture.' },
+            { icon: Globe, title: 'Full-Stack Dev', desc: 'React, Next.js, Node, Spring Boot - modern stack, scalable architecture.' },
             { icon: Zap, title: 'Blazing Fast', desc: '90+ Lighthouse scores, optimised assets, CDN deployed.' },
             { icon: Shield, title: 'Secure & Stable', desc: 'SSL, best-practice security headers, regular backups.' },
             { icon: Palette, title: 'Custom Design', desc: 'Pixel-perfect UI designed from scratch to match your brand.' },
-            { icon: Package, title: 'SEO Ready', desc: 'Semantic HTML, meta tags, schema markup â€” built for search engines.' },
+            { icon: Package, title: 'SEO Ready', desc: 'Semantic HTML, meta tags, schema markup - built for search engines.' },
             { icon: Clock, title: 'Agile Delivery', desc: 'Sprint-based development with weekly demos.' },
         ],
         packages: [
@@ -300,7 +300,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1605379399843-5870eea9b74e?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '200+', label: 'Sites Launched' }, { val: '4.9â˜…', label: 'Rating' }, { val: '99.9%', label: 'Uptime' }, { val: '90+', label: 'Lighthouse' }],
+        stats: [{ val: '5+', label: 'Sites Launched' }, { val: '4.9★', label: 'Rating' }, { val: '99.9%', label: 'Uptime' }, { val: '90+', label: 'Lighthouse' }],
         process: ['Discovery', 'Design Sprint', 'Development', 'Launch & Support'],
         faq: [
             { q: 'Do you provide hosting?', a: 'Yes, we can assist with Vercel, Netlify or VPS hosting setup.' },
@@ -333,7 +333,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1523206489230-c012c64b2b48?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '50+', label: 'Apps Designed' }, { val: '4.9â˜…', label: 'Rating' }, { val: '3x', label: 'Conversion Avg' }, { val: '100%', label: 'Responsive' }],
+        stats: [{ val: '4+', label: 'Apps Designed' }, { val: '4.9★', label: 'Rating' }, { val: '3x', label: 'Conversion Avg' }, { val: '100%', label: 'Responsive' }],
         process: ['Wireframing', 'Visual Design', 'Prototyping', 'Handoff'],
         faq: [
             { q: 'Do you also develop the app?', a: 'Yes, we offer both UI/UX design and full-stack development services.' },
@@ -366,7 +366,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '120+', label: 'Restaurants' }, { val: '4.9â˜…', label: 'Rating' }, { val: '100%', label: 'Delicious' }, { val: '5 yrs', label: 'Experience' }],
+        stats: [{ val: '8+', label: 'Restaurants' }, { val: '4.9★', label: 'Rating' }, { val: '100%', label: 'Delicious' }, { val: '2 yrs', label: 'Experience' }],
         process: ['Tasting/Briefing', 'Concept Creation', 'Refinement', 'Final Delivery'],
         faq: [
             { q: 'Can you design digital menu boards?', a: 'Yes, we design for both print menus and digital displays.' },
@@ -399,7 +399,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1626785774675-dd4159dd54e2?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '500+', label: 'Logos Crafted' }, { val: '4.8â˜…', label: 'Rating' }, { val: '4 days', label: 'Avg Turnaround' }, { val: '100%', label: 'Vector' }],
+        stats: [{ val: '20+', label: 'Logos Crafted' }, { val: '4.8★', label: 'Rating' }, { val: '4 days', label: 'Avg Turnaround' }, { val: '100%', label: 'Vector' }],
         process: ['Discovery', 'Sketching', 'Vectorizing', 'Finalizing'],
         faq: [
             { q: 'Will I get the vector source files?', a: 'Yes, source files (AI/EPS) are included in Business and Brand packages.' },
@@ -432,7 +432,7 @@ const SERVICE_DATA = {
             'https://images.unsplash.com/photo-1563214539-775b81ae2cc1?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1616628188859-75119c688395?auto=format&fit=crop&w=800&q=80',
         ],
-        stats: [{ val: '2,000+', label: 'Cards Designed' }, { val: '4.9â˜…', label: 'Rating' }, { val: '48 hr', label: 'Delivery' }, { val: '100%', label: 'Professional' }],
+        stats: [{ val: '25+', label: 'Cards Designed' }, { val: '4.9★', label: 'Rating' }, { val: '48 hr', label: 'Delivery' }, { val: '100%', label: 'Professional' }],
         process: ['Details Gathering', 'Layout Design', 'Revisions', 'Print Files Sent'],
         faq: [
             { q: 'Do you offer printing services?', a: 'We provide print-ready files that you can take to any professional printer.' },
@@ -441,7 +441,7 @@ const SERVICE_DATA = {
     },
 };
 
-/* â”€â”€ Lightbox â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* -- Lightbox ------------------------------------------------ */
 const Lightbox = ({ images, index, onClose, onPrev, onNext }) => (
     <AnimatePresence>
         <motion.div
@@ -466,7 +466,7 @@ const Lightbox = ({ images, index, onClose, onPrev, onNext }) => (
     </AnimatePresence>
 );
 
-/* â”€â”€ FAQ Item â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* -- FAQ Item ------------------------------------------------ */
 const FaqItem = ({ q, a }) => {
     const [open, setOpen] = useState(false);
     return (
@@ -488,7 +488,7 @@ const FaqItem = ({ q, a }) => {
     );
 };
 
-/* â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* -- Main Component ---------------------------------------- */
 const GalleryPage = ({ type }) => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -528,7 +528,7 @@ const GalleryPage = ({ type }) => {
 
     return (
         <div className="sp-page">
-            {/* â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* -- HERO ------------------------------------------- */}
             <section
                 className={`sp-hero${heroImg ? ' sp-hero--has-image' : ''}`}
                 style={heroImg ? {
@@ -577,14 +577,14 @@ const GalleryPage = ({ type }) => {
                 </div>
             </section>
 
-            {/* â”€â”€ FEATURES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* -- FEATURES ---------------------------------------- */}
             {features.length > 0 && (
                 <section className="sp-section sp-features-section">
                     <div className="container">
                         <motion.div {...fadeUp()} className="sp-section-head">
                             <div className="sp-section-tag" style={{ background: accentGradient }}>What's Included</div>
                             <h2 className="sp-section-title">Everything You <span className="text-gradient">Need</span></h2>
-                            <p className="sp-section-sub">Professional quality, meticulous attention to detail â€” built into every order.</p>
+                            <p className="sp-section-sub">Professional quality, meticulous attention to detail - built into every order.</p>
                         </motion.div>
                         <div className="sp-features-grid">
                             {features.map((f, i) => (
@@ -728,7 +728,7 @@ const GalleryPage = ({ type }) => {
                 </div>
             </section>
 
-            {/* â”€â”€ PRICING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* -- PRICING ----------------------------------------- */}
             {packages.length > 0 && (
                 <section className="sp-section sp-pricing-section">
                     <div className="container">
@@ -775,7 +775,7 @@ const GalleryPage = ({ type }) => {
                 </section>
             )}
 
-            {/* â”€â”€ PROCESS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* -- PROCESS ----------------------------------------- */}
             {process.length > 0 && (
                 <section className="sp-section sp-process-section">
                     <div className="container">
@@ -796,7 +796,7 @@ const GalleryPage = ({ type }) => {
                 </section>
             )}
 
-            {/* â”€â”€ FAQ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* -- FAQ --------------------------------------------- */}
             {faq.length > 0 && (
                 <section className="sp-section sp-faq-section">
                     <div className="container sp-faq-wrap">
@@ -811,7 +811,7 @@ const GalleryPage = ({ type }) => {
                 </section>
             )}
 
-            {/* â”€â”€ CTA BANNER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* -- CTA BANNER ------------------------------------- */}
             <section className="sp-section sp-cta-section">
                 <div className="container">
                     <motion.div {...fadeUp()} className="sp-cta-card" style={{ background: accentGradient }}>
