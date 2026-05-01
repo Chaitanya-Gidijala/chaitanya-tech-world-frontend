@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, ChevronDown, ChevronLeft, ChevronRight,
-    BookOpen, Terminal, Bookmark, Share2, X,
-    LayoutGrid, List, Sun, Moon, Lightbulb, Zap, Code2,
-    Database, Globe, Lock, Cpu, GitBranch, Filter
+    BookOpen, Bookmark, Share2, X,
+    LayoutGrid, List, Lightbulb, Zap
 } from 'lucide-react';
+import { getAllQuestions, getTopics } from '../../services/prepService';
 import '../../styles/InterviewQuestions.css';
+import PrepHeroVisual from './PrepHeroVisual';
 
 /* ──────────────────────────────────────────────
    CONSTANTS
@@ -83,6 +84,60 @@ const TOPIC_CATEGORIES = [
     { name: 'Git', icon: '🌿', count: 17 },
     { name: 'Web', icon: '🌐', count: 44 },
 ];
+
+const normalizeDifficulty = (value) => {
+    const difficulty = String(value || '').toUpperCase();
+
+    if (difficulty === 'EASY') return 'EASY';
+    if (difficulty === 'INTERMEDIATE' || difficulty === 'MEDIUM') return 'INTERMEDIATE';
+    if (difficulty === 'HARD' || difficulty === 'EXPERT') return 'HARD';
+
+    return 'INTERMEDIATE';
+};
+
+const normalizeQuestion = (question, index) => {
+    let finalAnswer = question.answer || '';
+    let keyPoints = Array.isArray(question.keyPoints) ? question.keyPoints : [];
+    let tip = '';
+
+    // Check if answer is a JSON string (structured data from new admin)
+    try {
+        if (question.answer && typeof question.answer === 'string' && question.answer.trim().startsWith('{')) {
+            const parsed = JSON.parse(question.answer);
+            finalAnswer = parsed.expertAnswer || finalAnswer;
+            keyPoints = parsed.takeaways || keyPoints;
+            tip = parsed.tip || '';
+        }
+    } catch (e) {
+        // Fallback to plain text if parsing fails
+    }
+
+    return {
+        id: question.id || `question-${index}`,
+        question: question.question || 'Untitled question',
+        answer: finalAnswer || 'Answer details will appear here once the item is updated from admin.',
+        difficulty: normalizeDifficulty(question.difficulty),
+        tags: Array.isArray(question.tags) && question.tags.length > 0 ? question.tags : ['General'],
+        keyPoints: keyPoints,
+        interviewTip: tip
+    };
+};
+
+const buildTopicCards = (topics, questionBank) => {
+    const topicNamesFromQuestions = questionBank.flatMap((question) => question.tags || []);
+    const preferredNames = topics.length > 0
+        ? topics.map((topic) => topic.name)
+        : TOPIC_CATEGORIES.map((topic) => topic.name);
+
+    return Array.from(new Set([...preferredNames, ...topicNamesFromQuestions])).map((topicName) => {
+        const topicMeta = TOPIC_CATEGORIES.find((topic) => topic.name === topicName);
+        return {
+            name: topicName,
+            icon: topicMeta?.icon || TOPIC_ICONS[topicName] || '◌',
+            count: questionBank.filter((question) => question.tags?.includes(topicName)).length
+        };
+    });
+};
 
 /* ──────────────────────────────────────────────
    SMALL SUBCOMPONENTS
@@ -232,7 +287,7 @@ const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => 
                         </div>
 
                         {/* Key Points */}
-                        {q.keyPoints && (
+                        {q.keyPoints && q.keyPoints.length > 0 && (
                             <div className="iq-key-points">
                                 <p className="iq-key-points-title">⚡ Key Takeaways</p>
                                 <ul>
@@ -242,17 +297,19 @@ const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => 
                         )}
 
                         {/* Interview Tip */}
-                        <div className="iq-key-points" style={{
-                            borderLeftColor: 'var(--iq-accent)',
-                            marginTop: '1.25rem'
-                        }}>
-                            <p className="iq-key-points-title" style={{ color: 'var(--iq-accent)' }}>
-                                💡 Interview Tip
-                            </p>
-                            <p className="iq-answer-text" style={{ fontSize: '0.82rem' }}>
-                                When answering this question, structure your response using the STAR method: briefly define the concept, explain how it works, give a real-world example, and mention trade-offs or alternatives. Interviewers appreciate concise, structured thinking.
-                            </p>
-                        </div>
+                        {(q.interviewTip || q.difficulty === 'HARD') && (
+                            <div className="iq-key-points" style={{
+                                borderLeftColor: 'var(--iq-accent)',
+                                marginTop: '1.25rem'
+                            }}>
+                                <p className="iq-key-points-title" style={{ color: 'var(--iq-accent)' }}>
+                                    💡 Interview Tip
+                                </p>
+                                <p className="iq-answer-text" style={{ fontSize: '0.82rem' }}>
+                                    {q.interviewTip || "When answering this question, structure your response using the STAR method: briefly define the concept, explain how it works, give a real-world example, and mention trade-offs or alternatives. Interviewers appreciate concise, structured thinking."}
+                                </p>
+                            </div>
+                        )}
                     </motion.div>
                 </AnimatePresence>
             </div>
@@ -320,10 +377,17 @@ const MobileModal = ({ q, onClose, bookmarks, toggleBookmark }) => {
                 </div>
                 <p className="iq-answer-text" style={{ marginBottom: '1.25rem' }}>{q.answer}</p>
 
-                {q.keyPoints && (
+                {q.keyPoints && q.keyPoints.length > 0 && (
                     <div className="iq-key-points">
                         <p className="iq-key-points-title">⚡ Key Takeaways</p>
                         <ul>{q.keyPoints.map((pt, i) => <li key={i}>{pt}</li>)}</ul>
+                    </div>
+                )}
+
+                {q.interviewTip && (
+                    <div className="iq-key-points" style={{ borderLeftColor: 'var(--iq-accent)', marginTop: '1rem' }}>
+                        <p className="iq-key-points-title" style={{ color: 'var(--iq-accent)' }}>💡 Interview Tip</p>
+                        <p className="iq-answer-text" style={{ fontSize: '0.8rem' }}>{q.interviewTip}</p>
                     </div>
                 )}
 
@@ -346,13 +410,10 @@ const MobileModal = ({ q, onClose, bookmarks, toggleBookmark }) => {
    MAIN COMPONENT
 ──────────────────────────────────────────────── */
 const InterviewQuestionsPage = () => {
-    // Theme
-    const [theme, setTheme] = useState('dark');
-
     // Data
-    const [questions, setQuestions] = useState(DEMO_QUESTIONS);
-    const [topics] = useState(TOPIC_CATEGORIES);
-    const [loading, setLoading] = useState(false);
+    const [questionBank, setQuestionBank] = useState(DEMO_QUESTIONS);
+    const [topics, setTopics] = useState(TOPIC_CATEGORIES);
+    const [loading, setLoading] = useState(true);
 
     // Filters
     const [searchTerm, setSearchTerm] = useState('');
@@ -369,40 +430,60 @@ const InterviewQuestionsPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const pageSize = 12;
 
-    // Apply theme
     useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-    }, [theme]);
+        const fetchQuestionBank = async () => {
+            setLoading(true);
 
-    // (Replace this with your real API call)
-    const fetchQuestions = useCallback(async () => {
-        setLoading(true);
-        try {
-            // const data = await getAllQuestions(currentPage, pageSize, selectedTag, difficulty);
-            // setQuestions(data.content);
-            // Simulate API delay
-            await new Promise(r => setTimeout(r, 300));
-            let filtered = DEMO_QUESTIONS;
-            if (selectedTag !== 'All') filtered = filtered.filter(q => q.tags?.includes(selectedTag));
-            if (difficulty !== 'All') filtered = filtered.filter(q => q.difficulty === difficulty);
-            setQuestions(filtered);
-        } catch (e) {
-            setQuestions(DEMO_QUESTIONS);
-        } finally {
-            setLoading(false);
-        }
-    }, [currentPage, selectedTag, difficulty]);
+            try {
+                const [questionsResponse, topicsResponse] = await Promise.all([
+                    getAllQuestions(0, 200),
+                    getTopics()
+                ]);
 
-    useEffect(() => { fetchQuestions(); }, [fetchQuestions]);
+                const normalizedQuestions = (questionsResponse.content || []).map(normalizeQuestion);
+                const resolvedQuestions = normalizedQuestions.length > 0 ? normalizedQuestions : DEMO_QUESTIONS;
+
+                setQuestionBank(resolvedQuestions);
+                setTopics(buildTopicCards(topicsResponse || [], resolvedQuestions));
+            } catch (error) {
+                console.error('Failed to load question bank', error);
+                setQuestionBank(DEMO_QUESTIONS);
+                setTopics(buildTopicCards([], DEMO_QUESTIONS));
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchQuestionBank();
+    }, []);
+
+    const baseQuestions = useMemo(() => (
+        questionBank.filter((question) => {
+            const matchesTag = selectedTag === 'All' || question.tags?.includes(selectedTag);
+            const matchesDifficulty = difficulty === 'All' || question.difficulty === difficulty;
+            return matchesTag && matchesDifficulty;
+        })
+    ), [difficulty, questionBank, selectedTag]);
 
     const filteredQuestions = useMemo(() => {
-        if (!searchTerm) return questions;
+        if (!searchTerm) return baseQuestions;
         const term = searchTerm.toLowerCase();
-        return questions.filter(q =>
+        return baseQuestions.filter(q =>
             q.question.toLowerCase().includes(term) ||
             q.tags?.some(t => t.toLowerCase().includes(term))
         );
-    }, [questions, searchTerm]);
+    }, [baseQuestions, searchTerm]);
+
+    useEffect(() => {
+        if (filteredQuestions.length === 0) {
+            setActiveQuestion(null);
+            return;
+        }
+
+        if (!activeQuestion || !filteredQuestions.some((question) => question.id === activeQuestion.id)) {
+            setActiveQuestion(filteredQuestions[0]);
+        }
+    }, [activeQuestion, filteredQuestions]);
 
     const handleQuestionClick = (q) => {
         setActiveQuestion(q);
@@ -432,69 +513,67 @@ const InterviewQuestionsPage = () => {
         setCurrentPage(0);
     };
 
+    useEffect(() => {
+        setCurrentPage(0);
+    }, [difficulty, searchTerm]);
+
     const totalPages = Math.ceil(filteredQuestions.length / pageSize);
     const paginatedQ = filteredQuestions.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
     const stats = {
-        total: questions.length,
-        easy: questions.filter(q => q.difficulty === 'EASY').length,
-        mid: questions.filter(q => q.difficulty === 'INTERMEDIATE').length,
-        hard: questions.filter(q => q.difficulty === 'HARD').length,
+        total: questionBank.length,
+        easy: baseQuestions.filter(q => q.difficulty === 'EASY').length,
+        mid: baseQuestions.filter(q => q.difficulty === 'INTERMEDIATE').length,
+        hard: baseQuestions.filter(q => q.difficulty === 'HARD').length,
     };
 
-    if (loading && questions.length === 0) {
+    if (loading && questionBank.length === 0) {
         return <div className="iq-shell"><div className="iq-spinner" /></div>;
     }
 
     return (
         <div className="iq-shell">
-            {/* ── THEME TOGGLE ── */}
-            <button className="iq-theme-toggle" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
-                {theme === 'dark' ? <Sun size={12} /> : <Moon size={12} />}
-                {theme === 'dark' ? 'Light' : 'Dark'}
-            </button>
-
             {/* ── HEADER ── */}
             <header className="iq-header">
-                <div className="iq-header-meta">
-                    <span className="iq-breadcrumb">Academy <span>/</span> Prep</span>
-                    <span className="iq-header-chip">
-                        Live Question Bank
-                    </span>
-                </div>
+                <div className="prep-hero-grid">
+                    <div className="prep-hero-copy">
+                        <div className="iq-header-meta">
+                            <span className="iq-breadcrumb">Academy <span>/</span> Prep</span>
+                        </div>
 
-                <h1 className="iq-main-title">
-                    Technical <em>Interview</em><br />Question Bank
-                </h1>
+                        <h1 className="iq-main-title">
+                            Technical <em>Interview</em><br />Question Bank
+                        </h1>
 
-                <p className="iq-subtitle">
-                    Master your engineering interviews with curated questions, deep-dive explanations, and key takeaways reviewed by senior engineers.
-                </p>
+                        <p className="iq-subtitle">
+                            Master your engineering interviews with curated questions and deep-dive explanations in a minimalist reading experience.
+                        </p>
 
-                <div className="iq-stats-bar">
-                    <div className="iq-stat">
-                        <span className="iq-stat-num">{stats.total}+</span>
-                        <span className="iq-stat-label">Questions</span>
+                        <div className="iq-stats-bar">
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">{stats.total}+</span>
+                                <span className="iq-stat-label">Questions</span>
+                            </div>
+                            <div className="iq-stat-divider" />
+                            <div className="iq-stat">
+                                <span className="iq-stat-num" style={{ color: 'var(--iq-easy)' }}>{stats.easy}</span>
+                                <span className="iq-stat-label">Beginner</span>
+                            </div>
+                            <div className="iq-stat-divider" />
+                            <div className="iq-stat">
+                                <span className="iq-stat-num" style={{ color: 'var(--iq-mid)' }}>{stats.mid}</span>
+                                <span className="iq-stat-label">Mid</span>
+                            </div>
+                            <div className="iq-stat-divider" />
+                            <div className="iq-stat">
+                                <span className="iq-stat-num" style={{ color: 'var(--iq-hard)' }}>{stats.hard}</span>
+                                <span className="iq-stat-label">Expert</span>
+                            </div>
+                        </div>
                     </div>
-                    <div className="iq-stat-divider" />
-                    <div className="iq-stat">
-                        <span className="iq-stat-num" style={{ color: 'var(--iq-easy)' }}>{stats.easy}</span>
-                        <span className="iq-stat-label">Beginner</span>
-                    </div>
-                    <div className="iq-stat-divider" />
-                    <div className="iq-stat">
-                        <span className="iq-stat-num" style={{ color: 'var(--iq-mid)' }}>{stats.mid}</span>
-                        <span className="iq-stat-label">Intermediate</span>
-                    </div>
-                    <div className="iq-stat-divider" />
-                    <div className="iq-stat">
-                        <span className="iq-stat-num" style={{ color: 'var(--iq-hard)' }}>{stats.hard}</span>
-                        <span className="iq-stat-label">Expert</span>
-                    </div>
-                    <div className="iq-stat-divider" />
-                    <div className="iq-stat">
-                        <span className="iq-stat-num">{bookmarks.length}</span>
-                        <span className="iq-stat-label">Bookmarked</span>
+
+                    <div className="prep-hero-visual">
+                        <PrepHeroVisual type="questions" />
                     </div>
                 </div>
             </header>
@@ -525,17 +604,19 @@ const InterviewQuestionsPage = () => {
                         <ChevronDown className="iq-select-chevron" size={14} />
                     </div>
 
-                    {/* Tech chips */}
-                    <div className="iq-tech-filters">
-                        {topics.slice(0, 7).map(t => (
-                            <button
-                                key={t.name}
-                                className={`iq-tech-chip ${selectedTag === t.name ? 'active' : ''}`}
-                                onClick={() => toggleTag(t.name)}
-                            >
-                                {t.icon} {t.name}
-                            </button>
-                        ))}
+                    {/* Tech select */}
+                    <div className="iq-select-wrap">
+                        <select 
+                            className="iq-select" 
+                            value={selectedTag} 
+                            onChange={(e) => toggleTag(e.target.value)}
+                        >
+                            <option value="All">All Technologies</option>
+                            {topics.map(t => (
+                                <option key={t.name} value={t.name}>{t.name}</option>
+                            ))}
+                        </select>
+                        <ChevronDown className="iq-select-chevron" size={14} />
                     </div>
 
                     {/* View toggle */}
@@ -553,48 +634,6 @@ const InterviewQuestionsPage = () => {
             {/* ── BODY ── */}
             <main className="iq-body">
 
-                {/* TOPIC BROWSER SECTION */}
-                <section className="iq-topics-section">
-                    <div className="iq-section-label">
-                        <span className="iq-section-label-text">Browse by Topic</span>
-                        <div className="iq-section-label-line" />
-                    </div>
-                    
-                    {/* Desktop/Tablet Grid */}
-                    <div className="iq-topics-grid">
-                        {topics.map(t => (
-                            <div
-                                key={t.name}
-                                className={`iq-topic-card ${selectedTag === t.name ? 'active' : ''}`}
-                                onClick={() => toggleTag(t.name)}
-                            >
-                                <span className="iq-topic-icon">{t.icon}</span>
-                                <span className="iq-topic-name">{t.name}</span>
-                                <span className="iq-topic-count">{t.count} Qs</span>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Mobile Dropdown */}
-                    <div className="iq-topics-mobile">
-                        <div className="iq-select-wrap" style={{ width: '100%' }}>
-                            <select 
-                                className="iq-select" 
-                                style={{ width: '100%', height: '48px', fontSize: '0.9rem' }}
-                                value={selectedTag}
-                                onChange={(e) => toggleTag(e.target.value)}
-                            >
-                                <option value="All">All Technologies</option>
-                                {topics.map(t => (
-                                    <option key={t.name} value={t.name}>
-                                        {t.icon} {t.name} ({t.count} questions)
-                                    </option>
-                                ))}
-                            </select>
-                            <ChevronDown className="iq-select-chevron" size={16} />
-                        </div>
-                    </div>
-                </section>
 
                 {/* PROGRESS TRACKER */}
                 <section className="iq-progress-section">

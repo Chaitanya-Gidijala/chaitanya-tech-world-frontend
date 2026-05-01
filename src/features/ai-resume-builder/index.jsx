@@ -1,5 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { isAuthenticated, getToken } from '../job-portal/services/authService';
+import apiConfig from '../../config/apiConfig';
 import './styles/resume-builder.css';
 
 
@@ -10,8 +12,8 @@ import './styles/resume-builder.css';
 const DEFAULT_RESUME = {
     name: 'Chaitanya Gidijala',
     title: 'Senior UI/UX Developer',
-    email: 'chaitanya@example.com',
-    phone: '+91 98765 43210',
+    email: 'support@chaitanyatechworld.com',
+    phone: '+91 73370 72766',
     location: 'Bangalore, India',
     linkedin: 'linkedin.com/in/chaitanya',
     website: 'chaitanya.dev',
@@ -68,180 +70,142 @@ const DEFAULT_RESUME = {
 
 const TEMPLATES = [
     {
-        id: 'modern-pro',
-        name: 'Modern Pro',
-        tag: 'Popular',
+        id: 'clean-minimal',
+        name: 'Clean Minimal',
+        tag: 'Standard',
         tagColor: '#6366f1',
         accent: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
         accentSolid: '#6366f1',
-        headerBg: 'linear-gradient(135deg,#1e1b4b 0%,#312e81 100%)',
-        headerText: '#fff',
+        headerBg: '#f8fafc',
+        headerText: '#1e293b',
         borderAccent: '#6366f1',
-        sidebarBg: '#f0f0ff',
+        sidebarBg: '#ffffff',
         bodyFont: "'Inter', sans-serif",
         previewThumb: {
-            header: 'linear-gradient(135deg,#1e1b4b,#312e81)',
+            header: '#f8fafc',
             accent: '#6366f1',
         },
     },
     {
-        id: 'clean-minimal',
-        name: 'Clean Minimal',
-        tag: 'ATS Friendly',
+        id: 'executive-pro',
+        name: 'Executive Pro',
+        tag: 'Standard',
+        tagColor: '#1e293b',
+        accent: 'linear-gradient(135deg,#0f172a,#1e293b)',
+        accentSolid: '#1e293b',
+        headerBg: '#1e293b',
+        headerText: '#ffffff',
+        borderAccent: '#1e293b',
+        sidebarBg: '#f1f5f9',
+        bodyFont: "'Inter', sans-serif",
+        previewThumb: {
+            header: '#1e293b',
+            accent: '#ffffff',
+        },
+    },
+    {
+        id: 'modern-edge',
+        name: 'Modern Edge',
+        tag: 'Standard',
         tagColor: '#059669',
         accent: 'linear-gradient(135deg,#059669,#10b981)',
         accentSolid: '#059669',
-        headerBg: '#fff',
-        headerText: '#111827',
+        headerBg: '#f0fdf4',
+        headerText: '#064e3b',
         borderAccent: '#059669',
-        sidebarBg: '#f0fdf4',
+        sidebarBg: '#ffffff',
         bodyFont: "'Inter', sans-serif",
         previewThumb: {
             header: '#f0fdf4',
             accent: '#059669',
         },
-    },
-    {
-        id: 'executive-dark',
-        name: 'Executive Dark',
-        tag: 'Premium',
-        tagColor: '#f59e0b',
-        accent: 'linear-gradient(135deg,#b45309,#f59e0b)',
-        accentSolid: '#d97706',
-        headerBg: 'linear-gradient(135deg,#1c1917 0%,#292524 100%)',
-        headerText: '#fff',
-        borderAccent: '#d97706',
-        sidebarBg: '#fdf8f0',
-        bodyFont: "'Georgia', serif",
-        previewThumb: {
-            header: 'linear-gradient(135deg,#1c1917,#292524)',
-            accent: '#d97706',
-        },
-    },
-    {
-        id: 'ocean-blue',
-        name: 'Ocean Blue',
-        tag: 'Creative',
-        tagColor: '#0ea5e9',
-        accent: 'linear-gradient(135deg,#0284c7,#38bdf8)',
-        accentSolid: '#0284c7',
-        headerBg: 'linear-gradient(135deg,#0c4a6e 0%,#075985 100%)',
-        headerText: '#fff',
-        borderAccent: '#0284c7',
-        sidebarBg: '#f0f9ff',
-        bodyFont: "'Inter', sans-serif",
-        previewThumb: {
-            header: 'linear-gradient(135deg,#0c4a6e,#075985)',
-            accent: '#0284c7',
-        },
-    },
-    {
-        id: 'rose-elegant',
-        name: 'Rose Elegant',
-        tag: 'Modern',
-        tagColor: '#e11d48',
-        accent: 'linear-gradient(135deg,#be123c,#f43f5e)',
-        accentSolid: '#e11d48',
-        headerBg: 'linear-gradient(135deg,#fff1f2 0%,#ffe4e6 100%)',
-        headerText: '#881337',
-        borderAccent: '#e11d48',
-        sidebarBg: '#fff1f2',
-        bodyFont: "'Inter', sans-serif",
-        previewThumb: {
-            header: 'linear-gradient(135deg,#fff1f2,#ffe4e6)',
-            accent: '#e11d48',
-        },
-    },
-    {
-        id: 'forest-green',
-        name: 'Forest Green',
-        tag: 'Nature',
-        tagColor: '#16a34a',
-        accent: 'linear-gradient(135deg,#15803d,#22c55e)',
-        accentSolid: '#16a34a',
-        headerBg: 'linear-gradient(135deg,#14532d 0%,#166534 100%)',
-        headerText: '#fff',
-        borderAccent: '#16a34a',
-        sidebarBg: '#f0fff4',
-        bodyFont: "'Inter', sans-serif",
-        previewThumb: {
-            header: 'linear-gradient(135deg,#14532d,#166534)',
-            accent: '#16a34a',
-        },
-    },
-    {
-        id: 'purple-vibe',
-        name: 'Purple Vibe',
-        tag: 'Bold',
-        tagColor: '#9333ea',
-        accent: 'linear-gradient(135deg,#7e22ce,#a855f7)',
-        accentSolid: '#9333ea',
-        headerBg: 'linear-gradient(135deg,#4a1d96 0%,#6d28d9 100%)',
-        headerText: '#fff',
-        borderAccent: '#9333ea',
-        sidebarBg: '#faf5ff',
-        bodyFont: "'Inter', sans-serif",
-        previewThumb: {
-            header: 'linear-gradient(135deg,#4a1d96,#6d28d9)',
-            accent: '#9333ea',
-        },
-    },
-    {
-        id: 'slate-professional',
-        name: 'Slate Pro',
-        tag: 'Corporate',
-        tagColor: '#475569',
-        accent: 'linear-gradient(135deg,#334155,#64748b)',
-        accentSolid: '#475569',
-        headerBg: 'linear-gradient(135deg,#0f172a 0%,#1e293b 100%)',
-        headerText: '#fff',
-        borderAccent: '#475569',
-        sidebarBg: '#f8fafc',
-        bodyFont: "'Inter', sans-serif",
-        previewThumb: {
-            header: 'linear-gradient(135deg,#0f172a,#1e293b)',
-            accent: '#475569',
-        },
-    },
+    }
 ];
 
 const PREMIUM_TEMPLATES = [
     {
+        id: 'ats-expert-blue',
+        name: 'ATS Expert Blue',
+        tag: '👑 Premium',
+        tagColor: '#2563eb',
+        accentSolid: '#2563eb',
+        accent: 'linear-gradient(135deg,#2563eb,#3b82f6)',
+        headerBg: '#eff6ff',
+        headerText: '#1e3a8a',
+        borderAccent: '#2563eb',
+        sidebarBg: '#ffffff',
+        bodyFont: "'Inter', sans-serif",
+        previewThumb: { header: 'linear-gradient(135deg,#eff6ff,#dbeafe)', accent: '#2563eb' },
+        locked: true,
+        atsOptimized: true,
+    },
+    {
+        id: 'corporate-elite',
+        name: 'Corporate Elite',
+        tag: '👑 Premium',
+        tagColor: '#dc2626',
+        accentSolid: '#dc2626',
+        accent: 'linear-gradient(135deg,#dc2626,#ef4444)',
+        headerBg: '#fef2f2',
+        headerText: '#7f1d1d',
+        borderAccent: '#dc2626',
+        sidebarBg: '#ffffff',
+        bodyFont: "'Inter', sans-serif",
+        previewThumb: { header: 'linear-gradient(135deg,#fef2f2,#fee2e2)', accent: '#dc2626' },
+        locked: true,
+        atsOptimized: true,
+    },
+    {
+        id: 'nordic-ats',
+        name: 'Nordic ATS',
+        tag: '👑 Premium',
+        tagColor: '#4b5563',
+        accentSolid: '#4b5563',
+        accent: 'linear-gradient(135deg,#4b5563,#6b7280)',
+        headerBg: '#f9fafb',
+        headerText: '#111827',
+        borderAccent: '#4b5563',
+        sidebarBg: '#ffffff',
+        bodyFont: "'Inter', sans-serif",
+        previewThumb: { header: 'linear-gradient(135deg,#f9fafb,#f3f4f6)', accent: '#4b5563' },
+        locked: true,
+        atsOptimized: true,
+    }
+];
+
+const ULTRA_PREMIUM_TEMPLATES = [
+    {
         id: 'midnight-luxury',
         name: 'Midnight Luxury',
-        tag: '👑 Premium',
-        tagColor: '#f59e0b',
-        accentSolid: '#f59e0b',
-        previewThumb: { header: 'linear-gradient(135deg,#09090b,#18181b)', accent: '#f59e0b' },
-        locked: true,
+        tag: '💎 Ultra',
+        tagColor: '#fbbf24',
+        accentSolid: '#fbbf24',
+        accent: 'linear-gradient(135deg,#fbbf24,#f59e0b)',
+        headerBg: '#111827',
+        headerText: '#ffffff',
+        borderAccent: '#fbbf24',
+        sidebarBg: '#1f2937',
+        bodyFont: "'Inter', sans-serif",
+        previewThumb: { header: '#111827', accent: '#fbbf24' },
+        price: 99,
+        ultra: true
     },
     {
-        id: 'coral-bloom',
-        name: 'Coral Bloom',
-        tag: '👑 Premium',
-        tagColor: '#f43f5e',
-        accentSolid: '#f43f5e',
-        previewThumb: { header: 'linear-gradient(135deg,#fff1f2,#ffe4e6)', accent: '#f43f5e' },
-        locked: true,
-    },
-    {
-        id: 'nordic-clean',
-        name: 'Nordic Clean',
-        tag: '👑 Premium',
-        tagColor: '#3b82f6',
-        accentSolid: '#3b82f6',
-        previewThumb: { header: 'linear-gradient(135deg,#f0f9ff,#e0f2fe)', accent: '#3b82f6' },
-        locked: true,
-    },
-    {
-        id: 'cyber-tech',
-        name: 'Cyber Tech',
-        tag: '👑 Premium',
-        tagColor: '#06b6d4',
-        accentSolid: '#06b6d4',
-        previewThumb: { header: 'linear-gradient(135deg,#083344,#164e63)', accent: '#06b6d4' },
-        locked: true,
-    },
+        id: 'cyber-tech-pro',
+        name: 'Cyber Tech Pro',
+        tag: '💎 Ultra',
+        tagColor: '#00f2ff',
+        accentSolid: '#00f2ff',
+        accent: 'linear-gradient(135deg,#00f2ff,#0066ff)',
+        headerBg: '#050a15',
+        headerText: '#ffffff',
+        borderAccent: '#00f2ff',
+        sidebarBg: '#0a101f',
+        bodyFont: "'Inter', sans-serif",
+        previewThumb: { header: '#050a15', accent: '#00f2ff' },
+        price: 149,
+        ultra: true
+    }
 ];
 
 /* ── Animated counter hook ── */
@@ -399,8 +363,97 @@ function ResumeTemplate({ resume, tpl }) {
         experience, education, skills, certifications, projects } = resume;
 
     // Sidebar layout templates
-    const sidebarTemplates = ['modern-pro', 'ocean-blue', 'purple-vibe', 'forest-green', 'slate-professional'];
+    const sidebarTemplates = ['modern-pro', 'ocean-blue', 'purple-vibe', 'forest-green', 'slate-professional', 'ats-expert-blue', 'corporate-elite'];
     const isSidebar = sidebarTemplates.includes(tpl.id);
+    const isUltra = tpl.ultra;
+
+    if (isUltra) {
+        return (
+            <div className="rba-resume-ultra-layout" style={{ fontFamily: tpl.bodyFont }}>
+                {/* Ultra unique design: Wide Header with floating contact card */}
+                <div className="rba-ultra-header" style={{ background: tpl.headerBg }}>
+                    <div className="rba-ultra-header-content">
+                        <div className="rba-ultra-name" style={{ color: tpl.headerText }}>{name}</div>
+                        <div className="rba-ultra-title" style={{ color: tpl.accentSolid }}>{title}</div>
+                    </div>
+                    <div className="rba-ultra-contact-card" style={{ borderColor: tpl.accentSolid }}>
+                        {email && <div className="rba-ultra-contact-item">📧 {email}</div>}
+                        {phone && <div className="rba-ultra-contact-item">📞 {phone}</div>}
+                        {location && <div className="rba-ultra-contact-item">📍 {location}</div>}
+                    </div>
+                </div>
+
+                <div className="rba-ultra-body">
+                    {summary && (
+                        <div className="rba-ultra-section">
+                            <div className="rba-ultra-section-title" style={{ color: tpl.accentSolid }}>
+                                <span className="rba-ultra-icon">✨</span> ABOUT ME
+                            </div>
+                            <p className="rba-ultra-summary">{summary}</p>
+                        </div>
+                    )}
+
+                    <div className="rba-ultra-main-grid">
+                        <div className="rba-ultra-col-1">
+                            {experience.length > 0 && (
+                                <div className="rba-ultra-section">
+                                    <div className="rba-ultra-section-title" style={{ color: tpl.accentSolid }}>
+                                        <span className="rba-ultra-icon">💼</span> EXPERIENCE
+                                    </div>
+                                    {experience.map(exp => (
+                                        <div key={exp.id} className="rba-ultra-exp-item">
+                                            <div className="rba-ultra-exp-meta">
+                                                <div className="rba-ultra-exp-role">{exp.role}</div>
+                                                <div className="rba-ultra-exp-period">{exp.period}</div>
+                                            </div>
+                                            <div className="rba-ultra-exp-company" style={{ color: tpl.accentSolid }}>{exp.company}</div>
+                                            <ul className="rba-ultra-bullets">
+                                                {exp.bullets.filter(b => b.trim()).map((b, i) => (
+                                                    <li key={i}>{b}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="rba-ultra-col-2">
+                            {skills.length > 0 && (
+                                <div className="rba-ultra-section">
+                                    <div className="rba-ultra-section-title" style={{ color: tpl.accentSolid }}>
+                                        <span className="rba-ultra-icon">⚡</span> EXPERTISE
+                                    </div>
+                                    <div className="rba-ultra-skills">
+                                        {skills.map((s, i) => (
+                                            <span key={i} className="rba-ultra-skill" style={{ background: `${tpl.accentSolid}11`, color: tpl.accentSolid }}>
+                                                {s}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {education.length > 0 && (
+                                <div className="rba-ultra-section">
+                                    <div className="rba-ultra-section-title" style={{ color: tpl.accentSolid }}>
+                                        <span className="rba-ultra-icon">🎓</span> EDUCATION
+                                    </div>
+                                    {education.map(edu => (
+                                        <div key={edu.id} className="rba-ultra-edu-item">
+                                            <div className="rba-ultra-edu-degree">{edu.degree}</div>
+                                            <div className="rba-ultra-edu-school">{edu.institution}</div>
+                                            <div className="rba-ultra-edu-period">{edu.period}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (isSidebar) {
         return (
@@ -1021,7 +1074,7 @@ const EDITOR_TABS = [
 ];
 
 const AIResumeBuilderApp = () => {
-    const [view, setView] = useState('landing'); // 'landing' | 'builder'
+    const [view, setView] = useState('landing'); // 'landing' | 'builder' | 'payment'
     const [resume, setResume] = useState(DEFAULT_RESUME);
     const [activeTpl, setActiveTpl] = useState(TEMPLATES[0]);
     const [activeTab, setActiveTab] = useState('personal');
@@ -1029,7 +1082,36 @@ const AIResumeBuilderApp = () => {
     const [atsScore] = useState(Math.floor(Math.random() * 6) + 92);
     const [previewScale, setPreviewScale] = useState(1);
     const [user, setUser] = useState(null);
+    const [purchasedTemplates, setPurchasedTemplates] = useState([]);
+    const [selectedUltra, setSelectedUltra] = useState(null);
     const navigate = useNavigate();
+    const locationState = useLocation().state;
+    const isUserLoggedIn = isAuthenticated();
+
+    // Load state from navigation (e.g. from Profile page)
+    useEffect(() => {
+        if (locationState?.resumeData) {
+            const data = locationState.resumeData;
+            const parsedContent = data.content ? JSON.parse(data.content) : null;
+            if (parsedContent) {
+                setResume(parsedContent);
+            }
+            // Find template object
+            const allTpls = [...TEMPLATES, ...PREMIUM_TEMPLATES, ...ULTRA_PREMIUM_TEMPLATES];
+            const foundTpl = allTpls.find(t => t.id === data.template);
+            if (foundTpl) setActiveTpl(foundTpl);
+            
+            setView('builder');
+            setMobileView('preview');
+
+            // Handle auto-download
+            if (locationState.autoDownload) {
+                setTimeout(() => {
+                    downloadResume(data.name || 'Resume');
+                }, 1000); // Give it a second to render
+            }
+        }
+    }, [locationState]);
 
     // Ref to the preview container — used to measure available width
     const previewColRef = React.useRef(null);
@@ -1077,6 +1159,75 @@ const AIResumeBuilderApp = () => {
         setMobileView('edit');
     };
 
+    // Load user data and purchased templates
+    useEffect(() => {
+        if (isUserLoggedIn) {
+            const fetchUserData = async () => {
+                try {
+                    const token = getToken();
+                    // Fetch profile info
+                    const authRes = await fetch(apiConfig.endpoints.auth.me || `${apiConfig.AUTH_API_URL}/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (authRes.ok) {
+                        const authData = await authRes.json();
+                        setUser(authData.data);
+                    }
+
+                    // Fetch purchased templates (using the payments endpoint)
+                    const payRes = await fetch(apiConfig.endpoints.userProfile.payments, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (payRes.ok) {
+                        const payments = await payRes.json();
+                        const ultraPurchases = payments
+                            .filter(p => p.itemType === 'RESUME' && p.status === 'Completed')
+                            .map(p => p.itemId);
+                        setPurchasedTemplates(ultraPurchases);
+                    }
+                } catch (err) {
+                    console.error("Failed to load user session data:", err);
+                }
+            };
+            fetchUserData();
+        }
+    }, [isUserLoggedIn]);
+
+    const handleSaveResume = async () => {
+        if (!isUserLoggedIn) {
+            alert("Please login to save your resume to your profile.");
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const token = getToken();
+            const res = await fetch(apiConfig.endpoints.userProfile.resumes, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: resume.name,
+                    template: activeTpl.id,
+                    type: activeTpl.ultra ? 'Ultra Premium' : (activeTpl.tag || 'Standard'),
+                    resumeId: `R-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+                    content: JSON.stringify(resume)
+                })
+            });
+
+            if (res.ok) {
+                alert("Resume saved successfully to your profile!");
+            } else {
+                const err = await res.json();
+                alert(`Failed to save: ${err.message || 'Unknown error'}`);
+            }
+        } catch (err) {
+            alert("An error occurred while saving your resume.");
+        }
+    };
+
     if (view === 'builder') {
         return (
             <div className="rba-app rba-builder-mode">
@@ -1091,9 +1242,16 @@ const AIResumeBuilderApp = () => {
                             </span>
                             <span className="rba-ats-chip">📊 ATS {atsScore}%</span>
                         </div>
-                        <button className="rba-download-btn" onClick={() => downloadResume(resume.name)}>
-                            ⬇ PDF
-                        </button>
+                        <div className="rba-topbar-actions">
+                            {isUserLoggedIn && (
+                                <button className="rba-save-profile-btn" onClick={handleSaveResume} title="Save to Profile">
+                                    💾 Save
+                                </button>
+                            )}
+                            <button className="rba-download-btn" onClick={() => downloadResume(resume.name)}>
+                                ⬇ PDF
+                            </button>
+                        </div>
                     </div>
 
                     {/* Mobile toggle row — row 2 on mobile: Download + Edit/Preview */}
@@ -1199,6 +1357,140 @@ const AIResumeBuilderApp = () => {
         );
     }
 
+    if (view === 'payment' && selectedUltra) {
+        const payNow = async () => {
+            if (!isUserLoggedIn) { alert('Please log in to purchase templates.'); return; }
+            try {
+                const token = getToken();
+                const headers = { 'Content-Type': 'application/json' };
+                if (token && token !== 'null') {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                const orderRes = await fetch(apiConfig.endpoints.payments.createOrder, {
+                    method: 'POST', headers,
+                    body: JSON.stringify({ amount: selectedUltra.price * 100, currency: 'INR' })
+                });
+                if (!orderRes.ok) throw new Error('Failed to create order on server');
+                const orderData = await orderRes.json();
+                const loadRazorpay = () => new Promise((resolve) => {
+                    if (window.Razorpay) return resolve(true);
+                    const s = document.createElement('script');
+                    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+                    s.onload = () => resolve(true); s.onerror = () => resolve(false);
+                    document.body.appendChild(s);
+                });
+                const loaded = await loadRazorpay();
+                if (!loaded) { alert('Razorpay SDK failed to load.'); return; }
+                const options = {
+                    key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_YOUR_KEY_HERE',
+                    amount: orderData.amount, currency: orderData.currency, order_id: orderData.order_id,
+                    name: 'Chaitanya Tech World', description: `Unlock ${selectedUltra.name} Template`,
+                    image: 'https://cdn-icons-png.flaticon.com/512/3135/3135692.png',
+                    handler: async (response) => {
+                        try {
+                            const verifyRes = await fetch(apiConfig.endpoints.payments.verifyPayment, {
+                                method: 'POST', headers,
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature
+                                })
+                            });
+                            if (!verifyRes.ok) throw new Error('Payment verification failed');
+                            await fetch(apiConfig.endpoints.userProfile.payments, {
+                                method: 'POST', headers,
+                                body: JSON.stringify({
+                                    itemName: `Premium Template: ${selectedUltra.name}`, 
+                                    amount: `${selectedUltra.price}`,
+                                    itemId: selectedUltra.id,
+                                    itemType: 'RESUME',
+                                    paymentMethod: 'Razorpay', 
+                                    status: 'Completed',
+                                    transactionId: response.razorpay_payment_id,
+                                    name: user?.name || 'Guest',
+                                    email: user?.email || ''
+                                })
+                            });
+                            setPurchasedTemplates([...purchasedTemplates, selectedUltra.id]);
+                            setActiveTpl(selectedUltra); setView('builder'); setMobileView('edit');
+                        } catch (e) { alert('Payment verification failed. Contact support if money was deducted.'); }
+                    },
+                    prefill: { name: user?.name || '', email: user?.email || '', contact: '' },
+                    theme: { color: '#3395ff' }
+                };
+                const rp = new window.Razorpay(options);
+                rp.on('payment.failed', (r) => alert('Payment failed: ' + r.error.description));
+                rp.open();
+            } catch (err) { alert('Could not initiate payment. ' + err.message); }
+        };
+
+        return (
+            <div className="rba-payment-page">
+
+
+                {/* Main Content Split Layout */}
+                <div className="rb-container rba-payment-main-container">
+                    <div className="rba-payment-body-split">
+                        
+                        {/* Left Side: Template Details */}
+                        <div className="rba-payment-details-side">
+                            <h2 style={{ fontSize: '1.8rem', marginBottom: '0.5rem', color: 'var(--rb-text)' }}>Unlock Ultra Premium</h2>
+                            <p style={{ color: 'var(--rb-text-muted)', marginBottom: '2rem' }}>Get lifetime access to this exclusive, highly-converting design.</p>
+                            
+                            <div className="rba-payment-item-large">
+                                <div className="rba-payment-thumb-large">
+                                    <div className="rba-payment-thumb-inner">
+                                        <div className="rba-payment-thumb-header" style={{ background: selectedUltra.previewThumb.header }} />
+                                        <div className="rba-payment-thumb-body">
+                                            {[70, 50, 80, 60, 90].map((w, i) => (<div key={i} className="rba-payment-thumb-line" style={{ width: `${w}%` }} />))}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ textAlign: 'left', flex: 1 }}>
+                                    <div className="rba-payment-item-name-large">{selectedUltra.name}</div>
+                                    <div className="rba-payment-item-tag-large">💎 Ultra Premium Template</div>
+                                    
+                                    <div className="rba-payment-features" style={{ marginTop: '1.5rem' }}>
+                                        {['Lifetime access to template', 'Unlimited PDF downloads', 'ATS score > 96% guaranteed', 'Stand out with unique design'].map((f, i) => (
+                                            <div key={i} className="rba-pf-item"><div className="rba-pf-check">✓</div>{f}</div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Side: Payment Info & Action */}
+                        <div className="rba-payment-action-side">
+                            <div className="rba-payment-breakdown">
+                                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--rb-text)' }}>Order Summary</h3>
+                                <div className="rba-pb-row"><span className="rba-pb-label">Template Price</span><span className="rba-pb-val">₹{selectedUltra.price}</span></div>
+                                <div className="rba-pb-row"><span className="rba-pb-label">Tax (GST 18%)</span><span className="rba-pb-val">Included</span></div>
+                                <div className="rba-pb-row total"><span className="rba-pb-label">Total to Pay</span><span className="rba-pb-val">₹{selectedUltra.price}</span></div>
+                            </div>
+
+                            <div style={{ marginTop: '1.5rem' }}>
+                                <button className="rba-pay-btn" onClick={payNow}>
+                                    <span>Pay with Razorpay</span>
+                                    <span className="rba-pay-btn-amount">₹{selectedUltra.price}</span>
+                                </button>
+                                <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--rb-text-muted)', marginTop: '1rem' }}>
+                                    By clicking pay, you agree to our Terms of Service.
+                                </p>
+                            </div>
+                            
+                            <div className="rba-payment-trust">
+                                <div className="rba-trust-badge">🔒 AES-256 Encrypted</div>
+                                <div className="rba-trust-badge">⚡ Powered by Razorpay</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     /* ── LANDING PAGE ── */
     return (
         <div className="rba-app">
@@ -1295,7 +1587,7 @@ const AIResumeBuilderApp = () => {
                     <div className="rba-section-header">
                         <div className="rb-section-label">🎨 Templates</div>
                         <h2 className="rb-section-h2">Choose Your Perfect Template</h2>
-                        <p className="rb-section-sub">8 free templates + 4 premium designs. All ATS-optimised. Click to customise.</p>
+                        <p className="rb-section-sub">20+ hand-crafted templates. All ATS-optimised. Click to customise.</p>
                     </div>
                     {/* Free templates */}
                     <div className="rba-tpls-subhead">✅ Free Templates</div>
@@ -1310,35 +1602,112 @@ const AIResumeBuilderApp = () => {
                         ))}
                     </div>
                     {/* Premium locked templates */}
-                    <div className="rba-tpls-subhead rba-tpls-subhead--premium">👑 Premium Templates — Register Free to Unlock</div>
+                    <div className="rba-tpls-subhead rba-tpls-subhead--premium">👑 Premium Templates — {isUserLoggedIn ? 'Unlocked for You' : 'Register Free to Unlock'}</div>
                     <div className="rba-tpls-grid">
                         {PREMIUM_TEMPLATES.map(tpl => (
-                            <div key={tpl.id} className="rba-tpl-card-lg rba-tpl-card-locked" onClick={() => navigate('/signup')}>
-                                {/* Mini colour preview */}
-                                <div className="rba-locked-thumb">
-                                    <div className="rba-locked-header" style={{ background: tpl.previewThumb.header }}>
-                                        <div className="rba-locked-accent-bar" style={{ background: tpl.accentSolid }} />
+                            <div key={tpl.id} className={`rba-tpl-card-lg ${!isUserLoggedIn ? 'rba-tpl-card-locked' : ''}`} onClick={() => {
+                                if (isUserLoggedIn) {
+                                    handleTemplateSelect(tpl);
+                                } else {
+                                    navigate('/signup');
+                                }
+                            }}>
+                                {isUserLoggedIn ? (
+                                    <TemplateThumbnail tpl={tpl} active={false} />
+                                ) : (
+                                    <div className="rba-locked-thumb">
+                                        <div className="rba-locked-header" style={{ background: tpl.previewThumb.header }}>
+                                            <div className="rba-locked-accent-bar" style={{ background: tpl.accentSolid }} />
+                                        </div>
+                                        <div className="rba-locked-body">
+                                            <div className="rba-locked-line" style={{ width: '70%' }} />
+                                            <div className="rba-locked-line" style={{ width: '55%' }} />
+                                            <div className="rba-locked-line" style={{ width: '80%' }} />
+                                        </div>
+                                        <div className="rba-lock-overlay">
+                                            <div className="rba-lock-icon">🔒</div>
+                                            <div className="rba-lock-label">Register Free to Unlock</div>
+                                        </div>
                                     </div>
-                                    <div className="rba-locked-body">
-                                        <div className="rba-locked-line" style={{ width: '70%' }} />
-                                        <div className="rba-locked-line" style={{ width: '55%' }} />
-                                        <div className="rba-locked-line" style={{ width: '80%' }} />
-                                    </div>
-                                    {/* Lock overlay */}
-                                    <div className="rba-lock-overlay">
-                                        <div className="rba-lock-icon">🔒</div>
-                                        <div className="rba-lock-label">Register Free to Unlock</div>
-                                    </div>
-                                </div>
+                                )}
                                 <div className="rba-tpl-preview-meta">
                                     <span className="rba-tpl-name">{tpl.name}</span>
                                     <span className="rba-tpl-tag" style={{ background: `${tpl.tagColor}22`, color: tpl.tagColor }}>{tpl.tag}</span>
                                 </div>
-                                <button className="rba-use-tpl-btn rba-unlock-btn">
-                                    🔓 Unlock — Register Free
-                                </button>
+                                {!isUserLoggedIn ? (
+                                    <button className="rba-use-tpl-btn rba-unlock-btn">
+                                        🔓 Unlock — Register Free
+                                    </button>
+                                ) : (
+                                    <button className="rba-use-tpl-btn" style={{ background: tpl.accentSolid }}>
+                                        Use This Template →
+                                    </button>
+                                )}
                             </div>
                         ))}
+                    </div>
+
+                    {/* Ultra Premium locked templates */}
+                    <div className="rba-tpls-subhead rba-tpls-subhead--premium" style={{ marginTop: '3rem', color: '#fbbf24' }}>💎 Ultra Premium Templates — Stand Out</div>
+                    <div className="rba-tpls-grid">
+                        {ULTRA_PREMIUM_TEMPLATES.map(tpl => {
+                            const isPurchased = purchasedTemplates.includes(tpl.id);
+                            return (
+                                <div key={tpl.id} className={`rba-tpl-card-lg ${!isPurchased ? 'rba-tpl-card-locked' : ''}`} onClick={() => {
+                                    if (isPurchased) {
+                                        handleTemplateSelect(tpl);
+                                    } else if (!isUserLoggedIn) {
+                                        navigate('/login');
+                                    } else {
+                                        setSelectedUltra(tpl);
+                                        setView('payment');
+                                    }
+                                }}>
+                                    {isPurchased ? (
+                                        <TemplateThumbnail tpl={tpl} active={false} />
+                                    ) : (
+                                        <div className="rba-locked-thumb" style={{ border: '2px solid rgba(251,191,36,0.3)', borderRadius: '12px' }}>
+                                            <div className="rba-locked-header" style={{ background: tpl.previewThumb.header }}>
+                                                <div className="rba-locked-accent-bar" style={{ background: tpl.accentSolid }} />
+                                            </div>
+                                            <div className="rba-locked-body">
+                                                <div className="rba-locked-line" style={{ width: '70%' }} />
+                                                <div className="rba-locked-line" style={{ width: '55%' }} />
+                                                <div className="rba-locked-line" style={{ width: '80%' }} />
+                                                <div className="rba-locked-line" style={{ width: '60%' }} />
+                                            </div>
+                                            <div className="rba-lock-overlay" style={{ background: 'rgba(0,0,0,0.85)' }}>
+                                                <div className="rba-lock-icon">💎</div>
+                                                <div className="rba-lock-label" style={{ color: '#fbbf24' }}>₹{tpl.price} — Pay to Unlock</div>
+                                                <div style={{ background: 'rgba(16,185,129,0.2)', color: '#10b981', padding: '2px 8px', borderRadius: '100px', fontSize: '0.65rem', fontWeight: 'bold', marginTop: '4px' }}>
+                                                    96%+ ATS Score
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="rba-tpl-preview-meta" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                                            <span className="rba-tpl-name" style={{ fontSize: '0.9rem' }}>{tpl.name}</span>
+                                            <span className="rba-tpl-tag" style={{ background: `${tpl.tagColor}22`, color: tpl.tagColor, fontSize: '0.65rem' }}>{tpl.tag}</span>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '6px', fontSize: '0.65rem', fontWeight: '700', color: '#10b981' }}>
+                                            <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 96% ATS</span>
+                                            <span style={{ color: '#84849a' }}>•</span>
+                                            <span style={{ color: '#fbbf24' }}>Unique Design</span>
+                                        </div>
+                                    </div>
+                                    {!isPurchased ? (
+                                        <button className="rba-use-tpl-btn rba-unlock-btn" style={{ background: 'linear-gradient(135deg, #fbbf24, #d97706)', color: '#000', fontWeight: '900' }}>
+                                            💎 Buy for ₹{tpl.price}
+                                        </button>
+                                    ) : (
+                                        <button className="rba-use-tpl-btn" style={{ background: tpl.accentSolid }}>
+                                            Use This Template →
+                                        </button>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
@@ -1347,9 +1716,9 @@ const AIResumeBuilderApp = () => {
             <section className="rba-stats-section">
                 <div className="rb-container">
                     <div className="rba-stats-grid">
-                        <AnimatedStat num={100} suffix="K+" label="Resumes Created" />
+                        <AnimatedStat num={20} suffix="+" label="Resumes Created" />
                         <AnimatedStat num={94} suffix="%" label="Interview Success Rate" />
-                        <AnimatedStat num={12} suffix="" label="Premium Templates" />
+                        <AnimatedStat num={5} suffix="" label="Premium Templates" />
                         <AnimatedStat num={5} suffix=" min" label="Average Build Time" />
                     </div>
                 </div>

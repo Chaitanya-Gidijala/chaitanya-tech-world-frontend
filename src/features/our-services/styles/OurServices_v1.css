@@ -696,8 +696,7 @@
     .pe-portfolio-card,
     .pe-svc-img-card,
     .sp-feature-card,
-    .sp-pkg-card,
-    .sp-testi-card {
+    .sp-pkg-card {
         padding: 1rem !important;
         width: 100% !important;
     }
@@ -3999,6 +3998,7 @@
 
 .sp-marquee {
     display: flex;
+    align-items: center;
     gap: 1.25rem;
     width: max-content;
     /* pause on hover */
@@ -4280,18 +4280,22 @@
     }
 
     .sp-marquee--left {
-        animation-duration: 28s;
+        animation-duration: 35s;
     }
 
     .sp-marquee--right {
-        animation-duration: 26s;
+        animation-duration: 32s;
     }
 }
 
 @media (max-width: 480px) {
     .sp-testi-card {
-        width: 260px;
-        padding: 1.4rem;
+        width: 240px;
+        padding: 1rem;
+        gap: 0.5rem;
+    }
+    .sp-testi-text {
+        font-size: 0.78rem;
     }
 }
 

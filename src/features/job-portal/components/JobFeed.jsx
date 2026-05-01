@@ -5,6 +5,7 @@ import JobFilters from './JobFilters';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Users, Building2, Trophy, Quote, Star, ArrowRight, BookOpen, Target, Sparkles, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import '../styles/InterviewQuestions.css';
 import '../styles/JobFeed.css';
 
 const JobFeed = () => {
@@ -42,6 +43,13 @@ const JobFeed = () => {
         }
     };
 
+    const quickSearches = [
+        { keyword: 'Frontend Developer', label: 'Frontend' },
+        { keyword: 'Java Developer', label: 'Java' },
+        { keyword: 'React', label: 'React' },
+        { keyword: 'Remote', label: 'Remote' }
+    ];
+
     if (error) {
         return (
             <div className="jp-container">
@@ -56,24 +64,68 @@ const JobFeed = () => {
     }
 
     return (
-        <div className="jp-main-feed">
-            {/* ── HERO SECTION ── */}
-            <div className="jp-hero-section">
-                <motion.div
-                    className="jp-hero-content"
-                    initial={{ opacity: 0, y: -30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                >
-                    <span className="jp-badge">Platform for Professionals</span>
-                    <h1 className="jp-glitter-title">Find Your Dream Job</h1>
-                    <p className="jp-hero-subtitle">
-                        Discover your next career move among <span>thousands of premium openings</span> from the world's most innovative companies.
-                    </p>
-                </motion.div>
+            <div className="jp-main-feed">
+            <div className="iq-header">
+                <div className="prep-hero-grid">
+                    <div className="prep-hero-copy">
+                        <div className="iq-header-meta">
+                            <span className="iq-breadcrumb">Career <span>/</span> Marketplace</span>
+                        </div>
+
+                        <h1 className="iq-main-title">
+                            Professional <em>Job</em> Feed
+                        </h1>
+
+                        <p className="iq-subtitle">
+                            Curated tech opportunities with a streamlined hiring experience. Find your next role and prepare for it in one place.
+                        </p>
+
+                        <div className="iq-stats-bar">
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">500+</span>
+                                <span className="iq-stat-label">Tech Roles</span>
+                            </div>
+                            <div className="iq-stat-divider" />
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">100+</span>
+                                <span className="iq-stat-label">Companies</span>
+                            </div>
+                            <div className="iq-stat-divider" />
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">Verified</span>
+                                <span className="iq-stat-label">Listings</span>
+                            </div>
+                        </div>
+
+                        <div className="jp-hero-actions" style={{ marginTop: '2rem' }}>
+                             <a href="#jp-job-results" className="prep-primary-btn tests">Browse Jobs</a>
+                             <Link to="/job-portal/prep" style={{ textDecoration: 'none', color: 'var(--iq-text-muted)', fontWeight: 700, marginLeft: '1.5rem' }}>Open Prep Hub</Link>
+                        </div>
+                    </div>
+
+                    <div className="prep-hero-visual">
+                        <img src="/prep-hub-hero.png" alt="Job portal visual" />
+                    </div>
+                </div>
             </div>
 
             <JobFilters onSearch={handleSearch} />
+
+            <div className="jp-quick-searches">
+                <span className="jp-quick-search-label">Popular searches</span>
+                <div className="jp-quick-search-list">
+                    {quickSearches.map((search) => (
+                        <button
+                            key={search.label}
+                            type="button"
+                            className="jp-quick-search-chip"
+                            onClick={() => handleSearch({ keyword: search.keyword, location: '' })}
+                        >
+                            {search.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
 
             {/* ── TRUST PARTNERS ── */}
             <motion.section
@@ -93,7 +145,7 @@ const JobFeed = () => {
             </motion.section>
 
             {/* ── JOB FEED ── */}
-            <div className="jp-feed-header">
+            <div className="jp-feed-header" id="jp-job-results">
                 <h2 className="jp-feed-title">Latest Opportunities</h2>
                 <div className="jp-feed-line" />
             </div>
@@ -128,8 +180,8 @@ const JobFeed = () => {
                 <div className="jp-stats-grid">
                     {[
                         { icon: Building2, count: '500+', label: 'Top Companies' },
-                        { icon: Users, count: '12k+', label: 'Active Candidates' },
-                        { icon: Trophy, count: '8k+', label: 'Successful Hires' }
+                        { icon: Users, count: '500+', label: 'Active Candidates' },
+                        { icon: Trophy, count: '100+', label: 'Successful Hires' }
                     ].map((stat, i) => (
                         <motion.div
                             key={i}

@@ -1,261 +1,466 @@
-﻿import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Search, FileText, Video, ExternalLink, Download, Filter } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    Download,
+    ExternalLink,
+    FileText,
+    Link2,
+    PlayCircle,
+    Video,
+    X
+} from 'lucide-react';
 import { getAllResources, getTopics } from '../../services/prepService';
-import TechBadge from './TechBadge';
+import { PREP_RESOURCES, PREP_TOPICS } from '../../data/prepData';
+import '../../styles/InterviewQuestions.css';
+import PrepHeroVisual from './PrepHeroVisual';
+
+const typeOptions = [
+    { value: 'All', label: 'All formats' },
+    { value: 'pdf', label: 'PDF guides' },
+    { value: 'video', label: 'Video lessons' }
+];
+
+const getResourceIcon = (type) => {
+    if (type === 'pdf') return FileText;
+    if (type === 'video') return Video;
+    return Link2;
+};
+
+const getResourceAction = (type) => {
+    if (type === 'pdf') {
+        return { label: 'Download resource', Icon: Download };
+    }
+
+    if (type === 'video') {
+        return { label: 'Watch resource', Icon: PlayCircle };
+    }
+
+    return { label: 'Open resource', Icon: ExternalLink };
+};
+
+const ResourceDetailBody = ({ resource }) => {
+    if (!resource) {
+        return (
+            <div className="prep-detail-empty">
+                <div className="prep-detail-empty-icon">◌</div>
+                <p>Select a resource to preview its format, description, and access link.</p>
+            </div>
+        );
+    }
+
+    const ResourceIcon = getResourceIcon(resource.type);
+    const { label: actionLabel, Icon: ActionIcon } = getResourceAction(resource.type);
+
+    return (
+        <div className="prep-detail-stack">
+            <div className="prep-detail-hero">
+                <div className="prep-collection-item-head">
+                    <div className="prep-collection-icon resources">
+                        <ResourceIcon size={18} />
+                    </div>
+                    <div>
+                        <p className="prep-dashboard-kicker">Resource overview</p>
+                        <h2 className="prep-detail-title">{resource.title}</h2>
+                    </div>
+                </div>
+
+                <div className="prep-chip-row">
+                    <span className="prep-data-badge">{(resource.type || 'link').toUpperCase()}</span>
+                    {(resource.tags || []).slice(0, 4).map((tag) => (
+                        <span key={tag} className="prep-data-badge subtle">{tag}</span>
+                    ))}
+                </div>
+
+                <p className="prep-detail-copy">
+                    {resource.description || 'A focused learning resource curated to support technical interview preparation.'}
+                </p>
+            </div>
+
+            <div className="prep-detail-grid">
+                <section className="prep-detail-panel">
+                    <p className="prep-detail-label">Best for</p>
+                    <ul className="prep-detail-list">
+                        <li>Strengthening one topic after a practice session or interview review.</li>
+                        <li>Saving concise references for revision before a screening round.</li>
+                        <li>Turning weak areas from mock tests into an action plan.</li>
+                    </ul>
+                </section>
+
+                <section className="prep-detail-panel">
+                    <p className="prep-detail-label">How to use it</p>
+                    <ul className="prep-detail-list">
+                        <li>Read or watch the resource, then return to questions for recall practice.</li>
+                        <li>Use the tags to stay inside the same technology focus.</li>
+                        <li>Open the source directly when you are ready to go deeper.</li>
+                    </ul>
+                </section>
+            </div>
+
+            <div className="prep-detail-footer">
+                <div className="prep-detail-metrics">
+                    <div>
+                        <span className="prep-detail-metric-value">{(resource.type || 'link').toUpperCase()}</span>
+                        <span className="prep-detail-metric-label">format</span>
+                    </div>
+                    <div>
+                        <span className="prep-detail-metric-value">{resource.tags?.length || 0}</span>
+                        <span className="prep-detail-metric-label">focus tags</span>
+                    </div>
+                </div>
+
+                <a
+                    className="prep-primary-btn resources"
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    {actionLabel} <ActionIcon size={16} />
+                </a>
+            </div>
+        </div>
+    );
+};
 
 const ResourcesPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedTags, setSelectedTags] = useState([]);
+    const [selectedTopic, setSelectedTopic] = useState('All');
     const [typeFilter, setTypeFilter] = useState('All');
     const [resources, setResources] = useState([]);
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    // Pagination State
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const pageSize = 8; // 2x4 layout or 4x2 layout looks good
+    const [totalResources, setTotalResources] = useState(0);
+    const [activeResource, setActiveResource] = useState(null);
+    const [mobileModalOpen, setMobileModalOpen] = useState(false);
 
-
-    useEffect(() => {
-        fetchInitialData();
-    }, [currentPage, selectedTags, typeFilter]);
-
-    const fetchInitialData = async () => {
-        setLoading(true);
-        try {
-            const tag = selectedTags.length > 0 ? selectedTags[0] : 'All';
-            const [rData, tData] = await Promise.all([
-                getAllResources(currentPage, pageSize, tag, typeFilter),
-                getTopics()
-            ]);
-            setResources(rData.content || []);
-            setTotalPages(rData.totalPages || 0);
-            setTopics(tData);
-        } catch (e) {
-            console.error("Failed to load resources", e);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
-
-    const filteredResources = resources.filter(r => {
-        return r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            r.description.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-
-
-    const toggleTag = (tag) => {
-        if (selectedTags.includes(tag)) {
-            setSelectedTags(selectedTags.filter(t => t !== tag));
-        } else {
-            setSelectedTags([...selectedTags, tag]);
-        }
-    };
+    const pageSize = 10;
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const tech = params.get('tech');
         if (tech) {
-            setSelectedTags(tech.split(','));
+            const [primaryTag] = tech.split(',');
+            if (primaryTag) {
+                setSelectedTopic(primaryTag);
+            }
         }
     }, []);
 
-    if (loading) return <div className="jp-spinner"></div>;
+    useEffect(() => {
+        const fetchResources = async () => {
+            setLoading(true);
+            try {
+                const [resourcesResponse, topicsResponse] = await Promise.all([
+                    getAllResources(currentPage, pageSize, selectedTopic === 'All' ? '' : selectedTopic, typeFilter),
+                    getTopics()
+                ]);
+
+                const nextResources = resourcesResponse.content || [];
+                const fallbackResources = selectedTopic === 'All'
+                    ? PREP_RESOURCES
+                    : PREP_RESOURCES.filter((item) => item.tags?.includes(selectedTopic));
+
+                const resolvedResources = nextResources.length > 0 ? nextResources : fallbackResources;
+                const resolvedTopics = (topicsResponse || []).length > 0 ? topicsResponse : PREP_TOPICS;
+
+                setResources(resolvedResources);
+                setTopics(resolvedTopics);
+                setTotalPages(resourcesResponse.totalPages || (resolvedResources.length > 0 ? 1 : 0));
+                setTotalResources(resourcesResponse.totalElements || resolvedResources.length);
+            } catch (error) {
+                console.error('Failed to load resources', error);
+                const fallbackResources = selectedTopic === 'All'
+                    ? PREP_RESOURCES
+                    : PREP_RESOURCES.filter((item) => item.tags?.includes(selectedTopic));
+                setResources(fallbackResources);
+                setTopics(PREP_TOPICS);
+                setTotalPages(fallbackResources.length > 0 ? 1 : 0);
+                setTotalResources(fallbackResources.length);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchResources();
+    }, [currentPage, selectedTopic, typeFilter]);
+
+    const filteredResources = useMemo(() => resources.filter((resource) => {
+        const searchValue = searchTerm.toLowerCase();
+        const title = resource.title?.toLowerCase() || '';
+        const description = resource.description?.toLowerCase() || '';
+
+        return title.includes(searchValue) || description.includes(searchValue);
+    }), [resources, searchTerm]);
+
+    useEffect(() => {
+        if (filteredResources.length === 0) {
+            setActiveResource(null);
+            return;
+        }
+
+        if (!activeResource || !filteredResources.some((resource) => resource.id === activeResource.id)) {
+            setActiveResource(filteredResources[0]);
+        }
+    }, [activeResource, filteredResources]);
+
+    const pdfCount = filteredResources.filter((resource) => resource.type === 'pdf').length;
+    const videoCount = filteredResources.filter((resource) => resource.type === 'video').length;
+    const linkCount = filteredResources.filter((resource) => !resource.type || resource.type === 'link').length;
+
+    const handleSelectResource = (resource) => {
+        setActiveResource(resource);
+
+        if (window.innerWidth < 768) {
+            setMobileModalOpen(true);
+        }
+    };
+
+    const handleTopicChange = (topic) => {
+        setSelectedTopic(topic);
+        setCurrentPage(0);
+    };
+
+    if (loading && resources.length === 0) {
+        return <div className="iq-shell"><div className="iq-spinner" /></div>;
+    }
 
     return (
-        <div className="jp-container" style={{ padding: '0.5rem' }}>
-            <div className="jp-mobile-tight" style={{ marginBottom: '3rem', textAlign: 'center' }}>
-                <h1 className="jp-mobile-title-sm" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Learning Resources</h1>
-                <p className="jp-mobile-text-sm" style={{ color: 'var(--jp-text-muted)' }}>Articles, videos, and documentation for tech skills.</p>
-            </div>
+        <div className="iq-shell">
+            <header className="iq-header">
+                <div className="prep-hero-grid">
+                    <div className="prep-hero-copy">
+                        <div className="iq-header-meta">
+                            <span className="iq-breadcrumb">Academy <span>/</span> Prep</span>
+                        </div>
 
-            <div className="jp-mobile-grid-1" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 2fr) 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                <div style={{ position: 'relative' }}>
-                    <Search style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--jp-text-muted)' }} size={20} />
-                    <input
-                        type="text"
-                        placeholder="Search resources..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{
-                            width: '100%',
-                            padding: '0.85rem 1rem 0.85rem 3rem',
-                            borderRadius: '12px',
-                            border: '1px solid var(--jp-border)',
-                            background: 'var(--jp-bg)',
-                            color: 'var(--jp-text-main)',
-                            fontSize: '0.95rem'
-                        }}
-                    />
+                        <h1 className="iq-main-title">
+                            Learning <em>Resource</em> Desk
+                        </h1>
+
+                        <p className="iq-subtitle">
+                            Curated resources, guides, and videos for your technical growth.
+                        </p>
+
+                        <div className="iq-stats-bar">
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">{totalResources}+</span>
+                                <span className="iq-stat-label">Resources</span>
+                            </div>
+                            <div className="iq-stat-divider" />
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">{pdfCount}</span>
+                                <span className="iq-stat-label">PDF</span>
+                            </div>
+                            <div className="iq-stat-divider" />
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">{videoCount}</span>
+                                <span className="iq-stat-label">Video</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="prep-hero-visual">
+                        <PrepHeroVisual type="resources" />
+                    </div>
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button
-                        onClick={() => { setTypeFilter('All'); setCurrentPage(0); }}
-                        style={{ flex: 1, padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--jp-border)', background: typeFilter === 'All' ? 'var(--jp-primary)' : 'var(--jp-card-bg)', color: typeFilter === 'All' ? 'white' : 'var(--jp-text-main)', fontSize: '0.85rem', fontWeight: 600 }}
-                    >All</button>
+            </header>
 
-                    <button
-                        onClick={() => { setTypeFilter('pdf'); setCurrentPage(0); }}
-                        style={{ flex: 1, padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--jp-border)', background: typeFilter === 'pdf' ? 'var(--jp-primary)' : 'var(--jp-card-bg)', color: typeFilter === 'pdf' ? 'white' : 'var(--jp-text-main)', fontSize: '0.85rem', fontWeight: 600 }}
-                    >PDF</button>
-                    <button
-                        onClick={() => { setTypeFilter('video'); setCurrentPage(0); }}
-                        style={{ flex: 1, padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--jp-border)', background: typeFilter === 'video' ? 'var(--jp-primary)' : 'var(--jp-card-bg)', color: typeFilter === 'video' ? 'white' : 'var(--jp-text-main)', fontSize: '0.85rem', fontWeight: 600 }}
-                    >Video</button>
-
-                </div>
-            </div>
-
-            <div className="jp-mobile-tight" style={{ marginBottom: '2.5rem' }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
-                    <TechBadge
-                        tech="All"
-                        active={selectedTags.length === 0}
-                        onClick={() => {
-                            setSelectedTags([]);
-                            setCurrentPage(0);
-                        }}
-                    />
-                    {topics.map(topic => (
-
-                        <TechBadge
-                            key={topic.id}
-                            tech={topic.name}
-                            active={selectedTags.includes(topic.name)}
-                            onClick={() => toggleTag(topic.name)}
+            <div className="iq-controls-wrap">
+                <div className="iq-controls-inner">
+                    <div className="iq-search-wrap">
+                        <input
+                            type="text"
+                            className="iq-input"
+                            placeholder="Search by title or description..."
+                            value={searchTerm}
+                            onChange={(event) => setSearchTerm(event.target.value)}
                         />
-                    ))}
+                    </div>
+
+                    <div className="iq-select-wrap">
+                        <select
+                            className="iq-select"
+                            value={typeFilter}
+                            onChange={(event) => {
+                                setTypeFilter(event.target.value);
+                                setCurrentPage(0);
+                            }}
+                        >
+                            {typeOptions.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
+                        </select>
+                        <ChevronDown className="iq-select-chevron" size={14} />
+                    </div>
+
+                    <div className="iq-select-wrap">
+                        <select 
+                            className="iq-select" 
+                            value={selectedTopic} 
+                            onChange={(e) => handleTopicChange(e.target.value)}
+                        >
+                            <option value="All">All Technologies</option>
+                            {topics.map(t => (
+                                <option key={t.id} value={t.name}>{t.name}</option>
+                            ))}
+                        </select>
+                        <ChevronDown className="iq-select-chevron" size={14} />
+                    </div>
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
-                {filteredResources.map((res) => (
-                    <motion.div
-                        key={res.id}
-                        whileHover={{ y: -5 }}
-                        style={{
-                            background: 'var(--jp-card-bg)',
-                            padding: '1.5rem',
-                            borderRadius: '20px',
-                            border: '1px solid var(--jp-border)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '1rem'
-                        }}
-                    >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div style={{
-                                width: '48px',
-                                height: '48px',
-                                borderRadius: '12px',
-                                background: res.type === 'pdf' ? 'rgba(225, 29, 72, 0.1)' : res.type === 'video' ? 'rgba(2, 132, 199, 0.1)' : 'rgba(22, 163, 74, 0.1)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                color: res.type === 'pdf' ? '#e11d48' : res.type === 'video' ? '#0284c7' : '#16a34a'
-                            }}>
-                                {res.type === 'pdf' ? <FileText /> : res.type === 'video' ? <Video /> : <ExternalLink />}
+            <main className="iq-body">
+
+                <section className="prep-summary-grid">
+                    <article className="prep-surface-card">
+                        <div className="prep-surface-head">
+                            <div className="prep-surface-icon"><FileText size={18} /></div>
+                            <h3>Reference-first browsing</h3>
+                        </div>
+                        <p>Each resource opens in a cleaner detail view before you leave the page, so selection feels more deliberate.</p>
+                    </article>
+                    <article className="prep-surface-card">
+                        <div className="prep-surface-head">
+                            <div className="prep-surface-icon"><Video size={18} /></div>
+                            <h3>Mixed media support</h3>
+                        </div>
+                        <p>Switch between PDFs, videos, and links using the same editorial layout and compact filter bar.</p>
+                    </article>
+                    <article className="prep-surface-card">
+                        <div className="prep-surface-head">
+                            <div className="prep-surface-icon"><ExternalLink size={18} /></div>
+                            <h3>Direct source access</h3>
+                        </div>
+                        <p>Open the selected resource from the reader pane once you confirm it matches the topic you need.</p>
+                    </article>
+                </section>
+
+                <div className="iq-section-label">
+                    <span className="iq-section-label-text">
+                        Resource catalog - {filteredResources.length} visible
+                    </span>
+                    <div className="iq-section-label-line" />
+                </div>
+
+                {filteredResources.length === 0 ? (
+                    <div className="iq-empty">
+                        <div className="iq-empty-icon">◌</div>
+                        <p className="iq-empty-text">No resources match the current topic, format, and search filters.</p>
+                    </div>
+                ) : (
+                    <div className="prep-collection-shell">
+                        <div className="prep-collection-list">
+                            <div className="prep-collection-list-header">
+                                <span>Resources</span>
+                                <span>{filteredResources.length} visible</span>
                             </div>
-                            <div style={{ display: 'flex', gap: '0.25rem' }}>
-                                {res.tags.slice(0, 2).map(tag => (
-                                    <span key={tag} style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: 'var(--jp-bg-secondary)', color: 'var(--jp-text-muted)', borderRadius: '4px', border: '1px solid var(--jp-border)' }}>{tag}</span>
-                                ))}
+
+                            <div className="prep-collection-scroll">
+                                {filteredResources.map((resource) => {
+                                    const ResourceIcon = getResourceIcon(resource.type);
+
+                                    return (
+                                        <motion.button
+                                            type="button"
+                                            key={resource.id}
+                                            className={`prep-collection-item ${activeResource?.id === resource.id ? 'active' : ''}`}
+                                            onClick={() => handleSelectResource(resource)}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                        >
+                                            <div className="prep-collection-item-head">
+                                                <div className="prep-collection-icon resources">
+                                                    <ResourceIcon size={16} />
+                                                </div>
+                                                <div>
+                                                    <p className="prep-collection-kicker">{(resource.type || 'link').toUpperCase()}</p>
+                                                    <h3>{resource.title}</h3>
+                                                </div>
+                                            </div>
+
+                                            <p className="prep-collection-preview">
+                                                {resource.description || 'Curated learning material for focused technical preparation.'}
+                                            </p>
+
+                                            <div className="prep-chip-row">
+                                                {(resource.tags || []).slice(0, 3).map((tag) => (
+                                                    <span key={tag} className="prep-data-badge subtle">{tag}</span>
+                                                ))}
+                                            </div>
+                                        </motion.button>
+                                    );
+                                })}
                             </div>
                         </div>
 
-                        <div>
-                            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>{res.title}</h3>
-                            <p style={{ fontSize: '0.9rem', color: 'var(--jp-text-muted)', lineHeight: '1.5' }}>{res.description}</p>
+                        <div className="prep-collection-detail">
+                            <ResourceDetailBody resource={activeResource} />
                         </div>
+                    </div>
+                )}
 
-                        <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--jp-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.8rem', color: 'var(--jp-text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>{res.type}</span>
-                            <a
-                                href={res.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    color: 'var(--jp-primary)',
-                                    textDecoration: 'none',
-                                    fontWeight: 700,
-                                    fontSize: '0.9rem'
-                                }}
-                            >
-                                {res.type === 'pdf' ? <><Download size={16} /> Download</> : <><ExternalLink size={16} /> View Resource</>}
-                            </a>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginTop: '3rem', padding: '1rem' }}>
-                    <button
-                        onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
-                        disabled={currentPage === 0}
-                        style={{
-                            padding: '0.75rem 1.25rem',
-                            borderRadius: '12px',
-                            background: 'var(--jp-card-bg)',
-                            color: currentPage === 0 ? 'var(--jp-text-muted)' : 'var(--jp-text-main)',
-                            border: '1px solid var(--jp-border)',
-                            cursor: currentPage === 0 ? 'default' : 'pointer',
-                            fontWeight: 700,
-                            fontSize: '0.9rem',
-                            opacity: currentPage === 0 ? 0.5 : 1
-                        }}
-                    >
-                        Previous
-                    </button>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        {[...Array(totalPages)].map((_, idx) => (
+                {totalPages > 1 && (
+                    <div className="iq-pagination">
+                        <button
+                            type="button"
+                            className="iq-page-btn"
+                            onClick={() => setCurrentPage((page) => Math.max(0, page - 1))}
+                            disabled={currentPage === 0}
+                        >
+                            <ChevronLeft size={14} />
+                        </button>
+                        {Array.from({ length: totalPages }, (_, index) => (
                             <button
-                                key={idx}
-                                onClick={() => setCurrentPage(idx)}
-                                style={{
-                                    width: '42px',
-                                    height: '42px',
-                                    borderRadius: '12px',
-                                    background: currentPage === idx ? 'var(--jp-primary)' : 'var(--jp-card-bg)',
-                                    color: currentPage === idx ? 'white' : 'var(--jp-text-main)',
-                                    border: '1px solid var(--jp-border)',
-                                    cursor: 'pointer',
-                                    fontWeight: 800,
-                                    fontSize: '0.95rem'
-                                }}
+                                type="button"
+                                key={index}
+                                className={`iq-page-btn ${currentPage === index ? 'active' : ''}`}
+                                onClick={() => setCurrentPage(index)}
                             >
-                                {idx + 1}
+                                {index + 1}
                             </button>
                         ))}
+                        <button
+                            type="button"
+                            className="iq-page-btn"
+                            onClick={() => setCurrentPage((page) => Math.min(totalPages - 1, page + 1))}
+                            disabled={currentPage === totalPages - 1}
+                        >
+                            <ChevronRight size={14} />
+                        </button>
                     </div>
-                    <button
-                        onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
-                        disabled={currentPage === totalPages - 1}
-                        style={{
-                            padding: '0.75rem 1.25rem',
-                            borderRadius: '12px',
-                            background: 'var(--jp-card-bg)',
-                            color: currentPage === totalPages - 1 ? 'var(--jp-text-muted)' : 'var(--jp-text-main)',
-                            border: '1px solid var(--jp-border)',
-                            cursor: currentPage === totalPages - 1 ? 'default' : 'pointer',
-                            fontWeight: 700,
-                            fontSize: '0.9rem',
-                            opacity: currentPage === totalPages - 1 ? 0.5 : 1
-                        }}
-                    >
-                        Next
-                    </button>
-                </div>
-            )}
+                )}
+            </main>
 
+            <AnimatePresence>
+                {mobileModalOpen && activeResource && (
+                    <>
+                        <div className="iq-modal-overlay" onClick={() => setMobileModalOpen(false)} style={{ display: 'block' }} />
+                        <motion.div
+                            className="iq-modal"
+                            initial={{ y: '100%' }}
+                            animate={{ y: 0 }}
+                            exit={{ y: '100%' }}
+                            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+                        >
+                            <div className="iq-modal-header">
+                                <div>
+                                    <p className="prep-dashboard-kicker">Resource overview</p>
+                                    <h2 className="prep-detail-title" style={{ fontSize: '1.1rem' }}>{activeResource.title}</h2>
+                                </div>
+                                <button type="button" className="iq-modal-close" onClick={() => setMobileModalOpen(false)}>
+                                    <X size={16} />
+                                </button>
+                            </div>
+
+                            <ResourceDetailBody resource={activeResource} />
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

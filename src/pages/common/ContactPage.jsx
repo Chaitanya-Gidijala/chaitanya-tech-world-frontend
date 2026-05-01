@@ -59,9 +59,9 @@ const serviceOptions = [
 
 const budgetLabels = (val) => {
     if (val < 2000) return '< ₹2,000';
-    if (val < 5000) return '₹2,000 – ₹5,000';
-    if (val < 15000) return '₹5,000 – ₹15,000';
-    if (val < 30000) return '₹15,000 – ₹30,000';
+    if (val < 5000) return '₹2,000 - ₹5,000';
+    if (val < 15000) return '₹5,000 - ₹15,000';
+    if (val < 30000) return '₹15,000 - ₹30,000';
     return '₹30,000+';
 };
 

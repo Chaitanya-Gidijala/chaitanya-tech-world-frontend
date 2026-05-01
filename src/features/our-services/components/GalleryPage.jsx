@@ -554,11 +554,11 @@ const GalleryPage = ({ type }) => {
                         <p className="sp-hero-tagline">{tagline}</p>
                         <p className="sp-hero-desc">{basedesc}</p>
                         <div className="sp-hero-ctas">
-                            <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer"
+                            <a href="https://wa.me/917337072766" target="_blank" rel="noreferrer"
                                 className="sp-cta-primary" style={{ background: accentGradient }}>
                                 <Phone size={16} /> Order via WhatsApp
                             </a>
-                            <a href="mailto:hello@chaitanyatech.com" className={heroImg ? 'sp-cta-ghost-img' : 'sp-cta-ghost'}>
+                            <a href="mailto:support@chaitanyatechworld.com" className={heroImg ? 'sp-cta-ghost-img' : 'sp-cta-ghost'}>
                                 <Mail size={16} /> Email Us
                             </a>
                         </div>
@@ -761,7 +761,7 @@ const GalleryPage = ({ type }) => {
                                         ))}
                                     </ul>
                                     <a
-                                        href="https://wa.me/919876543210"
+                                        href="https://wa.me/917337072766"
                                         target="_blank" rel="noreferrer"
                                         className="sp-pkg-cta"
                                         style={pkg.popular ? { background: accentGradient } : {}}
@@ -820,10 +820,10 @@ const GalleryPage = ({ type }) => {
                         <h2 className="sp-cta-h2">Ready to Get Started?</h2>
                         <p className="sp-cta-sub">Let's bring your vision to life. Reach out now and we'll reply within 30 minutes.</p>
                         <div className="sp-cta-btns">
-                            <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer" className="sp-cta-btn-white">
+                            <a href="https://wa.me/917337072766" target="_blank" rel="noreferrer" className="sp-cta-btn-white">
                                 <Phone size={16} /> WhatsApp Us
                             </a>
-                            <a href="mailto:hello@chaitanyatech.com" className="sp-cta-btn-outline">
+                            <a href="mailto:support@chaitanyatechworld.com" className="sp-cta-btn-outline">
                                 <Mail size={16} /> Send an Email
                             </a>
                         </div>

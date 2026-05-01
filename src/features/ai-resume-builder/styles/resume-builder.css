@@ -3725,3 +3725,689 @@
         border-bottom: none;
     }
 }
+/* ================================================================
+   ULTRA PREMIUM LAYOUT STYLES
+   ================================================================ */
+
+.rba-resume-ultra-layout {
+    width: 100%;
+    min-height: 297mm;
+    background: #fff;
+    color: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+}
+
+.rba-ultra-header {
+    padding: 3rem 4rem;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    color: #fff;
+}
+
+.rba-ultra-header-content {
+    max-width: 60%;
+}
+
+.rba-ultra-name {
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.rba-ultra-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.rba-ultra-contact-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.rba-ultra-contact-item {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.rba-ultra-body {
+    padding: 3rem 4rem;
+    flex: 1;
+}
+
+.rba-ultra-section {
+    margin-bottom: 2.5rem;
+}
+
+.rba-ultra-section-title {
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: 0.5rem;
+}
+
+.rba-ultra-summary {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #4b5563;
+    max-width: 90%;
+}
+
+.rba-ultra-main-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr;
+    gap: 4rem;
+}
+
+.rba-ultra-exp-item {
+    margin-bottom: 2rem;
+}
+
+.rba-ultra-exp-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.25rem;
+}
+
+.rba-ultra-exp-role {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+.rba-ultra-exp-period {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #6b7280;
+}
+
+.rba-ultra-exp-company {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.rba-ultra-bullets {
+    list-style: none;
+    padding-left: 1.25rem;
+}
+
+.rba-ultra-bullets li {
+    position: relative;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+}
+
+.rba-ultra-bullets li::before {
+    content: "\2192";
+    position: absolute;
+    left: -1.25rem;
+    font-weight: 900;
+}
+
+.rba-ultra-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.rba-ultra-skill {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.rba-ultra-edu-item {
+    margin-bottom: 1.5rem;
+}
+
+.rba-ultra-edu-degree {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+.rba-ultra-edu-school {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.rba-ultra-edu-period {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #9ca3af;
+}
+
+/* ================================================================
+   TEMPLATES SECTION — COMPLETE REDESIGN
+   ================================================================ */
+
+/* Section spacing */
+.rba-tpls-section {
+    padding: 4rem 0 5rem;
+    background: var(--rb-bg2);
+}
+
+.rba-section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+/* Category subheadings */
+.rba-tpls-subhead {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--rb-text-muted);
+    margin-bottom: 1.25rem;
+    margin-top: 0.5rem;
+}
+.rba-tpls-subhead::before,
+.rba-tpls-subhead::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rb-border);
+}
+.rba-tpls-subhead--premium {
+    color: #fbbf24;
+}
+.rba-tpls-subhead--premium::before,
+.rba-tpls-subhead--premium::after {
+    background: rgba(251,191,36,0.2);
+}
+
+/* Responsive grid — 4 → 3 → 2 → 1 */
+.rba-tpls-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+@media (max-width: 1200px) { .rba-tpls-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 860px)  { .rba-tpls-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .rba-tpls-grid { grid-template-columns: 1fr; } }
+
+/* Template Card */
+.rba-tpl-card-lg {
+    cursor: pointer;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--rb-card);
+    border: 2px solid var(--rb-border);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.rba-tpl-card-lg:hover {
+    transform: translateY(-5px);
+    border-color: var(--rb-primary);
+    box-shadow: 0 16px 48px hsla(231, 90%, 60%, 0.2);
+}
+.rba-tpl-card-lg:hover .rba-use-tpl-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Real preview container */
+.rba-tpl-real-preview { flex: 1; display: flex; flex-direction: column; }
+.rba-tpl-preview-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background: #f5f5f5;
+    flex: 1;
+}
+.rba-tpl-preview-inner { display: block; }
+
+/* Meta row */
+.rba-tpl-preview-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.85rem;
+    background: var(--rb-card);
+    border-top: 1px solid var(--rb-border);
+}
+.rba-tpl-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--rb-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.rba-tpl-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 50px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Use Template Button */
+.rba-use-tpl-btn {
+    width: 100%;
+    padding: 0.7rem;
+    border: none;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transform: translateY(3px);
+    opacity: 0.88;
+    transition: all 0.25s ease;
+    letter-spacing: 0.02em;
+}
+.rba-unlock-btn {
+    background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+/* Locked template miniature */
+.rba-locked-thumb {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+    min-height: 160px;
+    flex: 1;
+}
+.rba-locked-thumb.unlocked .rba-lock-overlay { display: none; }
+.rba-locked-header {
+    height: 52px;
+    position: relative;
+}
+.rba-locked-accent-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+.rba-locked-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.rba-locked-line {
+    height: 7px;
+    background: var(--rb-border2);
+    border-radius: 4px;
+}
+.rba-lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    z-index: 2;
+}
+.rba-lock-icon { font-size: 1.75rem; }
+.rba-lock-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+    padding: 0 12px;
+}
+
+/* ================================================================
+   PAYMENT PAGE — PROFESSIONAL REDESIGN
+   ================================================================ */
+.rba-payment-page {
+    min-height: 100vh;
+    background: var(--rb-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Payment Header */
+.rba-payment-header {
+    background: var(--rb-card);
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--rb-border);
+}
+.rba-payment-back {
+    background: transparent;
+    border: 1px solid var(--rb-border);
+    color: var(--rb-text-muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.rba-payment-back:hover { background: var(--rb-border); color: var(--rb-text); }
+.rba-payment-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--rb-text);
+    letter-spacing: -0.01em;
+}
+.rba-payment-secure {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: #10b981;
+    font-weight: 600;
+}
+
+.rba-payment-main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 1.5rem;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Payment Body Split Layout */
+.rba-payment-body-split {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    width: 100%;
+}
+
+/* Template Details Side (Left) */
+.rba-payment-details-side {
+    display: flex;
+    flex-direction: column;
+}
+
+.rba-payment-item-large {
+    background: var(--rb-card);
+    border: 1px solid var(--rb-border);
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+    box-shadow: var(--rb-shadow);
+}
+
+.rba-payment-thumb-large {
+    width: 140px;
+    height: 190px;
+    border-radius: 12px;
+    border: 4px solid var(--rb-border);
+    overflow: hidden;
+    position: relative;
+    background: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+}
+.rba-payment-thumb-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.rba-payment-thumb-header { flex: 2; }
+.rba-payment-thumb-body {
+    flex: 5;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.rba-payment-thumb-line {
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+}
+
+.rba-payment-item-name-large {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--rb-text);
+    margin-bottom: 8px;
+}
+
+.rba-payment-item-tag-large {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    background: rgba(251,191,36,0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(251,191,36,0.2);
+}
+
+/* Features checklist */
+.rba-payment-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.rba-pf-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: var(--rb-text-sub);
+    font-weight: 500;
+}
+.rba-pf-check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(16,185,129,0.15);
+    border: 1px solid rgba(16,185,129,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: #10b981;
+    flex-shrink: 0;
+}
+
+/* Payment Info Side (Right) */
+.rba-payment-action-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 1rem;
+}
+
+/* Price breakdown */
+.rba-payment-breakdown {
+    background: var(--rb-card);
+    border: 1px solid var(--rb-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--rb-shadow);
+    padding: 1.5rem;
+}
+.rba-pb-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    font-size: 0.95rem;
+}
+.rba-pb-row + .rba-pb-row { border-top: 1px dashed var(--rb-border2); }
+.rba-pb-label { color: var(--rb-text-muted); font-weight: 500; }
+.rba-pb-val { color: var(--rb-text); font-weight: 600; }
+.rba-pb-row.total { 
+    margin-top: 0.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rb-border);
+}
+.rba-pb-row.total .rba-pb-label { color: var(--rb-text); font-weight: 800; font-size: 1.1rem; }
+.rba-pb-row.total .rba-pb-val { color: var(--rb-primary); font-size: 1.4rem; font-weight: 900; }
+
+/* Pay button */
+.rba-pay-btn {
+    width: 100%;
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    letter-spacing: 0.01em;
+    background: var(--rb-primary);
+    color: white;
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+}
+.rba-pay-btn:hover {
+    transform: translateY(-2px);
+    background: var(--rb-primary-dark);
+    box-shadow: 0 15px 40px rgba(79, 70, 229, 0.4);
+}
+.rba-pay-btn-amount {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 1.05rem;
+}
+
+/* Trust badges */
+.rba-payment-trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rb-border);
+}
+.rba-trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--rb-text-muted);
+}
+
+/* Payment page responsive */
+@media (max-width: 900px) {
+    .rba-payment-body-split {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    .rba-payment-main-container {
+        padding: 2rem 1.5rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .rba-payment-main-container {
+        padding: 1rem 1rem;
+    }
+    .rba-payment-body-split {
+        gap: 1.5rem;
+    }
+    .rba-payment-item-large {
+        flex-direction: row; /* Keep row for thumbnail to save space */
+        align-items: center;
+        text-align: left;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    .rba-payment-thumb-large {
+        width: 80px; /* Smaller thumbnail on mobile */
+        height: 110px;
+        border-width: 2px;
+    }
+    .rba-payment-thumb-body {
+        padding: 6px;
+        gap: 4px;
+    }
+    .rba-payment-item-large > div {
+        text-align: left !important;
+    }
+    .rba-payment-features {
+        align-items: flex-start;
+    }
+    .rba-payment-item-name-large {
+        font-size: 1.1rem;
+    }
+    .rba-payment-item-tag-large {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+    }
+    /* Header layout for mobile */
+    .rba-payment-header {
+        padding: 1rem 0;
+    }
+    .rba-payment-header .rb-container {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+    .rba-payment-title {
+        font-size: 1rem;
+    }
+    .rba-payment-secure {
+        font-size: 0.7rem;
+    }
+    .rba-payment-back {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    .rba-payment-trust { flex-wrap: wrap; gap: 1rem; margin-top: 1rem; padding-top: 1rem; }
+    
+    .rba-payment-details-side h2 {
+        font-size: 1.4rem !important;
+    }
+    .rba-payment-details-side p {
+        font-size: 0.9rem;
+        margin-bottom: 1rem !important;
+    }
+    .rba-payment-action-side {
+        padding-top: 0;
+    }
+}
+

@@ -53,11 +53,20 @@ const config = {
         },
         auth: {
             login: `${AUTH_HOST}/login`,
-            register: `${AUTH_HOST}/register`
+            register: `${AUTH_HOST}/register`,
+            me: `${AUTH_HOST.replace('/auth', '/users')}/me`
         },
         users: {
             base: `${AUTH_HOST.replace('/auth', '/users')}`,
             count: `${AUTH_HOST.replace('/auth', '/users')}/count`
+        },
+        userProfile: {
+            resumes: `${API_HOST}/user/profile/resumes`,
+            payments: `${API_HOST}/user/profile/payments`
+        },
+        payments: {
+            createOrder: `${API_HOST}/payments/create-order`,
+            verifyPayment: `${API_HOST}/payments/verify-payment`
         }
     }
 };

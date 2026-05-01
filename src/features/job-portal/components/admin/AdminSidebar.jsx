@@ -1,48 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     PlusCircle, List, Settings, BarChart3,
     Globe, HelpCircle, Book, ClipboardCheck,
-    Hash, Home, Moon, Sun, MessageSquare,
-    LogOut, X, ShieldCheck, Menu
+    Hash, Home, Moon, Sun, MessageSquare, Heart,
+    LogOut, X, ShieldCheck, Menu, CreditCard, Users, Mail
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { THEME_KEY } from '@/constants/theme';
 import './AdminLayout.css';
 
 const navGroups = [
     {
-        label: 'Main',
+        label: 'Dashboard',
         items: [
-            { id: 'overview',  label: 'Overview',       icon: Home },
+            { id: 'overview', label: 'Hub Overview', icon: Home },
+            { id: 'analytics', label: 'Traffic Stats', icon: BarChart3 },
         ]
     },
     {
-        label: 'Job Management',
+        label: 'Job Center',
         items: [
-            { id: 'create',    label: 'Post a Job',     icon: PlusCircle },
-            { id: 'manage',    label: 'Manage Jobs',    icon: List },
+            { id: 'create', label: 'Post New Job', icon: PlusCircle },
+            { id: 'manage', label: 'Manage Jobs', icon: List },
         ]
     },
     {
-        label: 'Prep Hub',
+        label: 'Prep & Learn',
         items: [
-            { id: 'questions', label: 'Questions',      icon: HelpCircle },
-            { id: 'topics',    label: 'Topics',         icon: Hash },
-            { id: 'resources', label: 'Resources',      icon: Book },
-            { id: 'quizzes',   label: 'Quizzes',        icon: ClipboardCheck },
+            { id: 'questions', label: 'Prep Questions', icon: HelpCircle },
+            { id: 'topics', label: 'Core Topics', icon: Hash },
+            { id: 'resources', label: 'PDF Library', icon: Book },
+            { id: 'quizzes', label: 'Live Quizzes', icon: ClipboardCheck },
         ]
     },
     {
-        label: 'Insights',
+        label: 'CRM & Users',
         items: [
-            { id: 'analytics', label: 'Analytics',      icon: BarChart3 },
-            { id: 'inquiries', label: 'Inquiries',       icon: MessageSquare },
+            { id: 'users', label: 'User Registry', icon: Users },
+            { id: 'inquiries', label: 'Contact Inbox', icon: MessageSquare },
+            { id: 'subscribers', label: 'Subscribers', icon: Mail },
+        ]
+    },
+    {
+        label: 'Finance',
+        items: [
+            { id: 'support', label: 'Contributions', icon: Heart },
+            { id: 'payments', label: 'Transactions', icon: CreditCard },
         ]
     },
     {
         label: 'System',
         items: [
-            { id: 'settings',  label: 'Settings',       icon: Settings },
+            { id: 'settings', label: 'Portal Config', icon: Settings },
         ]
     }
 ];
@@ -60,7 +70,7 @@ const AdminSidebar = ({ activeTab, onTabChange, isOpen, onToggle }) => {
         const newTheme = !isDark ? 'dark' : 'light';
         setIsDark(!isDark);
         document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('jp-theme', newTheme);
+        localStorage.setItem(THEME_KEY, newTheme);
     };
 
     const handleTabClick = (id) => {
@@ -69,66 +79,59 @@ const AdminSidebar = ({ activeTab, onTabChange, isOpen, onToggle }) => {
     };
 
     return (
-        <>
-            {/* Mobile backdrop */}
-            <div
-                className={`adm-backdrop ${isOpen ? 'visible' : ''}`}
-                onClick={onToggle}
-            />
-
-            {/* Sidebar */}
-            <motion.aside
-                className={`adm-sidebar ${isOpen ? 'is-open' : 'is-closed'}`}
-                initial={false}
-            >
-                {/* Brand Header */}
-                <div className="adm-sidebar-header">
-                    <div className="adm-sidebar-brand">
-                        <div className="adm-sidebar-logo">
-                            <img src="/CTW.svg" alt="CTW" />
-                        </div>
-                        <div>
-                            <h2 className="adm-sidebar-title">Admin Portal</h2>
-                        </div>
+        <aside className={`adm-sidebar ${isOpen ? 'is-open' : 'is-closed'}`}>
+            <div className="adm-sidebar-header">
+                <div className="adm-sidebar-brand">
+                    <div className="adm-sidebar-logo">
+                        <img src="/CTW.svg" alt="CTW" />
                     </div>
-                    <p className="adm-sidebar-subtitle">Chaitanya Tech World</p>
-                </div>
-
-                {/* Navigation */}
-                <nav className="adm-sidebar-nav">
-                    {navGroups.map(group => (
-                        <div key={group.label}>
-                            <p className="adm-nav-section-label">{group.label}</p>
-                            {group.items.map(({ id, label, icon: Icon }) => (
-                                <button
-                                    key={id}
-                                    className={`adm-nav-item ${activeTab === id ? 'active' : ''}`}
-                                    onClick={() => handleTabClick(id)}
-                                >
-                                    <span className="adm-nav-icon">
-                                        <Icon size={16} />
-                                    </span>
-                                    <span className="adm-nav-label">{label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    ))}
-                </nav>
-
-                {/* Footer */}
-                <div className="adm-sidebar-footer">
-                    <button className="adm-theme-btn" onClick={toggleTheme} title="Toggle Theme">
-                        {isDark ? <Sun size={16} /> : <Moon size={16} />}
-                    </button>
-                    <button
-                        className="adm-logout-btn"
-                        onClick={() => { localStorage.clear(); navigate('/job-portal'); }}
+                    <div style={{ flex: 1 }}>
+                        <h2 className="adm-sidebar-title">CTW Admin</h2>
+                        <p className="adm-sidebar-subtitle">Control Panel</p>
+                    </div>
+                    <button 
+                        className="adm-sidebar-close-mobile" 
+                        onClick={onToggle}
+                        aria-label="Close menu"
                     >
-                        <LogOut size={14} /> Logout
+                        <X size={20} />
                     </button>
                 </div>
-            </motion.aside>
-        </>
+            </div>
+
+            <nav className="adm-sidebar-nav">
+                {navGroups.map(group => (
+                    <div key={group.label} className="adm-nav-group">
+                        <p className="adm-nav-section-label">{group.label}</p>
+                        {group.items.map(({ id, label, icon: Icon }) => (
+                            <button
+                                key={id}
+                                className={`adm-nav-item ${activeTab === id ? 'active' : ''}`}
+                                onClick={() => handleTabClick(id)}
+                            >
+                                <span className="adm-nav-icon">
+                                    <Icon size={14} />
+                                </span>
+                                <span className="adm-nav-label">{label}</span>
+                                {id === 'inquiries' && <span className="adm-nav-badge">New</span>}
+                            </button>
+                        ))}
+                    </div>
+                ))}
+            </nav>
+
+            <div className="adm-sidebar-footer">
+                <button className="adm-theme-btn" onClick={toggleTheme} title="Toggle Theme">
+                    {isDark ? <Sun size={15} /> : <Moon size={15} />}
+                </button>
+                <button
+                    className="adm-logout-btn"
+                    onClick={() => { localStorage.clear(); navigate('/job-portal'); }}
+                >
+                    <LogOut size={13} /> Exit Portal
+                </button>
+            </div>
+        </aside>
     );
 };
 

@@ -1,16 +1,16 @@
 :root {
-    --jp-primary: hsl(260, 100%, 60%);
-    --jp-secondary: hsl(320, 100%, 55%);
-    --jp-accent: hsl(190, 100%, 45%);
-    --jp-bg: #f8fafc;
-    --jp-bg-secondary: #f1f5f9;
-    --jp-card-bg: #ffffff;
-    --jp-text-main: #0f172a;
-    --jp-text-muted: #475569;
-    --jp-border: #e2e8f0;
-    --jp-glass-bg: rgba(255, 255, 255, 0.75);
-    --jp-glass-border: rgba(255, 255, 255, 0.5);
-    --jp-shadow: 0 4px 20px -5px rgba(15, 23, 42, 0.1);
+    --jp-primary: var(--color-primary);
+    --jp-secondary: var(--color-secondary);
+    --jp-accent: var(--color-tertiary);
+    --jp-bg: var(--bg-body);
+    --jp-bg-secondary: color-mix(in srgb, var(--bg-card) 84%, var(--color-primary) 16%);
+    --jp-card-bg: var(--bg-card);
+    --jp-text-main: var(--text-main);
+    --jp-text-muted: var(--text-muted);
+    --jp-border: var(--border-light);
+    --jp-glass-bg: var(--bg-card-glass);
+    --jp-glass-border: color-mix(in srgb, var(--border-light) 72%, transparent);
+    --jp-shadow: var(--shadow-sm);
     --jp-instructions-padding: 3rem;
     --bs-body-bg: var(--jp-bg);
     --bs-body-color: var(--jp-text-main);
@@ -89,18 +89,18 @@ a {
 }
 
 [data-theme='dark'] {
-    --jp-primary: hsl(260, 100%, 65%);
-    --jp-secondary: hsl(320, 100%, 65%);
-    --jp-accent: hsl(190, 100%, 60%);
-    --jp-bg: #020617;
-    --jp-bg-secondary: #0f172a;
-    --jp-card-bg: #0f172a;
-    --jp-text-main: #f8fafc;
-    --jp-text-muted: #94a3b8;
-    --jp-border: rgba(255, 255, 255, 0.08);
-    --jp-glass-bg: rgba(15, 23, 42, 0.7);
-    --jp-glass-border: rgba(255, 255, 255, 0.1);
-    --jp-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+    --jp-primary: var(--color-primary);
+    --jp-secondary: var(--color-secondary);
+    --jp-accent: var(--color-tertiary);
+    --jp-bg: var(--bg-body);
+    --jp-bg-secondary: color-mix(in srgb, var(--bg-card) 88%, white 12%);
+    --jp-card-bg: var(--bg-card);
+    --jp-text-main: var(--text-main);
+    --jp-text-muted: var(--text-muted);
+    --jp-border: var(--border-light);
+    --jp-glass-bg: var(--bg-card-glass);
+    --jp-glass-border: color-mix(in srgb, var(--border-light) 72%, transparent);
+    --jp-shadow: var(--shadow-lg);
 }
 
 /* Glassmorphism Panel */
@@ -1259,7 +1259,7 @@ MCQ Exam Page
     flex-direction: column;
     background: var(--jp-bg);
     color: var(--jp-text-main);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', sans-serif;
 }
 
 .jp-exam-header {
@@ -1726,6 +1726,20 @@ MCQ Exam Page
     min-height: 200px;
     color: var(--jp-text-main);
     padding: 1.5rem !important;
+}
+
+@media (max-width: 768px) {
+    .jp-live-exam-title {
+        font-size: 11px !important;
+        line-height: 1.12 !important;
+        letter-spacing: 0 !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .jp-live-exam-title {
+        font-size: 10px !important;
+    }
 }
 
 .jp-editor-group .ql-editor.ql-blank::before {

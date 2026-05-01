@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useParams, useNavigate, Navigate } from 'react-router-dom';
+import { Routes, Route, useParams, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import JobFeed from './components/JobFeed';
 import JobDetails from './components/JobDetails';
 import PreparationHub from './components/prep/PreparationHub';
@@ -7,6 +7,7 @@ import InterviewQuestionsPage from './components/prep/InterviewQuestionsPage';
 import ResourcesPage from './components/prep/ResourcesPage';
 import MCQExamPage from './components/prep/MCQExamPage';
 import TestsPage from './components/prep/TestsPage';
+import { PREP_TESTS } from './data/prepData';
 import { getQuizById } from './services/prepService';
 import './styles/job-portal.css';
 
@@ -16,6 +17,11 @@ import { incrementVisitorCount } from './services/analyticsService';
 
 const JobPortalApp = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
 
     const getBrowserInfo = () => {
         const ua = navigator.userAgent;
@@ -46,7 +52,10 @@ const JobPortalApp = () => {
         if (type === 'questions') navigate('/job-portal/prep/questions');
         if (type === 'resources-all') navigate('/job-portal/prep/resources');
         if (type === 'tests-all') navigate('/job-portal/prep/tests');
-        if (type === 'mcq') navigate(`/job-portal/prep/exam/${data.id}`);
+        if (type === 'mcq') {
+            // Open exam in a new tab
+            window.open(`/job-portal/prep/exam/${data.id}`, '_blank');
+        }
     };
 
     return (
@@ -67,34 +76,10 @@ const JobPortalApp = () => {
                     <Route path="/prep/questions" element={<InterviewQuestionsPage />} />
                     <Route path="/prep/resources" element={<ResourcesPage />} />
                     <Route path="/prep/tests" element={<TestsPage onNavigate={handleHubNavigate} />} />
-                    <Route path="/prep/exam/:testId" element={<ExamWrapper />} />
-
                 </Routes>
             </div>
         </ToastProvider>
     );
-};
-
-const ExamWrapper = () => {
-    const { testId } = useParams();
-    const navigate = useNavigate();
-    const [test, setTest] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchTest = async () => {
-            setLoading(true);
-            const data = await getQuizById(testId);
-            setTest(data);
-            setLoading(false);
-        };
-        fetchTest();
-    }, [testId]);
-
-    if (loading) return <div className="jp-spinner"></div>;
-    if (!test) return <div>Test not found</div>;
-
-    return <MCQExamPage test={test} onComplete={() => navigate('/job-portal/prep')} />;
 };
 
 

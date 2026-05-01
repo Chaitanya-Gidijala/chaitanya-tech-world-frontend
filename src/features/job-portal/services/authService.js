@@ -51,6 +51,34 @@ export const login = async (usernameOrEmail, password) => {
 };
 
 /**
+ * Fetch current user profile to initialize session
+ */
+export const loadUserProfile = async () => {
+    const token = getToken();
+    if (!token) return null;
+
+    try {
+        const response = await fetch(config.endpoints.auth.me, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            if (result.data) {
+                localStorage.setItem('jp_user', JSON.stringify(result.data));
+                return result.data;
+            }
+        }
+    } catch (err) {
+        console.error('Failed to load user profile:', err);
+    }
+    return null;
+};
+
+/**
  * Handle user registration via backend
  */
 export const register = async (name, email, password) => {

@@ -15,6 +15,7 @@ import './LandingFooter.css';
 const apps = [
     { name: 'Our Services', path: '/services', Icon: Camera },
     { name: 'Job Portal', path: '/job-portal', Icon: Briefcase },
+    { name: 'Prep Hub', path: '/job-portal/prep', Icon: Brain },
     { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },
 ];
 
@@ -22,6 +23,11 @@ const quickLinks = [
     { label: 'Home', path: '/' },
     { label: 'AI Resume Builder', path: '/ai-resume-builder' },
     { label: 'Job Portal', path: '/job-portal' },
+    { label: 'Preparation Hub', path: '/job-portal/prep' },
+    { label: 'Mock Tests', path: '/job-portal/prep/tests' },
+    { label: 'Interview Questions', path: '/job-portal/prep/questions' },
+    { label: 'Learning Resources', path: '/job-portal/prep/resources' },
+    { label: 'Support Me', path: '/support-me' },
     { label: 'Contact', path: '/contact' },
 ];
 
@@ -162,6 +168,27 @@ const LandingFooter = () => {
                                 {profileConfig.contact.availability}
                             </div>
 
+                            <div className="footer-desktop-brand-card" aria-hidden="true">
+                                <div className="footer-desktop-card-top">
+                                    <span>Career stack</span>
+                                    <Sparkles size={15} />
+                                </div>
+                                <h3>Build. Apply. Prepare.</h3>
+                                <div className="footer-desktop-metric-row">
+                                    <span><strong>4</strong> tools</span>
+                                    <span><strong>1</strong> flow</span>
+                                    <span><strong>24/7</strong> access</span>
+                                </div>
+                                <div className="footer-desktop-card-line" />
+                                <p>Move from resume to job search to interview practice without leaving the platform.</p>
+                            </div>
+
+                            <div className="footer-desktop-brand-glow" aria-hidden="true">
+                                <span />
+                                <span />
+                                <span />
+                            </div>
+
                             {/* Social links row (uncomment to show) */}
                             {/* <div className="footer-social-row">
                                 {socials.map(({ Icon, href, label, color }) => (
@@ -180,6 +207,30 @@ const LandingFooter = () => {
                                     <AppLink key={path} path={path} Icon={Icon} name={name} />
                                 ))}
                             </ul>
+
+                            <div className="footer-desktop-app-card" aria-hidden="true">
+                                <div className="footer-desktop-app-window">
+                                    <div className="footer-desktop-window-dots">
+                                        <span />
+                                        <span />
+                                        <span />
+                                    </div>
+                                    <div className="footer-desktop-window-score">
+                                        <span>Prep score</span>
+                                        <strong>82%</strong>
+                                    </div>
+                                </div>
+                                <div className="footer-desktop-app-bars">
+                                    <span style={{ '--bar-width': '88%' }} />
+                                    <span style={{ '--bar-width': '64%' }} />
+                                    <span style={{ '--bar-width': '74%' }} />
+                                </div>
+                                <div className="footer-desktop-app-pill-row">
+                                    <span>Questions</span>
+                                    <span>Tests</span>
+                                    <span>Resources</span>
+                                </div>
+                            </div>
                         </div>
 
                         {/* ── Quick Links Column ── */}

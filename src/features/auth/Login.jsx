@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, User, Eye, EyeOff, AlertCircle, Loader2, CheckCircle, ShieldCheck, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { login, isAuthenticated, isAdmin } from '../job-portal/services/authService';
+import { login, isAuthenticated, isAdmin, loadUserProfile } from '../job-portal/services/authService';
+import apiConfig from '../../config/apiConfig';
 import './styles/login.css';
 
 const LoginPage = () => {
@@ -15,6 +16,19 @@ const LoginPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Check for OAuth2 token in URL
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        
+        if (token) {
+            localStorage.setItem('jp_admin_token', token);
+            // Load profile then navigate
+            loadUserProfile().then(() => {
+                navigate('/profile', { replace: true });
+            });
+            return;
+        }
+
         if (isAuthenticated()) {
             if (isAdmin()) {
                 navigate('/AdminPortal/admin/dashboard', { replace: true });
@@ -56,6 +70,14 @@ const LoginPage = () => {
         }
     };
 
+    const handleOAuth = (provider) => {
+        // Construct the base URL for OAuth redirection
+        // config.AUTH_API_URL is typically something like 'http://localhost:8085/api/v1/auth'
+        // Spring Security OAuth2 standard endpoint is base_url + '/oauth2/authorization/{provider}'
+        const authBaseUrl = apiConfig.AUTH_API_URL.split('/api')[0];
+        window.location.href = `${authBaseUrl}/oauth2/authorization/${provider}`;
+    };
+
     return (
         <div className="auth-page-clean">
             <div className="auth-card-split">
@@ -64,38 +86,43 @@ const LoginPage = () => {
                 <div className="auth-side-branding">
                     {/* Decorative Background Icon */}
                     <div className="branding-decor-icon">
-                        <User size={240} strokeWidth={1} />
+                        <User size={480} strokeWidth={0.5} />
                     </div>
 
                     <div className="branding-content">
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="branding-logo-box"
-                        >
-                            C
-                        </motion.div>
-
                         <h1 className="branding-title">Welcome Back</h1>
                         <p className="branding-subtitle">
                             Enter your credentials to access your professional dashboard
                             and continue your career journey with Find Sharp.
                         </p>
 
-                        <div className="branding-benefit-card">
-                            <div className="benefit-row">
-                                <div className="benefit-check"><CheckCircle size={14} fill="white" color="var(--color-primary)" /></div>
-                                <span>Global AI Resume Builder Access</span>
+                        <div className="branding-benefits-list">
+                            <div className="benefit-item">
+                                <div className="benefit-icon-wrap"><CheckCircle size={20} /></div>
+                                <div className="benefit-text">
+                                    <h4>Global AI Builder</h4>
+                                    <p>Craft ATS-optimized resumes in seconds with our intelligence.</p>
+                                </div>
                             </div>
-                            <div className="benefit-row">
-                                <div className="benefit-check"><CheckCircle size={14} fill="white" color="var(--color-primary)" /></div>
-                                <span>Advanced Career Preparation Hub</span>
+                            <div className="benefit-item">
+                                <div className="benefit-icon-wrap"><ShieldCheck size={20} /></div>
+                                <div className="benefit-text">
+                                    <h4>Verified Opportunities</h4>
+                                    <p>Access high-quality job listings from trusted global partners.</p>
+                                </div>
                             </div>
-                            <div className="benefit-row">
-                                <div className="benefit-check"><CheckCircle size={14} fill="white" color="var(--color-primary)" /></div>
-                                <span>Priority Support & Insights</span>
+                            <div className="benefit-item">
+                                <div className="benefit-icon-wrap"><AlertCircle size={20} /></div>
+                                <div className="benefit-text">
+                                    <h4>Priority Insights</h4>
+                                    <p>Get real-time feedback and market analysis for your profile.</p>
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="branding-footer">
+                        &copy; 2026 Chaitanya Tech World. Empowering Careers globally.
                     </div>
                 </div>
 
@@ -108,11 +135,11 @@ const LoginPage = () => {
                         </header>
 
                         <div className="auth-oauth-min">
-                            <button className="oa-btn-min">
+                            <button className="oa-btn-min" onClick={() => handleOAuth('google')}>
                                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="G" />
                                 Google
                             </button>
-                            <button className="oa-btn-min">
+                            <button className="oa-btn-min" onClick={() => handleOAuth('github')}>
                                 <img src="https://www.svgrepo.com/show/475654/github-color.svg" alt="GH" />
                                 GitHub
                             </button>

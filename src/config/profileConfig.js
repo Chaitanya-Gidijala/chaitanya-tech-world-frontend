@@ -2,6 +2,8 @@ export const profileConfig = {
     brandName: "Chaitanya Tech World",
     tagline: "Digital creations and web applications",
     contact: {
+        phone: "+91 73370 72766",
+        whatsapp: "917337072766",
         email: "support@chaitanyatechworld.com", // Found in LandingFooter
         secondaryEmail: "contact@chaitanya.tech", // Found in PhotoEditorConfig
         availability: "Available Mon-Fri, 9am - 6pm IST",

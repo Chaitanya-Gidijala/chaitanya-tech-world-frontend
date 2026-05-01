@@ -1,277 +1,327 @@
-﻿
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, Award, RefreshCw, BookOpen, Target, Download, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, RefreshCw, Target, Download, TrendingUp, FileText } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 
-const ScoreCard = ({ score, total, results, onRetake, tags = [], testTitle = "Assessment" }) => {
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+const COLORS = {
+    ink: [15, 23, 42],
+    muted: [100, 116, 139],
+    border: [226, 232, 240],
+    surface: [248, 250, 252],
+    primary: [99, 102, 241],
+    violet: [139, 92, 246],
+    success: [16, 185, 129],
+    danger: [239, 68, 68],
+    amber: [245, 158, 11],
+    white: [255, 255, 255],
+    dark: [17, 24, 39]
+};
 
-    useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 768);
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    const percentage = Math.round((score / total) * 100);
+const ScoreCard = ({ score, total, results, onRetake, tags = [], testTitle = 'Assessment' }) => {
+    const safeTotal = Math.max(total, 1);
+    const percentage = Math.round((score / safeTotal) * 100);
+    const incorrect = total - score;
+    const attempted = results.filter((result) => result.userAnswer).length;
 
     const getLevel = (pct) => {
-        if (pct >= 85) return { label: 'Expert', color: '#10b981', icon: <Award size={isMobile ? 32 : 48} /> };
-        if (pct >= 60) return { label: 'Intermediate', color: '#f59e0b', icon: <Target size={isMobile ? 32 : 48} /> };
-        return { label: 'Beginner', color: '#ef4444', icon: <BookOpen size={isMobile ? 32 : 48} /> };
+        if (pct >= 85) return {
+            label: 'Advanced Mastery',
+            tone: 'excellent',
+            color: 'var(--iq-easy)',
+            sub: 'Excellent command of the topic with strong accuracy and decision-making.'
+        };
+
+        if (pct >= 60) return {
+            label: 'Solid Foundation',
+            tone: 'good',
+            color: 'var(--iq-mid)',
+            sub: 'Good progress. Review missed areas to turn knowledge into consistency.'
+        };
+
+        return {
+            label: 'Learning Phase',
+            tone: 'needs-work',
+            color: 'var(--iq-hard)',
+            sub: 'Keep practicing to strengthen core concepts and improve recall speed.'
+        };
     };
 
     const level = getLevel(percentage);
 
+    const addWrappedText = (doc, text, x, y, maxWidth, lineHeight = 5) => {
+        const lines = doc.splitTextToSize(String(text || ''), maxWidth);
+        doc.text(lines, x, y);
+        return y + (lines.length * lineHeight);
+    };
+
+    const roundedRect = (doc, x, y, w, h, radius, fill, stroke) => {
+        doc.roundedRect(x, y, w, h, radius, radius, fill && stroke ? 'FD' : fill ? 'F' : 'S');
+    };
+
     const handleDownload = () => {
-        const doc = new jsPDF();
-        const date = new Date().toLocaleDateString();
-        const time = new Date().toLocaleTimeString();
+        try {
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 12; // Reduced margin
+            const contentWidth = pageWidth - (margin * 2);
+            const date = new Date().toLocaleDateString('en-IN', {
+                year: 'numeric', month: 'short', day: 'numeric'
+            });
 
-        // Brand Colors
-        const primaryColor = [99, 102, 241]; // Indigo hsl(260, 100%, 60%)
-        const secondaryColor = [236, 72, 153]; // Pink hsl(320, 100%, 50%)
-        const successColor = [16, 185, 129];
-        const errorColor = [239, 68, 68];
-        const textColor = [30, 41, 59];
-        const mutedColor = [100, 116, 139];
+            const setFill = (color) => doc.setFillColor(color[0], color[1], color[2]);
+            const setText = (color) => doc.setTextColor(color[0], color[1], color[2]);
+            const setDraw = (color) => doc.setDrawColor(color[0], color[1], color[2]);
 
-        // Header / Branding (Minimal & Professional)
-        doc.setDrawColor(...primaryColor);
-        doc.setLineWidth(1.5);
-        doc.line(20, 15, 120, 15); // Primary accent
-        doc.setDrawColor(...secondaryColor);
-        doc.line(120, 15, 190, 15); // Secondary accent
+            const drawHeader = () => {
+                // Professional minimalist header
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+                setText(COLORS.ink);
+                doc.text('Chaitanya Tech World', margin, 12);
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                setText(COLORS.muted);
+                doc.text('www.chaitanyatechworld.com', margin, 16);
+                
+                setDraw(COLORS.border);
+                doc.setLineWidth(0.2);
+                doc.line(margin, 20, pageWidth - margin, 20);
+            };
 
-        doc.setTextColor(...primaryColor);
-        doc.setFontSize(22);
-        doc.setFont('helvetica', 'bold');
-        doc.text("CHAITANYA TECH WORLD", 20, 30);
+            const drawFooter = () => {
+                const pageNumber = doc.internal.getNumberOfPages();
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7);
+                setText(COLORS.muted);
+                doc.text(`Official Assessment Report • ${date}`, margin, pageHeight - 8);
+                doc.text(`Page ${pageNumber}`, pageWidth - margin, pageHeight - 8, { align: 'right' });
+            };
 
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(...mutedColor);
-        doc.text("Professional Assessment Score Card", 20, 38);
-
-        // Assessment Info
-        doc.setTextColor(...textColor);
-        doc.setFontSize(16);
-        doc.setFont('helvetica', 'bold');
-        doc.text(testTitle, 20, 55);
-
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(...mutedColor);
-        doc.text(`Date: ${date} | Time: ${time}`, 20, 62);
-
-        // Score Summary Section
-        doc.setDrawColor(226, 232, 240);
-        doc.setLineWidth(0.5);
-        doc.line(20, 70, 190, 70);
-
-        // Circular Score Effect
-        doc.setDrawColor(...primaryColor);
-        doc.setLineWidth(1.5);
-        doc.ellipse(50, 95, 20, 20);
-
-        doc.setTextColor(...primaryColor);
-        doc.setFontSize(22);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`${percentage}%`, 50, 98, { align: 'center' });
-
-        doc.setFontSize(8);
-        doc.text("SCORE", 50, 103, { align: 'center' });
-
-        // Stats
-        doc.setTextColor(...textColor);
-        doc.setFontSize(12);
-        doc.text("Result Details", 85, 85);
-
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Proficiency: ${level.label}`, 85, 93);
-
-        doc.setTextColor(...successColor);
-        doc.text(`Correct: ${score}`, 85, 100);
-
-        doc.setTextColor(...errorColor);
-        doc.text(`Incorrect: ${total - score}`, 85, 107);
-
-        doc.setTextColor(...textColor);
-        doc.text(`Total Questions: ${total}`, 85, 114);
-
-        // Review Section
-        let y = 135;
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.text("Detailed Review", 20, y);
-        y += 10;
-
-        results.forEach((res, index) => {
-            if (y > 260) {
+            const ensureSpace = (requiredHeight, y) => {
+                if (y + requiredHeight <= pageHeight - 15) return y;
+                drawFooter();
                 doc.addPage();
-                y = 20;
-            }
+                drawHeader();
+                return 30;
+            };
 
-            // Question
-            doc.setFontSize(10);
+            drawHeader();
+            let y = 32;
+
+            // Title and Summary
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(...textColor);
-
-            const splitQuestion = doc.splitTextToSize(`${index + 1}. ${res.question}`, 170);
-            doc.text(splitQuestion, 20, y);
-            y += splitQuestion.length * 5;
-
-            // Answers (Removed Symbols to avoid garbled text)
+            doc.setFontSize(18);
+            setText(COLORS.ink);
+            y = addWrappedText(doc, testTitle, margin, y, contentWidth, 7);
+            
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
+            setText(COLORS.muted);
+            doc.text(`Performance Score: ${percentage}% • Result: ${level.label}`, margin, y + 2);
+            y += 12;
 
-            if (res.isCorrect) {
-                doc.setTextColor(...successColor);
-                const splitAnswer = doc.splitTextToSize(`[+] Your Correct Choice: ${res.userAnswer}`, 160);
-                doc.text(splitAnswer, 25, y);
-                y += splitAnswer.length * 5;
-            } else {
-                doc.setTextColor(...errorColor);
-                const splitUserChoice = doc.splitTextToSize(`[-] Your Choice: ${res.userAnswer || 'Skipped'}`, 160);
-                doc.text(splitUserChoice, 25, y);
-                y += splitUserChoice.length * 5;
+            // Summary Metrics Box
+            setFill(COLORS.surface);
+            setDraw(COLORS.border);
+            roundedRect(doc, margin, y, contentWidth, 24, 2, true, true);
+            
+            const metricW = contentWidth / 4;
+            const metrics = [
+                { l: 'SCORE', v: `${percentage}%` },
+                { l: 'CORRECT', v: score },
+                { l: 'INCORRECT', v: incorrect },
+                { l: 'TOTAL Qs', v: total }
+            ];
 
-                doc.setTextColor(...successColor);
-                const splitCorrect = doc.splitTextToSize(`    Correct Answer: ${res.correctAnswer}`, 160);
-                doc.text(splitCorrect, 25, y);
-                y += splitCorrect.length * 5;
-            }
+            metrics.forEach((m, i) => {
+                const mx = margin + (i * metricW);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+                setText(COLORS.ink);
+                doc.text(String(m.v), mx + 8, y + 15);
+                doc.setFontSize(7);
+                setText(COLORS.muted);
+                doc.text(m.l, mx + 8, y + 8);
+            });
+            y += 34;
 
-            y += 6; // Spacing between items
-        });
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            setText(COLORS.ink);
+            doc.text('Performance Analysis', margin, y);
+            y += 8;
 
-        // Footer
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            doc.setFontSize(8);
-            doc.setTextColor(...mutedColor);
-            doc.text(`Page ${i} of ${pageCount} | Chaitanya Tech World - Excellence in Learning`, 105, 290, { align: 'center' });
+            results.forEach((result, index) => {
+                const qWidth = contentWidth - 10;
+                const questionLines = doc.splitTextToSize(`${index + 1}. ${result.question}`, qWidth);
+                const answerLines = doc.splitTextToSize(`Your Input: ${result.userAnswer || 'No response'}`, qWidth - 5);
+                const correctLines = result.isCorrect ? [] : doc.splitTextToSize(`Reference: ${result.correctAnswer}`, qWidth - 5);
+                
+                const cardHeight = (questionLines.length * 5) + (answerLines.length * 4.5) + (correctLines.length * 4.5) + 12;
+                y = ensureSpace(cardHeight + 10, y);
+
+                // Subtle separator instead of heavy cards
+                setDraw(COLORS.border);
+                doc.setLineWidth(0.1);
+                doc.line(margin, y - 2, pageWidth - margin, y - 2);
+
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9.5);
+                setText(COLORS.ink);
+                doc.text(questionLines, margin, y + 5);
+                
+                let nextY = y + 7 + (questionLines.length * 5);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8.5);
+                setText(result.isCorrect ? COLORS.success : COLORS.danger);
+                doc.text(answerLines, margin + 5, nextY);
+                nextY += (answerLines.length * 4.5);
+
+                if (!result.isCorrect) {
+                    setText(COLORS.success);
+                    doc.text(correctLines, margin + 5, nextY + 1);
+                }
+
+                y += cardHeight + 4;
+            });
+
+            drawFooter();
+            doc.save(`${testTitle.toLowerCase().replace(/\s+/g, '-')}-report.pdf`);
+        } catch (error) {
+            console.error('PDF Export failed', error);
+            window.alert('Unable to export PDF at this time.');
         }
-
-        doc.save(`${testTitle.replace(/\s+/g, '_')}_Result.pdf`);
     };
 
     return (
-        <div className="jp-results-container" style={{ padding: isMobile ? '1rem' : undefined }}>
-            <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="jp-results-summary-card"
-                style={{ padding: isMobile ? '2rem 1.5rem' : '4rem' }}
+        <div className="score-report-shell">
+            <motion.section
+                className={`score-hero-card ${level.tone}`}
+                style={{ '--score-percent': `${percentage}%`, '--score-level-color': level.color }}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
             >
-                {/* Decorative background element */}
-                <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, background: level.color, opacity: 0.05, borderRadius: '50%' }}></div>
-
-                <div className="jp-score-circle-lg" style={{
-                    borderColor: level.color,
-                    width: isMobile ? '120px' : '140px',
-                    height: isMobile ? '120px' : '140px',
-                    marginBottom: isMobile ? '1.5rem' : '2rem'
-                }}>
-                    <span style={{ fontSize: isMobile ? '2.5rem' : '3rem', fontWeight: 900, color: 'var(--jp-text-main)', lineHeight: '1' }}>{percentage}<span style={{ fontSize: '1.25rem' }}>%</span></span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--jp-text-muted)', fontWeight: 800, marginTop: '0.25rem', letterSpacing: '0.1em' }}>SCORE</span>
-                </div>
-
-                <h2 style={{ fontSize: isMobile ? '1.75rem' : '2.25rem', fontWeight: 900, color: level.color, marginBottom: '0.75rem', letterSpacing: '-0.02em' }}>
-                    {level.label}
-                </h2>
-                <p style={{ fontSize: isMobile ? '1rem' : '1.1rem', color: 'var(--jp-text-muted)', marginBottom: isMobile ? '2rem' : '3rem', maxWidth: '500px', margin: isMobile ? '0 auto 2rem auto' : '0 auto 3rem auto', lineHeight: '1.6' }}>
-                    {percentage >= 85 ? "Outstanding performance! You have demonstrated exceptional mastery." :
-                        percentage >= 60 ? "Well done! You have a solid understanding, but there's room for precision." :
-                            "A good start! Focusing on the review areas below will strengthen your knowledge."}
-                </p>
-
-                <div className="jp-results-stats-row" style={{ flexDirection: 'row', gap: '1rem', flexWrap: 'nowrap' }}>
-                    <div style={{ textAlign: 'center', flex: 1 }}>
-                        <div style={{ fontSize: isMobile ? '1.75rem' : '2rem', fontWeight: 900, color: '#10b981', lineHeight: '1' }}>{score}</div>
-                        <div style={{ fontSize: isMobile ? '0.7rem' : '0.8rem', fontWeight: 700, color: 'var(--jp-text-muted)', marginTop: '0.4rem', textTransform: 'uppercase' }}>Correct</div>
+                <div className="score-hero-copy">
+                    <span className="score-kicker">Assessment Report</span>
+                    <div className="score-percent-wrap">
+                        <span className="score-percent">{percentage}</span>
+                        <span className="score-percent-symbol">%</span>
                     </div>
-                    <div style={{ width: '1px', height: '40px', background: 'var(--jp-border)' }}></div>
-                    <div style={{ textAlign: 'center', flex: 1 }}>
-                        <div style={{ fontSize: isMobile ? '1.75rem' : '2rem', fontWeight: 900, color: '#ef4444', lineHeight: '1' }}>{total - score}</div>
-                        <div style={{ fontSize: isMobile ? '0.7rem' : '0.8rem', fontWeight: 700, color: 'var(--jp-text-muted)', marginTop: '0.4rem', textTransform: 'uppercase' }}>Incorrect</div>
+                    <h1>{level.label}</h1>
+                    <p>{level.sub} This assessment measured your proficiency in {testTitle} across {total} key performance indicators.</p>
+
+                    <div className="score-action-row">
+                        <button type="button" onClick={onRetake} className="prep-primary-btn tests score-action-primary">
+                            Retake Assessment <RefreshCw size={18} />
+                        </button>
+                        <button type="button" onClick={handleDownload} className="score-export-btn">
+                            Export Report <Download size={18} />
+                        </button>
                     </div>
                 </div>
 
-                {tags.length > 0 && (
-                    <div style={{ marginBottom: '3.5rem' }}>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', justifyContent: 'center' }}>
-                            {tags.map(tag => (
-                                <span key={tag} style={{ padding: '0.5rem 1.25rem', background: 'var(--jp-bg)', borderRadius: '50px', fontSize: '0.85rem', color: 'var(--jp-text-muted)', fontWeight: 600, border: '1px solid var(--jp-border)' }}>
-                                    {tag}
-                                </span>
-                            ))}
+                <div className="score-dashboard">
+                    <div className="score-ring-card">
+                        <div className="score-ring">
+                            <span>{percentage}%</span>
+                        </div>
+                        <div>
+                            <strong>Completion precision</strong>
+                            <span>{attempted}/{total} questions attempted</span>
                         </div>
                     </div>
-                )}
 
-                <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                    <button
-                        onClick={handleDownload}
-                        className="jp-btn"
-                        style={{ border: '2px solid var(--jp-border)', color: 'var(--jp-text-muted)', background: 'transparent', gap: '0.75rem', padding: '1rem 2rem', fontSize: '1rem', borderRadius: '16px', fontWeight: 800, transition: 'all 0.2s' }}
-                    >
-                        <Download size={20} /> Download Report
-                    </button>
-                    <button
-                        onClick={onRetake}
-                        className="jp-btn jp-btn-primary"
-                        style={{ gap: '0.75rem', padding: '1rem 2.5rem', fontSize: '1rem', borderRadius: '16px', fontWeight: 800, boxShadow: '0 10px 20px rgba(99, 102, 241, 0.2)' }}
-                    >
-                        <RefreshCw size={20} /> Retake Assessment
-                    </button>
-                </div>
-            </motion.div>
+                    <div className="score-metric-grid">
+                        <article className="score-metric-card success">
+                            <CheckCircle size={21} />
+                            <span>Correct</span>
+                            <strong>{score}</strong>
+                        </article>
+                        <article className="score-metric-card danger">
+                            <XCircle size={21} />
+                            <span>Improve</span>
+                            <strong>{incorrect}</strong>
+                        </article>
+                    </div>
 
-            <div className="jp-results-review-section">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', padding: '0 1rem' }}>
-                    <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--jp-text-main)', letterSpacing: '-0.01em' }}>Detailed Analysis</h3>
-                    <div style={{ padding: '0.4rem 1rem', background: 'var(--jp-bg-secondary)', borderRadius: '10px', fontSize: '0.9rem', fontWeight: 700, color: 'var(--jp-text-muted)' }}>
-                        {results.length} Questions
+                    <div className="score-progress-card">
+                        <div>
+                            <Target size={19} />
+                            <span>Readiness Track</span>
+                        </div>
+                        <div className="score-progress-track">
+                            <motion.span initial={{ width: 0 }} animate={{ width: `${percentage}%` }} />
+                        </div>
                     </div>
                 </div>
+            </motion.section>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {results.map((res, index) => (
-                        <div
-                            key={index}
-                            className="jp-review-item"
-                            style={{
-                                borderLeft: `6px solid ${res.isCorrect ? '#10b981' : '#ef4444'}`,
-                            }}
+            <section className="score-insight-strip">
+                <article>
+                    <TrendingUp size={18} />
+                    <span>Accuracy</span>
+                    <strong>{score}/{total}</strong>
+                </article>
+                <article>
+                    <FileText size={18} />
+                    <span>Attempted</span>
+                    <strong>{attempted}/{total}</strong>
+                </article>
+                <article>
+                    <Target size={18} />
+                    <span>Focus Tags</span>
+                    <strong>{tags?.length ? tags.slice(0, 2).join(', ') : 'Core'}</strong>
+                </article>
+            </section>
+
+            <section>
+                <div className="iq-section-label">
+                    <span className="iq-section-label-text">Performance Analysis</span>
+                    <div className="iq-section-label-line" />
+                </div>
+
+                <div className="score-analysis-grid">
+                    {results.map((result, index) => (
+                        <motion.article
+                            key={`${result.question}-${index}`}
+                            className={`score-result-card ${result.isCorrect ? 'correct' : 'incorrect'}`}
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.04 }}
                         >
-                            <div style={{ marginTop: '0.25rem', padding: '0.5rem', background: res.isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderRadius: '10px' }}>
-                                {res.isCorrect ? <CheckCircle size={20} color="#10b981" /> : <XCircle size={20} color="#ef4444" />}
+                            <div className="score-result-icon">
+                                {result.isCorrect ? <CheckCircle size={18} /> : <XCircle size={18} />}
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <p style={{ fontWeight: 700, marginBottom: '1rem', fontSize: '1.1rem', color: 'var(--jp-text-main)', lineHeight: '1.5' }}>{res.question}</p>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.75rem 1.5rem', fontSize: '0.95rem' }}>
-                                    <span style={{ color: 'var(--jp-text-muted)', fontWeight: 600 }}>Your Answer:</span>
-                                    <span style={{ color: res.isCorrect ? '#10b981' : '#ef4444', fontWeight: 800 }}>{res.userAnswer || 'Skipped'}</span>
 
-                                    {!res.isCorrect && (
-                                        <>
-                                            <span style={{ color: 'var(--jp-text-muted)', fontWeight: 600 }}>Correct Solution:</span>
-                                            <span style={{ color: '#10b981', fontWeight: 800 }}>{res.correctAnswer}</span>
-                                        </>
+                            <div className="score-result-content">
+                                <div className="score-result-head">
+                                    <span>Question {index + 1}</span>
+                                    <strong>{result.isCorrect ? 'Mastered' : 'Review Required'}</strong>
+                                </div>
+
+                                <h2>{result.question}</h2>
+
+                                <div className="score-answer-grid">
+                                    <div className="score-answer-pill user">
+                                        <span>Your Input</span>
+                                        <strong>{result.userAnswer || 'No response'}</strong>
+                                    </div>
+                                    {!result.isCorrect && (
+                                        <div className="score-answer-pill reference">
+                                            <span>Reference Answer</span>
+                                            <strong>{result.correctAnswer}</strong>
+                                        </div>
                                     )}
                                 </div>
                             </div>
-                        </div>
+                        </motion.article>
                     ))}
                 </div>
-            </div>
+            </section>
         </div>
     );
-
-
-
 };
+
 export default ScoreCard;

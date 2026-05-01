@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Edit2, Trash2, Search, Briefcase, MapPin, Clock } from 'lucide-react';
 import './AdminLayout.css';
@@ -83,12 +83,12 @@ const ManageJobs = ({ jobs, onEdit, onDelete, editingJobId }) => {
                                             transition={{ delay: i * 0.03 }}
                                             className={editingJobId === job.id ? 'is-editing' : ''}
                                         >
-                                            <td><span className="adm-mono">{String(job.id).substring(0, 8)}â€¦</span></td>
+                                            <td><span className="adm-mono">{String(job.id).substring(0, 8)}...</span></td>
                                             <td><span className="adm-cell-primary">{job.jobTitle}</span></td>
                                             <td>
                                                 <div className="adm-cell-title-group">
                                                     <div className="adm-company-logo">
-                                                        {job.companyLogo ? <img src={job.companyLogo} alt={job.company} /> : 'ðŸ¢'}
+                                                        {job.companyLogo ? <img src={job.companyLogo} alt={job.company} /> : <Briefcase size={14} />}
                                                     </div>
                                                     <span className="adm-cell-primary">{job.company}</span>
                                                 </div>

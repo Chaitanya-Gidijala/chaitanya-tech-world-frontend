@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 import AppHeader from '@/components/layout/AppHeader';
 import LandingFooter from '@/components/layout/LandingFooter';
 
@@ -20,15 +20,15 @@ const MainLayout = ({ theme, onToggleTheme, children }) => {
   
   const isStandaloneApp = 
     location.pathname.startsWith('/job-portal/admin') || 
+    location.pathname.startsWith('/AdminPortal') ||
     location.pathname.startsWith('/chaitanya-tech-world') ||
-    location.pathname.startsWith('/lms') ||
-    location.pathname === '/register';
+    location.pathname.startsWith('/lms');
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {!isStandaloneApp && <AppHeader theme={theme} onToggleTheme={onToggleTheme} />}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {children}
+        {children || <Outlet />}
       </main>
       {!isStandaloneApp && <LandingFooter />}
     </div>

@@ -1,12 +1,22 @@
-﻿import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Settings, Bell, Lock, Shield, User, Smartphone, Palette, Save, Webhook, Key, Mail, Moon, Monitor } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
+import { X, CheckCircle, AlertTriangle as AlertTriangleIcon } from 'lucide-react';
+import { getToken } from '../../services/authService';
 
 const AdminSettings = () => {
     const { showToast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [activeSection, setActiveSection] = useState('general');
+
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const [settings, setSettings] = useState({
         siteName: 'Chaitanya Tech World',
@@ -29,6 +39,49 @@ const AdminSettings = () => {
             setIsLoading(false);
             showToast('Settings saved successfully!', 'success');
         }, 800);
+    };
+
+    const [showPwdModal, setShowPwdModal] = useState(false);
+    const [pwdData, setPwdData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    const [pwdLoading, setPwdLoading] = useState(false);
+
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        if (pwdData.newPassword !== pwdData.confirmPassword) {
+            showToast('New passwords do not match!', 'error');
+            return;
+        }
+        if (pwdData.newPassword.length < 6) {
+            showToast('Password must be at least 6 characters.', 'warning');
+            return;
+        }
+
+        setPwdLoading(true);
+        try {
+            const API_HOST = import.meta.env.VITE_AUTH_HOST || 'http://localhost:8085/api/v1/auth';
+            const res = await fetch(`${API_HOST.replace('/auth', '/users')}/change-password`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({
+                    currentPassword: pwdData.currentPassword,
+                    newPassword: pwdData.newPassword
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to change password');
+            
+            showToast('Password updated successfully!', 'success');
+            setShowPwdModal(false);
+            setPwdData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            setPwdLoading(false);
+        }
     };
 
     const sections = [
@@ -75,9 +128,9 @@ const AdminSettings = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {/* Header Area that matches Dashboard */}
-            <div style={{ display: 'flex', gap: '2rem', flexDirection: window.innerWidth > 768 ? 'row' : 'column' }}>
+            <div style={{ display: 'flex', gap: '2rem', flexDirection: isMobile ? 'column' : 'row' }}>
                 {/* Left Navigation */}
-                <div style={{ width: window.innerWidth > 768 ? '260px' : '100%', flexShrink: 0 }}>
+                <div style={{ width: isMobile ? '100%' : '260px', flexShrink: 0 }}>
                     <div style={{ position: 'sticky', top: '2rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                         {sections.map(s => (
                             <button
@@ -181,7 +234,7 @@ const AdminSettings = () => {
                                             <Key size={18} /> Administrative Password
                                         </h4>
                                         <p style={{ margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--jp-text-main)', opacity: 0.8 }}>Send a secure reset link to the system admin email.</p>
-                                        <button type="button" style={{ padding: '0.8rem 1.5rem', borderRadius: '10px', background: 'transparent', border: '1.5px solid #ef4444', color: '#ef4444', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onMouseOver={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = 'white' }} onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444' }}>
+                                        <button type="button" onClick={() => setShowPwdModal(true)} style={{ padding: '0.8rem 1.5rem', borderRadius: '10px', background: 'transparent', border: '1.5px solid #ef4444', color: '#ef4444', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onMouseOver={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = 'white' }} onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444' }}>
                                             Reset Access Keys
                                         </button>
                                     </div>
@@ -238,6 +291,37 @@ const AdminSettings = () => {
                     </div>
                 </form>
             </div>
+            {/* Password Reset Modal */}
+            <AnimatePresence>
+                {showPwdModal && (
+                    <div className="adm-modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="adm-card-panel" style={{ width: '90%', maxWidth: '400px', padding: 0, overflow: 'hidden' }}>
+                            <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--jp-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Key size={18} /> Change Password</h3>
+                                <button type="button" onClick={() => setShowPwdModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--jp-text-muted)' }}><X size={20} /></button>
+                            </div>
+                            <form onSubmit={handlePasswordChange} style={{ padding: '1.5rem' }}>
+                                <div className="adm-field" style={{ marginBottom: '1rem' }}>
+                                    <label className="adm-label">Current Password</label>
+                                    <input type="password" required value={pwdData.currentPassword} onChange={e => setPwdData({...pwdData, currentPassword: e.target.value})} className="adm-input" />
+                                </div>
+                                <div className="adm-field" style={{ marginBottom: '1rem' }}>
+                                    <label className="adm-label">New Password</label>
+                                    <input type="password" required value={pwdData.newPassword} onChange={e => setPwdData({...pwdData, newPassword: e.target.value})} className="adm-input" />
+                                </div>
+                                <div className="adm-field" style={{ marginBottom: '1.5rem' }}>
+                                    <label className="adm-label">Confirm New Password</label>
+                                    <input type="password" required value={pwdData.confirmPassword} onChange={e => setPwdData({...pwdData, confirmPassword: e.target.value})} className="adm-input" />
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                                    <button type="button" onClick={() => setShowPwdModal(false)} className="adm-btn adm-btn-secondary" disabled={pwdLoading}>Cancel</button>
+                                    <button type="submit" className="adm-btn adm-btn-primary" disabled={pwdLoading}>{pwdLoading ? 'Updating...' : 'Update Password'}</button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

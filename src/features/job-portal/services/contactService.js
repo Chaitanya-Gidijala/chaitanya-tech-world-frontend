@@ -1,4 +1,16 @@
 import config from '../../../config/apiConfig';
+import { getToken } from './authService';
+
+const getHeaders = () => {
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    const token = getToken();
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+};
 
 /**
  * Fetches all contact inquiries from the backend.
@@ -8,9 +20,7 @@ export const getAllInquiries = async () => {
     try {
         const response = await fetch(`${config.endpoints.contact.all}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
+            headers: getHeaders()
         });
 
         if (!response.ok) {
@@ -35,9 +45,7 @@ export const getInquiryById = async (id) => {
     try {
         const response = await fetch(`${config.endpoints.contact.byId(id)}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
+            headers: getHeaders()
         });
 
         if (!response.ok) {

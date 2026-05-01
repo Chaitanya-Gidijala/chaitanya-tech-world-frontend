@@ -71,7 +71,7 @@ export const getPreparationSummary = async (jobTags) => {
             questionCount: 0,
             testCount: 0,
             resourceCount: 0,
-            topTechnologies: jobTags
+            recentActivities: []
         };
     }
 };
@@ -247,14 +247,16 @@ export const createQuestionsBatch = async (data) => {
 };
 
 // --- Learning Resources ---
-export const getAllResources = async (page = 0, size = 10, tag = '', type = '') => {
+export const getAllResources = async (page = 0, size = 15, tag = '', type = 'All') => {
     try {
         let url = `${config.endpoints.learningResources.base}?page=${page}&size=${size}`;
-        if ((tag && tag !== 'All') || (type && type !== 'All')) {
-            url = `${config.endpoints.learningResources.search}?page=${page}&size=${size}`;
-            if (tag && tag !== 'All') url += `&tag=${encodeURIComponent(tag)}`;
-            if (type && type !== 'All') url += `&type=${encodeURIComponent(type)}`;
+        
+        if (type && type !== 'All') {
+            url = `${config.endpoints.learningResources.base}/type/${type}?page=${page}&size=${size}`;
+        } else if (tag && tag !== 'All') {
+            url = `${config.endpoints.learningResources.search}?page=${page}&size=${size}&tag=${encodeURIComponent(tag)}`;
         }
+        
         const response = await fetch(url, { headers: getHeaders() });
         if (!response.ok) throw new Error('Failed to fetch resources');
         const data = await response.json();
@@ -377,3 +379,12 @@ export const deleteQuiz = async (id) => {
 };
 
 
+export const createQuizzesBatch = async (data) => {
+    const response = await fetch(config.endpoints.quizzes.batch || `${config.endpoints.quizzes.base}/batch`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error('Failed to create quizzes batch');
+    return await response.json();
+};

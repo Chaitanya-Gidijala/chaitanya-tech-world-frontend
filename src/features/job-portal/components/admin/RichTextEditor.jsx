@@ -1,4 +1,4 @@
-﻿import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
     Bold,
     Italic,
@@ -53,11 +53,7 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
         }
     };
 
-    const handlePaste = (e) => {
-        e.preventDefault();
-        const text = e.clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
-    };
+
 
     const ToolbarButton = ({ icon: Icon, onClick, isActive, title, label }) => (
         <button
@@ -203,7 +199,6 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
                 ref={editorRef}
                 contentEditable
                 onInput={handleInput}
-                onPaste={handlePaste}
                 onMouseUp={updateActiveFormats}
                 onKeyUp={updateActiveFormats}
                 style={{

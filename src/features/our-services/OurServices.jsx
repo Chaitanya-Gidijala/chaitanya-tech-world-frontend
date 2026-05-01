@@ -369,7 +369,7 @@ export default function OurServices() {
                             <button className="ctw-btn ctw-btn--primary ctw-btn--large" onClick={() => scrollTo("contact")}>
                                 Start Free Consultation 🚀
                             </button>
-                            <a className="ctw-btn ctw-btn--whatsapp" href="https://wa.me/919000000000" target="_blank" rel="noreferrer">
+                            <a className="ctw-btn ctw-btn--whatsapp" href="https://wa.me/917337072766" target="_blank" rel="noreferrer">
                                 <span>💬</span> Chat on WhatsApp
                             </a>
                         </div>
@@ -388,11 +388,11 @@ export default function OurServices() {
                             <div className="ctw-contact__details">
                                 <div className="ctw-contact__detail">
                                     <span>📧</span>
-                                    <span>hello@chaitanyatechworld.com</span>
+                                    <span>support@chaitanyatechworld.com</span>
                                 </div>
                                 <div className="ctw-contact__detail">
                                     <span>📞</span>
-                                    <span>+91 90000 00000</span>
+                                    <span>+91 73370 72766</span>
                                 </div>
                                 <div className="ctw-contact__detail">
                                     <span>📍</span>
@@ -408,7 +408,7 @@ export default function OurServices() {
                                 </div>
                                 <div className="ctw-form__group">
                                     <label>Phone / WhatsApp</label>
-                                    <input type="tel" placeholder="+91 98765 43210" />
+                                    <input type="tel" placeholder="+91 73370 72766" />
                                 </div>
                             </div>
                             <div className="ctw-form__group">
@@ -447,7 +447,7 @@ export default function OurServices() {
                         <div className="ctw-footer__links">
                             <a href="#">Privacy Policy</a>
                             <a href="#">Terms</a>
-                            <a href="https://wa.me/919000000000">WhatsApp</a>
+                            <a href="https://wa.me/917337072766">WhatsApp</a>
                         </div>
                     </div>
                 </div>
@@ -456,7 +456,7 @@ export default function OurServices() {
             {/* Floating WhatsApp Button */}
             <a
                 className="ctw-whatsapp-float"
-                href="https://wa.me/919000000000"
+                href="https://wa.me/917337072766"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Chat on WhatsApp"

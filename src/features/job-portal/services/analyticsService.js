@@ -1,10 +1,16 @@
 import config from '../../../config/apiConfig';
 
+import { getToken } from './authService';
+ 
 const getHeaders = () => {
-    return {
+    const headers = {
         'Content-Type': 'application/json',
-        // Add Authorization if needed, but analytics might be public or require persistent device ID
     };
+    const token = getToken();
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
 };
 
 // Increment the visitor count with metadata

@@ -1,326 +1,473 @@
-﻿
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Target, PlayCircle, Clock, BarChart, Search, X, SlidersHorizontal, ChevronRight } from 'lucide-react';
-import { getAllQuizzes, getTopics } from '../../services/prepService';
-import TechBadge from './TechBadge';
+import React, { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    CirclePlay,
+    Clock3,
+    Layers3,
+    Target,
+    X
+} from 'lucide-react';
+import { getAllQuizzes, getQuizById, getTopics } from '../../services/prepService';
+import { useToast } from '@/components/ui/Toast';
+import { PREP_TESTS, PREP_TOPICS } from '../../data/prepData';
+import '../../styles/InterviewQuestions.css';
+import PrepHeroVisual from './PrepHeroVisual';
 
-const TestsPage = ({ onNavigate }) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedTags, setSelectedTags] = useState([]);
-    const [tests, setTests] = useState([]);
-    const [topics, setTopics] = useState([]);
-    const [loading, setLoading] = useState(true);
+const durationOptions = [
+    { value: 'All', label: 'All formats' },
+    { value: 'Quick', label: 'Quick rounds' },
+    { value: 'Standard', label: 'Standard rounds' },
+    { value: 'Deep', label: 'Deep dives' }
+];
 
-    // Pagination State
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const pageSize = 9; // Grid of 3x3 layout looks good
+const getDurationBucket = (duration) => {
+    if (duration < 20) return 'Quick';
+    if (duration <= 40) return 'Standard';
+    return 'Deep';
+};
 
+const buildAssessmentSummary = (test) => {
+    const tagLabel = test.tags?.length ? test.tags.join(', ') : 'core interview topics';
+    return `Targeted practice for ${tagLabel} with a timed workflow built to simulate a real screening round.`;
+};
 
-    useEffect(() => {
-        fetchInitialData();
-    }, [currentPage, selectedTags]);
+const TestDetailBody = ({ test, onStart }) => {
+    if (!test) {
+        return (
+            <div className="prep-detail-empty">
+                <div className="prep-detail-empty-icon">◌</div>
+                <p>Select an assessment to inspect the format, timing, and launch details.</p>
+            </div>
+        );
+    }
 
-    const fetchInitialData = async () => {
-        setLoading(true);
-        try {
-            const tag = selectedTags.length > 0 ? selectedTags[0] : 'All';
-            const [tData, tpData] = await Promise.all([
-                getAllQuizzes(currentPage, pageSize, tag),
-                getTopics()
-            ]);
-            setTests(tData.content || []);
-            setTotalPages(tData.totalPages || 0);
-            setTopics(tpData);
-        } catch (e) {
-            console.error("Failed to load tests", e);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
-
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const tech = params.get('tech');
-        if (tech) {
-            setSelectedTags(tech.split(','));
-        }
-    }, []);
-
-    const toggleTag = (tag) => {
-        setCurrentPage(0); // Reset page on filter change
-        if (selectedTags.includes(tag)) {
-            setSelectedTags(selectedTags.filter(t => t !== tag));
-        } else {
-            setSelectedTags([tag]); // Single tag filtering for robustness
-        }
-    };
-
-
-    const filteredTests = tests.filter(t => {
-        return t.title.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-
-
-    if (loading) return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px', gap: '1rem' }}>
-            <div className="jp-spinner"></div>
-            <p style={{ color: 'var(--jp-text-muted)', fontWeight: 500 }}>Loading assessments...</p>
-        </div>
-    );
+    const questionCount = test.questions?.length || test.totalQuestions || 0;
+    const duration = test.duration || 0;
+    const durationBucket = getDurationBucket(duration);
 
     return (
-        <div className="jp-container" style={{ padding: '0 1rem 4rem 1rem' }}>
-            {/* Simple Clean Header */}
-            <div style={{ margin: '3rem 0', textAlign: 'center' }}>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--jp-text-main)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
-                    Assessment Center
-                </h1>
-                <p style={{ color: 'var(--jp-text-muted)', fontSize: '1.1rem', maxWidth: '500px', margin: '0 auto' }}>
-                    Validate your professional skills with standardized mock assessments.
-                </p>
-            </div>
-
-            {/* Structured Professional Filter Section */}
-            <div style={{
-                background: 'var(--jp-card-bg)',
-                padding: '1.5rem',
-                borderRadius: '20px',
-                border: '1px solid var(--jp-border)',
-                marginBottom: '3rem',
-                boxShadow: 'var(--jp-shadow-sm)'
-            }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
-                    {/* Compact Search Wrapper */}
-                    <div style={{ position: 'relative', flex: '1 1 300px' }}>
-                        <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--jp-text-muted)' }} />
-                        <input
-                            type="text"
-                            placeholder="Search by assessment name..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem 2.5rem 0.75rem 2.75rem',
-                                borderRadius: '12px',
-                                border: '1px solid var(--jp-border)',
-                                background: 'var(--jp-bg)',
-                                color: 'var(--jp-text-main)',
-                                fontSize: '0.95rem',
-                                outline: 'none',
-                                transition: 'all 0.2s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = 'var(--jp-primary)'}
-                            onBlur={(e) => e.target.style.borderColor = 'var(--jp-border)'}
-                        />
-                        {searchTerm && (
-                            <button
-                                onClick={() => setSearchTerm('')}
-                                style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--jp-text-muted)', display: 'flex' }}
-                            >
-                                <X size={16} />
-                            </button>
-                        )}
+        <div className="prep-detail-stack">
+            <div className="prep-detail-hero">
+                <div className="prep-collection-item-head">
+                    <div className="prep-collection-icon tests">
+                        <Target size={18} />
                     </div>
-
-                    <div style={{ width: '1px', height: '24px', background: 'var(--jp-border)', display: 'flex' }} className="desktop-only"></div>
-
-                    {/* Simple Tags Row */}
-                    <div style={{ flex: '1 1 400px', display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
-                        <SlidersHorizontal size={16} style={{ color: 'var(--jp-text-muted)', flexShrink: 0 }} />
-                        <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }} className="no-scrollbar">
-                            <button
-                                onClick={() => { setSelectedTags([]); setCurrentPage(0); }}
-
-                                style={{
-                                    padding: '0.4rem 0.8rem',
-                                    borderRadius: '8px',
-                                    fontSize: '0.85rem',
-                                    fontWeight: 600,
-                                    whiteSpace: 'nowrap',
-                                    cursor: 'pointer',
-                                    border: selectedTags.length === 0 ? '1px solid var(--jp-primary)' : '1px solid var(--jp-border)',
-                                    background: selectedTags.length === 0 ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-                                    color: selectedTags.length === 0 ? 'var(--jp-primary)' : 'var(--jp-text-muted)',
-                                    transition: 'all 0.2s'
-                                }}
-                            >
-                                All Topics
-                            </button>
-                            {topics.map(topic => (
-                                <button
-                                    key={topic.id}
-                                    onClick={() => toggleTag(topic.name)}
-                                    style={{
-                                        padding: '0.4rem 0.8rem',
-                                        borderRadius: '8px',
-                                        fontSize: '0.85rem',
-                                        fontWeight: 600,
-                                        whiteSpace: 'nowrap',
-                                        cursor: 'pointer',
-                                        border: selectedTags.includes(topic.name) ? '1px solid var(--jp-primary)' : '1px solid var(--jp-border)',
-                                        background: selectedTags.includes(topic.name) ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-                                        color: selectedTags.includes(topic.name) ? 'var(--jp-primary)' : 'var(--jp-text-muted)',
-                                        transition: 'all 0.2s'
-                                    }}
-                                >
-                                    {topic.name}
-                                </button>
-                            ))}
-                        </div>
+                    <div>
+                        <p className="prep-dashboard-kicker">Assessment overview</p>
+                        <h2 className="prep-detail-title">{test.title}</h2>
                     </div>
                 </div>
+
+                <div className="prep-chip-row">
+                    <span className="prep-data-badge">{duration} mins</span>
+                    <span className="prep-data-badge">{questionCount} questions</span>
+                    <span className="prep-data-badge">{durationBucket}</span>
+                    {(test.tags || []).slice(0, 3).map((tag) => (
+                        <span key={tag} className="prep-data-badge subtle">{tag}</span>
+                    ))}
+                </div>
+
+                <p className="prep-detail-copy">{buildAssessmentSummary(test)}</p>
             </div>
 
-            {/* Assessment Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
-                <AnimatePresence>
-                    {filteredTests.map((test) => (
-                        <motion.div
-                            key={test.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            whileHover={{ y: -4, boxShadow: 'var(--jp-shadow)' }}
-                            style={{
-                                background: 'var(--jp-card-bg)',
-                                padding: '1.5rem',
-                                borderRadius: '24px',
-                                border: '1px solid var(--jp-border)',
-                                transition: 'all 0.3s ease',
-                                display: 'flex',
-                                flexDirection: 'column'
-                            }}
-                        >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                                <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--jp-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Target size={22} />
-                                </div>
-                                <div style={{ display: 'flex', gap: '0.4rem' }}>
-                                    {test.tags.map(tag => (
-                                        <span key={tag} style={{ fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.6rem', color: 'var(--jp-text-muted)', background: 'var(--jp-bg)', borderRadius: '6px', textTransform: 'uppercase' }}>{tag}</span>
-                                    ))}
-                                </div>
-                            </div>
+            <div className="prep-detail-grid">
+                <section className="prep-detail-panel">
+                    <p className="prep-detail-label">What this covers</p>
+                    <ul className="prep-detail-list">
+                        <li>Timed completion window for better interview pacing.</li>
+                        <li>Focused question set sized for quick scoring feedback.</li>
+                        <li>Topic tags that keep practice aligned with your target role.</li>
+                    </ul>
+                </section>
 
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--jp-text-main)', marginBottom: '0.75rem', lineHeight: '1.3' }}>{test.title}</h3>
+                <section className="prep-detail-panel">
+                    <p className="prep-detail-label">Recommended use</p>
+                    <ul className="prep-detail-list">
+                        <li>Use after reviewing concept notes or interview questions.</li>
+                        <li>Repeat the same topic family until your speed feels consistent.</li>
+                        <li>Pair short rounds with longer tests before final interviews.</li>
+                    </ul>
+                </section>
+            </div>
 
-                            <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '1.5rem', color: 'var(--jp-text-muted)', fontSize: '0.85rem', fontWeight: 600 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                                    <Clock size={16} /> {test.duration} mins
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                                    <BarChart size={16} /> {test.questions ? test.questions.length : 0} Questions
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={() => onNavigate('mcq', test)}
-                                style={{
-                                    width: '100%',
-                                    marginTop: 'auto',
-                                    padding: '0.8rem',
-                                    borderRadius: '12px',
-                                    border: 'none',
-                                    background: 'var(--jp-primary)',
-                                    color: 'white',
-                                    fontWeight: 700,
-                                    fontSize: '0.95rem',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '0.5rem',
-                                    transition: 'all 0.2s'
-                                }}
-                                onMouseEnter={(e) => e.target.style.opacity = '0.9'}
-                                onMouseLeave={(e) => e.target.style.opacity = '1'}
-                            >
-                                Start Assessment <ChevronRight size={18} />
-                            </button>
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
-
-                {filteredTests.length === 0 && (
-                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem 2rem', background: 'var(--jp-card-bg)', borderRadius: '24px', border: '1px dashed var(--jp-border)' }}>
-                        <p style={{ color: 'var(--jp-text-muted)', fontSize: '1.1rem' }}>No assessments found matching your criteria.</p>
-                        <button
-                            onClick={() => { setSearchTerm(''); setSelectedTags([]); }}
-                            style={{ marginTop: '1rem', color: 'var(--jp-primary)', background: 'none', border: 'none', fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}
-                        >
-                            Reset Filters
-                        </button>
+            <div className="prep-detail-footer">
+                <div className="prep-detail-metrics">
+                    <div>
+                        <span className="prep-detail-metric-value">{duration}</span>
+                        <span className="prep-detail-metric-label">minutes</span>
                     </div>
-                )}
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                    <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginTop: '3rem' }}>
-                        <button
-                            onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
-                            disabled={currentPage === 0}
-                            style={{
-                                padding: '0.75rem 1.25rem',
-                                borderRadius: '12px',
-                                background: 'var(--jp-card-bg)',
-                                color: currentPage === 0 ? 'var(--jp-text-muted)' : 'var(--jp-text-main)',
-                                border: '1px solid var(--jp-border)',
-                                cursor: currentPage === 0 ? 'default' : 'pointer',
-                                fontWeight: 700,
-                                fontSize: '0.9rem',
-                                opacity: currentPage === 0 ? 0.5 : 1
-                            }}
-                        >
-                            Previous
-                        </button>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            {[...Array(totalPages)].map((_, idx) => (
-                                <button
-                                    key={idx}
-                                    onClick={() => setCurrentPage(idx)}
-                                    style={{
-                                        width: '42px',
-                                        height: '42px',
-                                        borderRadius: '12px',
-                                        background: currentPage === idx ? 'var(--jp-primary)' : 'var(--jp-card-bg)',
-                                        color: currentPage === idx ? 'white' : 'var(--jp-text-main)',
-                                        border: '1px solid var(--jp-border)',
-                                        cursor: 'pointer',
-                                        fontWeight: 800,
-                                        fontSize: '0.95rem'
-                                    }}
-                                >
-                                    {idx + 1}
-                                </button>
-                            ))}
-                        </div>
-                        <button
-                            onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
-                            disabled={currentPage === totalPages - 1}
-                            style={{
-                                padding: '0.75rem 1.25rem',
-                                borderRadius: '12px',
-                                background: 'var(--jp-card-bg)',
-                                color: currentPage === totalPages - 1 ? 'var(--jp-text-muted)' : 'var(--jp-text-main)',
-                                border: '1px solid var(--jp-border)',
-                                cursor: currentPage === totalPages - 1 ? 'default' : 'pointer',
-                                fontWeight: 700,
-                                fontSize: '0.9rem',
-                                opacity: currentPage === totalPages - 1 ? 0.5 : 1
-                            }}
-                        >
-                            Next
-                        </button>
+                    <div>
+                        <span className="prep-detail-metric-value">{questionCount}</span>
+                        <span className="prep-detail-metric-label">questions</span>
                     </div>
-                )}
+                </div>
+
+                <button type="button" className="prep-primary-btn tests" onClick={() => onStart(test)}>
+                    Start Assessment <ChevronRight size={16} />
+                </button>
             </div>
         </div>
     );
 };
 
+const TestsPage = ({ onNavigate }) => {
+    const { showToast } = useToast();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedTopic, setSelectedTopic] = useState('All');
+    const [durationFilter, setDurationFilter] = useState('All');
+    const [tests, setTests] = useState([]);
+    const [topics, setTopics] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalTests, setTotalTests] = useState(0);
+    const [activeTest, setActiveTest] = useState(null);
+    const [mobileModalOpen, setMobileModalOpen] = useState(false);
+
+    const pageSize = 15;
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const tech = params.get('tech');
+        if (tech) {
+            const [primaryTag] = tech.split(',');
+            if (primaryTag) {
+                setSelectedTopic(primaryTag);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        const fetchTests = async () => {
+            setLoading(true);
+            try {
+                const [testsResponse, topicsResponse] = await Promise.all([
+                    getAllQuizzes(currentPage, pageSize, selectedTopic === 'All' ? '' : selectedTopic),
+                    getTopics()
+                ]);
+
+                const nextTests = testsResponse.content || [];
+                const fallbackTests = selectedTopic === 'All'
+                    ? PREP_TESTS
+                    : PREP_TESTS.filter((item) => item.tags?.includes(selectedTopic));
+
+                const resolvedTests = nextTests.length > 0 ? nextTests : fallbackTests;
+                const resolvedTopics = (topicsResponse || []).length > 0 ? topicsResponse : PREP_TOPICS;
+
+                setTests(resolvedTests);
+                setTopics(resolvedTopics);
+                setTotalPages(testsResponse.totalPages || (resolvedTests.length > 0 ? 1 : 0));
+                setTotalTests(testsResponse.totalElements || resolvedTests.length);
+            } catch (error) {
+                console.error('Failed to load tests', error);
+                const fallbackTests = selectedTopic === 'All'
+                    ? PREP_TESTS
+                    : PREP_TESTS.filter((item) => item.tags?.includes(selectedTopic));
+                setTests(fallbackTests);
+                setTopics(PREP_TOPICS);
+                setTotalPages(fallbackTests.length > 0 ? 1 : 0);
+                setTotalTests(fallbackTests.length);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTests();
+    }, [currentPage, selectedTopic]);
+
+    const filteredTests = useMemo(() => tests.filter((test) => {
+        const matchesSearch = test.title.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesDuration = durationFilter === 'All' || getDurationBucket(test.duration || 0) === durationFilter;
+        return matchesSearch && matchesDuration;
+    }), [durationFilter, searchTerm, tests]);
+
+    useEffect(() => {
+        if (filteredTests.length === 0) {
+            setActiveTest(null);
+            return;
+        }
+
+        if (!activeTest || !filteredTests.some((test) => test.id === activeTest.id)) {
+            setActiveTest(filteredTests[0]);
+        }
+    }, [activeTest, filteredTests]);
+
+    const totalQuestions = filteredTests.reduce((sum, test) => sum + (test.questions?.length || test.totalQuestions || 0), 0);
+    const averageDuration = filteredTests.length
+        ? Math.round(filteredTests.reduce((sum, test) => sum + (test.duration || 0), 0) / filteredTests.length)
+        : 0;
+
+    const handleSelectTest = (test) => {
+        setActiveTest(test);
+
+        if (window.innerWidth < 768) {
+            setMobileModalOpen(true);
+        }
+    };
+
+    const handleStartAssessment = async (test) => {
+        if (test.questions?.length) {
+            onNavigate('mcq', test);
+            return;
+        }
+
+        try {
+            const liveQuiz = await getQuizById(test.id);
+
+            if (liveQuiz?.questions?.length) {
+                onNavigate('mcq', liveQuiz);
+                return;
+            }
+
+            showToast('This quiz does not have published questions yet. Please update it from admin.', 'warning');
+        } catch (error) {
+            console.error('Failed to load full quiz details', error);
+            showToast('Unable to load the quiz details right now.', 'error');
+        }
+    };
+
+    const handleTopicChange = (topic) => {
+        setSelectedTopic(topic);
+        setCurrentPage(0);
+    };
+
+    if (loading && tests.length === 0) {
+        return <div className="iq-shell"><div className="iq-spinner" /></div>;
+    }
+
+    return (
+        <div className="iq-shell">
+            <header className="iq-header">
+                <div className="prep-hero-grid">
+                    <div className="prep-hero-copy">
+                        <div className="iq-header-meta">
+                            <span className="iq-breadcrumb">Academy <span>/</span> Prep</span>
+                        </div>
+
+                        <h1 className="iq-main-title">
+                            Mock <em>Assessment</em> Library
+                        </h1>
+
+                        <p className="iq-subtitle">
+                            Browse compact, timed assessment tracks in a clean, distraction-free environment.
+                        </p>
+
+                        <div className="iq-stats-bar">
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">{totalTests}+</span>
+                                <span className="iq-stat-label">Assessments</span>
+                            </div>
+                            <div className="iq-stat-divider" />
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">{totalQuestions}</span>
+                                <span className="iq-stat-label">Questions</span>
+                            </div>
+                            <div className="iq-stat-divider" />
+                            <div className="iq-stat">
+                                <span className="iq-stat-num">{averageDuration}</span>
+                                <span className="iq-stat-label">Avg. Mins</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="prep-hero-visual">
+                        <PrepHeroVisual type="tests" />
+                    </div>
+                </div>
+            </header>
+
+            <div className="iq-controls-wrap">
+                <div className="iq-controls-inner">
+                    <div className="iq-search-wrap">
+                        <input
+                            type="text"
+                            className="iq-input"
+                            placeholder="Search assessments by title..."
+                            value={searchTerm}
+                            onChange={(event) => setSearchTerm(event.target.value)}
+                        />
+                    </div>
+
+                    <div className="iq-select-wrap">
+                        <select
+                            className="iq-select"
+                            value={durationFilter}
+                            onChange={(event) => setDurationFilter(event.target.value)}
+                        >
+                            {durationOptions.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
+                        </select>
+                        <ChevronDown className="iq-select-chevron" size={14} />
+                    </div>
+
+                    <div className="iq-select-wrap">
+                        <select 
+                            className="iq-select" 
+                            value={selectedTopic} 
+                            onChange={(e) => handleTopicChange(e.target.value)}
+                        >
+                            <option value="All">All Technologies</option>
+                            {topics.map(t => (
+                                <option key={t.id} value={t.name}>{t.name}</option>
+                            ))}
+                        </select>
+                        <ChevronDown className="iq-select-chevron" size={14} />
+                    </div>
+                </div>
+            </div>
+
+            <main className="iq-body">
+
+                <section className="prep-summary-grid">
+                    <article className="prep-surface-card">
+                        <div className="prep-surface-head">
+                            <div className="prep-surface-icon"><Clock3 size={18} /></div>
+                            <h3>Time-balanced rounds</h3>
+                        </div>
+                        <p>Use quick, standard, and deep-dive filters to match the time window you have available.</p>
+                    </article>
+                    <article className="prep-surface-card">
+                        <div className="prep-surface-head">
+                            <div className="prep-surface-icon"><Layers3 size={18} /></div>
+                            <h3>Topic-first discovery</h3>
+                        </div>
+                        <p>Stay inside one stack at a time so your assessments feel more intentional and easier to compare.</p>
+                    </article>
+                    <article className="prep-surface-card">
+                        <div className="prep-surface-head">
+                            <div className="prep-surface-icon"><CirclePlay size={18} /></div>
+                            <h3>Launch from detail view</h3>
+                        </div>
+                        <p>Inspect the format first, then start an assessment directly from the reader pane or mobile sheet.</p>
+                    </article>
+                </section>
+
+                <div className="iq-section-label">
+                    <span className="iq-section-label-text">
+                        Assessment catalog - {filteredTests.length} visible
+                    </span>
+                    <div className="iq-section-label-line" />
+                </div>
+
+                {filteredTests.length === 0 ? (
+                    <div className="iq-empty">
+                        <div className="iq-empty-icon">◌</div>
+                        <p className="iq-empty-text">No assessments match the current search and duration filters.</p>
+                    </div>
+                ) : (
+                    <div className="prep-collection-shell">
+                        <div className="prep-collection-list">
+                            <div className="prep-collection-list-header">
+                                <span>Assessments</span>
+                                <span>{filteredTests.length} visible</span>
+                            </div>
+
+                            <div className="prep-collection-scroll">
+                                {filteredTests.map((test) => {
+                                    const questionCount = test.questions?.length || test.totalQuestions || 0;
+
+                                    return (
+                                        <motion.button
+                                            type="button"
+                                            key={test.id}
+                                            className={`prep-collection-item ${activeTest?.id === test.id ? 'active' : ''}`}
+                                            onClick={() => handleSelectTest(test)}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                        >
+                                            <div className="prep-collection-item-head">
+                                                <div className="prep-collection-icon tests">
+                                                    <Target size={16} />
+                                                </div>
+                                                <div>
+                                                    <p className="prep-collection-kicker">{getDurationBucket(test.duration || 0)}</p>
+                                                    <h3>{test.title}</h3>
+                                                </div>
+                                            </div>
+
+                                            <div className="prep-chip-row">
+                                                <span className="prep-data-badge">{test.duration || 0} mins</span>
+                                                <span className="prep-data-badge">{questionCount} questions</span>
+                                                {(test.tags || []).slice(0, 2).map((tag) => (
+                                                    <span key={tag} className="prep-data-badge subtle">{tag}</span>
+                                                ))}
+                                            </div>
+                                        </motion.button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="prep-collection-detail">
+                            <TestDetailBody test={activeTest} onStart={handleStartAssessment} />
+                        </div>
+                    </div>
+                )}
+
+                {totalPages > 1 && (
+                    <div className="iq-pagination">
+                        <button
+                            type="button"
+                            className="iq-page-btn"
+                            onClick={() => setCurrentPage((page) => Math.max(0, page - 1))}
+                            disabled={currentPage === 0}
+                        >
+                            <ChevronLeft size={14} />
+                        </button>
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                type="button"
+                                key={index}
+                                className={`iq-page-btn ${currentPage === index ? 'active' : ''}`}
+                                onClick={() => setCurrentPage(index)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                        <button
+                            type="button"
+                            className="iq-page-btn"
+                            onClick={() => setCurrentPage((page) => Math.min(totalPages - 1, page + 1))}
+                            disabled={currentPage === totalPages - 1}
+                        >
+                            <ChevronRight size={14} />
+                        </button>
+                    </div>
+                )}
+            </main>
+
+            <AnimatePresence>
+                {mobileModalOpen && activeTest && (
+                    <>
+                        <div className="iq-modal-overlay" onClick={() => setMobileModalOpen(false)} style={{ display: 'block' }} />
+                        <motion.div
+                            className="iq-modal"
+                            initial={{ y: '100%' }}
+                            animate={{ y: 0 }}
+                            exit={{ y: '100%' }}
+                            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+                        >
+                            <div className="iq-modal-header">
+                                <div>
+                                    <p className="prep-dashboard-kicker">Assessment overview</p>
+                                    <h2 className="prep-detail-title" style={{ fontSize: '1.1rem' }}>{activeTest.title}</h2>
+                                </div>
+                                <button type="button" className="iq-modal-close" onClick={() => setMobileModalOpen(false)}>
+                                    <X size={16} />
+                                </button>
+                            </div>
+
+                            <TestDetailBody test={activeTest} onStart={handleStartAssessment} />
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
 
 export default TestsPage;

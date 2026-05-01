@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Eye, EyeOff, CheckCircle, ShieldCheck, Loader2, ChevronRight, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { register, isAuthenticated, isAdmin } from '../job-portal/services/authService';
+import { register, isAuthenticated, isAdmin, loadUserProfile } from '../job-portal/services/authService';
+import apiConfig from '../../config/apiConfig';
 import './styles/signup.css';
 
 const SignupPage = () => {
@@ -14,6 +15,18 @@ const SignupPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Check for OAuth2 token in URL
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        
+        if (token) {
+            localStorage.setItem('jp_admin_token', token);
+            loadUserProfile().then(() => {
+                navigate('/profile', { replace: true });
+            });
+            return;
+        }
+
         if (isAuthenticated()) {
             if (isAdmin()) {
                 navigate('/AdminPortal/admin/dashboard', { replace: true });
@@ -55,6 +68,11 @@ const SignupPage = () => {
         }
     };
 
+    const handleOAuth = (provider) => {
+        const authBaseUrl = apiConfig.AUTH_API_URL.split('/api')[0];
+        window.location.href = `${authBaseUrl}/oauth2/authorization/${provider}`;
+    };
+
     return (
         <div className="auth-page-clean">
             <div className="auth-card-split">
@@ -62,38 +80,43 @@ const SignupPage = () => {
                 {/* ── LEFT PANEL: Branded Hero (Screenshot Style) ── */}
                 <div className="auth-side-branding">
                     <div className="branding-decor-icon">
-                        <User size={240} strokeWidth={1} />
+                        <User size={480} strokeWidth={0.5} />
                     </div>
 
                     <div className="branding-content">
-                        <motion.div 
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="branding-logo-box"
-                        >
-                            C
-                        </motion.div>
-                        
                         <h1 className="branding-title">Join the Platform</h1>
                         <p className="branding-subtitle">
                             Unlock elite AI tools, premium resume templates, and curated
                             job opportunities optimized for your career growth.
                         </p>
 
-                        <div className="branding-benefit-card">
-                            <div className="benefit-row">
-                                <div className="benefit-check"><CheckCircle size={14} fill="white" color="var(--color-primary)" /></div>
-                                <span>Global AI Resume Builder Access</span>
+                        <div className="branding-benefits-list">
+                            <div className="benefit-item">
+                                <div className="benefit-icon-wrap"><CheckCircle size={20} /></div>
+                                <div className="benefit-text">
+                                    <h4>Global AI Builder</h4>
+                                    <p>Craft ATS-optimized resumes in seconds with our intelligence.</p>
+                                </div>
                             </div>
-                            <div className="benefit-row">
-                                <div className="benefit-check"><CheckCircle size={14} fill="white" color="var(--color-primary)" /></div>
-                                <span>Advanced Career Preparation Hub</span>
+                            <div className="benefit-item">
+                                <div className="benefit-icon-wrap"><ShieldCheck size={20} /></div>
+                                <div className="benefit-text">
+                                    <h4>Verified Opportunities</h4>
+                                    <p>Access high-quality job listings from trusted global partners.</p>
+                                </div>
                             </div>
-                            <div className="benefit-row">
-                                <div className="benefit-check"><CheckCircle size={14} fill="white" color="var(--color-primary)" /></div>
-                                <span>Priority Support & Insights</span>
+                            <div className="benefit-item">
+                                <div className="benefit-icon-wrap"><AlertCircle size={20} /></div>
+                                <div className="benefit-text">
+                                    <h4>Priority Insights</h4>
+                                    <p>Get real-time feedback and market analysis for your profile.</p>
+                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="branding-footer">
+                        &copy; 2026 Chaitanya Tech World. Empowering Careers globally.
                     </div>
                 </div>
 
@@ -106,11 +129,11 @@ const SignupPage = () => {
                         </header>
 
                         <div className="auth-oauth-min">
-                            <button className="oa-btn-min">
+                            <button className="oa-btn-min" onClick={() => handleOAuth('google')}>
                                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="G" />
                                 Google
                             </button>
-                            <button className="oa-btn-min">
+                            <button className="oa-btn-min" onClick={() => handleOAuth('github')}>
                                 <img src="https://www.svgrepo.com/show/475654/github-color.svg" alt="GH" />
                                 GitHub
                             </button>

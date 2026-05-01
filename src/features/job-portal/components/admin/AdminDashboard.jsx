@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import {
     PlusCircle, Layers, Send, XCircle, RefreshCw,
     Users, Eye, Globe, X, Menu, Moon, Sun, LogOut,
-    ChevronRight, Home, FileText, HelpCircle, Hash, Book, ClipboardCheck, MessageSquare, Briefcase, BarChart3
+    ChevronRight, Home, FileText, HelpCircle, Hash, Book, 
+    ClipboardCheck, MessageSquare, Briefcase, BarChart3, 
+    CreditCard, Mail, Settings, ShieldCheck, Heart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { postJob, postBatchJobs, getAllJobs, updateJob, deleteJob } from '../../services/jobService';
 import { getVisitorStats } from '../../services/analyticsService';
-import { logout, getUserCount } from '../../services/authService';
+import { logout, getUserCount, getToken } from '../../services/authService';
 import { getAllInquiries } from '../../services/contactService';
 import { getAllQuestions, getTopics, getAllResources, getAllQuizzes } from '../../services/prepService';
 import { useToast } from '@/components/ui/Toast';
@@ -22,19 +24,27 @@ import ManageResources from './ManageResources';
 import ManageQuizzes from './ManageQuizzes';
 import AdminSettings from './AdminSettings';
 import ManageInquiries from './ManageInquiries';
+import ManageSupport from './ManageSupport';
+import ManageUsers from './ManageUsers';
+import ManageSubscribers from './ManageSubscribers';
+import { THEME_KEY } from '@/constants/theme';
 import './AdminLayout.css';
 
 const tabTitles = {
-    overview: 'Dashboard Overview',
-    create: 'Post a Job',
-    manage: 'Manage Jobs',
-    questions: 'Questions',
-    topics: 'Topics',
-    resources: 'Resources',
-    quizzes: 'Quizzes',
-    analytics: 'Analytics',
-    inquiries: 'Inquiries',
-    settings: 'Settings',
+    overview: 'Portal Overview',
+    create: 'Post a New Job',
+    manage: 'Job Management',
+    questions: 'Interview Prep Q&A',
+    topics: 'Core Tech Topics',
+    resources: 'PDF & Media Resources',
+    quizzes: 'Live Assessment Quizzes',
+    analytics: 'Traffic & Visitor Stats',
+    inquiries: 'Contact Inquiries',
+    support: 'Support Contributions',
+    users: 'User Registry',
+    payments: 'Financial Transactions',
+    subscribers: 'Newsletter Subscribers',
+    settings: 'Portal Configuration',
 };
 
 const FORM_DEFAULTS = {
@@ -55,11 +65,11 @@ const AdminDashboard = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [jobToDelete, setJobToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
+    const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024);
     const [batchJobs, setBatchJobs] = useState([]);
     const [activeTab, setActiveTab] = useState('overview');
     const [overviewStats, setOverviewStats] = useState({
-        users: 0, jobs: 0, questions: 0, topics: 0, resources: 0, quizzes: 0, inquiries: 0
+        users: 0, jobs: 0, questions: 0, topics: 0, resources: 0, quizzes: 0, inquiries: 0, support: 0, revenue: 0
     });
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [jobData, setJobData] = useState(FORM_DEFAULTS);
@@ -71,11 +81,15 @@ const AdminDashboard = () => {
             else if (window.innerWidth <= 768) setSidebarOpen(false);
         };
         window.addEventListener('resize', handleResize);
-        handleResize();
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     useEffect(() => { loadJobs(); }, []);
+
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     useEffect(() => {
         if (activeTab === 'analytics') getVisitorStats().then(setStats).catch(console.error);
@@ -95,15 +109,34 @@ const AdminDashboard = () => {
                 getAllInquiries()
             ]);
 
-            setOverviewStats({
+            setOverviewStats(prev => ({
+                ...prev,
                 users: uCount || 0,
                 jobs: jList.length || 0,
                 questions: qPage.totalElements || 0,
                 topics: tList.length || 0,
                 resources: rPage.totalElements || 0,
                 quizzes: quizPage.totalElements || 0,
-                inquiries: iList.length || 0
+                inquiries: iList.length || 0,
+            }));
+
+            // Fetch payment stats
+            const API_HOST = import.meta.env.VITE_API_HOST || 'http://localhost:8080/api';
+            const r = await fetch(`${API_HOST}/user/profile/payments/all`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
             });
+            
+            if (!r.ok) {
+                console.warn(`Payment stats fetch failed with status: ${r.status}`);
+                return;
+            }
+
+            const paymentData = await r.json();
+            if (Array.isArray(paymentData)) {
+                const totalRevenue = paymentData.reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
+                setOverviewStats(prev => ({ ...prev, support: paymentData.length, revenue: totalRevenue }));
+            }
+
         } catch (err) {
             console.error('Failed to load overview stats:', err);
         } finally {
@@ -115,7 +148,7 @@ const AdminDashboard = () => {
         const newTheme = !isDark ? 'dark' : 'light';
         setIsDark(!isDark);
         document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('jp-theme', newTheme);
+        localStorage.setItem(THEME_KEY, newTheme);
     };
 
     const loadJobs = async () => {
@@ -222,34 +255,29 @@ const AdminDashboard = () => {
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        navigate('/job-portal');
     };
 
-    const title = editingJobId ? 'Edit Job' : tabTitles[activeTab] || 'Dashboard';
+    const currentTitle = editingJobId ? 'Edit Job Posting' : tabTitles[activeTab] || 'Admin Hub';
 
     return (
         <div className="adm-root">
-            {/* â”€â”€ TOP NAV BAR â”€â”€ */}
+            {/* ── TOP NAV BAR ── */}
             <header className="adm-topbar">
                 <div className="adm-topbar-left">
-                    <button
-                        className="adm-topbar-toggle"
-                        onClick={() => setSidebarOpen(p => !p)}
-                        aria-label="Toggle sidebar"
-                    >
-                        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                    <button className="adm-topbar-toggle" onClick={() => setSidebarOpen(p => !p)}>
+                        {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
                     </button>
                     <a href="/" className="adm-topbar-brand">
-                        <img src="/CTW.svg" alt="CTW" className="adm-topbar-logo" />
-                        <span className="adm-topbar-brand-name">Chaitanya Tech World</span>
+                        <img src="/CTW.svg" alt="Logo" className="adm-topbar-logo" />
                     </a>
                 </div>
                 <div className="adm-topbar-right">
-                    <button className="adm-topbar-icon-btn" onClick={toggleTheme} title="Toggle theme">
+                    <button className="adm-topbar-icon-btn" onClick={toggleTheme} title="Toggle Mode">
                         {isDark ? <Sun size={18} /> : <Moon size={18} />}
                     </button>
-                    <button className="adm-topbar-icon-btn" onClick={handleRefresh} title="Refresh">
-                        <RefreshCw size={18} className={isLoading ? 'adm-spinner' : ''} />
+                    <button className="adm-topbar-icon-btn" onClick={handleRefresh} title="Refresh Data">
+                        <RefreshCw size={18} className={isLoading ? 'jp-spin' : ''} />
                     </button>
                     <button className="adm-topbar-logout" onClick={handleLogout}>
                         <LogOut size={16} /> Logout
@@ -257,26 +285,19 @@ const AdminDashboard = () => {
                 </div>
             </header>
 
-            {/* â”€â”€ BODY: sidebar + content â”€â”€ */}
             <div className="adm-body">
-                {/* SIDEBAR */}
-                <AdminSidebar
-                    activeTab={activeTab}
-                    onTabChange={(tab) => {
-                        setActiveTab(tab);
-                        if (window.innerWidth <= 768) setSidebarOpen(false);
-                    }}
-                    isOpen={sidebarOpen}
-                    onToggle={() => setSidebarOpen(p => !p)}
+                <AdminSidebar 
+                    activeTab={activeTab} 
+                    onTabChange={handleTabChange} 
+                    isOpen={sidebarOpen} 
+                    onToggle={() => setSidebarOpen(!sidebarOpen)} 
                 />
 
-                {/* Mobile backdrop */}
                 {sidebarOpen && window.innerWidth <= 768 && (
                     <div className="adm-backdrop visible" onClick={() => setSidebarOpen(false)} />
                 )}
 
-                {/* MAIN CONTENT */}
-                <main className={`adm-content ${sidebarOpen ? 'sidebar-visible' : 'sidebar-hidden'}`}>
+                <main className="adm-content">
                     <DeleteConfirmModal
                         isOpen={showDeleteModal}
                         onClose={() => setShowDeleteModal(false)}
@@ -285,184 +306,207 @@ const AdminDashboard = () => {
                         isDeleting={isDeleting}
                     />
 
-                    {/* Page header */}
+                    {/* Page Header Strip */}
                     <div className="adm-page-header">
                         <div>
-                            <h1 className="adm-page-title">{title}</h1>
+                            <h1 className="adm-page-title">{currentTitle}</h1>
                             <p className="adm-page-subtitle">
-                                {editingJobId ? 'Modify job details below' : 'Manage your portal content efficiently'}
+                                {editingJobId ? 'Updating existing record' : 'Real-time portal management & insights'}
                             </p>
                         </div>
                         <div className="adm-page-actions">
                             {editingJobId && (
                                 <button className="adm-btn adm-btn-secondary" onClick={handleCancelEdit}>
-                                    <X size={15} /> Cancel Edit
+                                    <X size={14} /> Cancel Edit
                                 </button>
                             )}
+                            <button className="adm-btn adm-btn-primary" onClick={() => setRefreshTrigger(p => p + 1)}>
+                                <RefreshCw size={14} /> Refresh
+                            </button>
                         </div>
                     </div>
 
-                    {/* Tab content */}
                     <AnimatePresence mode="wait">
                         <motion.div
-                            key={activeTab + (editingJobId || '')}
+                            key={activeTab}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            transition={{ duration: 0.16 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.15 }}
                         >
-                            {/* ── OVERVIEW ── */}
+                            {/* OVERVIEW TAB */}
                             {activeTab === 'overview' && (
                                 <div className="adm-overview">
                                     <div className="adm-stats-grid">
                                         {[
-                                            { id: 'users', label: 'Total Users', val: overviewStats.users, icon: Users, color: '#6366f1', link: 'settings' },
+                                            { id: 'users', label: 'Registered Users', val: overviewStats.users, icon: Users, color: '#6366f1', link: 'users' },
                                             { id: 'jobs', label: 'Active Jobs', val: overviewStats.jobs, icon: Briefcase, color: '#ec4899', link: 'manage' },
-                                            { id: 'questions', label: 'Questions', val: overviewStats.questions, icon: HelpCircle, color: '#3b82f6', link: 'questions' },
-                                            { id: 'topics', label: 'Topics', val: overviewStats.topics, icon: Hash, color: '#10b981', link: 'topics' },
-                                            { id: 'resources', label: 'Resources', val: overviewStats.resources, icon: Book, color: '#f59e0b', link: 'resources' },
-                                            { id: 'quizzes', label: 'Quizzes', val: overviewStats.quizzes, icon: ClipboardCheck, color: '#8b5cf6', link: 'quizzes' },
+                                            { id: 'revenue', label: 'Total Revenue', val: `₹${overviewStats.revenue}`, icon: CreditCard, color: '#10b981', link: 'payments' },
+                                            { id: 'support', label: 'Contributions', val: overviewStats.support, icon: Heart, color: '#f59e0b', link: 'support' },
+                                            { id: 'questions', label: 'Prep Q&A', val: overviewStats.questions, icon: HelpCircle, color: '#3b82f6', link: 'questions' },
                                             { id: 'inquiries', label: 'Enquiries', val: overviewStats.inquiries, icon: MessageSquare, color: '#06b6d4', link: 'inquiries' }
                                         ].map(stat => (
-                                            <div 
-                                                key={stat.id} 
-                                                className="adm-stat-card clickable" 
-                                                onClick={() => setActiveTab(stat.link)}
-                                            >
-                                                <div 
-                                                    className="adm-stat-icon" 
-                                                    style={{ background: `${stat.color}15`, color: stat.color }}
-                                                >
-                                                    <stat.icon size={24} />
+                                            <div key={stat.id} className="adm-stat-card clickable" onClick={() => handleTabChange(stat.link)}>
+                                                <div className="adm-stat-icon" style={{ background: `${stat.color}15`, color: stat.color }}>
+                                                    <stat.icon size={22} />
                                                 </div>
                                                 <div className="adm-stat-info">
                                                     <h4 className="adm-stat-value">{isLoading ? '...' : stat.val}</h4>
                                                     <p className="adm-stat-label">{stat.label}</p>
                                                 </div>
-                                                <div className="adm-stat-arrow">
-                                                    <ChevronRight size={16} />
-                                                </div>
+                                                <ChevronRight size={16} className="adm-stat-arrow" />
                                             </div>
                                         ))}
                                     </div>
 
-                                    <div className="adm-quick-links-panel adm-card-panel" style={{ marginTop: '2.5rem' }}>
-                                        <h3 className="adm-step-title" style={{ marginBottom: '1.5rem' }}>Quick Actions</h3>
+                                    <div className="adm-card-panel">
+                                        <h3 className="adm-step-title" style={{ marginBottom: '1.25rem' }}>Quick Navigation</h3>
                                         <div className="adm-quick-actions-grid">
-                                            <button className="adm-btn adm-btn-primary" onClick={() => setActiveTab('create')}>
-                                                <PlusCircle size={16} /> Post New Job
+                                            <button className="adm-btn adm-btn-primary" onClick={() => handleTabChange('create')}>
+                                                <PlusCircle size={16} /> New Job Post
                                             </button>
-                                            <button className="adm-btn adm-btn-secondary" onClick={() => setActiveTab('manage')}>
-                                                <Layers size={16} /> Manage All Jobs
+                                            <button className="adm-btn adm-btn-secondary" onClick={() => handleTabChange('manage')}>
+                                                <Layers size={16} /> Job Registry
                                             </button>
-                                            <button className="adm-btn adm-btn-dashed" onClick={() => setActiveTab('analytics')}>
-                                                <BarChart3 size={16} /> View Traffic Analytics
+                                            <button className="adm-btn adm-btn-secondary" onClick={() => handleTabChange('support')}>
+                                                <Heart size={16} /> Support Logs
                                             </button>
+                                            <button className="adm-btn adm-btn-secondary" onClick={() => handleTabChange('analytics')}>
+                                                <BarChart3 size={16} /> View Traffic
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="adm-card-panel">
+                                        <h3 className="adm-step-title" style={{ marginBottom: '0.65rem' }}>Prep Operations</h3>
+                                        <p className="adm-page-subtitle" style={{ marginBottom: '1.25rem' }}>
+                                            These admin sections now feed the public prep hub, tests, resources, and question bank experience.
+                                        </p>
+                                        <div className="adm-quick-actions-grid">
+                                            <button className="adm-btn adm-btn-secondary" onClick={() => handleTabChange('questions')}>
+                                                <HelpCircle size={16} /> Manage Questions
+                                            </button>
+                                            <button className="adm-btn adm-btn-secondary" onClick={() => handleTabChange('topics')}>
+                                                <Hash size={16} /> Manage Topics
+                                            </button>
+                                            <button className="adm-btn adm-btn-secondary" onClick={() => handleTabChange('resources')}>
+                                                <Book size={16} /> Manage Resources
+                                            </button>
+                                            <button className="adm-btn adm-btn-primary" onClick={() => handleTabChange('quizzes')}>
+                                                <ClipboardCheck size={16} /> Build Live Quizzes
+                                            </button>
+                                        </div>
+                                        <div className="adm-stats-grid" style={{ marginTop: '1.25rem', marginBottom: 0 }}>
+                                            {[
+                                                { id: 'topics', label: 'Topics', val: overviewStats.topics, icon: Hash, color: '#7c3aed', link: 'topics' },
+                                                { id: 'resources', label: 'Resources', val: overviewStats.resources, icon: Book, color: '#10b981', link: 'resources' },
+                                                { id: 'quizzes', label: 'Live Quizzes', val: overviewStats.quizzes, icon: ClipboardCheck, color: '#3b82f6', link: 'quizzes' }
+                                            ].map((stat) => (
+                                                <div key={stat.id} className="adm-stat-card clickable" onClick={() => handleTabChange(stat.link)}>
+                                                    <div className="adm-stat-icon" style={{ background: `${stat.color}15`, color: stat.color }}>
+                                                        <stat.icon size={20} />
+                                                    </div>
+                                                    <div className="adm-stat-info">
+                                                        <h4 className="adm-stat-value">{isLoading ? '...' : stat.val}</h4>
+                                                        <p className="adm-stat-label">{stat.label}</p>
+                                                    </div>
+                                                    <ChevronRight size={16} className="adm-stat-arrow" />
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
                             )}
 
-                            {/* ── CREATE / EDIT JOB ── */}
+                            {/* CREATE JOB TAB */}
                             {activeTab === 'create' && (
-                                <div>
+                                <div className="adm-create-view">
                                     <div className="adm-mode-switcher">
                                         <button className={`adm-mode-btn ${uploadMode === 'single' ? 'active' : ''}`} onClick={() => setUploadMode('single')}>
-                                            <PlusCircle size={16} /> Single Upload
+                                            <PlusCircle size={14} /> Single Post
                                         </button>
                                         <button className={`adm-mode-btn ${uploadMode === 'batch' ? 'active' : ''}`} onClick={() => setUploadMode('batch')}>
-                                            <Layers size={16} /> Batch Builder
+                                            <Layers size={14} /> Batch Upload
                                         </button>
                                     </div>
 
                                     {uploadMode === 'single' ? (
-                                        <form className="adm-card-panel adm-form" onSubmit={handleSubmitSingle}>
-                                            <div className="adm-form-grid">
-                                                <div className="adm-field"><label className="adm-label">Job Title *</label><input name="jobTitle" value={jobData.jobTitle} onChange={handleFormChange} required placeholder="e.g. Senior Developer" className="adm-input" /></div>
-                                                <div className="adm-field"><label className="adm-label">Company Name *</label><input name="company" value={jobData.company} onChange={handleFormChange} required placeholder="e.g. Tech Corp" className="adm-input" /></div>
-                                                <div className="adm-field"><label className="adm-label">Company Logo URL</label><input name="companyLogo" value={jobData.companyLogo} onChange={handleFormChange} placeholder="https://logo.png" className="adm-input" /></div>
-                                                <div className="adm-field"><label className="adm-label">Location *</label><input name="location" value={jobData.location} onChange={handleFormChange} required placeholder="e.g. Remote / Hyderabad" className="adm-input" /></div>
-                                                <div className="adm-field"><label className="adm-label">Salary</label><input name="salary" value={jobData.salary} onChange={handleFormChange} placeholder="e.g. â‚¹5L â€“ â‚¹8L" className="adm-input" /></div>
-                                                <div className="adm-field"><label className="adm-label">Job Type</label><select name="jobType" value={jobData.jobType} onChange={handleFormChange} className="adm-input"><option value="Full-time">Full Time</option><option value="Part-time">Part Time</option><option value="Contract">Contract</option><option value="Remote">Remote</option></select></div>
-                                                <div className="adm-field"><label className="adm-label">Experience Required</label><input name="experienceRequired" value={jobData.experienceRequired} onChange={handleFormChange} placeholder="e.g. 2â€“4 years" className="adm-input" /></div>
-                                                <div className="adm-field"><label className="adm-label">Apply Link *</label><input name="applyLink" value={jobData.applyLink} onChange={handleFormChange} required placeholder="https://..." className="adm-input" /></div>
-                                            </div>
-                                            <div className="adm-field">
-                                                <label className="adm-label">Job Details / Description</label>
-                                                <RichTextEditor value={jobData.jobDetails} onChange={(c) => setJobData(p => ({ ...p, jobDetails: c }))} />
-                                            </div>
-                                            <div className="adm-form-footer">
-                                                <button type="submit" disabled={isLoading} className="adm-btn adm-btn-primary adm-btn-wide">
-                                                    {isLoading ? <><RefreshCw size={16} className="adm-spinner" /> Savingâ€¦</> : <><Send size={16} /> {editingJobId ? 'Update Job' : 'Publish Job'}</>}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    ) : (
-                                        <div className="adm-batch-outer">
-                                            {/* Step 1 */}
-                                            <div className="adm-card-panel adm-form">
-                                                <div className="adm-form-step-header">
-                                                    <span className="adm-step-badge">1</span>
-                                                    <h3 className="adm-step-title">Define a Job for the Batch</h3>
-                                                </div>
+                                        <div className="adm-card-panel">
+                                            <form className="adm-form" onSubmit={handleSubmitSingle}>
                                                 <div className="adm-form-grid">
-                                                    <div className="adm-field"><label className="adm-label">Job Title</label><input name="jobTitle" value={jobData.jobTitle} onChange={handleFormChange} placeholder="e.g. Senior Developer" className="adm-input" /></div>
-                                                    <div className="adm-field"><label className="adm-label">Company</label><input name="company" value={jobData.company} onChange={handleFormChange} placeholder="e.g. Tech Corp" className="adm-input" /></div>
-                                                    <div className="adm-field"><label className="adm-label">Location</label><input name="location" value={jobData.location} onChange={handleFormChange} placeholder="e.g. Remote" className="adm-input" /></div>
-                                                    <div className="adm-field"><label className="adm-label">Salary</label><input name="salary" value={jobData.salary} onChange={handleFormChange} placeholder="e.g. â‚¹5L â€“ â‚¹8L" className="adm-input" /></div>
-                                                    <div className="adm-field"><label className="adm-label">Job Type</label><select name="jobType" value={jobData.jobType} onChange={handleFormChange} className="adm-input"><option value="Full-time">Full Time</option><option value="Part-time">Part Time</option><option value="Contract">Contract</option><option value="Remote">Remote</option></select></div>
-                                                    <div className="adm-field"><label className="adm-label">Apply Link</label><input name="applyLink" value={jobData.applyLink} onChange={handleFormChange} placeholder="https://..." className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Job Title *</label><input name="jobTitle" value={jobData.jobTitle} onChange={handleFormChange} required placeholder="e.g. Full Stack Developer" className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Company Name *</label><input name="company" value={jobData.company} onChange={handleFormChange} required placeholder="e.g. Google" className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Location *</label><input name="location" value={jobData.location} onChange={handleFormChange} required placeholder="e.g. Remote / Hyderabad" className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Salary Range</label><input name="salary" value={jobData.salary} onChange={handleFormChange} placeholder="e.g. ₹12L - ₹15L" className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Experience Required *</label><input name="experienceRequired" value={jobData.experienceRequired} onChange={handleFormChange} required placeholder="e.g. 0-2 years / Fresher" className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Experience Level</label><select name="experience" value={jobData.experience} onChange={handleFormChange} className="adm-input"><option value="Fresher">Fresher</option><option value="Junior">Junior (1-3 yrs)</option><option value="Mid">Mid (3-5 yrs)</option><option value="Senior">Senior (5+ yrs)</option></select></div>
+                                                    <div className="adm-field"><label className="adm-label">Job Type</label><select name="jobType" value={jobData.jobType} onChange={handleFormChange} className="adm-input"><option value="Full-time">Full Time</option><option value="Part-time">Part Time</option><option value="Contract">Contract</option><option value="Internship">Internship</option></select></div>
+                                                    <div className="adm-field"><label className="adm-label">Apply Link *</label><input name="applyLink" value={jobData.applyLink} onChange={handleFormChange} required placeholder="https://..." className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Company Logo URL</label><input name="companyLogo" value={jobData.companyLogo} onChange={handleFormChange} placeholder="https://..." className="adm-input" /></div>
                                                 </div>
                                                 <div className="adm-field">
-                                                    <label className="adm-label">Job Details</label>
-                                                    <RichTextEditor value={jobData.jobDetails} onChange={(c) => setJobData(p => ({ ...p, jobDetails: c }))} />
+                                                    <label className="adm-label">Detailed Description</label>
+                                                    <RichTextEditor value={jobData.jobDetails} onChange={(val) => setJobData(p => ({ ...p, jobDetails: val }))} />
                                                 </div>
-                                                <button type="button" onClick={handleAddToBatch} className="adm-btn adm-btn-dashed adm-btn-wide">
-                                                    <PlusCircle size={16} /> Add to Batch List
+                                                <div className="adm-form-footer">
+                                                    <button type="submit" disabled={isLoading} className="adm-btn adm-btn-primary adm-btn-wide">
+                                                        {isLoading ? <RefreshCw className="jp-spin" size={16} /> : <Send size={16} />} 
+                                                        {editingJobId ? 'Update Posting' : 'Publish to Portal'}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    ) : (
+                                        <div className="adm-batch-view">
+                                            <div className="adm-card-panel">
+                                                <div className="adm-form-step-header">
+                                                    <span className="adm-step-badge">1</span>
+                                                    <h3 className="adm-step-title">Add Job to Batch List</h3>
+                                                </div>
+                                                <div className="adm-form-grid" style={{ marginTop: '1rem' }}>
+                                                    <div className="adm-field"><label className="adm-label">Job Title</label><input name="jobTitle" value={jobData.jobTitle} onChange={handleFormChange} className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Company</label><input name="company" value={jobData.company} onChange={handleFormChange} className="adm-input" /></div>
+                                                    <div className="adm-field"><label className="adm-label">Apply Link</label><input name="applyLink" value={jobData.applyLink} onChange={handleFormChange} className="adm-input" /></div>
+                                                </div>
+                                                <button onClick={handleAddToBatch} className="adm-btn adm-btn-dashed" style={{ marginTop: '1rem', width: '100%' }}>
+                                                    <PlusCircle size={14} /> Add to Collection
                                                 </button>
                                             </div>
 
-                                            {/* Step 2 review */}
                                             {batchJobs.length > 0 && (
                                                 <div className="adm-card-panel">
                                                     <div className="adm-batch-review-header">
-                                                        <div className="adm-form-step-header" style={{ border: 'none', padding: 0, marginBottom: 0 }}>
-                                                            <span className="adm-step-badge">2</span>
-                                                            <h3 className="adm-step-title">Review Batch ({batchJobs.length})</h3>
-                                                        </div>
-                                                        <button onClick={handleSubmitBatch} disabled={isLoading} className="adm-btn adm-btn-primary">
-                                                            {isLoading ? <RefreshCw size={15} className="adm-spinner" /> : <Send size={15} />} Publish All
+                                                        <h3 className="adm-step-title">Pending Jobs ({batchJobs.length})</h3>
+                                                        <button onClick={handleSubmitBatch} className="adm-btn adm-btn-primary">
+                                                            Publish {batchJobs.length} Jobs
                                                         </button>
                                                     </div>
                                                     <div className="adm-batch-list">
-                                                        {batchJobs.map(job => (
-                                                            <div key={job.id} className="adm-batch-item">
-                                                                <div className="adm-batch-item-info">
-                                                                    <div className="adm-company-logo">{job.companyLogo ? <img src={job.companyLogo} alt="" /> : 'ðŸ¢'}</div>
-                                                                    <div>
-                                                                        <p className="adm-batch-item-title">{job.jobTitle}</p>
-                                                                        <p className="adm-batch-item-meta">{job.company} Â· {job.location}</p>
-                                                                    </div>
-                                                                </div>
-                                                                <button onClick={() => handleRemoveFromBatch(job.id)} className="adm-btn-icon delete"><XCircle size={15} /></button>
+                                                        {batchJobs.map(j => (
+                                                            <div key={j.id} className="adm-batch-item">
+                                                                <span className="adm-batch-item-title">{j.jobTitle} @ {j.company}</span>
+                                                                <button onClick={() => handleRemoveFromBatch(j.id)} className="adm-btn-icon delete"><X size={14} /></button>
                                                             </div>
                                                         ))}
                                                     </div>
                                                 </div>
                                             )}
 
-                                            {/* Step 3 JSON */}
-                                            <div className="adm-card-panel adm-form">
+                                            <div className="adm-card-panel">
                                                 <div className="adm-form-step-header">
-                                                    <span className="adm-step-badge">3</span>
-                                                    <h3 className="adm-step-title">Paste JSON Array</h3>
+                                                    <span className="adm-step-badge">2</span>
+                                                    <h3 className="adm-step-title">Import via JSON Array</h3>
                                                 </div>
-                                                <div className="adm-field">
-                                                    <label className="adm-label">JSON Array</label>
-                                                    <textarea value={batchJson} onChange={(e) => setBatchJson(e.target.value)} placeholder='[{"jobTitle": "Developer", ...}]' className="adm-input adm-textarea adm-json-textarea" />
+                                                <div className="adm-field" style={{ marginTop: '1rem' }}>
+                                                    <textarea 
+                                                        className="adm-input adm-textarea adm-json-textarea" 
+                                                        value={batchJson} 
+                                                        onChange={(e) => setBatchJson(e.target.value)}
+                                                        placeholder='[{"jobTitle": "Dev", "company": "ABC", "applyLink": "http://..."}]'
+                                                    />
                                                 </div>
                                                 <button onClick={handleSubmitBatch} disabled={isLoading} className="adm-btn adm-btn-primary adm-btn-wide">
-                                                    {isLoading ? <><RefreshCw size={16} className="adm-spinner" /> Publishingâ€¦</> : <><Send size={16} /> Publish from JSON</>}
+                                                    <Layers size={14} /> Import & Publish JSON
                                                 </button>
                                             </div>
                                         </div>
@@ -470,9 +514,17 @@ const AdminDashboard = () => {
                                 </div>
                             )}
 
-                            {activeTab === 'manage' && <ManageJobs jobs={jobs} onEdit={handleEdit} onDelete={handleDeleteClick} editingJobId={editingJobId} />}
-
-                            {/* â”€â”€ ANALYTICS â”€â”€ */}
+                            {activeTab === 'manage' && <ManageJobs jobs={jobs} onEdit={handleEdit} onDelete={handleDeleteClick} />}
+                            {activeTab === 'questions' && <ManageQuestions refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'topics' && <ManageTopics refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'resources' && <ManageResources refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'quizzes' && <ManageQuizzes refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'inquiries' && <ManageInquiries refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'support' && <ManageSupport refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'payments' && <ManageSupport refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'users' && <ManageUsers refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'subscribers' && <ManageSubscribers refreshTrigger={refreshTrigger} />}
+                            
                             {activeTab === 'analytics' && (
                                 <div className="adm-analytics-section">
                                     <div className="adm-stats-grid">
@@ -480,11 +532,11 @@ const AdminDashboard = () => {
                                             <div className="adm-stat-icon"><Eye size={22} /></div>
                                             <div className="adm-stat-info">
                                                 <h4 className="adm-stat-value">{stats.totalViews}</h4>
-                                                <p className="adm-stat-label">Total Views</p>
+                                                <p className="adm-stat-label">Total Impressions</p>
                                             </div>
                                         </div>
                                         <div className="adm-stat-card">
-                                            <div className="adm-stat-icon" style={{ background: 'rgba(236,72,153,0.1)', color: 'var(--jp-secondary)' }}>
+                                            <div className="adm-stat-icon" style={{ background: 'rgba(236,72,153,0.1)', color: '#ec4899' }}>
                                                 <Users size={22} />
                                             </div>
                                             <div className="adm-stat-info">
@@ -492,56 +544,27 @@ const AdminDashboard = () => {
                                                 <p className="adm-stat-label">Unique Visitors</p>
                                             </div>
                                         </div>
-                                        <div className="adm-stat-card">
-                                            <div className="adm-stat-icon" style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981' }}>
-                                                <Globe size={22} />
-                                            </div>
-                                            <div className="adm-stat-info">
-                                                <h4 className="adm-stat-value">Global</h4>
-                                                <p className="adm-stat-label">Traffic Reach</p>
-                                            </div>
-                                        </div>
                                     </div>
-                                    <div className="adm-analytics-grid">
-                                        <div className="adm-analytics-card">
-                                            <div className="adm-analytics-header">
-                                                <div className="adm-analytics-icon"><Globe size={18} /></div>
-                                                <div><h3 className="adm-analytics-title">Browser Distribution</h3><p className="adm-analytics-subtitle">Hits by browser</p></div>
-                                            </div>
-                                            <div className="adm-progress-row">
-                                                {Object.entries(stats.browserStats || {}).length > 0
-                                                    ? Object.entries(stats.browserStats).sort((a, b) => b[1] - a[1]).map(([browser, count]) => {
-                                                        const pct = Math.round((count / stats.totalViews) * 100) || 0;
-                                                        return (
-                                                            <div key={browser} className="adm-progress-item">
-                                                                <div className="adm-progress-meta"><span className="adm-progress-name">{browser}</span><span className="adm-progress-pct">{count} ({pct}%)</span></div>
-                                                                <div className="adm-progress-bg"><motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} className="adm-progress-fill" /></div>
-                                                            </div>
-                                                        );
-                                                    })
-                                                    : <p className="adm-page-subtitle">No browser data yet.</p>
-                                                }
-                                            </div>
+                                    <div className="adm-analytics-card">
+                                        <div className="adm-analytics-header">
+                                            <Globe size={18} />
+                                            <h3 className="adm-analytics-title">Browser Distribution</h3>
                                         </div>
-                                        <div className="adm-analytics-card">
-                                            <div className="adm-analytics-header">
-                                                <div className="adm-analytics-icon"><Users size={18} /></div>
-                                                <div><h3 className="adm-analytics-title">Platform Breakdown</h3><p className="adm-analytics-subtitle">Desktop vs Mobile</p></div>
-                                            </div>
-                                            <div className="adm-platform-list">
-                                                <div className="adm-platform-item"><span className="adm-progress-name">Desktop Users</span><span className="adm-badge adm-badge-success">Most Active</span></div>
-                                                <div className="adm-platform-item"><span className="adm-progress-name">Mobile Users</span><span className="adm-badge adm-badge-primary">Trending</span></div>
-                                            </div>
+                                        <div className="adm-progress-row">
+                                            {Object.entries(stats.browserStats || {}).map(([b, c]) => {
+                                                const pct = Math.round((c / stats.totalViews) * 100) || 0;
+                                                return (
+                                                    <div key={b} className="adm-progress-item">
+                                                        <div className="adm-progress-meta"><span>{b}</span><span>{c} hits</span></div>
+                                                        <div className="adm-progress-bg"><div className="adm-progress-fill" style={{ width: `${pct}%` }} /></div>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </div>
                             )}
 
-                            {activeTab === 'questions' && <ManageQuestions refreshTrigger={refreshTrigger} />}
-                            {activeTab === 'topics' && <ManageTopics refreshTrigger={refreshTrigger} />}
-                            {activeTab === 'resources' && <ManageResources refreshTrigger={refreshTrigger} />}
-                            {activeTab === 'quizzes' && <ManageQuizzes refreshTrigger={refreshTrigger} />}
-                            {activeTab === 'inquiries' && <ManageInquiries refreshTrigger={refreshTrigger} />}
                             {activeTab === 'settings' && <AdminSettings />}
                         </motion.div>
                     </AnimatePresence>

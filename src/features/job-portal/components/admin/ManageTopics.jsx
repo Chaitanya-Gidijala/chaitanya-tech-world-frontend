@@ -1,6 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { PlusCircle, Search, Trash2, Edit2, UploadCloud, Save, X } from 'lucide-react';
+import { PlusCircle, Search, Trash2, Edit2, UploadCloud, Save, X, Tag } from 'lucide-react';
 import { getTopics, createTopic, updateTopic, deleteTopic, createTopicsBatch } from '../../services/prepService';
 import { useToast } from '@/components/ui/Toast';
 import './AdminLayout.css';
@@ -88,11 +88,11 @@ const ManageTopics = ({ refreshTrigger }) => {
                     {isLoading ? (
                         <div className="adm-loading-center"><div className="adm-spinner" style={{width:28,height:28,border:'3px solid var(--jp-border)',borderTop:'3px solid var(--jp-primary)',borderRadius:'50%'}} /></div>
                     ) : filtered.length === 0 ? (
-                        <div className="adm-empty"><div className="adm-empty-icon">ðŸ“Œ</div><h3>No topics found</h3><p>Create your first topic to get started.</p></div>
+                        <div className="adm-empty"><div className="adm-empty-icon"><Tag size={28} /></div><h3>No topics found</h3><p>Create your first topic to get started.</p></div>
                     ) : (
                         <>
                             {/* Desktop table */}
-                            <div className="adm-table-card">
+                            <div className="adm-table-card desktop-only">
                                 <div className="adm-table-scroll">
                                     <table className="adm-table">
                                         <thead><tr><th>ID</th><th>Icon</th><th>Name</th><th>Actions</th></tr></thead>
@@ -100,7 +100,7 @@ const ManageTopics = ({ refreshTrigger }) => {
                                             {filtered.map((t, i) => (
                                                 <motion.tr key={t.id} initial={{opacity:0}} animate={{opacity:1}} transition={{delay:i*0.04}}>
                                                     <td><span className="adm-mono">{t.id}</span></td>
-                                                    <td><span style={{fontSize:'1.5rem'}}>{t.icon || 'ðŸ“Œ'}</span></td>
+                                                    <td><span style={{fontSize:'1.5rem'}}>{t.icon || '📍'}</span></td>
                                                     <td><span className="adm-cell-primary">{t.name}</span></td>
                                                     <td><div className="adm-cell-actions"><button onClick={() => openEdit(t)} className="adm-btn-icon"><Edit2 size={15} /></button><button onClick={() => handleDelete(t.id)} className="adm-btn-icon delete"><Trash2 size={15} /></button></div></td>
                                                 </motion.tr>
@@ -115,7 +115,7 @@ const ManageTopics = ({ refreshTrigger }) => {
                                     <motion.div key={t.id} initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} transition={{delay:i*0.05}} className="adm-card">
                                         <div className="adm-card-header">
                                             <div className="adm-card-title-group">
-                                                <span style={{fontSize:'2rem'}}>{t.icon || 'ðŸ“Œ'}</span>
+                                                <span style={{fontSize:'1.75rem', marginRight: '0.75rem'}}>{t.icon || '📍'}</span>
                                                 <div><h3 className="adm-card-title">{t.name}</h3><p className="adm-card-subtitle"><span className="adm-mono">{t.id}</span></p></div>
                                             </div>
                                             <div className="adm-card-actions">
@@ -150,14 +150,34 @@ const ManageTopics = ({ refreshTrigger }) => {
                         </div>
                         <div className="adm-field">
                             <label className="adm-label">Icon (Emoji)</label>
-                            <input value={formData.icon} onChange={e => setFormData({...formData, icon: e.target.value})} placeholder="e.g. ðŸƒ" className="adm-input" />
-                            <div className="adm-emoji-picker" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.6rem', padding: '0.6rem', background: 'var(--jp-bg-secondary)', borderRadius: '8px' }}>
-                                {['âš›ï¸', 'ðŸƒ', 'â˜•', 'ðŸŸ¨', 'ðŸ”·', 'ðŸŸ¢', 'ðŸ', 'ðŸ³', 'â˜¸ï¸', 'â˜ï¸', 'ðŸ—„ï¸', 'ðŸ“±', 'ðŸŒ', 'ðŸ§ª', 'ðŸ›¡ï¸', 'âš™ï¸', 'ðŸ¦€', 'ðŸŽ', 'ðŸ§', 'ðŸ”¥', 'ðŸš€', 'ðŸŽ¨'].map(e => (
+                            <input value={formData.icon} onChange={e => setFormData({...formData, icon: e.target.value})} placeholder="e.g. 🚀" className="adm-input" />
+                            <div className="adm-emoji-picker" style={{ 
+                                display: 'grid', 
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(40px, 1fr))', 
+                                gap: '0.5rem', 
+                                marginTop: '0.75rem', 
+                                padding: '0.75rem', 
+                                background: 'rgba(0,0,0,0.2)', 
+                                borderRadius: '12px' 
+                            }}>
+                                {['⚛️', '☕', '🐍', '🚀', '🐘', '🤖', '☁️', '🎨', '⚙️', '🛡️', '📊', '📱', '🌐', '🧪', '📦', '🏗️', '🦀', '🍎', '🐹', '🔥', '💧', '🍃'].map(e => (
                                     <button
                                         key={e}
                                         type="button"
                                         onClick={() => setFormData({...formData, icon: e})}
-                                        style={{ fontSize: '1.2rem', padding: '0.4rem', border: '1px solid var(--jp-border)', background: 'var(--jp-card-bg)', borderRadius: '6px', cursor: 'pointer' }}
+                                        className={`adm-emoji-btn ${formData.icon === e ? 'active' : ''}`}
+                                        style={{ 
+                                            fontSize: '1.25rem', 
+                                            aspectRatio: '1', 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            justifyContent: 'center',
+                                            border: '1px solid var(--jp-border)', 
+                                            background: 'var(--jp-card-bg)', 
+                                            borderRadius: '8px', 
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
                                         title="Click to select"
                                     >
                                         {e}
@@ -183,7 +203,7 @@ const ManageTopics = ({ refreshTrigger }) => {
                     <p className="adm-page-subtitle">Paste a JSON array of topic objects.</p>
                     <div className="adm-field">
                         <label className="adm-label">JSON Array</label>
-                        <textarea required value={batchJson} onChange={e => setBatchJson(e.target.value)} rows={8} placeholder={`[\n  { "id": "java", "name": "Java", "icon": "â˜•" },\n  ...\n]`} className="adm-input adm-textarea adm-json-textarea" />
+                        <textarea required value={batchJson} onChange={e => setBatchJson(e.target.value)} rows={8} placeholder={`[\n  { "id": "java", "name": "Java", "icon": "☕" },\n  ...\n]`} className="adm-input adm-textarea adm-json-textarea" />
                     </div>
                     <div className="adm-form-footer">
                         <button onClick={handleBatchUpload} className="adm-btn adm-btn-primary"><UploadCloud size={16} /> Upload Batch</button>
