@@ -2,403 +2,245 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-    Camera, Wallet, ArrowRight, Globe, Map, Briefcase,
-    Zap, Shield, Cpu, Code2, Sparkles, Star, Users, Database, Layout, Smartphone,
-    Code, Activity, Terminal, Hash, Layers, CheckCircle2, Rocket, PiggyBank, FileText
+    ArrowRight, Globe, Briefcase, Zap, Shield, Cpu, Code2, Sparkles,
+    Users, Database, Layout, Target, BookOpen, MessageCircle, Heart,
+    Coffee, FileText, CheckCircle2
 } from 'lucide-react';
 import { incrementVisitorCount } from '@/features/job-portal/services/analyticsService';
+import LandingNavbar from '@/components/layout/LandingNavbar';
 import './LandingPage.css';
 
-const FloatingSymbols = () => {
-    const symbols = [
-        { Icon: Cpu, top: '10%', left: '5%', size: 40, delay: 0 },
-        { Icon: Code, top: '20%', left: '85%', size: 30, delay: 2 },
-        { Icon: Globe, top: '70%', left: '10%', size: 50, delay: 4 },
-        { Icon: Zap, top: '80%', left: '90%', size: 35, delay: 1 },
-        { Icon: Terminal, top: '40%', left: '15%', size: 25, delay: 3 },
-        { Icon: Database, top: '60%', left: '80%', size: 45, delay: 5 },
-    ];
+/* ── Animation Presets ── */
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 40 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }
+});
 
-    return (
-        <div className="bg-symbols">
-            {symbols.map((s, i) => (
-                <motion.div
-                    key={i}
-                    className="floating-symbol"
-                    style={{ top: s.top, left: s.left }}
-                    animate={{
-                        y: [0, -20, 0],
-                        rotate: [0, 10, -10, 0],
-                        opacity: [0.1, 0.2, 0.1]
-                    }}
-                    transition={{
-                        duration: 6 + i,
-                        repeat: Infinity,
-                        delay: s.delay,
-                        ease: "easeInOut"
-                    }}
-                >
-                    <s.Icon size={s.size} />
-                </motion.div>
-            ))}
-        </div>
-    );
-};
+const fadeLeft = (delay = 0) => ({
+    initial: { opacity: 0, x: 40 },
+    whileInView: { opacity: 1, x: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }
+});
 
-const CodePulse = () => (
-    <div className="code-pulse-wrap">
-        {[...Array(3)].map((_, i) => (
-            <motion.div
-                key={i}
-                className="pulse-ring"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 2, opacity: [0, 0.1, 0] }}
-                transition={{ duration: 4, repeat: Infinity, delay: i * 1.3 }}
-            />
-        ))}
-        <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        >
-            <Code2 size={120} strokeWidth={0.5} className="pulse-icon" />
-        </motion.div>
-    </div>
-);
-
-const LandingPage = () => {
-    const handleMouseMove = (e) => {
-        const cards = document.getElementsByClassName('app-card');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
-        }
-    };
+/* ============================================================
+   MAIN COMPONENT
+   ============================================================ */
+const LandingPage = ({ theme, toggleTheme }) => {
 
     useEffect(() => {
-        const metadata = {
+        incrementVisitorCount({
             page: 'Home Landing Page',
             userAgent: navigator.userAgent,
             timestamp: new Date().toISOString()
-        };
-        incrementVisitorCount(metadata).catch(err => console.error("Landing page tracking failed", err));
+        }).catch(() => {});
     }, []);
+
     return (
-        <div className="landing-wrapper" onMouseMove={handleMouseMove}>
-            <FloatingSymbols />
-            <div className="hero-spotlight" />
-            <CodePulse />
+        <div className="landing-wrapper">
+            {/* Background Blobs for Crope aesthetic */}
+            <div className="bg-blob bg-blob-1" />
+            <div className="bg-blob bg-blob-2" />
+            <div className="bg-blob bg-blob-3" />
 
-            {/* ── HERO SECTION ── */}
-            <div className="container" style={{
-                minHeight: '65vh',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
-                padding: '3rem 1rem',
-                position: 'relative',
-                zIndex: 2
-            }}>
-                <motion.div
-                    initial={{ opacity: 0, y: -40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                >
-                    <motion.div
-                        className="hero-badge"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                    >
-                        <Sparkles size={16} className="text-indigo-400" />
-                        Next Generation Digital Suite
-                    </motion.div>
-                    <motion.h1
-                        className="lp-hero-h1"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.2 }}
-                    >
-                        Build Your Future with <br />
-                        <span className="text-gradient">Chaitanya Tech World</span>
-                    </motion.h1>
-                    <motion.p
-                        className="lp-hero-desc"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.35 }}
-                    >
-                        Discover a curated collection of powerful web applications designed to solve real-world problems with elegance and speed.
-                    </motion.p>
-                    <div className="lp-hero-btns">
-                        <a href="#apps-grid" className="btn btn-primary lp-hero-btn">Explore Apps</a>
-                        <Link to="/contact" className="btn lp-btn-secondary lp-hero-btn">Let's Talk</Link>
-                    </div>
-                </motion.div>
-            </div>
+            <LandingNavbar theme={theme} onToggleTheme={toggleTheme} />
 
-            {/* ── TRUST BAR ── */}
-            <div className="trust-bar">
-                <div className="container">
-                    <p className="trust-text">POWERING DIGITAL INNOVATION FOR PROFESSIONALS WORLDWIDE</p>
-                    <div className="tech-marquee">
-                        {['React', 'Next.js', 'Vite', 'Node.js', 'Tailwind', 'Framer Motion', 'MongoDB'].map((tech, i) => (
-                            <div key={i} className="tech-tag">{tech}</div>
-                        ))}
-                    </div>
+            {/* ═══════════════════════════════════════════
+                §1 — HERO (Crope Style)
+               ═══════════════════════════════════════════ */}
+            <section id="hero" className="crope-hero crope-container">
+                <div className="crope-hero-bg-anim">
+                    <div className="hero-blob-mobile" />
                 </div>
-            </div>
-
-            {/* ── APPS GRID SECTION ── */}
-            <section id="apps-grid" className="container apps-grid-section">
-                <div className="landing-section-header">
-                    <span className="landing-section-badge">Our Ecosystem</span>
-                    <h2 className="landing-section-title">One Platform, Infinite Possibilities</h2>
-                </div>
-
-                <div className="lp-apps-grid">
-                    {/* App items mapped here for cleaner code */}
-                    {[
-
-                        {
-                            title: 'AI Resume Builder',
-                            desc: 'Build ATS-optimised, professional resumes in minutes with 8 stunning templates.',
-                            icon: FileText,
-                            color: '#7c3aed',
-                            path: '/ai-resume-builder',
-                            delay: 0.1,
-                            featured: true
-                        },
-                        {
-                            title: 'Job Portal',
-                            desc: 'Premium job board with AI-driven matching and career growth tools.',
-                            icon: Briefcase,
-                            color: '#3b82f6',
-                            path: '/job-portal',
-                            delay: 0.2,
-                            featured: true
-                        },
-                        {
-                            title: 'Our Services',
-                            desc: 'Premium digital solutions — from high-end restorations to bespoke web development.',
-                            icon: Sparkles,
-                            color: '#8b5cf6',
-                            path: '/services',
-                            delay: 0.3,
-                            featured: true
-                        }
-                    ].map((app, i) => (
-                        <Link to={app.path} key={i}>
-                            <motion.div
-                                whileHover={{ scale: 1.02, y: -8 }}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: app.delay }}
-                                className={`app-card ${app.featured ? 'featured' : ''}`}
-                                style={{ '--app-color': app.color, position: 'relative' }}
-                            >
-                                <div className="app-card-header">
-                                    <div className="app-icon-wrap">
-                                        <app.icon size={24} />
-                                    </div>
-                                    <div className="app-header-text">
-                                        <h3 className="app-title">{app.title}</h3>
-                                        {app.badge && <span className="app-badge-pill">{app.badge}</span>}
-                                    </div>
-                                </div>
-                                <div className="app-card-body">
-                                    <p className="app-desc">{app.desc}</p>
-                                </div>
-                                <div className="app-link">
-                                    Launch App <ArrowRight size={18} />
-                                </div>
-                            </motion.div>
-                        </Link>
-                    ))}
-                </div>
-            </section>
-
-            {/* ── VISION SECTION ── */}
-            <section className="vision-section">
-                <div className="container vision-inner">
-                    <div className="vision-content">
-                        <span className="landing-section-badge purple">Our Philosophy</span>
-                        <h2 className="landing-section-title white">Built for the modern <br /><span>High-Performance</span> web</h2>
-                        <p className="vision-text">
-                            We don't just build apps; we craft experiences. Every pixel, every interaction is engineered for maximum impact and flawless execution.
+                <div className="crope-hero-grid">
+                    <motion.div {...fadeUp()} className="crope-hero-content">
+                        <div className="crope-section-tag">Digital Excellence</div>
+                        <h1 className="crope-title">
+                            Creative<br/>
+                            <span className="shine-text">Never Ends</span>
+                        </h1>
+                        <p className="crope-subtitle">
+                            Welcome to Chaitanya Tech World. A premium suite of web applications designed to solve real-world problems with elegance, speed, and cutting-edge technology.
                         </p>
-                        <div className="vision-stats">
-                            <div className="v-stat">
-                                <h3>99%</h3>
-                                <p>Efficiency</p>
-                            </div>
-                            <div className="v-stat">
-                                <h3>24/7</h3>
-                                <p>Availability</p>
-                            </div>
-                            <div className="v-stat">
-                                <h3>50ms</h3>
-                                <p>Response Time</p>
-                            </div>
+                        <div className="crope-hero-actions">
+                            <a href="#apps-grid" className="crope-btn crope-btn-primary">
+                                Explore Ecosystem <ArrowRight size={18} />
+                            </a>
+                            <Link to="/contact" className="crope-btn crope-btn-outline">
+                                Contact Us
+                            </Link>
                         </div>
-                    </div>
-                    <motion.div
-                        className="vision-visual"
-                        initial={{ opacity: 0, rotate: -10 }}
-                        whileInView={{ opacity: 1, rotate: 0 }}
-                    >
-                        <Cpu size={200} strokeWidth={0.5} className="v-icon-glow" />
+                    </motion.div>
+
+                    <motion.div {...fadeLeft(0.2)} className="crope-hero-visual">
+                        <img src="/our-services-hero-banner.jpg" alt="Creative Studio" className="hero-main-img" />
+                        
+                        {/* Floating elements typical of Crope */}
+                        <motion.div 
+                            animate={{ y: [0, -15, 0] }} 
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            className="hero-floating-element hero-float-1"
+                        >
+                            <div className="crope-icon-btn"><Zap size={24} /></div>
+                            <div>
+                                <h4 style={{ fontWeight: 800 }}>Lightning Fast</h4>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Zero layout shift</span>
+                            </div>
+                        </motion.div>
+
+                        <motion.div 
+                            animate={{ y: [0, 15, 0] }} 
+                            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                            className="hero-floating-element hero-float-2"
+                        >
+                            <div className="crope-icon-btn"><Layout size={24} /></div>
+                            <div>
+                                <h4 style={{ fontWeight: 800 }}>Pixel Perfect</h4>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Modern Design</span>
+                            </div>
+                        </motion.div>
                     </motion.div>
                 </div>
             </section>
 
-            {/* ── TECHNOLOGY STACK ── */}
-            <section className="tech-stack-section">
-                <div className="container">
-                    <div className="landing-section-header center">
-                        <span className="landing-section-badge">The Engine Room</span>
-                        <h2 className="landing-section-title">Industry Standard Tech</h2>
-                    </div>
-                    <div className="tech-grid">
-                        {[
-                            { icon: Code2, title: 'Clean Architecture', desc: 'Maintainable, scalable codebase following SOLID principles.' },
-                            { icon: Zap, title: 'Lightning Fast', desc: 'Blazing performance with zero layout shift and rapid TTFB.' },
-                            { icon: Shield, title: 'Security First', desc: 'Robust protection and data privacy at the core of every app.' },
-                            { icon: Layout, title: 'Adaptive Design', desc: 'Seamlessly floating between mobile, tablet and ultra-wide screens.' }
-                        ].map((stat, i) => (
-                            <motion.div
-                                key={i}
-                                className="tech-item"
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: i * 0.1 }}
-                                viewport={{ once: true }}
-                            >
-                                <div className="tech-icon"><stat.icon size={23} /></div>
-                                <div>
-                                    <h6>{stat.title}</h6>
-                                    <p>{stat.desc}</p>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── SERVICE / VALUE SECTION ── */}
-            <section className="container" style={{ padding: '2.5rem 1rem' }}>
-                <div className="landing-section-header center">
-                    <span className="landing-section-badge">Sustainable Development</span>
-                    <h2 className="landing-section-title">High Efficiency. <span>Low Cost.</span></h2>
-                    <p style={{
-                        color: 'var(--text-muted)',
-                        maxWidth: '700px',
-                        margin: '1.5rem auto 0',
-                        fontSize: '1.1rem'
-                    }}>
-                        I bridge the gap between premium performance and affordable development.
-                        Get a fully structured, professional website without the enterprise markup.
-                    </p>
+            {/* ═══════════════════════════════════════════
+                §2 — ECOSYSTEM / SERVICES
+               ═══════════════════════════════════════════ */}
+            <section id="apps-grid" className="crope-services crope-container">
+                <div style={{ textAlign: 'center' }}>
+                    <div className="crope-section-tag">Our Ecosystem</div>
+                    <h2 className="crope-h2">Digital Products</h2>
                 </div>
 
-                <div className="service-grid">
+                <div className="crope-service-grid">
                     {[
-                        {
-                            title: "Full-Stack Structure",
-                            desc: "Complete architectural integrity from robust backends to pixel-perfect frontends.",
-                            price: "Value Pack",
-                            icon: Rocket,
-                            features: ["Clean Folders", "DB Integration", "State Mgmt"]
-                        },
-                        {
-                            title: "Ultra Efficiency",
-                            desc: "Lightweight code for max speed, SEO, and zero layout shift.",
-                            price: "Performance First",
-                            icon: Zap,
-                            features: ["100/100 Lighthouse", "Optimized Assets", "Fully Responsive"]
-                        },
-                        {
-                            title: "Ethical Pricing",
-                            desc: "Top-tier skills at honest rates. Pay for quality, not the brand.",
-                            price: "Affordable",
-                            icon: PiggyBank,
-                            features: ["Zero Extra Fee", "Scalable Logic", "Future Proof"]
-                        }
-                    ].map((svc, i) => (
-                        <motion.div
-                            key={i}
-                            className="service-card"
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.15 }}
-                            viewport={{ once: true }}
-                        >
-                            <span className="service-price-tag">{svc.price}</span>
-                            <div className="service-card-header">
-                                <div className="app-icon-wrap" style={{ '--app-color': 'var(--color-primary)' }}>
-                                    <svc.icon size={24} />
+                        { title: 'AI Resume Builder', desc: 'Craft ATS-friendly, professional resumes in minutes using our intelligent builder and premium templates.', icon: FileText, path: '/ai-resume-builder' },
+                        { title: 'Job Portal', desc: 'A sophisticated platform connecting top talent with industry-leading opportunities, featuring advanced filtering.', icon: Briefcase, path: '/job-portal' },
+                        { title: 'Our Services', desc: 'Bespoke web development and high-end digital solutions tailored to elevate your business presence.', icon: Sparkles, path: '/services' }
+                    ].map((app, i) => (
+                        <motion.div key={i} {...fadeUp(i * 0.1)} className="crope-service-card">
+                            <div className="crope-service-header">
+                                <div className="crope-service-icon">
+                                    <app.icon size={32} />
                                 </div>
-                                <h3>{svc.title}</h3>
+                                <h3>{app.title}</h3>
                             </div>
-                            <div className="service-card-body">
-                                <p className="service-desc">{svc.desc}</p>
-                                <div className="service-features-list">
-                                    {svc.features.map((f, fi) => (
-                                        <div key={fi} className="service-feature-item">
-                                            <CheckCircle2 size={14} />
-                                            <span>{f}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <Link to="/contact" className="btn lp-btn-secondary" style={{ width: '100%', marginTop: 'auto', textAlign: 'center', justifyContent: 'center' }}>Hire Me</Link>
+                            <p>{app.desc}</p>
+                            <Link to={app.path} className="crope-link-arrow">
+                                Launch App <ArrowRight size={18} />
+                            </Link>
                         </motion.div>
                     ))}
                 </div>
+            </section>
 
-                <motion.div
-                    className="efficiency-highlight"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                >
-                    <div className="eff-stat">
-                        <h4>10x</h4>
-                        <p>Better Value</p>
+            {/* ═══════════════════════════════════════════
+                §4 — PREPARATION HUB (Portfolio Style)
+               ═══════════════════════════════════════════ */}
+            <section id="prep-hub" className="crope-portfolio">
+                <div className="crope-container">
+                    <div style={{ textAlign: 'center' }}>
+                        <div className="crope-section-tag">Career Accelerator</div>
+                        <h2 className="crope-h2">Preparation Hub</h2>
+                        <p className="crope-subtitle" style={{ margin: '0 auto 3rem' }}>
+                            Master your technical interviews with our comprehensive suite of preparation tools — from curated questions to timed mock tests.
+                        </p>
                     </div>
-                    <div style={{ width: '1px', height: '40px', background: 'var(--border-light)' }} />
-                    <div className="eff-stat">
-                        <h4>Zero</h4>
-                        <p>Bloated Code</p>
+
+                    <div className="crope-portfolio-grid">
+                        {[
+                            { title: 'Mock Tests', desc: 'Simulate real exam conditions with timed MCQ tests.', img: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800', path: '/job-portal/prep/tests' },
+                            { title: 'Interview Questions', desc: 'Curated library of tech questions & answers.', img: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800', path: '/job-portal/prep/questions' },
+                            { title: 'Learning Resources', desc: 'Hand-picked articles, tutorials, and cheat sheets.', img: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80&w=800', path: '/job-portal/prep/resources' }
+                        ].map((item, i) => (
+                            <motion.div key={i} {...fadeUp(i * 0.2)} className="crope-port-card">
+                                <div className="crope-port-img-wrap">
+                                    <img src={item.img} alt={item.title} className="crope-port-img" />
+                                    <div className="crope-port-overlay">
+                                        <div className="crope-port-content">
+                                            <h3>{item.title}</h3>
+                                            <p>{item.desc}</p>
+                                            <Link to={item.path} className="crope-link-arrow" style={{ color: '#fff', marginTop: '1rem' }}>
+                                                Explore <ArrowRight size={18} />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
                     </div>
-                    <div style={{ width: '1px', height: '40px', background: 'var(--border-light)' }} />
-                    <div className="eff-stat">
-                        <h4>100%</h4>
-                        <p>Full Transparency</p>
+                    
+                    <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+                        <Link to="/job-portal/prep" className="crope-btn crope-btn-primary" style={{ padding: '1rem 3rem' }}>
+                            View Full Prep Hub <ArrowRight size={20} />
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════
+                §NEW — CORE FEATURES
+               ═══════════════════════════════════════════ */}
+            <section className="crope-features crope-container">
+                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                    <div className="crope-section-tag">Why Choose Us</div>
+                    <h2 className="crope-h2">Core Features</h2>
+                </div>
+                <div className="crope-features-grid">
+                    {[
+                        { title: 'Lightning Fast', desc: 'Optimized for speed with zero layout shift and instantaneous load times.', icon: Zap },
+                        { title: 'Enterprise Security', desc: 'Bank-grade encryption and secure authentication protecting your data.', icon: Shield },
+                        { title: 'Global Infrastructure', desc: 'Distributed servers ensure high availability and low latency everywhere.', icon: Globe },
+                        { title: 'Data Analytics', desc: 'Advanced tracking and reporting capabilities to monitor your progress.', icon: Database }
+                    ].map((feature, i) => (
+                        <motion.div key={i} {...fadeUp(i * 0.1)} className="crope-feature-card">
+                            <div className="crope-feature-icon"><feature.icon size={28} /></div>
+                            <div>
+                                <h3>{feature.title}</h3>
+                                <p>{feature.desc}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ═══════════════════════════════════════════
+                §5 — SUPPORT ME (Contact Style)
+               ═══════════════════════════════════════════ */}
+            <section id="support-me" className="crope-contact crope-container">
+                <motion.div {...fadeUp()} className="crope-contact-box">
+                    <div className="crope-contact-content">
+                        <h2>Help Me Build<br/>& Grow</h2>
+                        <p>
+                            As an independent developer, I build these tools with passion — no ads, no trackers, just pure value. Your support fuels continuous development and keeps essential tools free for the community.
+                        </p>
+                        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                            <Link to="/support-me" className="crope-btn crope-btn-white">
+                                <Heart size={18} fill="currentColor" /> Support My Work
+                            </Link>
+                            <Link to="/contact" className="crope-btn crope-btn-outline" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)' }}>
+                                Let's Connect
+                            </Link>
+                        </div>
+                    </div>
+                    <div className="crope-contact-visual" style={{ position: 'relative', zIndex: 2 }}>
+                        <img src="/support_community_v2.png" alt="Support" style={{ width: '100%', maxWidth: '350px', borderRadius: '24px', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))' }} />
                     </div>
                 </motion.div>
             </section>
 
-            {/* ── CTA ── */}
-            <section className="container final-cta-section">
-                <motion.div
-                    className="final-cta"
-                    whileHover={{ scale: 1.01 }}
-                >
-                    <div className="cta-left">
-                        <Rocket size={120} className="cta-icon-float" />
-                        <h2>Ready for the next experience?</h2>
-                        <p>Join the thousands already using Chaitanya Tech World today.</p>
-                    </div>
-                    <div className="cta-right">
-                        <Link to="/contact" className="btn btn-primary lp-hero-btn">Contact Developer</Link>
-                    </div>
-                </motion.div>
-            </section>
+            {/* ═══════════════════════════════════════════
+                §6 — MARQUEE FOOTER 
+               ═══════════════════════════════════════════ */}
+            <div className="crope-marquee">
+                <div className="crope-marquee-inner">
+                    <span className="crope-marquee-text">INNOVATION • CREATIVITY • EXCELLENCE • PERFORMANCE • </span>
+                    <span className="crope-marquee-text">INNOVATION • CREATIVITY • EXCELLENCE • PERFORMANCE • </span>
+                </div>
+            </div>
+            
         </div>
     );
 };

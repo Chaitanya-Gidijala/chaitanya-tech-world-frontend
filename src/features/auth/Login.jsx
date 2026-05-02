@@ -24,7 +24,7 @@ const LoginPage = () => {
             localStorage.setItem('jp_admin_token', token);
             // Load profile then navigate
             loadUserProfile().then(() => {
-                navigate('/profile', { replace: true });
+                navigate('/', { replace: true });
             });
             return;
         }
@@ -33,7 +33,7 @@ const LoginPage = () => {
             if (isAdmin()) {
                 navigate('/AdminPortal/admin/dashboard', { replace: true });
             } else {
-                navigate('/profile', { replace: true });
+                navigate('/', { replace: true });
             }
         }
     }, [navigate]);
@@ -61,7 +61,7 @@ const LoginPage = () => {
             if (isAdmin()) {
                 navigate('/AdminPortal/admin/dashboard');
             } else {
-                navigate('/profile');
+                navigate('/');
             }
         } catch (err) {
             setError(err.message || 'Invalid login credentials.');

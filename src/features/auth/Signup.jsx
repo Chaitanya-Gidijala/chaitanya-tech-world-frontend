@@ -22,7 +22,7 @@ const SignupPage = () => {
         if (token) {
             localStorage.setItem('jp_admin_token', token);
             loadUserProfile().then(() => {
-                navigate('/profile', { replace: true });
+                navigate('/', { replace: true });
             });
             return;
         }
@@ -31,7 +31,7 @@ const SignupPage = () => {
             if (isAdmin()) {
                 navigate('/AdminPortal/admin/dashboard', { replace: true });
             } else {
-                navigate('/profile', { replace: true });
+                navigate('/', { replace: true });
             }
         }
     }, [navigate]);

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     ChevronDown,
@@ -57,15 +58,10 @@ const ResourceDetailBody = ({ resource }) => {
     return (
         <div className="prep-detail-stack">
             <div className="prep-detail-hero">
-                <div className="prep-collection-item-head">
-                    <div className="prep-collection-icon resources">
-                        <ResourceIcon size={18} />
-                    </div>
                     <div>
                         <p className="prep-dashboard-kicker">Resource overview</p>
                         <h2 className="prep-detail-title">{resource.title}</h2>
                     </div>
-                </div>
 
                 <div className="prep-chip-row">
                     <span className="prep-data-badge">{(resource.type || 'link').toUpperCase()}</span>
@@ -125,17 +121,17 @@ const ResourceDetailBody = ({ resource }) => {
 };
 
 const ResourcesPage = () => {
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTopic, setSelectedTopic] = useState('All');
     const [typeFilter, setTypeFilter] = useState('All');
-    const [resources, setResources] = useState([]);
-    const [topics, setTopics] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [resources, setResources] = useState(PREP_RESOURCES.slice(0, 10));
+    const [topics, setTopics] = useState(PREP_TOPICS);
+    const [isFetching, setIsFetching] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [totalResources, setTotalResources] = useState(0);
     const [activeResource, setActiveResource] = useState(null);
-    const [mobileModalOpen, setMobileModalOpen] = useState(false);
 
     const pageSize = 10;
 
@@ -152,7 +148,7 @@ const ResourcesPage = () => {
 
     useEffect(() => {
         const fetchResources = async () => {
-            setLoading(true);
+            setIsFetching(true);
             try {
                 const [resourcesResponse, topicsResponse] = await Promise.all([
                     getAllResources(currentPage, pageSize, selectedTopic === 'All' ? '' : selectedTopic, typeFilter),
@@ -181,7 +177,7 @@ const ResourcesPage = () => {
                 setTotalPages(fallbackResources.length > 0 ? 1 : 0);
                 setTotalResources(fallbackResources.length);
             } finally {
-                setLoading(false);
+                setIsFetching(false);
             }
         };
 
@@ -215,7 +211,7 @@ const ResourcesPage = () => {
         setActiveResource(resource);
 
         if (window.innerWidth < 768) {
-            setMobileModalOpen(true);
+            navigate(`/job-portal/prep/view/resource/${resource.id}`);
         }
     };
 
@@ -224,9 +220,7 @@ const ResourcesPage = () => {
         setCurrentPage(0);
     };
 
-    if (loading && resources.length === 0) {
-        return <div className="iq-shell"><div className="iq-spinner" /></div>;
-    }
+    // Instant loading mode enabled. No blocking spinner.
 
     return (
         <div className="iq-shell">
@@ -310,6 +304,12 @@ const ResourcesPage = () => {
                         </select>
                         <ChevronDown className="iq-select-chevron" size={14} />
                     </div>
+                    {isFetching && (
+                        <div className="prep-fetching-indicator">
+                            <div className="iq-spinner-small" />
+                            <span>Updating...</span>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -435,32 +435,6 @@ const ResourcesPage = () => {
                 )}
             </main>
 
-            <AnimatePresence>
-                {mobileModalOpen && activeResource && (
-                    <>
-                        <div className="iq-modal-overlay" onClick={() => setMobileModalOpen(false)} style={{ display: 'block' }} />
-                        <motion.div
-                            className="iq-modal"
-                            initial={{ y: '100%' }}
-                            animate={{ y: 0 }}
-                            exit={{ y: '100%' }}
-                            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-                        >
-                            <div className="iq-modal-header">
-                                <div>
-                                    <p className="prep-dashboard-kicker">Resource overview</p>
-                                    <h2 className="prep-detail-title" style={{ fontSize: '1.1rem' }}>{activeResource.title}</h2>
-                                </div>
-                                <button type="button" className="iq-modal-close" onClick={() => setMobileModalOpen(false)}>
-                                    <X size={16} />
-                                </button>
-                            </div>
-
-                            <ResourceDetailBody resource={activeResource} />
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
         </div>
     );
 };

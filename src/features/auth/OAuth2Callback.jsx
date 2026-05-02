@@ -27,7 +27,7 @@ const OAuth2Callback = () => {
                     if (user && (user.roles?.includes('ROLE_ADMIN') || user.roles?.includes('ADMIN'))) {
                         navigate('/AdminPortal/admin/dashboard', { replace: true });
                     } else {
-                        navigate('/profile', { replace: true });
+                        navigate('/', { replace: true });
                     }
                 } else {
                     console.error('No token found in OAuth2 callback URL');

@@ -16,6 +16,7 @@ const MCQExamPage = ({ test }) => {
     const [lastViolation, setLastViolation] = useState(null);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [showFinishConfirm, setShowFinishConfirm] = useState(false);
+    const [mobileNavigatorOpen, setMobileNavigatorOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -201,11 +202,18 @@ const MCQExamPage = ({ test }) => {
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: timeLeft < 60 ? 'var(--iq-hard-bg)' : 'var(--iq-surface-2)', color: timeLeft < 60 ? 'var(--iq-hard)' : 'var(--iq-text)', padding: '0.45rem 0.75rem', borderRadius: '8px', fontWeight: 800, fontSize: isMobile ? '0.9rem' : '0.85rem', fontFamily: 'monospace' }}>
                         <Clock size={16} /> {formatTime(timeLeft)}
                     </div>
-                    {!isMobile && (
+                    {isMobile ? (
+                        <button 
+                            onClick={() => setMobileNavigatorOpen(!mobileNavigatorOpen)}
+                            style={{ background: 'var(--iq-surface-2)', color: 'var(--iq-text)', border: 'none', width: '38px', height: '38px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                        >
+                            {mobileNavigatorOpen ? <X size={20} /> : <Menu size={20} />}
+                        </button>
+                    ) : (
                         <button onClick={() => setShowFinishConfirm(true)} style={{ background: 'var(--iq-easy)', color: 'white', border: 'none', padding: '0.45rem 1rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                             Submit <CheckCircle size={14} />
                         </button>
@@ -218,31 +226,75 @@ const MCQExamPage = ({ test }) => {
             </div>
 
             <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-                {!isMobile && (
-                    <aside style={{ width: '220px', borderRight: '1px solid var(--iq-border)', background: 'var(--iq-surface)', padding: '1rem', display: 'flex', flexDirection: 'column' }}>
-                        <p style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--iq-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>Navigator</p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem', overflowY: 'auto', paddingRight: '4px' }}>
-                            {test.questions.map((_, idx) => (
-                                <button
-                                    key={idx}
-                                    onClick={() => setCurrentIndex(idx)}
-                                    style={{
-                                        height: '32px',
-                                        borderRadius: '4px',
-                                        border: '1px solid var(--iq-border)',
-                                        background: currentIndex === idx ? 'var(--iq-primary)' : marked.includes(idx) ? 'var(--iq-mid-bg)' : answers[idx] ? 'var(--iq-easy-bg)' : 'transparent',
-                                        color: currentIndex === idx ? 'white' : marked.includes(idx) ? 'var(--iq-mid)' : answers[idx] ? 'var(--iq-easy)' : 'var(--iq-text-muted)',
-                                        fontWeight: 700,
-                                        fontSize: '0.75rem',
-                                        cursor: 'pointer'
+                <AnimatePresence>
+                    {(mobileNavigatorOpen || !isMobile) && (
+                        <motion.aside 
+                            initial={isMobile ? { x: '-100%' } : false}
+                            animate={{ x: 0 }}
+                            exit={{ x: '-100%' }}
+                            transition={{ type: 'tween', duration: 0.3 }}
+                            style={{ 
+                                width: isMobile ? '260px' : '220px', 
+                                borderRight: '1px solid var(--iq-border)', 
+                                background: 'var(--iq-surface)', 
+                                padding: '1.25rem 1rem', 
+                                display: 'flex', 
+                                flexDirection: 'column',
+                                position: isMobile ? 'absolute' : 'static',
+                                top: isMobile ? '80px' : 'auto',
+                                bottom: 0,
+                                zIndex: 100,
+                                boxShadow: isMobile ? '10px 0 30px rgba(0,0,0,0.1)' : 'none'
+                            }}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                                <p style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--iq-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Question Navigator</p>
+                                {isMobile && (
+                                    <div style={{ fontSize: '0.7rem', color: 'var(--iq-primary)', fontWeight: 700 }}>
+                                        {Object.keys(answers).length} / {test.questions.length}
+                                    </div>
+                                )}
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', overflowY: 'auto', paddingRight: '4px' }}>
+                                {test.questions.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => {
+                                            setCurrentIndex(idx);
+                                            if (isMobile) setMobileNavigatorOpen(false);
+                                        }}
+                                        style={{
+                                            height: '36px',
+                                            borderRadius: '6px',
+                                            border: '1px solid',
+                                            borderColor: currentIndex === idx ? 'var(--iq-primary)' : 'var(--iq-border)',
+                                            background: currentIndex === idx ? 'var(--iq-primary)' : marked.includes(idx) ? 'var(--iq-mid-bg)' : answers[idx] ? 'var(--iq-easy-bg)' : 'var(--iq-surface-2)',
+                                            color: currentIndex === idx ? 'white' : marked.includes(idx) ? 'var(--iq-mid)' : answers[idx] ? 'var(--iq-easy)' : 'var(--iq-text-muted)',
+                                            fontWeight: 700,
+                                            fontSize: '0.8rem',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                    >
+                                        {idx + 1}
+                                    </button>
+                                ))}
+                            </div>
+                            
+                            {isMobile && (
+                                <button 
+                                    onClick={() => {
+                                        setShowFinishConfirm(true);
+                                        setMobileNavigatorOpen(false);
                                     }}
+                                    style={{ marginTop: 'auto', background: 'var(--iq-easy)', color: 'white', border: 'none', padding: '0.85rem', borderRadius: '10px', fontSize: '0.9rem', fontWeight: 850, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
                                 >
-                                    {idx + 1}
+                                    Finish Assessment <CheckCircle size={18} />
                                 </button>
-                            ))}
-                        </div>
-                    </aside>
-                )}
+                            )}
+                        </motion.aside>
+                    )}
+                </AnimatePresence>
 
                 <main style={{ flex: 1, padding: isMobile ? '1.25rem' : '2rem', overflowY: 'auto', background: 'var(--iq-bg)', scrollbarWidth: 'thin' }}>
                     <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', minHeight: isMobile ? 'auto' : '100%' }}>

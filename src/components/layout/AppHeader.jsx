@@ -68,9 +68,11 @@ const AppHeader = ({ theme, onToggleTheme }) => {
 
                     {/* LEFT: Consistent Brand Heading */}
                     <div className="header-left">
-                        <h1 className="brand-heading">
-                            Chaitanya Tech World
-                        </h1>
+                        <Link to="/" className="brand-link" style={{ textDecoration: 'none' }}>
+                            <h1 className="brand-heading">
+                                Chaitanya Tech World
+                            </h1>
+                        </Link>
                     </div>
 
 
@@ -138,14 +140,6 @@ const AppHeader = ({ theme, onToggleTheme }) => {
                                         </div>
                                         <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
                                     </button>
-                                    <Link
-                                        to="/support-me"
-                                        className={`side-nav-item ${location.pathname === '/support-me' ? 'active' : ''}`}
-                                        onClick={closeMobileMenu}
-                                    >
-                                        <div className="item-icon-new"><Heart size={17} /></div>
-                                        <span>Support Me</span>
-                                    </Link>
                                     <Link
                                         to="/contact"
                                         className={`side-nav-item ${location.pathname === '/contact' ? 'active' : ''}`}

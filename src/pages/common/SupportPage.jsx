@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { 
     Heart, Coffee, Shield, Sparkles, Rocket, Users, 
     CheckCircle2, ArrowRight, Star, Coins, Zap, User, 
-    Mail, Gift, RefreshCw 
+    Mail, Gift, RefreshCw, ShieldCheck, Lock
 } from 'lucide-react';
 import { isAuthenticated, getCurrentUser } from '../../features/job-portal/services/authService';
 import { useNavigate } from 'react-router-dom';
@@ -268,8 +268,20 @@ const SupportPage = () => {
                             )}
                         </button>
 
-                        <div className="sp-secure-badge">
-                            <Shield size={12} /> Secure Payment
+                        <div className="sp-secure-badge-row">
+                            <div className="sp-secure-badge">
+                                <ShieldCheck size={14} /> Secure Payment
+                            </div>
+                            <div className="sp-secure-badge">
+                                <Lock size={12} /> SSL Encrypted
+                            </div>
+                        </div>
+
+                        <div className="sp-trust-logos">
+                            <div className="trust-item">
+                                <img src="https://www.svgrepo.com/show/361327/razorpay.svg" alt="Razorpay" />
+                                <span>Secured by Razorpay</span>
+                            </div>
                         </div>
                     </motion.div>
 
@@ -344,6 +356,25 @@ const SupportPage = () => {
                                     <li><Sparkles size={16} /> Real-time Collaborative Coding Tools</li>
                                     <li><Rocket size={16} /> Global Career Guidance Network</li>
                                 </ul>
+                            </div>
+                        </div>
+                    </motion.div>
+                </section>
+
+                <section className="sp-security-info-v4" style={{ marginBottom: '4rem' }}>
+                    <motion.div {...fadeInUp} className="sp-glass-panel security-notice">
+                        <div className="notice-icon"><Shield size={32} /></div>
+                        <div className="notice-content">
+                            <h4>Bank-Grade Security</h4>
+                            <p>
+                                Your payment information is never stored on our servers. All transactions are processed through 
+                                <strong> Razorpay</strong>, a leading secure payment gateway with 128-bit SSL encryption. 
+                                We prioritize your financial security above all else.
+                            </p>
+                            <div className="notice-features">
+                                <span><Lock size={14} /> Encrypted Transmission</span>
+                                <span><ShieldCheck size={14} /> Fraud Detection</span>
+                                <span><CheckCircle2 size={14} /> Secured by Razorpay</span>
                             </div>
                         </div>
                     </motion.div>

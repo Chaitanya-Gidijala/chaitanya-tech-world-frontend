@@ -7,6 +7,7 @@ import InterviewQuestionsPage from './components/prep/InterviewQuestionsPage';
 import ResourcesPage from './components/prep/ResourcesPage';
 import MCQExamPage from './components/prep/MCQExamPage';
 import TestsPage from './components/prep/TestsPage';
+import PrepDetailView from './components/prep/PrepDetailView';
 import { PREP_TESTS } from './data/prepData';
 import { getQuizById } from './services/prepService';
 import './styles/job-portal.css';
@@ -52,6 +53,8 @@ const JobPortalApp = () => {
         if (type === 'questions') navigate('/job-portal/prep/questions');
         if (type === 'resources-all') navigate('/job-portal/prep/resources');
         if (type === 'tests-all') navigate('/job-portal/prep/tests');
+        if (type === 'view-question') navigate(`/job-portal/prep/view/question/${data.id}`);
+        if (type === 'view-resource') navigate(`/job-portal/prep/view/resource/${data.id}`);
         if (type === 'mcq') {
             // Open exam in a new tab
             window.open(`/job-portal/prep/exam/${data.id}`, '_blank');
@@ -76,6 +79,7 @@ const JobPortalApp = () => {
                     <Route path="/prep/questions" element={<InterviewQuestionsPage />} />
                     <Route path="/prep/resources" element={<ResourcesPage />} />
                     <Route path="/prep/tests" element={<TestsPage onNavigate={handleHubNavigate} />} />
+                    <Route path="/prep/view/:type/:id" element={<PrepDetailView />} />
                 </Routes>
             </div>
         </ToastProvider>

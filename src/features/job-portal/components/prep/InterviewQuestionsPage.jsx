@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, ChevronDown, ChevronLeft, ChevronRight,
@@ -218,6 +219,7 @@ const GridCard = ({ q, onClick, index, searchTerm }) => (
 ──────────────────────────────────────────────── */
 const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => {
     const [isRevealed, setIsRevealed] = useState(false);
+    const [showShareToast, setShowShareToast] = useState(false);
 
     // Reset reveal when question changes
     useEffect(() => {
@@ -332,9 +334,16 @@ const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => 
                     >
                         <Bookmark size={15} fill={isBookmarked ? 'currentColor' : 'none'} />
                     </button>
-                    <button className="iq-icon-btn" title="Share" onClick={() => {
-                        navigator.clipboard?.writeText(q.question);
-                    }}>
+                    <button 
+                        className={`iq-icon-btn ${showShareToast ? 'active' : ''}`} 
+                        title="Share" 
+                        onClick={() => {
+                            const url = `${window.location.origin}/job-portal/prep/view/question/${q.id}`;
+                            navigator.clipboard.writeText(url);
+                            setShowShareToast(true);
+                            setTimeout(() => setShowShareToast(false), 2000);
+                        }}
+                    >
                         <Share2 size={15} />
                     </button>
                 </div>
@@ -344,76 +353,14 @@ const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => 
 };
 
 /* ──────────────────────────────────────────────
-   MOBILE MODAL
-──────────────────────────────────────────────── */
-const MobileModal = ({ q, onClose, bookmarks, toggleBookmark }) => {
-    if (!q) return null;
-    const isBookmarked = bookmarks.includes(q.id);
-
-    return (
-        <>
-            <div className="iq-modal-overlay" onClick={onClose} style={{ display: 'block' }} />
-            <motion.div
-                className="iq-modal"
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-            >
-                <div className="iq-modal-header">
-                    <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                            <DiffBadge difficulty={q.difficulty} />
-                            {q.tags?.slice(0, 2).map((t, i) => <span key={i} className="iq-tag">{t}</span>)}
-                        </div>
-                        <h2 className="iq-reader-q" style={{ fontSize: '1.1rem' }}>{q.question}</h2>
-                    </div>
-                    <button className="iq-modal-close" onClick={onClose}><X size={16} /></button>
-                </div>
-
-                <div className="iq-answer-label">
-                    <div className="iq-answer-label-icon"><BookOpen size={10} /></div>
-                    Explanation
-                </div>
-                <p className="iq-answer-text" style={{ marginBottom: '1.25rem' }}>{q.answer}</p>
-
-                {q.keyPoints && q.keyPoints.length > 0 && (
-                    <div className="iq-key-points">
-                        <p className="iq-key-points-title">⚡ Key Takeaways</p>
-                        <ul>{q.keyPoints.map((pt, i) => <li key={i}>{pt}</li>)}</ul>
-                    </div>
-                )}
-
-                {q.interviewTip && (
-                    <div className="iq-key-points" style={{ borderLeftColor: 'var(--iq-accent)', marginTop: '1rem' }}>
-                        <p className="iq-key-points-title" style={{ color: 'var(--iq-accent)' }}>💡 Interview Tip</p>
-                        <p className="iq-answer-text" style={{ fontSize: '0.8rem' }}>{q.interviewTip}</p>
-                    </div>
-                )}
-
-                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
-                    <button
-                        className={`iq-icon-btn ${isBookmarked ? 'bookmarked' : ''}`}
-                        onClick={() => toggleBookmark(q.id)}
-                        style={{ padding: '0.6rem 1rem', gap: '0.4rem', fontFamily: 'var(--iq-font-mono)', fontSize: '0.75rem' }}
-                    >
-                        <Bookmark size={14} fill={isBookmarked ? 'currentColor' : 'none'} />
-                        {isBookmarked ? 'Saved' : 'Save'}
-                    </button>
-                </div>
-            </motion.div>
-        </>
-    );
-};
-
-/* ──────────────────────────────────────────────
    MAIN COMPONENT
 ──────────────────────────────────────────────── */
 const InterviewQuestionsPage = () => {
+    const navigate = useNavigate();
     // Data
     const [questionBank, setQuestionBank] = useState(DEMO_QUESTIONS);
     const [topics, setTopics] = useState(TOPIC_CATEGORIES);
-    const [loading, setLoading] = useState(true);
+    const [isFetching, setIsFetching] = useState(false);
 
     // Filters
     const [searchTerm, setSearchTerm] = useState('');
@@ -421,9 +368,8 @@ const InterviewQuestionsPage = () => {
     const [difficulty, setDifficulty] = useState('All');
 
     // UI state
-    const [activeQuestion, setActiveQuestion] = useState(DEMO_QUESTIONS[0]);
+    const [activeQuestion, setActiveQuestion] = useState(null);
     const [viewMode, setViewMode] = useState('split'); // 'split' | 'grid'
-    const [mobileModalOpen, setMobileModalOpen] = useState(false);
     const [bookmarks, setBookmarks] = useState([]);
 
     // Pagination
@@ -432,11 +378,11 @@ const InterviewQuestionsPage = () => {
 
     useEffect(() => {
         const fetchQuestionBank = async () => {
-            setLoading(true);
+            setIsFetching(true);
 
             try {
                 const [questionsResponse, topicsResponse] = await Promise.all([
-                    getAllQuestions(0, 200),
+                    getAllQuestions(0, 50),
                     getTopics()
                 ]);
 
@@ -450,7 +396,7 @@ const InterviewQuestionsPage = () => {
                 setQuestionBank(DEMO_QUESTIONS);
                 setTopics(buildTopicCards([], DEMO_QUESTIONS));
             } finally {
-                setLoading(false);
+                setIsFetching(false);
             }
         };
 
@@ -489,7 +435,7 @@ const InterviewQuestionsPage = () => {
         setActiveQuestion(q);
         const isMobile = window.innerWidth < 768;
         if (isMobile) {
-            setMobileModalOpen(true);
+            navigate(`/job-portal/prep/view/question/${q.id}`);
         } else {
             // Auto-switch to split view on desktop so user can see the answer
             setViewMode('split');
@@ -521,15 +467,13 @@ const InterviewQuestionsPage = () => {
     const paginatedQ = filteredQuestions.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
     const stats = {
-        total: questionBank.length,
+        total: baseQuestions.length,
         easy: baseQuestions.filter(q => q.difficulty === 'EASY').length,
         mid: baseQuestions.filter(q => q.difficulty === 'INTERMEDIATE').length,
         hard: baseQuestions.filter(q => q.difficulty === 'HARD').length,
     };
 
-    if (loading && questionBank.length === 0) {
-        return <div className="iq-shell"><div className="iq-spinner" /></div>;
-    }
+    // Instant loading mode enabled. No blocking spinner.
 
     return (
         <div className="iq-shell">
@@ -628,6 +572,12 @@ const InterviewQuestionsPage = () => {
                             <LayoutGrid size={15} />
                         </button>
                     </div>
+                    {isFetching && (
+                        <div className="prep-fetching-indicator">
+                            <div className="iq-spinner-small" />
+                            <span>Updating...</span>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -742,18 +692,6 @@ const InterviewQuestionsPage = () => {
                     </div>
                 )}
             </main>
-
-            {/* ── MOBILE MODAL ── */}
-            <AnimatePresence>
-                {mobileModalOpen && (
-                    <MobileModal
-                        q={activeQuestion}
-                        onClose={() => setMobileModalOpen(false)}
-                        bookmarks={bookmarks}
-                        toggleBookmark={toggleBookmark}
-                    />
-                )}
-            </AnimatePresence>
         </div>
     );
 };

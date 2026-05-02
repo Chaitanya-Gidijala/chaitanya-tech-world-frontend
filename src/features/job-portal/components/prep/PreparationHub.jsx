@@ -84,12 +84,16 @@ const platformBenefits = [
 
 const PreparationHub = ({ onNavigate }) => {
     const [selectedTopic, setSelectedTopic] = useState('All');
-    const [topics, setTopics] = useState([]);
-    const [tests, setTests] = useState([]);
-    const [questions, setQuestions] = useState([]);
-    const [resources, setResources] = useState([]);
-    const [counts, setCounts] = useState({ tests: 0, questions: 0, resources: 0 });
-    const [loading, setLoading] = useState(true);
+    const [topics, setTopics] = useState(PREP_TOPICS);
+    const [tests, setTests] = useState(PREP_TESTS.slice(0, 6));
+    const [questions, setQuestions] = useState(PREP_QUESTIONS.slice(0, 6));
+    const [resources, setResources] = useState(PREP_RESOURCES.slice(0, 6));
+    const [counts, setCounts] = useState({ 
+        tests: PREP_TESTS.length, 
+        questions: PREP_QUESTIONS.length, 
+        resources: PREP_RESOURCES.length 
+    });
+    const [isFetching, setIsFetching] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
@@ -118,7 +122,7 @@ const PreparationHub = ({ onNavigate }) => {
 
     useEffect(() => {
         const fetchContent = async () => {
-            setLoading(true);
+            setIsFetching(true);
             try {
                 const tag = selectedTopic === 'All' ? '' : selectedTopic;
                 const [testsResponse, questionsResponse, resourcesResponse] = await Promise.all([
@@ -165,7 +169,7 @@ const PreparationHub = ({ onNavigate }) => {
                     resources: fallbackResources.length
                 });
             } finally {
-                setLoading(false);
+                setIsFetching(false);
             }
         };
 
@@ -208,7 +212,7 @@ const PreparationHub = ({ onNavigate }) => {
                     id: question.id,
                     title: question.question,
                     meta: question.difficulty || 'Interview prep',
-                    action: () => onNavigate('questions'),
+                    action: () => onNavigate('view-question', question),
                     actionLabel: 'Open'
                 })),
                 ctaLabel: 'Practice Questions',
@@ -221,7 +225,7 @@ const PreparationHub = ({ onNavigate }) => {
                     id: resource.id,
                     title: resource.title,
                     meta: (resource.type || 'resource').toUpperCase(),
-                    action: () => onNavigate('resources-all'),
+                    action: () => onNavigate('view-resource', resource),
                     actionLabel: 'View'
                 })),
                 ctaLabel: 'Browse Materials',
@@ -229,10 +233,6 @@ const PreparationHub = ({ onNavigate }) => {
             }
         ]);
     }, [counts, onNavigate, questions, resources, tests, searchTerm]);
-
-    if (loading) {
-        return <div className="iq-shell"><div className="iq-spinner" /></div>;
-    }
 
     return (
         <div className="iq-shell">
@@ -303,6 +303,12 @@ const PreparationHub = ({ onNavigate }) => {
                             <ChevronDown className="iq-select-chevron" size={14} />
                         </div>
                     </div>
+                    {isFetching && (
+                        <div className="prep-fetching-indicator">
+                            <div className="iq-spinner-small" />
+                            <span>Updating...</span>
+                        </div>
+                    )}
                 </div>
 
                 <section className="prep-dashboard-grid">

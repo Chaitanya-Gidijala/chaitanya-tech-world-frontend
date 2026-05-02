@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     ChevronDown,
@@ -51,15 +52,10 @@ const TestDetailBody = ({ test, onStart }) => {
     return (
         <div className="prep-detail-stack">
             <div className="prep-detail-hero">
-                <div className="prep-collection-item-head">
-                    <div className="prep-collection-icon tests">
-                        <Target size={18} />
-                    </div>
                     <div>
                         <p className="prep-dashboard-kicker">Assessment overview</p>
                         <h2 className="prep-detail-title">{test.title}</h2>
                     </div>
-                </div>
 
                 <div className="prep-chip-row">
                     <span className="prep-data-badge">{duration} mins</span>
@@ -114,18 +110,18 @@ const TestDetailBody = ({ test, onStart }) => {
 };
 
 const TestsPage = ({ onNavigate }) => {
+    const navigate = useNavigate();
     const { showToast } = useToast();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedTopic, setSelectedTopic] = useState('All');
     const [durationFilter, setDurationFilter] = useState('All');
-    const [tests, setTests] = useState([]);
-    const [topics, setTopics] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [tests, setTests] = useState(PREP_TESTS.slice(0, 15));
+    const [topics, setTopics] = useState(PREP_TOPICS);
+    const [isFetching, setIsFetching] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [totalTests, setTotalTests] = useState(0);
     const [activeTest, setActiveTest] = useState(null);
-    const [mobileModalOpen, setMobileModalOpen] = useState(false);
 
     const pageSize = 15;
 
@@ -142,7 +138,7 @@ const TestsPage = ({ onNavigate }) => {
 
     useEffect(() => {
         const fetchTests = async () => {
-            setLoading(true);
+            setIsFetching(true);
             try {
                 const [testsResponse, topicsResponse] = await Promise.all([
                     getAllQuizzes(currentPage, pageSize, selectedTopic === 'All' ? '' : selectedTopic),
@@ -171,7 +167,7 @@ const TestsPage = ({ onNavigate }) => {
                 setTotalPages(fallbackTests.length > 0 ? 1 : 0);
                 setTotalTests(fallbackTests.length);
             } finally {
-                setLoading(false);
+                setIsFetching(false);
             }
         };
 
@@ -204,7 +200,7 @@ const TestsPage = ({ onNavigate }) => {
         setActiveTest(test);
 
         if (window.innerWidth < 768) {
-            setMobileModalOpen(true);
+            navigate(`/job-portal/prep/view/assessment/${test.id}`);
         }
     };
 
@@ -233,10 +229,6 @@ const TestsPage = ({ onNavigate }) => {
         setSelectedTopic(topic);
         setCurrentPage(0);
     };
-
-    if (loading && tests.length === 0) {
-        return <div className="iq-shell"><div className="iq-spinner" /></div>;
-    }
 
     return (
         <div className="iq-shell">
@@ -317,6 +309,12 @@ const TestsPage = ({ onNavigate }) => {
                         </select>
                         <ChevronDown className="iq-select-chevron" size={14} />
                     </div>
+                    {isFetching && (
+                        <div className="prep-fetching-indicator">
+                            <div className="iq-spinner-small" />
+                            <span>Updating...</span>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -440,32 +438,6 @@ const TestsPage = ({ onNavigate }) => {
                 )}
             </main>
 
-            <AnimatePresence>
-                {mobileModalOpen && activeTest && (
-                    <>
-                        <div className="iq-modal-overlay" onClick={() => setMobileModalOpen(false)} style={{ display: 'block' }} />
-                        <motion.div
-                            className="iq-modal"
-                            initial={{ y: '100%' }}
-                            animate={{ y: 0 }}
-                            exit={{ y: '100%' }}
-                            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-                        >
-                            <div className="iq-modal-header">
-                                <div>
-                                    <p className="prep-dashboard-kicker">Assessment overview</p>
-                                    <h2 className="prep-detail-title" style={{ fontSize: '1.1rem' }}>{activeTest.title}</h2>
-                                </div>
-                                <button type="button" className="iq-modal-close" onClick={() => setMobileModalOpen(false)}>
-                                    <X size={16} />
-                                </button>
-                            </div>
-
-                            <TestDetailBody test={activeTest} onStart={handleStartAssessment} />
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
         </div>
     );
 };

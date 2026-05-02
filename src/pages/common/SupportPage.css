@@ -564,3 +564,92 @@
         margin-bottom: 0.5rem;
     }
 }
+
+/* ── Payment Security Elements ── */
+.sp-secure-badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.25rem;
+}
+
+.sp-trust-logos {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    border-top: 1px solid var(--sp-border);
+    padding-top: 1.5rem;
+}
+
+.trust-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.trust-item img {
+    height: 24px;
+    opacity: 0.8;
+}
+
+.trust-item span {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--sp-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.security-notice {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    border-left: 4px solid var(--sp-accent);
+}
+
+.notice-icon {
+    color: var(--sp-accent);
+    flex-shrink: 0;
+}
+
+.notice-content h4 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.notice-content p {
+    font-size: 0.9rem;
+    color: var(--sp-text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+.notice-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+}
+
+.notice-features span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--sp-text);
+}
+
+@media (max-width: 768px) {
+    .security-notice {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .notice-features {
+        justify-content: center;
+    }
+}

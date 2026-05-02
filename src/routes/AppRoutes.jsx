@@ -40,7 +40,7 @@ const AppRoutes = ({ theme, toggleTheme }) => {
 
       {/* ── STANDARD ROUTES (With MainLayout) ── */}
       <Route element={<MainLayout theme={theme} onToggleTheme={toggleTheme} />}>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage theme={theme} toggleTheme={toggleTheme} />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/support-me" element={<SupportPage />} />
         <Route path="/our-services" element={<OurServices />} />
@@ -52,13 +52,13 @@ const AppRoutes = ({ theme, toggleTheme }) => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/oauth2/callback" element={<OAuth2Callback />} />
-        <Route 
-          path="/profile" 
+        <Route
+          path="/profile"
           element={
             <AuthProtectedRoute>
               <ProfilePage />
             </AuthProtectedRoute>
-          } 
+          }
         />
         <Route path="*" element={<NotFound />} />
       </Route>
