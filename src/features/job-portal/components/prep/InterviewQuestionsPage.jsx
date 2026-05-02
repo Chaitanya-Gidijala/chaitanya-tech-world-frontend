@@ -271,7 +271,7 @@ const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => 
                                 <div className="iq-answer-label-icon"><Zap size={10} /></div>
                                 Expert Answer
                             </div>
-                            
+
                             {!isRevealed ? (
                                 <div className="iq-reveal-card" onClick={() => setIsRevealed(true)}>
                                     <div className="iq-reveal-inner">
@@ -334,9 +334,9 @@ const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => 
                     >
                         <Bookmark size={15} fill={isBookmarked ? 'currentColor' : 'none'} />
                     </button>
-                    <button 
-                        className={`iq-icon-btn ${showShareToast ? 'active' : ''}`} 
-                        title="Share" 
+                    <button
+                        className={`iq-icon-btn ${showShareToast ? 'active' : ''}`}
+                        title="Share"
                         onClick={() => {
                             const url = `${window.location.origin}/job-portal/prep/view/question/${q.id}`;
                             navigator.clipboard.writeText(url);
@@ -550,9 +550,9 @@ const InterviewQuestionsPage = () => {
 
                     {/* Tech select */}
                     <div className="iq-select-wrap">
-                        <select 
-                            className="iq-select" 
-                            value={selectedTag} 
+                        <select
+                            className="iq-select"
+                            value={selectedTag}
                             onChange={(e) => toggleTag(e.target.value)}
                         >
                             <option value="All">All Technologies</option>

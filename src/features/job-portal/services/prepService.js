@@ -250,13 +250,13 @@ export const createQuestionsBatch = async (data) => {
 export const getAllResources = async (page = 0, size = 15, tag = '', type = 'All') => {
     try {
         let url = `${config.endpoints.learningResources.base}?page=${page}&size=${size}`;
-        
+
         if (type && type !== 'All') {
             url = `${config.endpoints.learningResources.base}/type/${type}?page=${page}&size=${size}`;
         } else if (tag && tag !== 'All') {
             url = `${config.endpoints.learningResources.search}?page=${page}&size=${size}&tag=${encodeURIComponent(tag)}`;
         }
-        
+
         const response = await fetch(url, { headers: getHeaders() });
         if (!response.ok) throw new Error('Failed to fetch resources');
         const data = await response.json();

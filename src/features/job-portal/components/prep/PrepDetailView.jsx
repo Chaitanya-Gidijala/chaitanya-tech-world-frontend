@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    ChevronLeft, BookOpen, Target, FileText, 
-    Zap, Lightbulb, Bookmark, Share2, Clock3, 
+import {
+    ChevronLeft, BookOpen, Target, FileText,
+    Zap, Lightbulb, Bookmark, Share2, Clock3,
     Layers3, Target as TargetIcon, CheckCircle2,
     ArrowRight
 } from 'lucide-react';
@@ -123,7 +123,7 @@ const PrepDetailView = () => {
                         {iconMap[type]}
                     </div>
                 </div>
-                
+
                 <div className="pd-header-main">
                     <p className="pd-kicker">{kickerMap[type]}</p>
                     <h1 className="pd-title">{data.question || data.title}</h1>
@@ -224,7 +224,7 @@ const PrepDetailView = () => {
                             <span className="pd-metric-lab">questions</span>
                         </div>
                     </div>
-                    <button 
+                    <button
                         className="prep-primary-btn tests pd-launch-btn"
                         onClick={() => window.open(`/job-portal/prep/exam/${data.id}`, '_blank')}
                     >
@@ -256,8 +256,8 @@ const PrepDetailView = () => {
                 </div>
             </div>
 
-            <button 
-                className="prep-primary-btn resources" 
+            <button
+                className="prep-primary-btn resources"
                 style={{ width: '100%', marginTop: '2rem', height: '56px', fontSize: '1rem' }}
                 onClick={() => window.open(data.link || '#', '_blank')}
             >
@@ -270,7 +270,7 @@ const PrepDetailView = () => {
         <div className="iq-shell pd-shell">
             <div className="pd-container">
                 {renderHeader()}
-                
+
                 <main className="pd-main">
                     {type === 'question' && renderQuestionContent()}
                     {type === 'assessment' && renderAssessmentContent()}
@@ -282,8 +282,8 @@ const PrepDetailView = () => {
                         <Bookmark size={18} fill={isBookmarked ? 'currentColor' : 'none'} />
                         {isBookmarked ? 'Saved' : 'Save for later'}
                     </button>
-                    <button 
-                        className={`pd-action-btn ${showShareToast ? 'active' : ''}`} 
+                    <button
+                        className={`pd-action-btn ${showShareToast ? 'active' : ''}`}
                         onClick={async () => {
                             if (navigator.share) {
                                 try {

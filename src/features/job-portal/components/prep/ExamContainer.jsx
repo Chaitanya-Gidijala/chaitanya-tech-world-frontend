@@ -34,7 +34,7 @@ const ExamContainer = () => {
             <div className="jp-spinner"></div>
         </div>
     );
-    
+
     if (!test) return (
         <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--iq-bg)', color: 'var(--iq-text)' }}>
             <div style={{ textAlign: 'center' }}>
