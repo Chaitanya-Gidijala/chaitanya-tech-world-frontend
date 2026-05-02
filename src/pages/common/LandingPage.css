@@ -860,10 +860,11 @@
     .crope-section-tag {
         font-size: 0.75rem;
         margin-bottom: 1.5rem;
+        padding-top: 1rem;
     }
 
     .crope-services {
-        margin-top: 6rem !important;
+        margin-top: 2rem !important;
         padding: 4rem 4% !important;
     }
 
@@ -912,6 +913,14 @@
 }
 
 @media (max-width: 480px) {
+    .crope-section-tag {
+        padding-top: 2rem !important;
+    }
+
+    .crope-hero-content {
+        padding-bottom: 3rem;
+    }
+
     .crope-contact {
         margin-top: 3rem !important;
         margin-bottom: 3rem !important;
