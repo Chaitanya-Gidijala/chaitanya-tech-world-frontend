@@ -204,6 +204,17 @@ export const getAllQuestions = async (page = 0, size = 10, tag = '', difficulty 
 
 
 
+export const getQuestionById = async (id) => {
+    try {
+        const response = await fetch(config.endpoints.interviewQuestions.byId(id), { headers: getHeaders() });
+        if (!response.ok) throw new Error('Failed to fetch question');
+        return await response.json();
+    } catch (error) {
+        console.warn("API fetch question by id failed:", error);
+        return null;
+    }
+};
+
 export const createQuestion = async (data) => {
     const response = await fetch(config.endpoints.interviewQuestions.base, {
         method: 'POST',
@@ -268,6 +279,17 @@ export const getAllResources = async (page = 0, size = 15, tag = '', type = 'All
 };
 
 
+
+export const getResourceById = async (id) => {
+    try {
+        const response = await fetch(config.endpoints.learningResources.byId(id), { headers: getHeaders() });
+        if (!response.ok) throw new Error('Failed to fetch resource');
+        return await response.json();
+    } catch (error) {
+        console.warn("API fetch resource by id failed:", error);
+        return null;
+    }
+};
 
 export const createResource = async (data) => {
     const response = await fetch(config.endpoints.learningResources.base, {

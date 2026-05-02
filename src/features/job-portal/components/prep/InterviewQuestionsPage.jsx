@@ -13,56 +13,8 @@ import PrepHeroVisual from './PrepHeroVisual';
 /* ──────────────────────────────────────────────
    CONSTANTS
 ──────────────────────────────────────────────── */
-const DEMO_QUESTIONS = [
-    {
-        id: 'd1', question: 'Explain React Fiber and its reconciliation algorithm.',
-        answer: 'React Fiber is a complete rewrite of the React core algorithm that enables incremental rendering. It splits rendering work into chunks spread over multiple frames, making complex UIs feel smoother. The reconciler compares a virtual DOM tree to the actual DOM and applies only the necessary changes — a process called diffing. Fiber introduces priority-based scheduling so high-priority updates (like animations) preempt low-priority ones (like data fetching).',
-        difficulty: 'HARD', tags: ['React', 'Core'],
-        keyPoints: ['Enables incremental rendering via time-slicing', 'Priority-based task scheduling', 'Enables Concurrent Mode and Suspense', 'Diffing runs in phases: render & commit']
-    },
-    {
-        id: 'd2', question: 'What is the Event Loop in Node.js?',
-        answer: 'The event loop allows Node.js to perform non-blocking I/O operations despite being single-threaded. When an async operation is initiated (e.g., reading a file), Node delegates it to the OS and registers a callback. The event loop continuously checks if operations are done and runs their callbacks. It cycles through phases: Timers, Pending Callbacks, I/O Poll, Check (setImmediate), and Close Callbacks.',
-        difficulty: 'INTERMEDIATE', tags: ['Node.js', 'Runtime'],
-        keyPoints: ['Single-threaded non-blocking I/O', '6 phases: timers → I/O → check → close', 'libuv provides the thread pool for heavy tasks', 'process.nextTick runs before each phase']
-    },
-    {
-        id: 'd3', question: 'How does Dependency Injection work in Spring Boot?',
-        answer: 'Dependency Injection (DI) is a design pattern implementing Inversion of Control — objects receive their dependencies from an external container instead of creating them. Spring\'s IoC container manages bean lifecycle. You use @Component, @Service, or @Repository to register beans, and @Autowired or constructor injection to wire them. Constructor injection is preferred for immutability and testability.',
-        difficulty: 'INTERMEDIATE', tags: ['Java', 'Spring'],
-        keyPoints: ['IoC container manages all bean lifecycles', 'Constructor injection > field injection', '@Autowired, @Qualifier for wiring', 'Enables easy mocking in unit tests']
-    },
-    {
-        id: 'd4', question: 'ACID vs BASE properties in Database Systems.',
-        answer: 'ACID (Atomicity, Consistency, Isolation, Durability) is the gold standard for relational databases — every transaction is treated as a single unit that either fully succeeds or fully rolls back. BASE (Basically Available, Soft state, Eventual consistency) is the trade-off in distributed NoSQL systems that prioritize availability and partition tolerance over strict data consistency, allowing stale reads temporarily.',
-        difficulty: 'HARD', tags: ['SQL', 'NoSQL'],
-        keyPoints: ['ACID → strong consistency, used in RDBMS', 'BASE → high availability, used in NoSQL', 'CAP theorem: you can only guarantee 2 of 3', 'Eventual consistency ≠ no consistency']
-    },
-    {
-        id: 'd5', question: 'Explain JWT authentication and its workflow.',
-        answer: 'JSON Web Token (JWT) is a compact, URL-safe token format with three base64-encoded parts: Header (algorithm), Payload (claims), and Signature. Workflow: user logs in → server creates and signs a JWT with a secret → client stores the JWT → client sends it in the Authorization header on every request → server verifies the signature without hitting the database.',
-        difficulty: 'EASY', tags: ['Auth', 'Web'],
-        keyPoints: ['Stateless — no session storage needed', 'Three parts: header.payload.signature', 'Use short expiry + refresh tokens', 'Never store sensitive data in payload (it\'s base64, not encrypted)']
-    },
-    {
-        id: 'd6', question: 'What are the main differences between Python 2 and Python 3?',
-        answer: 'Python 3 introduced print() as a function, true division (3/2 = 1.5 vs 1), native Unicode strings, and superior async support via asyncio. It also improved error handling with exception chaining, removed outdated modules, and made iterators the default (range instead of xrange). Python 2 reached end-of-life in January 2020.',
-        difficulty: 'EASY', tags: ['Python', 'System'],
-        keyPoints: ['print() is a function in Py3', 'Integer division changed: 3/2 = 1.5', 'Strings are Unicode by default', 'asyncio, f-strings, type hints are Py3 only']
-    },
-    {
-        id: 'd7', question: 'What is the difference between TCP and UDP?',
-        answer: 'TCP (Transmission Control Protocol) is connection-oriented — it performs a 3-way handshake, ensures data delivery via acknowledgments, retransmits lost packets, and guarantees order. UDP (User Datagram Protocol) is connectionless — it fires packets without handshaking or guarantees, trading reliability for raw speed.',
-        difficulty: 'INTERMEDIATE', tags: ['Networking', 'System'],
-        keyPoints: ['TCP → reliable, ordered, connection-based', 'UDP → fast, no guarantees, connectionless', 'TCP uses 3-way handshake (SYN, SYN-ACK, ACK)', 'Use UDP for streaming, DNS, gaming']
-    },
-    {
-        id: 'd8', question: 'Explain Big O Notation and time complexity.',
-        answer: 'Big O notation describes the upper-bound growth rate of an algorithm\'s runtime as input size n grows. Common complexities: O(1) constant, O(log n) logarithmic (binary search), O(n) linear (simple loop), O(n log n) linearithmic (merge sort), O(n²) quadratic (bubble sort), O(2ⁿ) exponential (subset enumeration). Always analyze the worst-case scenario unless stated otherwise.',
-        difficulty: 'EASY', tags: ['DSA', 'Core'],
-        keyPoints: ['Describes worst-case growth, not exact time', 'Drop constants: O(2n) = O(n)', 'Space complexity matters too', 'Binary search is O(log n) — halves input each step']
-    }
-];
+// Demo questions removed to enforce database-only fetching.
+const DEMO_QUESTIONS = [];
 
 const TOPIC_ICONS = {
     React: '⚛️', 'Node.js': '🟩', Java: '☕', Python: '🐍',
@@ -358,9 +310,9 @@ const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => 
 const InterviewQuestionsPage = () => {
     const navigate = useNavigate();
     // Data
-    const [questionBank, setQuestionBank] = useState(DEMO_QUESTIONS);
-    const [topics, setTopics] = useState(TOPIC_CATEGORIES);
-    const [isFetching, setIsFetching] = useState(false);
+    const [questionBank, setQuestionBank] = useState([]);
+    const [topics, setTopics] = useState([]);
+    const [isFetching, setIsFetching] = useState(true);
 
     // Filters
     const [searchTerm, setSearchTerm] = useState('');
@@ -387,14 +339,12 @@ const InterviewQuestionsPage = () => {
                 ]);
 
                 const normalizedQuestions = (questionsResponse.content || []).map(normalizeQuestion);
-                const resolvedQuestions = normalizedQuestions.length > 0 ? normalizedQuestions : DEMO_QUESTIONS;
-
-                setQuestionBank(resolvedQuestions);
-                setTopics(buildTopicCards(topicsResponse || [], resolvedQuestions));
+                setQuestionBank(normalizedQuestions);
+                setTopics(buildTopicCards(topicsResponse || [], normalizedQuestions));
             } catch (error) {
                 console.error('Failed to load question bank', error);
-                setQuestionBank(DEMO_QUESTIONS);
-                setTopics(buildTopicCards([], DEMO_QUESTIONS));
+                setQuestionBank([]);
+                setTopics([]);
             } finally {
                 setIsFetching(false);
             }
@@ -625,53 +575,65 @@ const InterviewQuestionsPage = () => {
                     <div className="iq-section-label-line" />
                 </div>
 
-                {filteredQuestions.length === 0 ? (
-                    <div className="iq-empty">
-                        <div className="iq-empty-icon">🔍</div>
-                        <p className="iq-empty-text">No questions match your filters.</p>
-                    </div>
-                ) : viewMode === 'split' ? (
-                    /* ── SPLIT VIEW ── */
-                    <div className="iq-split">
-                        {/* Left list */}
-                        <div className="iq-list-pane">
-                            <div className="iq-list-header">
-                                <span style={{ fontFamily: 'var(--iq-font-display)', fontSize: '0.9rem', fontWeight: 700 }}>Questions</span>
-                                <span className="iq-list-count"><span>{filteredQuestions.length}</span> found</span>
+                {filteredQuestions.length > 0 ? (
+                    viewMode === 'split' ? (
+                        /* ── SPLIT VIEW ── */
+                        <div className="iq-split">
+                            {/* Left list */}
+                            <div className="iq-list-pane">
+                                <div className="iq-list-header">
+                                    <span style={{ fontFamily: 'var(--iq-font-display)', fontSize: '0.9rem', fontWeight: 700 }}>Questions</span>
+                                    <span className="iq-list-count"><span>{filteredQuestions.length}</span> found</span>
+                                </div>
+                                <div className="iq-list-scroll">
+                                    <AnimatePresence>
+                                        {filteredQuestions.map((q, i) => (
+                                            <QuestionRow
+                                                key={q.id}
+                                                q={q}
+                                                index={i}
+                                                searchTerm={searchTerm}
+                                                active={activeQuestion?.id === q.id}
+                                                onClick={handleQuestionClick}
+                                            />
+                                        ))}
+                                    </AnimatePresence>
+                                </div>
                             </div>
-                            <div className="iq-list-scroll">
-                                <AnimatePresence>
-                                    {filteredQuestions.map((q, i) => (
-                                        <QuestionRow
-                                            key={q.id}
-                                            q={q}
-                                            index={i}
-                                            searchTerm={searchTerm}
-                                            active={activeQuestion?.id === q.id}
-                                            onClick={handleQuestionClick}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </div>
-                        </div>
 
-                        {/* Right reader */}
-                        <ReaderPane
-                            q={activeQuestion}
-                            questions={filteredQuestions}
-                            onNavigate={handleNavigate}
-                            bookmarks={bookmarks}
-                            toggleBookmark={toggleBookmark}
-                        />
-                    </div>
+                            {/* Right reader */}
+                            <ReaderPane
+                                q={activeQuestion}
+                                questions={filteredQuestions}
+                                onNavigate={handleNavigate}
+                                bookmarks={bookmarks}
+                                toggleBookmark={toggleBookmark}
+                            />
+                        </div>
+                    ) : (
+                        /* ── GRID VIEW ── */
+                        <div className="iq-grid-view">
+                            <AnimatePresence>
+                                {paginatedQ.map((q, i) => (
+                                    <GridCard key={q.id} q={q} index={i} searchTerm={searchTerm} onClick={handleQuestionClick} />
+                                ))}
+                            </AnimatePresence>
+                        </div>
+                    )
                 ) : (
-                    /* ── GRID VIEW ── */
-                    <div className="iq-grid-view">
-                        <AnimatePresence>
-                            {paginatedQ.map((q, i) => (
-                                <GridCard key={q.id} q={q} index={i} searchTerm={searchTerm} onClick={handleQuestionClick} />
-                            ))}
-                        </AnimatePresence>
+                    <div className="iq-empty-state-v2 iq-fade-in">
+                        <div className="iq-empty-art">
+                            <div className="iq-empty-circle" />
+                            <Search size={64} className="iq-empty-icon-v2" />
+                        </div>
+                        <div className="iq-empty-content">
+                            <h3>No Questions Found</h3>
+                            <p>We couldn't find any questions matching your current filters or search term. Try adjusting your criteria or clearing all filters to browse our full bank.</p>
+                            <button className="iq-empty-reset-btn" onClick={() => { setSearchTerm(''); setSelectedTag('All'); setDifficulty('All'); }}>
+                                <Zap size={16} />
+                                Clear All Filters
+                            </button>
+                        </div>
                     </div>
                 )}
 

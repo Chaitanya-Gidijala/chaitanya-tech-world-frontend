@@ -84,14 +84,14 @@ const platformBenefits = [
 
 const PreparationHub = ({ onNavigate }) => {
     const [selectedTopic, setSelectedTopic] = useState('All');
-    const [topics, setTopics] = useState(PREP_TOPICS);
-    const [tests, setTests] = useState(PREP_TESTS.slice(0, 6));
-    const [questions, setQuestions] = useState(PREP_QUESTIONS.slice(0, 6));
-    const [resources, setResources] = useState(PREP_RESOURCES.slice(0, 6));
+    const [topics, setTopics] = useState([]);
+    const [tests, setTests] = useState([]);
+    const [questions, setQuestions] = useState([]);
+    const [resources, setResources] = useState([]);
     const [counts, setCounts] = useState({ 
-        tests: PREP_TESTS.length, 
-        questions: PREP_QUESTIONS.length, 
-        resources: PREP_RESOURCES.length 
+        tests: 0, 
+        questions: 0, 
+        resources: 0 
     });
     const [isFetching, setIsFetching] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -135,39 +135,20 @@ const PreparationHub = ({ onNavigate }) => {
                 const nextQuestions = questionsResponse.content || [];
                 const nextResources = resourcesResponse.content || [];
 
-                const fallbackFilter = (items) => (
-                    selectedTopic === 'All'
-                        ? items
-                        : items.filter((item) => item.tags?.includes(selectedTopic))
-                );
-
-                const resolvedTests = nextTests.length > 0 ? nextTests : fallbackFilter(PREP_TESTS);
-                const resolvedQuestions = nextQuestions.length > 0 ? nextQuestions : fallbackFilter(PREP_QUESTIONS);
-                const resolvedResources = nextResources.length > 0 ? nextResources : fallbackFilter(PREP_RESOURCES);
-
-                setTests(resolvedTests);
-                setQuestions(resolvedQuestions);
-                setResources(resolvedResources);
-                setTopics((existingTopics) => existingTopics.length > 0 ? existingTopics : PREP_TOPICS);
+                setTests(nextTests);
+                setQuestions(nextQuestions);
+                setResources(nextResources);
                 setCounts({
-                    tests: testsResponse.totalElements || resolvedTests.length,
-                    questions: questionsResponse.totalElements || resolvedQuestions.length,
-                    resources: resourcesResponse.totalElements || resolvedResources.length
+                    tests: testsResponse.totalElements || nextTests.length,
+                    questions: questionsResponse.totalElements || nextQuestions.length,
+                    resources: resourcesResponse.totalElements || nextResources.length
                 });
             } catch (error) {
-                console.error('Error fetching prep hub data', error);
-                const fallbackTests = selectedTopic === 'All' ? PREP_TESTS : PREP_TESTS.filter((item) => item.tags?.includes(selectedTopic));
-                const fallbackQuestions = selectedTopic === 'All' ? PREP_QUESTIONS : PREP_QUESTIONS.filter((item) => item.tags?.includes(selectedTopic));
-                const fallbackResources = selectedTopic === 'All' ? PREP_RESOURCES : PREP_RESOURCES.filter((item) => item.tags?.includes(selectedTopic));
-                setTopics(PREP_TOPICS);
-                setTests(fallbackTests);
-                setQuestions(fallbackQuestions);
-                setResources(fallbackResources);
-                setCounts({
-                    tests: fallbackTests.length,
-                    questions: fallbackQuestions.length,
-                    resources: fallbackResources.length
-                });
+                console.error('Error fetching content', error);
+                setTests([]);
+                setQuestions([]);
+                setResources([]);
+                setCounts({ tests: 0, questions: 0, resources: 0 });
             } finally {
                 setIsFetching(false);
             }

@@ -13,15 +13,21 @@ const ExamContainer = () => {
 
     useEffect(() => {
         const fetchTest = async () => {
-            setLoading(true);
+            // 1. Check mock data for instant load
+            const fallbackTest = PREP_TESTS.find((quiz) => String(quiz.id) === String(testId)) || null;
+            if (fallbackTest) {
+                setTest(fallbackTest);
+                setLoading(false);
+            } else {
+                setLoading(true);
+            }
+
+            // 2. Fetch live data
             try {
                 const data = await getQuizById(testId);
-                const fallbackTest = PREP_TESTS.find((quiz) => String(quiz.id) === String(testId)) || null;
-                setTest(data || fallbackTest);
+                if (data) setTest(data);
             } catch (err) {
-                console.error("Failed to fetch test", err);
-                const fallbackTest = PREP_TESTS.find((quiz) => String(quiz.id) === String(testId)) || null;
-                setTest(fallbackTest);
+                console.error("Failed to fetch live test", err);
             } finally {
                 setLoading(false);
             }

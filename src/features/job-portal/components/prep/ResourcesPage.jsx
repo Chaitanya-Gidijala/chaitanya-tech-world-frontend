@@ -156,26 +156,18 @@ const ResourcesPage = () => {
                 ]);
 
                 const nextResources = resourcesResponse.content || [];
-                const fallbackResources = selectedTopic === 'All'
-                    ? PREP_RESOURCES
-                    : PREP_RESOURCES.filter((item) => item.tags?.includes(selectedTopic));
+                const resolvedTopics = topicsResponse || [];
 
-                const resolvedResources = nextResources.length > 0 ? nextResources : fallbackResources;
-                const resolvedTopics = (topicsResponse || []).length > 0 ? topicsResponse : PREP_TOPICS;
-
-                setResources(resolvedResources);
+                setResources(nextResources);
                 setTopics(resolvedTopics);
-                setTotalPages(resourcesResponse.totalPages || (resolvedResources.length > 0 ? 1 : 0));
-                setTotalResources(resourcesResponse.totalElements || resolvedResources.length);
+                setTotalPages(resourcesResponse.totalPages || (nextResources.length > 0 ? 1 : 0));
+                setTotalResources(resourcesResponse.totalElements || nextResources.length);
             } catch (error) {
                 console.error('Failed to load resources', error);
-                const fallbackResources = selectedTopic === 'All'
-                    ? PREP_RESOURCES
-                    : PREP_RESOURCES.filter((item) => item.tags?.includes(selectedTopic));
-                setResources(fallbackResources);
-                setTopics(PREP_TOPICS);
-                setTotalPages(fallbackResources.length > 0 ? 1 : 0);
-                setTotalResources(fallbackResources.length);
+                setResources([]);
+                setTopics([]);
+                setTotalPages(0);
+                setTotalResources(0);
             } finally {
                 setIsFetching(false);
             }

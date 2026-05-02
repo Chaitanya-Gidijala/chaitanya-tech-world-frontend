@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
     Sun, Moon, Menu, X, Home, Heart, Mail, Brain, Briefcase,
     FileText, Sparkles, ArrowRight, Users, LogIn, User, ChevronDown
@@ -9,6 +9,7 @@ import { isAuthenticated, getCurrentUser, logout } from '@/features/job-portal/s
 import './LandingNavbar.css';
 
 const LandingNavbar = ({ theme, onToggleTheme }) => {
+    const location = useLocation();
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const loggedIn = isAuthenticated();
@@ -153,17 +154,18 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
 
                                 {/* Navigate */}
                                 <span className="ln-drawer__label">Navigate</span>
-                                {navItems.map((item) =>
-                                    item.to ? (
-                                        <Link key={item.label} className="ln-drawer__item" to={item.to} onClick={close}>
+                                {navItems.map((item) => {
+                                    const isActive = item.to ? location.pathname === item.to : false;
+                                    return item.to ? (
+                                        <Link key={item.label} className={`ln-drawer__item ${isActive ? 'active' : ''}`} to={item.to} onClick={close}>
                                             <span>{item.label}</span>
                                         </Link>
                                     ) : (
                                         <button key={item.label} className="ln-drawer__item" onClick={item.action}>
                                             <span>{item.label}</span>
                                         </button>
-                                    )
-                                )}
+                                    );
+                                })}
 
                                 <div className="ln-drawer__divider" />
 
@@ -172,12 +174,18 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
                                     { label: 'Job Portal', to: '/job-portal', Icon: Briefcase },
                                     { label: 'Prep Hub', to: '/job-portal/prep', Icon: Brain },
                                     { label: 'AI Resume Builder', to: '/ai-resume-builder', Icon: FileText },
-                                ].map((link) => (
-                                    <Link key={link.label} className="ln-drawer__item" to={link.to} onClick={close}>
-                                        <link.Icon size={15} />
-                                        <span>{link.label}</span>
-                                    </Link>
-                                ))}
+                                ].map((link) => {
+                                    const isActive = link.to === '/job-portal'
+                                        ? (location.pathname === '/job-portal' || (location.pathname.startsWith('/job-portal') && !location.pathname.startsWith('/job-portal/prep')))
+                                        : location.pathname.startsWith(link.to);
+
+                                    return (
+                                        <Link key={link.label} className={`ln-drawer__item ${isActive ? 'active' : ''}`} to={link.to} onClick={close}>
+                                            <link.Icon size={15} />
+                                            <span>{link.label}</span>
+                                        </Link>
+                                    );
+                                })}
 
                                 <div className="ln-drawer__divider" />
 

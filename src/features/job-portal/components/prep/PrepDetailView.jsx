@@ -5,9 +5,9 @@ import {
     ChevronLeft, BookOpen, Target, FileText,
     Zap, Lightbulb, Bookmark, Share2, Clock3,
     Layers3, Target as TargetIcon, CheckCircle2,
-    ArrowRight
+    ArrowRight, Shield
 } from 'lucide-react';
-import { getQuizById, getAllQuestions, getAllResources } from '../../services/prepService';
+import { getQuizById, getQuestionById, getResourceById } from '../../services/prepService';
 import { PREP_QUESTIONS, PREP_RESOURCES, PREP_TESTS } from '../../data/prepData';
 import '../../styles/InterviewQuestions.css';
 
@@ -16,6 +16,7 @@ const PrepDetailView = () => {
     const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [isRevealed, setIsRevealed] = useState(false);
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [showShareToast, setShowShareToast] = useState(false);
@@ -47,37 +48,33 @@ const PrepDetailView = () => {
     };
 
     useEffect(() => {
+        let isMounted = true;
         const fetchData = async () => {
             setIsLoading(true);
+
+            // 2. Background/Live Update
             try {
-                let foundData = null;
+                let live = null;
+                if (type === 'assessment') live = await getQuizById(id);
+                else if (type === 'question') live = await getQuestionById(id);
+                else if (type === 'resource') live = await getResourceById(id);
 
-                if (type === 'assessment') {
-                    foundData = PREP_TESTS.find(t => String(t.id) === String(id));
-                    const live = await getQuizById(id);
-                    if (live) foundData = live;
-                } else if (type === 'question') {
-                    foundData = PREP_QUESTIONS.find(q => String(q.id) === String(id));
-                    const res = await getAllQuestions(0, 1000);
-                    const live = (res.content || []).find(q => String(q.id) === String(id));
-                    if (live) foundData = live;
-                } else if (type === 'resource') {
-                    foundData = PREP_RESOURCES.find(r => String(r.id) === String(id));
-                    const res = await getAllResources(0, 1000);
-                    const live = (res.content || []).find(r => String(r.id) === String(id));
-                    if (live) foundData = live;
-                }
-
-                if (foundData) {
-                    setData(normalizeData(foundData));
+                if (isMounted && live) {
+                    setData(normalizeData(live));
+                    setError(null);
+                } else if (isMounted) {
+                    setError('Item not found');
                 }
             } catch (err) {
-                console.error('Failed to load detail', err);
+                console.warn('API fetch failed', err);
+                if (isMounted) setError('Failed to connect to the server. Please check if the backend is running.');
             } finally {
-                setIsLoading(false);
+                if (isMounted) setIsLoading(false);
             }
         };
+
         fetchData();
+        return () => { isMounted = false; };
     }, [type, id]);
 
     if (isLoading) {
@@ -88,12 +85,12 @@ const PrepDetailView = () => {
         );
     }
 
-    if (!data) {
+    if (error || !data) {
         return (
             <div className="iq-shell">
                 <div className="iq-empty" style={{ marginTop: '10vh' }}>
-                    <div className="iq-empty-icon">⚠️</div>
-                    <p>We couldn't find this item.</p>
+                    <div className="iq-empty-icon">{error?.includes('server') ? '🔌' : '⚠️'}</div>
+                    <p>{error || "We couldn't find this item."}</p>
                     <button onClick={() => navigate(-1)} className="prep-secondary-btn" style={{ marginTop: '1rem' }}>Go Back</button>
                 </div>
             </div>
@@ -162,8 +159,10 @@ const PrepDetailView = () => {
             {data.keyPoints?.length > 0 && (
                 <div className="pd-section">
                     <p className="pd-section-label">⚡ Key Takeaways</p>
-                    <ul className="pd-list">
-                        {data.keyPoints.map((pt, i) => <li key={i}>{pt}</li>)}
+                    <ul className="pd-feature-list">
+                        {data.keyPoints.map((pt, i) => (
+                            <li key={i}><CheckCircle2 size={14} style={{ color: 'var(--iq-mid)' }} /> {pt}</li>
+                        ))}
                     </ul>
                 </div>
             )}
@@ -183,52 +182,70 @@ const PrepDetailView = () => {
     const renderAssessmentContent = () => {
         const questionCount = data.questions?.length || data.totalQuestions || 0;
         return (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="pd-content-stack">
-                <div className="pd-chip-row">
-                    <span className="prep-data-badge">{data.duration} mins</span>
-                    <span className="prep-data-badge">{questionCount} questions</span>
-                    {data.tags?.slice(0, 3).map(t => <span key={t} className="prep-data-badge subtle">{t}</span>)}
-                </div>
-
-                <p className="pd-description">
-                    Targeted practice for {data.tags?.join(', ') || 'technical topics'} with a timed workflow built to simulate a real screening round.
-                </p>
-
-                <div className="pd-grid-2">
-                    <div className="pd-panel">
-                        <p className="pd-panel-label">What this covers</p>
-                        <ul className="pd-list">
-                            <li>Timed completion window for better interview pacing.</li>
-                            <li>Focused question set sized for quick scoring feedback.</li>
-                            <li>Topic tags that keep practice aligned with your target role.</li>
-                        </ul>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="pd-assessment-layout-v2">
+                {/* 1. Integrated Info Bar (No Cards) */}
+                <div className="pd-info-bar">
+                    <div className="pd-info-item">
+                        <Clock3 size={16} />
+                        <span>{data.duration}m Duration</span>
                     </div>
-                    <div className="pd-panel">
-                        <p className="pd-panel-label">Recommended use</p>
-                        <ul className="pd-list">
-                            <li>Use after reviewing concept notes or interview questions.</li>
-                            <li>Repeat the same topic family until your speed feels consistent.</li>
-                            <li>Pair short rounds with longer tests before final interviews.</li>
-                        </ul>
+                    <div className="pd-info-item">
+                        <FileText size={16} />
+                        <span>{questionCount} Questions</span>
+                    </div>
+                    <div className="pd-info-item">
+                        <TargetIcon size={16} />
+                        <span>Mid-Level</span>
                     </div>
                 </div>
 
-                <div className="pd-action-bar">
-                    <div className="pd-metrics">
-                        <div className="pd-metric">
-                            <span className="pd-metric-val">{data.duration}</span>
-                            <span className="pd-metric-lab">minutes</span>
-                        </div>
-                        <div className="pd-metric">
-                            <span className="pd-metric-val">{questionCount}</span>
-                            <span className="pd-metric-lab">questions</span>
-                        </div>
+                {/* 2. Main Body Content */}
+                <div className="pd-body-main">
+                    <section className="pd-body-section">
+                        <h4 className="pd-body-label">About this Assessment</h4>
+                        <p className="pd-body-text">
+                            Targeted practice for {data.tags?.join(', ') || 'technical topics'} with a timed workflow built to simulate a real screening round. This assessment evaluates both technical accuracy and speed.
+                        </p>
+                    </section>
+
+                    <div className="pd-body-grid">
+                        <section className="pd-body-section">
+                            <h4 className="pd-body-label">
+                                <Shield size={16} style={{ marginRight: '8px', color: 'var(--iq-primary)' }} />
+                                What this covers
+                            </h4>
+                            <ul className="pd-body-list">
+                                <li>Timed completion window</li>
+                                <li>Focused interview question set</li>
+                                <li>Role-aligned topic tags</li>
+                            </ul>
+                        </section>
+
+                        <section className="pd-body-section">
+                            <h4 className="pd-body-label">
+                                <Zap size={16} style={{ marginRight: '8px', color: 'var(--iq-mid)' }} />
+                                Pro Tips
+                            </h4>
+                            <ul className="pd-body-list">
+                                <li>Review concepts before starting</li>
+                                <li>Aim for consistency over speed</li>
+                                <li>Track your progress in history</li>
+                            </ul>
+                        </section>
+                    </div>
+                </div>
+
+                {/* 3. Integrated Action Banner */}
+                <div className="pd-action-footer">
+                    <div className="pd-action-header">
+                        <h3>Ready to start?</h3>
+                        <p>You can retake this assessment anytime.</p>
                     </div>
                     <button
-                        className="prep-primary-btn tests pd-launch-btn"
+                        className="pd-full-launch-btn"
                         onClick={() => window.open(`/job-portal/prep/exam/${data.id}`, '_blank')}
                     >
-                        Start Assessment <ArrowRight size={18} />
+                        Launch Assessment <ArrowRight size={20} />
                     </button>
                 </div>
             </motion.div>
@@ -236,29 +253,29 @@ const PrepDetailView = () => {
     };
 
     const renderResourceContent = () => (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="pd-content-stack">
-            <div className="pd-tags">
-                <span className="iq-tag" style={{ background: 'var(--iq-primary-soft)', color: 'var(--iq-primary)' }}>
-                    {data.type?.toUpperCase()}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="pd-resource-body">
+            <div className="pd-resource-meta">
+                <span className={`iq-badge iq-badge-${data.difficulty?.toLowerCase() || 'easy'}`}>
+                    {data.difficulty || 'Essential'}
                 </span>
                 {data.tags?.map(t => <span key={t} className="iq-tag">{t}</span>)}
             </div>
 
-            <div className="pd-section">
-                <p className="pd-main-text">{data.description || "Detailed guide and documentation covering essential concepts for your technical preparation."}</p>
-            </div>
+            <div className="pd-resource-main">
+                <p className="pd-resource-text">
+                    {data.description || "Detailed guide and documentation covering essential concepts for your technical preparation."}
+                </p>
 
-            <div className="pd-panel" style={{ borderLeft: '4px solid var(--iq-primary)' }}>
-                <p className="pd-panel-label">Source Information</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
-                    <div className="pd-icon-box resources" style={{ width: '32px', height: '32px' }}><Layers3 size={14} /></div>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{data.type === 'video' ? 'Video Workshop' : 'Technical Document'}</span>
+                <div className="pd-resource-info-strip">
+                    <div className="pd-info-item">
+                        <Layers3 size={16} />
+                        <span>{data.type === 'video' ? 'Video Workshop' : 'Technical Document'}</span>
+                    </div>
                 </div>
             </div>
 
             <button
-                className="prep-primary-btn resources"
-                style={{ width: '100%', marginTop: '2rem', height: '56px', fontSize: '1rem' }}
+                className="pd-resource-launch-btn"
                 onClick={() => window.open(data.link || '#', '_blank')}
             >
                 Access Resource <ArrowRight size={20} />

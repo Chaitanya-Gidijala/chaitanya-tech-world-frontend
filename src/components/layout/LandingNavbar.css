@@ -405,6 +405,11 @@
     color: var(--color-primary);
 }
 
+.ln-drawer__item.active {
+    background: hsla(260, 100%, 60%, 0.1);
+    color: var(--color-primary);
+}
+
 .ln-drawer__item svg {
     color: var(--color-primary);
     flex-shrink: 0;
