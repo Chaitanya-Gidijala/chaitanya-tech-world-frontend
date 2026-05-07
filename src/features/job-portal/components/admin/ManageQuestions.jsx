@@ -176,16 +176,21 @@ const ManageQuestions = ({ refreshTrigger }) => {
             const parsed = JSON.parse(jsonInput);
             const items = Array.isArray(parsed) ? parsed : [parsed];
             
-            const structuredItems = items.map(item => ({
-                question: item.question,
-                difficulty: normalizeDifficulty(item.difficulty),
-                tags: item.tags || [],
-                answer: packageAnswer({
-                    answer: item.answer || item.expertAnswer || '',
-                    takeaways: item.takeaways || item.keyPoints || [],
-                    tip: item.tip || item.interviewTip || INTERVIEW_TIPS[0]
-                })
-            }));
+            const structuredItems = items.map(item => {
+                let tagsRaw = item.tags || item.topics || item.topic || item.categories || [];
+                if (typeof tagsRaw === 'string') tagsRaw = tagsRaw.split(',').map(t => t.trim());
+                
+                return {
+                    question: item.question || item.title || '',
+                    difficulty: normalizeDifficulty(item.difficulty || item.level),
+                    tags: Array.isArray(tagsRaw) ? tagsRaw : [],
+                    answer: packageAnswer({
+                        answer: item.answer || item.expertAnswer || item.explanation || item.expertExplanation || '',
+                        takeaways: item.takeaways || item.keyPoints || item.bullets || [],
+                        tip: item.tip || item.interviewTip || item.strategy || INTERVIEW_TIPS[0]
+                    })
+                };
+            });
 
             setIsLoading(true);
             await createQuestionsBatch(structuredItems);
@@ -387,14 +392,13 @@ const ManageQuestions = ({ refreshTrigger }) => {
                                 <h4 className="section-title">Interview Polish</h4>
                                 <div className="adm-field">
                                     <label className="adm-label">Expert Interview Tip</label>
-                                    <div className="custom-select-wrap">
-                                        <select value={formData.tip} onChange={e => setFormData({ ...formData, tip: e.target.value })} className="adm-input">
-                                            {INTERVIEW_TIPS.map((tip, i) => (
-                                                <option key={i} value={tip}>{tip.substring(0, 60)}...</option>
-                                            ))}
-                                        </select>
-                                        <ChevronDown className="select-icon" size={16} />
-                                    </div>
+                                    <textarea 
+                                        rows={2} 
+                                        value={formData.tip} 
+                                        onChange={e => setFormData({ ...formData, tip: e.target.value })} 
+                                        placeholder="Add an interview strategy or pro tip..." 
+                                        className="adm-input adm-textarea" 
+                                    />
                                 </div>
 
                                 <div className="adm-field">
@@ -443,28 +447,67 @@ const ManageQuestions = ({ refreshTrigger }) => {
                         </div>
                     </div>
 
-                    <div className="batch-import-container">
-                        <div className="json-editor-wrap">
+                    <div className="batch-import-container" style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '1.5rem', marginTop: '1.5rem' }}>
+                        <div className="json-editor-wrap" style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                <label className="adm-label" style={{ marginBottom: 0 }}>JSON Data Payload</label>
+                                <button 
+                                    type="button" 
+                                    className="btn-tiny"
+                                    onClick={() => {
+                                        setJsonInput(JSON.stringify([{
+                                            "question": "What is encapsulation in Java?",
+                                            "answer": "Encapsulation is the mechanism of wrapping the data (variables) and code acting on the data (methods) together as a single unit.\n\nIt restricts direct access to some of an object's components, which is a means of preventing accidental interference.",
+                                            "difficulty": "INTERMEDIATE",
+                                            "tags": ["Java", "OOP"],
+                                            "takeaways": [
+                                                "Protects data from unwanted access",
+                                                "Achieved using private access modifiers",
+                                                "Provides getter/setter methods"
+                                            ],
+                                            "tip": "Mention private variables and getter/setter methods while explaining."
+                                        }], null, 2));
+                                        setIsJsonValid(true);
+                                    }}
+                                >
+                                    <FileCode size={12}/> Load Demo Format
+                                </button>
+                            </div>
                             <textarea 
                                 value={jsonInput}
                                 onChange={e => { setJsonInput(e.target.value); setIsJsonValid(true); }}
                                 placeholder='Paste your JSON array here...'
                                 className={`adm-input json-textarea ${!isJsonValid ? 'error' : ''}`}
-                                rows={15}
+                                rows={20}
+                                style={{ fontFamily: 'monospace', fontSize: '0.85rem', flex: 1 }}
                             />
                         </div>
 
-                        <div className="batch-import-sidebar">
-                            <div className="info-box">
-                                <h5>Success Instructions</h5>
-                                <p>Once you paste, click "Import" to save. The list will refresh automatically.</p>
+                        <div className="batch-import-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div className="info-box" style={{ background: 'var(--iq-surface-2)', padding: '1.25rem', borderRadius: '8px', border: '1px solid var(--iq-border)' }}>
+                                <h5 style={{ fontSize: '0.9rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                    <CheckCircle size={16} style={{ color: 'var(--iq-primary)' }}/> Supported Fields
+                                </h5>
+                                <ul style={{ fontSize: '0.8rem', color: 'var(--iq-text-dim)', paddingLeft: '1.2rem', margin: '0.5rem 0', lineHeight: 1.6 }}>
+                                    <li><code>question</code> (Required)</li>
+                                    <li><code>answer</code> (Required, supports \n\n for paragraphs)</li>
+                                    <li><code>difficulty</code> (EASY, INTERMEDIATE, HARD)</li>
+                                    <li><code>tags</code> (Array of strings)</li>
+                                    <li><code>takeaways</code> (Array of strings)</li>
+                                    <li><code>tip</code> (String)</li>
+                                </ul>
+                            </div>
+                            
+                            <div className="info-box" style={{ background: 'var(--iq-primary-soft)', padding: '1.25rem', borderRadius: '8px', border: '1px solid var(--iq-primary)' }}>
+                                <h5 style={{ fontSize: '0.9rem', marginBottom: '0.5rem', color: 'var(--iq-primary)' }}>Action</h5>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--iq-text-dim)', marginBottom: '1rem' }}>Review your JSON data to ensure formatting is correct before starting the import.</p>
                                 <button 
                                     onClick={handleBatchJsonUpload} 
                                     disabled={isLoading || !jsonInput.trim()} 
                                     className="adm-btn adm-btn-primary adm-btn-wide"
-                                    style={{ height: '50px', fontSize: '1rem', marginTop: '1rem' }}
+                                    style={{ height: '45px', fontSize: '0.95rem' }}
                                 >
-                                    {isLoading ? <RefreshCw className="animate-spin" /> : <UploadCloud size={18} />} 
+                                    {isLoading ? <RefreshCw className="animate-spin" size={16} /> : <UploadCloud size={16} />} 
                                     {isLoading ? ' Importing...' : ' Start Import'}
                                 </button>
                             </div>

@@ -55,7 +55,7 @@ const PrepDetailView = () => {
             if (rawContent && typeof rawContent === 'string' && rawContent.trim().startsWith('{')) {
                 const parsed = JSON.parse(rawContent);
                 if (type === 'question') {
-                    finalItem.answer = parsed.expertAnswer || finalItem.answer;
+                    finalItem.answer = parsed.expertAnswer !== undefined ? parsed.expertAnswer : finalItem.answer;
                     finalItem.keyPoints = parsed.takeaways || finalItem.keyPoints || [];
                     finalItem.interviewTip = parsed.tip || finalItem.interviewTip || '';
                 } else if (type === 'resource') {

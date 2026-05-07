@@ -57,7 +57,7 @@ const normalizeQuestion = (question, index) => {
     try {
         if (question.answer && typeof question.answer === 'string' && question.answer.trim().startsWith('{')) {
             const parsed = JSON.parse(question.answer);
-            finalAnswer = parsed.expertAnswer || finalAnswer;
+            finalAnswer = parsed.expertAnswer !== undefined ? parsed.expertAnswer : finalAnswer;
             keyPoints = parsed.takeaways || keyPoints;
             tip = parsed.tip || '';
         }
