@@ -42,6 +42,21 @@ export const incrementVisitorCount = async (metadata = {}) => {
     }
 };
 
+// Increment the login count
+export const recordLogin = async () => {
+    try {
+        const response = await fetch(`${config.endpoints.analytics.base}/login`, {
+            method: 'POST',
+            headers: getHeaders()
+        });
+        if (!response.ok) throw new Error('Failed to record login');
+        return await response.json();
+    } catch (error) {
+        console.warn("Backend analytics login tracking failed:", error);
+        return { success: false };
+    }
+};
+
 // Get the total visitor count and insights
 export const getVisitorStats = async () => {
     try {

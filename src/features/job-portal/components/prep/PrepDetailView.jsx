@@ -11,6 +11,28 @@ import { getQuizById, getQuestionById, getResourceById } from '../../services/pr
 import { PREP_QUESTIONS, PREP_RESOURCES, PREP_TESTS } from '../../data/prepData';
 import '../../styles/InterviewQuestions.css';
 
+/* Renders answer text with proper paragraph spacing */
+const FormattedAnswer = ({ text, className = '' }) => {
+    if (!text) return null;
+    const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
+    if (paragraphs.length <= 1) {
+        const lines = text.split(/\n/).filter(l => l.trim());
+        if (lines.length > 1) {
+            return (
+                <div className={`iq-formatted-answer ${className}`}>
+                    {lines.map((line, i) => <p key={i} className="pd-main-text">{line}</p>)}
+                </div>
+            );
+        }
+        return <p className={`pd-main-text ${className}`}>{text}</p>;
+    }
+    return (
+        <div className={`iq-formatted-answer ${className}`}>
+            {paragraphs.map((para, i) => <p key={i} className="pd-main-text">{para.trim()}</p>)}
+        </div>
+    );
+};
+
 const PrepDetailView = () => {
     const { type, id } = useParams();
     const navigate = useNavigate();
@@ -152,7 +174,7 @@ const PrepDetailView = () => {
                         </div>
                     </div>
                 ) : (
-                    <p className="pd-main-text iq-fade-in">{data.answer}</p>
+                    <FormattedAnswer text={data.answer} className="iq-fade-in" />
                 )}
             </div>
 

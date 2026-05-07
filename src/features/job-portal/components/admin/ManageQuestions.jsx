@@ -163,6 +163,14 @@ const ManageQuestions = ({ refreshTrigger }) => {
         setViewMode('edit');
     };
 
+    const normalizeDifficulty = (value) => {
+        const diff = String(value || '').toUpperCase();
+        if (diff === 'EASY') return 'EASY';
+        if (diff === 'INTERMEDIATE' || diff === 'MEDIUM') return 'INTERMEDIATE';
+        if (diff === 'HARD' || diff === 'EXPERT') return 'HARD';
+        return 'INTERMEDIATE';
+    };
+
     const handleBatchJsonUpload = async () => {
         try {
             const parsed = JSON.parse(jsonInput);
@@ -170,7 +178,7 @@ const ManageQuestions = ({ refreshTrigger }) => {
             
             const structuredItems = items.map(item => ({
                 question: item.question,
-                difficulty: item.difficulty || 'INTERMEDIATE',
+                difficulty: normalizeDifficulty(item.difficulty),
                 tags: item.tags || [],
                 answer: packageAnswer({
                     answer: item.answer || item.expertAnswer || '',

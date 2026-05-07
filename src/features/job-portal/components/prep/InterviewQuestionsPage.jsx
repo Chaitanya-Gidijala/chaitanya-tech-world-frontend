@@ -93,6 +93,36 @@ const buildTopicCards = (topics, questionBank) => {
 };
 
 /* ──────────────────────────────────────────────
+   FORMATTED ANSWER — renders paragraphs properly
+──────────────────────────────────────────────── */
+const FormattedAnswer = ({ text, className = '' }) => {
+    if (!text) return null;
+    // Split on double-newline (paragraph breaks) OR single newline
+    const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
+    if (paragraphs.length <= 1) {
+        // Fallback: split on single newline
+        const lines = text.split(/\n/).filter(l => l.trim());
+        if (lines.length > 1) {
+            return (
+                <div className={`iq-formatted-answer ${className}`}>
+                    {lines.map((line, i) => (
+                        <p key={i} className="iq-answer-text">{line}</p>
+                    ))}
+                </div>
+            );
+        }
+        return <p className={`iq-answer-text ${className}`}>{text}</p>;
+    }
+    return (
+        <div className={`iq-formatted-answer ${className}`}>
+            {paragraphs.map((para, i) => (
+                <p key={i} className="iq-answer-text">{para.trim()}</p>
+            ))}
+        </div>
+    );
+};
+
+/* ──────────────────────────────────────────────
    SMALL SUBCOMPONENTS
 ──────────────────────────────────────────────── */
 const DiffBadge = ({ difficulty }) => {
@@ -232,11 +262,11 @@ const ReaderPane = ({ q, questions, onNavigate, bookmarks, toggleBookmark }) => 
                                         <span>Test your knowledge first!</span>
                                     </div>
                                     <div className="iq-blur-text">
-                                        {q.answer.substring(0, 100)}...
+                                        {(q.answer || '').substring(0, 120)}...
                                     </div>
                                 </div>
                             ) : (
-                                <p className="iq-answer-text iq-fade-in">{q.answer}</p>
+                                <FormattedAnswer text={q.answer} className="iq-fade-in" />
                             )}
                         </div>
 

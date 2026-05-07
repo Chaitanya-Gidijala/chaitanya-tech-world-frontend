@@ -685,6 +685,25 @@
   color: var(--iq-text-dim);
 }
 
+/* Multi-paragraph answer wrapper — adds spacing between paragraphs */
+.iq-formatted-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.iq-formatted-answer .iq-answer-text,
+.iq-formatted-answer .pd-main-text {
+  margin: 0;
+}
+
+/* pd-main-text used in PrepDetailView (mobile) */
+.pd-main-text {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--iq-text-dim);
+}
+
 /* Code block */
 .iq-code-block {
   background: var(--iq-surface-2);
