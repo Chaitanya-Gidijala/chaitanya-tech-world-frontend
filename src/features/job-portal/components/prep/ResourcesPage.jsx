@@ -135,7 +135,7 @@ const ResourceDetailBody = ({ resource }) => {
 
                 <a
                     className="prep-primary-btn resources"
-                    href={resource.url}
+                    href={resource.url?.startsWith('http') ? resource.url : `https://${resource.url}`}
                     target="_blank"
                     rel="noopener noreferrer"
                 >
@@ -159,7 +159,7 @@ const ResourcesPage = () => {
     const [totalResources, setTotalResources] = useState(0);
     const [activeResource, setActiveResource] = useState(null);
 
-    const pageSize = 12;
+    const pageSize = 10;
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);

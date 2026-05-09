@@ -44,7 +44,7 @@ const ManageQuestions = ({ refreshTrigger }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
-    const pageSize = 15;
+    const pageSize = 10;
 
     // Advanced Form State
     const [formData, setFormData] = useState({ 

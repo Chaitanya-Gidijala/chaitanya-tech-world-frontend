@@ -61,7 +61,7 @@ const ManageQuizzes = ({ refreshTrigger }) => {
     const [jsonInput, setJsonInput] = useState('');
     const { showToast } = useToast();
 
-    const pageSize = 15;
+    const pageSize = 10;
 
     // Use DB topics if available, else fallback to standard list
     const availableTopics = dbTopics.length > 0 ? dbTopics.map(t => t.name) : DEFAULT_TOPICS;

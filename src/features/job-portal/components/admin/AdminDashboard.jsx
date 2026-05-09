@@ -532,13 +532,6 @@ const AdminDashboard = () => {
                                 
                                 return (
                                     <div className="adm-analytics-section">
-                                        <div className="adm-page-header" style={{ marginBottom: '1.5rem', borderBottom: 'none', padding: 0 }}>
-                                            <div>
-                                                <h2 className="adm-page-title" style={{ fontSize: '1.25rem' }}>Traffic Analytics</h2>
-                                                <p className="adm-page-subtitle">Real-time visitor insights and platform usage</p>
-                                            </div>
-                                        </div>
-
                                         <div className="adm-stats-grid" style={{ marginBottom: '1.5rem' }}>
                                             <div className="adm-stat-card">
                                                 <div className="adm-stat-icon" style={{ background: 'rgba(99,102,241,0.1)', color: '#6366f1' }}>

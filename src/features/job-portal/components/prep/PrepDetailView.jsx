@@ -299,7 +299,11 @@ const PrepDetailView = () => {
 
             <button
                 className="pd-resource-launch-btn"
-                onClick={() => window.open(data.link || '#', '_blank')}
+                onClick={() => {
+                    const url = data.url || data.link || '#';
+                    const finalUrl = url.startsWith('http') ? url : `https://${url}`;
+                    window.open(finalUrl, '_blank');
+                }}
             >
                 Access Resource <ArrowRight size={20} />
             </button>

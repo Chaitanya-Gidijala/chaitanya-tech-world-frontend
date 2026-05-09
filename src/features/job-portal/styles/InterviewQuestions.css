@@ -300,6 +300,22 @@
   align-self: stretch;
 }
 
+@media (max-width: 640px) {
+  .iq-stats-bar {
+    gap: 1.5rem !important;
+    justify-content: flex-start !important;
+  }
+  .iq-stat-num {
+    font-size: 1.1rem !important;
+  }
+  .iq-stat-label {
+    font-size: 0.65rem !important;
+  }
+  .iq-stat-divider {
+    display: none !important;
+  }
+}
+
 /* ── CONTROLS ── */
 .iq-controls-wrap {
   position: relative;

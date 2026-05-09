@@ -29,7 +29,7 @@ const ManageResources = ({ refreshTrigger }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
-    const pageSize = 15;
+    const pageSize = 10;
 
     const [formData, setFormData] = useState({ title:'', description:'', url:'', type:'LINK', tags:[], jobId:null });
     const [editingId, setEditingId] = useState(null);
@@ -149,7 +149,7 @@ const ManageResources = ({ refreshTrigger }) => {
                                                         <div className="adm-cell-primary">{r.title}</div>
                                                         <div className="adm-cell-muted">{r.description}</div>
                                                     </td>
-                                                    <td><a href={r.url} target="_blank" rel="noreferrer" className="adm-link"><ExternalLink size={13}/> Open</a></td>
+                                                    <td><a href={r.url?.startsWith('http') ? r.url : `https://${r.url}`} target="_blank" rel="noreferrer" className="adm-link"><ExternalLink size={13}/> Open</a></td>
                                                     <td><div className="adm-tags-row">{r.tags?.map(t=><span key={t} className="adm-tag">{t}</span>)}</div></td>
                                                     <td><div className="adm-cell-actions"><button onClick={()=>openEdit(r)} className="adm-btn-icon"><Edit2 size={15}/></button><button onClick={()=>handleDelete(r.id)} className="adm-btn-icon delete"><Trash2 size={15}/></button></div></td>
                                                 </motion.tr>
@@ -177,12 +177,13 @@ const ManageResources = ({ refreshTrigger }) => {
                                             {r.description?.substring(0, 60)}...
                                         </p>
                                         <div className="adm-tags-row">
-                                            <a href={r.url} target="_blank" rel="noreferrer" className="adm-badge adm-badge-primary" style={{ textDecoration: 'none' }}>
+                                            <a href={r.url?.startsWith('http') ? r.url : `https://${r.url}`} target="_blank" rel="noreferrer" className="adm-badge adm-badge-primary" style={{ textDecoration: 'none' }}>
                                                 <ExternalLink size={10} style={{ marginRight: '4px' }}/> Open Link
                                             </a>
                                             {r.tags?.slice(0, 2).map(t => <span key={t} className="adm-tag">{t}</span>)}
                                         </div>
                                     </div>
+
                                 ))}
                             </div>
 
