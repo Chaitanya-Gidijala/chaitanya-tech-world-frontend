@@ -354,8 +354,10 @@ const InterviewQuestionsPage = () => {
     const [viewMode, setViewMode] = useState('split'); // 'split' | 'grid'
     const [bookmarks, setBookmarks] = useState([]);
 
-    // Pagination
+    // Pagination — server-side
     const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
     const pageSize = 12;
 
     useEffect(() => {
@@ -364,16 +366,20 @@ const InterviewQuestionsPage = () => {
 
             try {
                 const [questionsResponse, topicsResponse] = await Promise.all([
-                    getAllQuestions(0, 50),
+                    getAllQuestions(currentPage, pageSize, selectedTag === 'All' ? '' : selectedTag, difficulty === 'All' ? '' : difficulty),
                     getTopics()
                 ]);
 
                 const normalizedQuestions = (questionsResponse.content || []).map(normalizeQuestion);
                 setQuestionBank(normalizedQuestions);
+                setTotalPages(questionsResponse.totalPages || 1);
+                setTotalElements(questionsResponse.totalElements || normalizedQuestions.length);
                 setTopics(buildTopicCards(topicsResponse || [], normalizedQuestions));
             } catch (error) {
                 console.error('Failed to load question bank', error);
                 setQuestionBank([]);
+                setTotalPages(0);
+                setTotalElements(0);
                 setTopics([]);
             } finally {
                 setIsFetching(false);
@@ -381,24 +387,17 @@ const InterviewQuestionsPage = () => {
         };
 
         fetchQuestionBank();
-    }, []);
+    }, [currentPage, selectedTag, difficulty]);
 
-    const baseQuestions = useMemo(() => (
-        questionBank.filter((question) => {
-            const matchesTag = selectedTag === 'All' || question.tags?.includes(selectedTag);
-            const matchesDifficulty = difficulty === 'All' || question.difficulty === difficulty;
-            return matchesTag && matchesDifficulty;
-        })
-    ), [difficulty, questionBank, selectedTag]);
-
+    // Client-side search filter (applied on top of server-side tag/difficulty)
     const filteredQuestions = useMemo(() => {
-        if (!searchTerm) return baseQuestions;
+        if (!searchTerm) return questionBank;
         const term = searchTerm.toLowerCase();
-        return baseQuestions.filter(q =>
+        return questionBank.filter(q =>
             q.question.toLowerCase().includes(term) ||
             q.tags?.some(t => t.toLowerCase().includes(term))
         );
-    }, [baseQuestions, searchTerm]);
+    }, [questionBank, searchTerm]);
 
     useEffect(() => {
         if (filteredQuestions.length === 0) {
@@ -417,9 +416,7 @@ const InterviewQuestionsPage = () => {
         if (isMobile) {
             navigate(`/job-portal/prep/view/question/${q.id}`);
         } else {
-            // Auto-switch to split view on desktop so user can see the answer
             setViewMode('split');
-            // Scroll to top of body to ensure they see the reader
             window.scrollTo({ top: 300, behavior: 'smooth' });
         }
     };
@@ -439,19 +436,42 @@ const InterviewQuestionsPage = () => {
         setCurrentPage(0);
     };
 
+    // Reset to page 0 when search changes
     useEffect(() => {
         setCurrentPage(0);
-    }, [difficulty, searchTerm]);
-
-    const totalPages = Math.ceil(filteredQuestions.length / pageSize);
-    const paginatedQ = filteredQuestions.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+    }, [searchTerm]);
 
     const stats = {
-        total: baseQuestions.length,
-        easy: baseQuestions.filter(q => q.difficulty === 'EASY').length,
-        mid: baseQuestions.filter(q => q.difficulty === 'INTERMEDIATE').length,
-        hard: baseQuestions.filter(q => q.difficulty === 'HARD').length,
+        total: totalElements,
+        easy: questionBank.filter(q => q.difficulty === 'EASY').length,
+        mid: questionBank.filter(q => q.difficulty === 'INTERMEDIATE').length,
+        hard: questionBank.filter(q => q.difficulty === 'HARD').length,
     };
+
+    // Pagination controls shared between split + grid view
+    const PaginationBar = () => totalPages > 1 ? (
+        <div className="iq-pagination">
+            <button className="iq-page-btn" onClick={() => setCurrentPage(p => Math.max(0, p - 1))} disabled={currentPage === 0}>
+                <ChevronLeft size={14} />
+            </button>
+            {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                // Smart window: show pages around current
+                let page = i;
+                if (totalPages > 7) {
+                    const start = Math.max(0, Math.min(currentPage - 3, totalPages - 7));
+                    page = start + i;
+                }
+                return (
+                    <button key={page} className={`iq-page-btn ${currentPage === page ? 'active' : ''}`} onClick={() => setCurrentPage(page)}>
+                        {page + 1}
+                    </button>
+                );
+            })}
+            <button className="iq-page-btn" onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))} disabled={currentPage === totalPages - 1}>
+                <ChevronRight size={14} />
+            </button>
+        </div>
+    ) : null;
 
     // Instant loading mode enabled. No blocking spinner.
 
@@ -600,7 +620,7 @@ const InterviewQuestionsPage = () => {
                 <div className="iq-section-label">
                     <span className="iq-section-label-text">
                         {selectedTag !== 'All' ? selectedTag : 'All Questions'}
-                        {' '}— {filteredQuestions.length} results
+                        {' '}— {totalElements} results
                     </span>
                     <div className="iq-section-label-line" />
                 </div>
@@ -608,47 +628,54 @@ const InterviewQuestionsPage = () => {
                 {filteredQuestions.length > 0 ? (
                     viewMode === 'split' ? (
                         /* ── SPLIT VIEW ── */
-                        <div className="iq-split">
-                            {/* Left list */}
-                            <div className="iq-list-pane">
-                                <div className="iq-list-header">
-                                    <span style={{ fontFamily: 'var(--iq-font-display)', fontSize: '0.9rem', fontWeight: 700 }}>Questions</span>
-                                    <span className="iq-list-count"><span>{filteredQuestions.length}</span> found</span>
+                        <>
+                            <div className="iq-split">
+                                {/* Left list */}
+                                <div className="iq-list-pane">
+                                    <div className="iq-list-header">
+                                        <span style={{ fontFamily: 'var(--iq-font-display)', fontSize: '0.9rem', fontWeight: 700 }}>Questions</span>
+                                        <span className="iq-list-count"><span>{filteredQuestions.length}</span> found</span>
+                                    </div>
+                                    <div className="iq-list-scroll">
+                                        <AnimatePresence>
+                                            {filteredQuestions.map((q, i) => (
+                                                <QuestionRow
+                                                    key={q.id}
+                                                    q={q}
+                                                    index={i}
+                                                    searchTerm={searchTerm}
+                                                    active={activeQuestion?.id === q.id}
+                                                    onClick={handleQuestionClick}
+                                                />
+                                            ))}
+                                        </AnimatePresence>
+                                    </div>
                                 </div>
-                                <div className="iq-list-scroll">
-                                    <AnimatePresence>
-                                        {filteredQuestions.map((q, i) => (
-                                            <QuestionRow
-                                                key={q.id}
-                                                q={q}
-                                                index={i}
-                                                searchTerm={searchTerm}
-                                                active={activeQuestion?.id === q.id}
-                                                onClick={handleQuestionClick}
-                                            />
-                                        ))}
-                                    </AnimatePresence>
-                                </div>
-                            </div>
 
-                            {/* Right reader */}
-                            <ReaderPane
-                                q={activeQuestion}
-                                questions={filteredQuestions}
-                                onNavigate={handleNavigate}
-                                bookmarks={bookmarks}
-                                toggleBookmark={toggleBookmark}
-                            />
-                        </div>
+                                {/* Right reader */}
+                                <ReaderPane
+                                    q={activeQuestion}
+                                    questions={filteredQuestions}
+                                    onNavigate={handleNavigate}
+                                    bookmarks={bookmarks}
+                                    toggleBookmark={toggleBookmark}
+                                />
+                            </div>
+                            {/* Pagination below split view */}
+                            <PaginationBar />
+                        </>
                     ) : (
                         /* ── GRID VIEW ── */
-                        <div className="iq-grid-view">
-                            <AnimatePresence>
-                                {paginatedQ.map((q, i) => (
-                                    <GridCard key={q.id} q={q} index={i} searchTerm={searchTerm} onClick={handleQuestionClick} />
-                                ))}
-                            </AnimatePresence>
-                        </div>
+                        <>
+                            <div className="iq-grid-view">
+                                <AnimatePresence>
+                                    {filteredQuestions.map((q, i) => (
+                                        <GridCard key={q.id} q={q} index={i} searchTerm={searchTerm} onClick={handleQuestionClick} />
+                                    ))}
+                                </AnimatePresence>
+                            </div>
+                            <PaginationBar />
+                        </>
                     )
                 ) : (
                     <div className="iq-empty-state-v2 iq-fade-in">
@@ -664,23 +691,6 @@ const InterviewQuestionsPage = () => {
                                 Clear All Filters
                             </button>
                         </div>
-                    </div>
-                )}
-
-                {/* PAGINATION (grid only) */}
-                {viewMode === 'grid' && totalPages > 1 && (
-                    <div className="iq-pagination">
-                        <button className="iq-page-btn" onClick={() => setCurrentPage(p => Math.max(0, p - 1))} disabled={currentPage === 0}>
-                            <ChevronLeft size={14} />
-                        </button>
-                        {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => (
-                            <button key={i} className={`iq-page-btn ${currentPage === i ? 'active' : ''}`} onClick={() => setCurrentPage(i)}>
-                                {i + 1}
-                            </button>
-                        ))}
-                        <button className="iq-page-btn" onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))} disabled={currentPage === totalPages - 1}>
-                            <ChevronRight size={14} />
-                        </button>
                     </div>
                 )}
             </main>

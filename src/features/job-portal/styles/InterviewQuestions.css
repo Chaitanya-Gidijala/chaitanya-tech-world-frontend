@@ -4340,3 +4340,463 @@
     box-shadow: 0 10px 25px rgba(14, 165, 233, 0.25);
   }
 }
+
+/* ═══════════════════════════════════════════════════
+   PREP HUB — ENHANCED MOBILE RESPONSIVE (all pages)
+   ═══════════════════════════════════════════════════ */
+
+/* ── Pagination: always visible and touch-friendly ── */
+.iq-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.iq-page-btn {
+  font-family: var(--iq-font-mono);
+  font-size: 0.78rem;
+  background: var(--iq-surface);
+  border: 1px solid var(--iq-border);
+  border-radius: var(--iq-radius-sm);
+  color: var(--iq-text-dim);
+  min-width: 36px;
+  height: 36px;
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--iq-transition);
+}
+
+.iq-page-btn:hover:not(:disabled) {
+  border-color: var(--iq-primary);
+  color: var(--iq-primary);
+}
+
+.iq-page-btn.active {
+  background: var(--iq-primary);
+  border-color: var(--iq-primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+.iq-page-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ── prep-detail-copy: formatted description in detail pane ── */
+.prep-detail-copy {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--iq-text-dim);
+}
+
+.prep-detail-copy p {
+  margin: 0;
+}
+
+/* ── prep-collection-preview clean text ── */
+.prep-collection-preview {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--iq-text-muted);
+  margin-top: 0.4rem;
+  overflow: hidden;
+}
+
+/* ── Fetching indicator ── */
+.prep-fetching-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--iq-font-mono);
+  font-size: 0.72rem;
+  color: var(--iq-text-muted);
+  flex-shrink: 0;
+}
+
+.iq-spinner-small {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--iq-border);
+  border-top-color: var(--iq-primary);
+  border-radius: 50%;
+  animation: iq-spin 0.8s linear infinite;
+}
+
+@keyframes iq-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════
+   TABLET  ≤ 1024px
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+
+  /* Hero: single column */
+  .prep-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prep-hero-visual {
+    min-height: 240px;
+    justify-self: stretch;
+    border-radius: 20px;
+  }
+
+  /* Split pane: narrower left column */
+  .iq-split {
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+
+  /* Controls bar: allow wrapping without overflow */
+  .iq-controls-inner {
+    flex-wrap: wrap;
+  }
+
+  .iq-search-wrap {
+    min-width: 180px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   LARGE MOBILE  ≤ 768px
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Header & body spacing */
+  .iq-header {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .iq-body {
+    padding: 1rem 1rem 3rem;
+  }
+
+  /* Hero: tighten gap, hide visual on very small */
+  .prep-hero-grid {
+    gap: 0.75rem;
+  }
+
+  .prep-hero-visual {
+    min-height: 180px;
+    border-radius: 16px;
+  }
+
+  /* Stats bar: smaller font */
+  .iq-main-title {
+    font-size: clamp(1.25rem, 5vw, 1.8rem);
+  }
+
+  .iq-stats-bar {
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .iq-stat-num {
+    font-size: 1rem;
+  }
+
+  /* Controls bar: stack vertically on mobile */
+  .iq-controls-wrap {
+    padding: 0.75rem 1rem;
+    overflow: visible;
+  }
+
+  .iq-controls-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+
+  .iq-search-wrap {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .iq-input {
+    width: 100%;
+    font-size: 1rem; /* prevent iOS zoom */
+  }
+
+  .iq-select-wrap {
+    width: 100%;
+  }
+
+  .iq-select {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  /* View toggle: keep visible but smaller */
+  .iq-view-toggle {
+    align-self: flex-end;
+  }
+
+  /* Split view: mobile shows only list, tap navigates to detail page */
+  .iq-split {
+    display: block;
+  }
+
+  .iq-reader-pane {
+    display: none;
+  }
+
+  .iq-list-pane {
+    max-height: none;
+    border-radius: var(--iq-radius);
+  }
+
+  /* Grid view: single column */
+  .iq-grid-view {
+    grid-template-columns: 1fr;
+  }
+
+  /* Pagination: bigger tap targets */
+  .iq-pagination {
+    gap: 0.3rem;
+    margin-top: 1.5rem;
+  }
+
+  .iq-page-btn {
+    min-width: 40px;
+    height: 40px;
+    font-size: 0.85rem;
+  }
+
+  /* Progress section */
+  .iq-progress-bar-wrap {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .iq-progress-levels {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .iq-progress-cta {
+    border-left: none;
+    border-top: 1px solid var(--iq-border);
+    padding-left: 0;
+    padding-top: 0.75rem;
+  }
+
+  /* Summary cards: single column */
+  .prep-summary-grid,
+  .prep-dashboard-grid,
+  .prep-insights-grid,
+  .prep-step-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Resources collection: stacked on mobile */
+  .prep-collection-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .prep-collection-list {
+    min-height: auto;
+    max-height: none;
+    border-radius: var(--iq-radius) var(--iq-radius) 0 0;
+  }
+
+  /* On mobile resources page: show list fully, hide detail panel */
+  .prep-collection-detail {
+    display: none;
+  }
+
+  .prep-collection-item {
+    padding: 0.85rem 1rem;
+  }
+
+  .prep-collection-item h3 {
+    font-size: 0.9rem;
+  }
+
+  /* Description text in detail view */
+  .prep-detail-copy {
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .prep-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Buttons: full width */
+  .prep-primary-btn,
+  .prep-secondary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .prep-cta-panel,
+  .prep-detail-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Topic filters: hidden (in select instead) */
+  .iq-topics-grid {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   SMALL MOBILE  ≤ 480px
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+
+  .iq-header {
+    padding: 1.25rem 0.75rem 0.75rem;
+  }
+
+  .iq-body {
+    padding: 0.75rem 0.75rem 2.5rem;
+  }
+
+  .prep-hero-visual {
+    min-height: 150px;
+  }
+
+  .iq-main-title {
+    font-size: 1.3rem;
+  }
+
+  .iq-subtitle {
+    font-size: 0.85rem;
+  }
+
+  /* Pagination: wrap and shrink */
+  .iq-pagination {
+    gap: 0.25rem;
+  }
+
+  .iq-page-btn {
+    min-width: 36px;
+    height: 36px;
+    font-size: 0.78rem;
+  }
+
+  /* Card items */
+  .iq-grid-card {
+    padding: 1rem;
+  }
+
+  .prep-collection-item {
+    padding: 0.75rem;
+  }
+
+  /* Reader pane question text */
+  .iq-reader-q {
+    font-size: 1rem;
+  }
+
+  /* Stats bar: wrap to 2 columns */
+  .iq-stats-bar {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .iq-stat-divider {
+    display: none;
+  }
+
+  .iq-stat-num {
+    font-size: 1.1rem;
+  }
+
+  /* Surface cards */
+  .prep-surface-card,
+  .prep-dashboard-card,
+  .prep-step-card {
+    padding: 1rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   ADMIN RESOURCES — ManageResources mobile layout
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Table: scrollable horizontally on mobile */
+  .adm-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .adm-table {
+    min-width: 620px;
+  }
+
+  /* Toolbar: wrap filters */
+  .adm-toolbar {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .adm-toolbar-left,
+  .adm-toolbar-right {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .adm-search-wrap {
+    width: 100%;
+  }
+
+  .adm-search-input {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .adm-select {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  /* Mode buttons: scrollable row */
+  .adm-mode-switcher {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem;
+  }
+
+  /* Form grid: single column */
+  .form-section-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Pagination: full width */
+  .adm-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .adm-form-header-fancy {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .adm-table td,
+  .adm-table th {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}

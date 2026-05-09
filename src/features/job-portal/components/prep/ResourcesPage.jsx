@@ -24,6 +24,31 @@ const typeOptions = [
     { value: 'video', label: 'Video lessons' }
 ];
 
+/* Render multi-paragraph descriptions stored as \n\n-separated text */
+const FormattedDescription = ({ text, className = '', lineClamp = 0 }) => {
+    if (!text) return null;
+    // Render just a clean preview if line-clamped (for list items)
+    if (lineClamp > 0) {
+        const plain = text.replace(/\n\n+/g, ' ').replace(/\n/g, ' ').trim();
+        return <p className={className} style={{ display: '-webkit-box', WebkitLineClamp: lineClamp, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{plain}</p>;
+    }
+    const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
+    if (paragraphs.length <= 1) {
+        const lines = text.split(/\n/).filter(l => l.trim());
+        if (lines.length > 1) {
+            return <div className={className}>{lines.map((line, i) => <p key={i} style={{ marginBottom: '0.6rem' }}>{line}</p>)}</div>;
+        }
+        return <p className={className}>{text}</p>;
+    }
+    return (
+        <div className={className}>
+            {paragraphs.map((para, i) => (
+                <p key={i} style={{ marginBottom: i < paragraphs.length - 1 ? '0.75rem' : 0 }}>{para.trim()}</p>
+            ))}
+        </div>
+    );
+};
+
 const getResourceIcon = (type) => {
     if (type === 'pdf') return FileText;
     if (type === 'video') return Video;
@@ -70,9 +95,10 @@ const ResourceDetailBody = ({ resource }) => {
                     ))}
                 </div>
 
-                <p className="prep-detail-copy">
-                    {resource.description || 'A focused learning resource curated to support technical interview preparation.'}
-                </p>
+                <FormattedDescription
+                    text={resource.description || 'A focused learning resource curated to support technical interview preparation.'}
+                    className="prep-detail-copy"
+                />
             </div>
 
             <div className="prep-detail-grid">
@@ -133,7 +159,7 @@ const ResourcesPage = () => {
     const [totalResources, setTotalResources] = useState(0);
     const [activeResource, setActiveResource] = useState(null);
 
-    const pageSize = 10;
+    const pageSize = 12;
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -212,7 +238,36 @@ const ResourcesPage = () => {
         setCurrentPage(0);
     };
 
-    // Instant loading mode enabled. No blocking spinner.
+    const clearFilters = () => {
+        setSearchTerm('');
+        setSelectedTopic('All');
+        setTypeFilter('All');
+        setCurrentPage(0);
+    };
+
+    // Robust Pagination Bar (shared logic)
+    const PaginationBar = () => totalPages > 1 ? (
+        <div className="iq-pagination">
+            <button className="iq-page-btn" onClick={() => setCurrentPage(p => Math.max(0, p - 1))} disabled={currentPage === 0}>
+                <ChevronLeft size={14} />
+            </button>
+            {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                let page = i;
+                if (totalPages > 7) {
+                    const start = Math.max(0, Math.min(currentPage - 3, totalPages - 7));
+                    page = start + i;
+                }
+                return (
+                    <button key={page} className={`iq-page-btn ${currentPage === page ? 'active' : ''}`} onClick={() => setCurrentPage(page)}>
+                        {page + 1}
+                    </button>
+                );
+            })}
+            <button className="iq-page-btn" onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))} disabled={currentPage === totalPages - 1}>
+                <ChevronRight size={14} />
+            </button>
+        </div>
+    ) : null;
 
     return (
         <div className="iq-shell">
@@ -306,8 +361,85 @@ const ResourcesPage = () => {
             </div>
 
             <main className="iq-body">
+                <div className="iq-section-label">
+                    <span className="iq-section-label-text">
+                        {selectedTopic !== 'All' ? selectedTopic : 'Resource Catalog'} — {totalResources} found
+                    </span>
+                    <div className="iq-section-label-line" />
+                </div>
 
-                <section className="prep-summary-grid">
+                {filteredResources.length === 0 ? (
+                    <div className="iq-empty-state-v2 iq-fade-in">
+                        <div className="iq-empty-art">
+                            <div className="iq-empty-circle" />
+                            <Search size={64} className="iq-empty-icon-v2" />
+                        </div>
+                        <div className="iq-empty-content">
+                            <h3>No Resources Found</h3>
+                            <p>We couldn't find any materials matching your current filters. Try adjusting your search or clearing all filters to browse the full library.</p>
+                            <button className="iq-empty-reset-btn" onClick={clearFilters}>
+                                <Zap size={16} /> Clear All Filters
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <>
+                        <div className="prep-collection-shell">
+                            <div className="prep-collection-list">
+                                <div className="prep-collection-list-header">
+                                    <span>Browse Library</span>
+                                    <span>{filteredResources.length} visible</span>
+                                </div>
+
+                                <div className="prep-collection-scroll">
+                                    {filteredResources.map((resource) => {
+                                        const ResourceIcon = getResourceIcon(resource.type);
+
+                                        return (
+                                            <motion.button
+                                                type="button"
+                                                key={resource.id}
+                                                className={`prep-collection-item ${activeResource?.id === resource.id ? 'active' : ''}`}
+                                                onClick={() => handleSelectResource(resource)}
+                                                initial={{ opacity: 0, x: -10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                            >
+                                                <div className="prep-collection-item-head">
+                                                    <div className="prep-collection-icon resources">
+                                                        <ResourceIcon size={16} />
+                                                    </div>
+                                                    <div>
+                                                        <p className="prep-collection-kicker">{(resource.type || 'link').toUpperCase()}</p>
+                                                        <h3>{resource.title}</h3>
+                                                    </div>
+                                                </div>
+
+                                                <FormattedDescription
+                                                    text={resource.description || 'Curated learning material for focused technical preparation.'}
+                                                    className="prep-collection-preview"
+                                                    lineClamp={2}
+                                                />
+
+                                                <div className="prep-chip-row">
+                                                    {(resource.tags || []).slice(0, 3).map((tag) => (
+                                                        <span key={tag} className="prep-data-badge subtle">{tag}</span>
+                                                    ))}
+                                                </div>
+                                            </motion.button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <div className="prep-collection-detail">
+                                <ResourceDetailBody resource={activeResource} />
+                            </div>
+                        </div>
+                        <PaginationBar />
+                    </>
+                )}
+
+                <section className="prep-summary-grid" style={{ marginTop: '4rem' }}>
                     <article className="prep-surface-card">
                         <div className="prep-surface-head">
                             <div className="prep-surface-icon"><FileText size={18} /></div>
@@ -330,101 +462,6 @@ const ResourcesPage = () => {
                         <p>Open the selected resource from the reader pane once you confirm it matches the topic you need.</p>
                     </article>
                 </section>
-
-                <div className="iq-section-label">
-                    <span className="iq-section-label-text">
-                        Resource catalog - {filteredResources.length} visible
-                    </span>
-                    <div className="iq-section-label-line" />
-                </div>
-
-                {filteredResources.length === 0 ? (
-                    <div className="iq-empty">
-                        <div className="iq-empty-icon">◌</div>
-                        <p className="iq-empty-text">No resources match the current topic, format, and search filters.</p>
-                    </div>
-                ) : (
-                    <div className="prep-collection-shell">
-                        <div className="prep-collection-list">
-                            <div className="prep-collection-list-header">
-                                <span>Resources</span>
-                                <span>{filteredResources.length} visible</span>
-                            </div>
-
-                            <div className="prep-collection-scroll">
-                                {filteredResources.map((resource) => {
-                                    const ResourceIcon = getResourceIcon(resource.type);
-
-                                    return (
-                                        <motion.button
-                                            type="button"
-                                            key={resource.id}
-                                            className={`prep-collection-item ${activeResource?.id === resource.id ? 'active' : ''}`}
-                                            onClick={() => handleSelectResource(resource)}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                        >
-                                            <div className="prep-collection-item-head">
-                                                <div className="prep-collection-icon resources">
-                                                    <ResourceIcon size={16} />
-                                                </div>
-                                                <div>
-                                                    <p className="prep-collection-kicker">{(resource.type || 'link').toUpperCase()}</p>
-                                                    <h3>{resource.title}</h3>
-                                                </div>
-                                            </div>
-
-                                            <p className="prep-collection-preview">
-                                                {resource.description || 'Curated learning material for focused technical preparation.'}
-                                            </p>
-
-                                            <div className="prep-chip-row">
-                                                {(resource.tags || []).slice(0, 3).map((tag) => (
-                                                    <span key={tag} className="prep-data-badge subtle">{tag}</span>
-                                                ))}
-                                            </div>
-                                        </motion.button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        <div className="prep-collection-detail">
-                            <ResourceDetailBody resource={activeResource} />
-                        </div>
-                    </div>
-                )}
-
-                {totalPages > 1 && (
-                    <div className="iq-pagination">
-                        <button
-                            type="button"
-                            className="iq-page-btn"
-                            onClick={() => setCurrentPage((page) => Math.max(0, page - 1))}
-                            disabled={currentPage === 0}
-                        >
-                            <ChevronLeft size={14} />
-                        </button>
-                        {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                                type="button"
-                                key={index}
-                                className={`iq-page-btn ${currentPage === index ? 'active' : ''}`}
-                                onClick={() => setCurrentPage(index)}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                        <button
-                            type="button"
-                            className="iq-page-btn"
-                            onClick={() => setCurrentPage((page) => Math.min(totalPages - 1, page + 1))}
-                            disabled={currentPage === totalPages - 1}
-                        >
-                            <ChevronRight size={14} />
-                        </button>
-                    </div>
-                )}
             </main>
 
         </div>

@@ -284,9 +284,10 @@ const PrepDetailView = () => {
             </div>
 
             <div className="pd-resource-main">
-                <p className="pd-resource-text">
-                    {data.description || "Detailed guide and documentation covering essential concepts for your technical preparation."}
-                </p>
+                <FormattedAnswer 
+                    text={data.description || "Detailed guide and documentation covering essential concepts for your technical preparation."} 
+                    className="pd-resource-text" 
+                />
 
                 <div className="pd-resource-info-strip">
                     <div className="pd-info-item">
