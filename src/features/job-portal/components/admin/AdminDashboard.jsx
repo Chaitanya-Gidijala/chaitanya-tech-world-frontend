@@ -525,45 +525,92 @@ const AdminDashboard = () => {
                             {activeTab === 'users' && <ManageUsers refreshTrigger={refreshTrigger} />}
                             {activeTab === 'subscribers' && <ManageSubscribers refreshTrigger={refreshTrigger} />}
                             
-                            {activeTab === 'analytics' && (
-                                <div className="adm-analytics-section">
-                                    <div className="adm-stats-grid">
-                                        <div className="adm-stat-card accent">
-                                            <div className="adm-stat-icon"><Eye size={22} /></div>
-                                            <div className="adm-stat-info">
-                                                <h4 className="adm-stat-value">{stats.totalViews}</h4>
-                                                <p className="adm-stat-label">Total Impressions</p>
+                            {activeTab === 'analytics' && (() => {
+                                const total = stats.totalViews != null ? stats.totalViews : 0;
+                                const unique = stats.uniqueVisitors != null ? stats.uniqueVisitors : 0;
+                                const browsers = stats.browserStats || {};
+                                
+                                return (
+                                    <div className="adm-analytics-section">
+                                        <div className="adm-page-header" style={{ marginBottom: '1.5rem', borderBottom: 'none', padding: 0 }}>
+                                            <div>
+                                                <h2 className="adm-page-title" style={{ fontSize: '1.25rem' }}>Traffic Analytics</h2>
+                                                <p className="adm-page-subtitle">Real-time visitor insights and platform usage</p>
                                             </div>
                                         </div>
-                                        <div className="adm-stat-card">
-                                            <div className="adm-stat-icon" style={{ background: 'rgba(236,72,153,0.1)', color: '#ec4899' }}>
-                                                <Users size={22} />
+
+                                        <div className="adm-stats-grid" style={{ marginBottom: '1.5rem' }}>
+                                            <div className="adm-stat-card">
+                                                <div className="adm-stat-icon" style={{ background: 'rgba(99,102,241,0.1)', color: '#6366f1' }}>
+                                                    <Eye size={22} />
+                                                </div>
+                                                <div className="adm-stat-info">
+                                                    <h4 className="adm-stat-value">{total.toLocaleString()}</h4>
+                                                    <p className="adm-stat-label">Total Impressions</p>
+                                                </div>
                                             </div>
-                                            <div className="adm-stat-info">
-                                                <h4 className="adm-stat-value">{stats.uniqueVisitors}</h4>
-                                                <p className="adm-stat-label">Unique Visitors</p>
+                                            <div className="adm-stat-card">
+                                                <div className="adm-stat-icon" style={{ background: 'rgba(236,72,153,0.1)', color: '#ec4899' }}>
+                                                    <Users size={22} />
+                                                </div>
+                                                <div className="adm-stat-info">
+                                                    <h4 className="adm-stat-value">{unique.toLocaleString()}</h4>
+                                                    <p className="adm-stat-label">Unique Visitors</p>
+                                                </div>
+                                            </div>
+                                            <div className="adm-stat-card">
+                                                <div className="adm-stat-icon" style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981' }}>
+                                                    <Briefcase size={22} />
+                                                </div>
+                                                <div className="adm-stat-info">
+                                                    <h4 className="adm-stat-value">{overviewStats.jobs}</h4>
+                                                    <p className="adm-stat-label">Active Jobs</p>
+                                                </div>
+                                            </div>
+                                            <div className="adm-stat-card">
+                                                <div className="adm-stat-icon" style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}>
+                                                    <RefreshCw size={22} />
+                                                </div>
+                                                <div className="adm-stat-info">
+                                                    <h4 className="adm-stat-value">{overviewStats.users}</h4>
+                                                    <p className="adm-stat-label">Registered Users</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="adm-analytics-card">
-                                        <div className="adm-analytics-header">
-                                            <Globe size={18} />
-                                            <h3 className="adm-analytics-title">Browser Distribution</h3>
-                                        </div>
-                                        <div className="adm-progress-row">
-                                            {Object.entries(stats.browserStats || {}).map(([b, c]) => {
-                                                const pct = Math.round((c / stats.totalViews) * 100) || 0;
-                                                return (
-                                                    <div key={b} className="adm-progress-item">
-                                                        <div className="adm-progress-meta"><span>{b}</span><span>{c} hits</span></div>
-                                                        <div className="adm-progress-bg"><div className="adm-progress-fill" style={{ width: `${pct}%` }} /></div>
+
+                                        <div className="adm-analytics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                                            <div className="adm-card-panel">
+                                                <div className="adm-form-header-fancy" style={{ padding: '0 0 1rem 0', borderBottom: '1px solid var(--jp-border)', marginBottom: '1rem' }}>
+                                                    <div className="header-icon-box" style={{ background: 'rgba(59,130,246,0.1)', color: '#3b82f6', width: 32, height: 32 }}>
+                                                        <Globe size={16} />
                                                     </div>
-                                                );
-                                            })}
+                                                    <div><h3 className="adm-step-title">Browser Distribution</h3></div>
+                                                </div>
+                                                <div className="adm-progress-row">
+                                                    {Object.keys(browsers).length === 0 ? (
+                                                        <p style={{ fontSize: '0.8rem', color: 'var(--jp-text-muted)', textAlign: 'center', padding: '1rem 0' }}>No browser data recorded yet.</p>
+                                                    ) : (
+                                                        Object.entries(browsers).sort((a,b) => b[1]-a[1]).map(([b, c]) => {
+                                                            const pct = total > 0 ? Math.round((c / total) * 100) : 0;
+                                                            return (
+                                                                <div key={b} className="adm-progress-item">
+                                                                    <div className="adm-progress-meta">
+                                                                        <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{b}</span>
+                                                                        <span style={{ fontSize: '0.8rem', color: 'var(--jp-text-muted)' }}>{pct}% ({c.toLocaleString()})</span>
+                                                                    </div>
+                                                                    <div className="adm-progress-bg" style={{ height: 8, background: 'var(--jp-border)', borderRadius: 4, overflow: 'hidden' }}>
+                                                                        <div className="adm-progress-fill" style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, var(--jp-primary), var(--jp-secondary))', borderRadius: 4 }} />
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
+                                );
+                            })()}
 
                             {activeTab === 'settings' && <AdminSettings />}
                         </motion.div>

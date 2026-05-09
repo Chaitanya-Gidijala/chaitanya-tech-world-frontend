@@ -136,7 +136,8 @@ const ManageResources = ({ refreshTrigger }) => {
                         </div>
                     ) : (
                         <>
-                            <div className="adm-table-card">
+                            {/* Table view for Desktop */}
+                            <div className="adm-table-card desktop-only">
                                 <div className="adm-table-scroll">
                                     <table className="adm-table">
                                         <thead><tr><th>Type</th><th>Title / Info</th><th>Link</th><th>Topics</th><th>Actions</th></tr></thead>
@@ -156,6 +157,33 @@ const ManageResources = ({ refreshTrigger }) => {
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+
+                            {/* Card view for Mobile */}
+                            <div className="adm-card-grid mobile-only">
+                                {filtered.map((r, i) => (
+                                    <div key={r.id} className="adm-card-simple">
+                                        <div className="adm-card-header">
+                                            <span className={`adm-badge ${typeBadge[r.type]||'adm-badge-neutral'}`}>
+                                                {TYPE_ICON[r.type]} {r.type}
+                                            </span>
+                                            <div className="adm-card-actions">
+                                                <button onClick={() => openEdit(r)} className="adm-btn-icon"><Edit2 size={14} /></button>
+                                                <button onClick={() => handleDelete(r.id)} className="adm-btn-icon delete"><Trash2 size={14} /></button>
+                                            </div>
+                                        </div>
+                                        <h4 className="adm-card-q">{r.title}</h4>
+                                        <p className="adm-cell-muted" style={{ fontSize: '0.8rem', margin: '0 0 0.5rem 0' }}>
+                                            {r.description?.substring(0, 60)}...
+                                        </p>
+                                        <div className="adm-tags-row">
+                                            <a href={r.url} target="_blank" rel="noreferrer" className="adm-badge adm-badge-primary" style={{ textDecoration: 'none' }}>
+                                                <ExternalLink size={10} style={{ marginRight: '4px' }}/> Open Link
+                                            </a>
+                                            {r.tags?.slice(0, 2).map(t => <span key={t} className="adm-tag">{t}</span>)}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
 
                             {totalPages > 1 && (
