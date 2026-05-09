@@ -302,7 +302,7 @@ const ManageQuestions = ({ refreshTrigger }) => {
                             </div>
 
                             {/* Card view for Mobile */}
-                            <div className="adm-card-grid mobile-only" style={{ display: 'none' }}>
+                            <div className="adm-card-grid mobile-only">
                                 {filteredQuestions.map((q, i) => (
                                     <div key={q.id} className="adm-card-simple">
                                         <div className="adm-card-header">
@@ -447,7 +447,7 @@ const ManageQuestions = ({ refreshTrigger }) => {
                         </div>
                     </div>
 
-                    <div className="batch-import-container" style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '1.5rem', marginTop: '1.5rem' }}>
+                    <div className="batch-import-container">
                         <div className="json-editor-wrap" style={{ display: 'flex', flexDirection: 'column' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                                 <label className="adm-label" style={{ marginBottom: 0 }}>JSON Data Payload</label>

@@ -205,7 +205,8 @@ const ManageQuizzes = ({ refreshTrigger }) => {
                         </div>
                     ) : (
                         <>
-                            <div className="adm-table-card">
+                            {/* Table view for Desktop */}
+                            <div className="adm-table-card desktop-only">
                                 <div className="adm-table-scroll">
                                     <table className="adm-table">
                                         <thead><tr><th>Title / Concept</th><th>Status</th><th>Time</th><th>Topics</th><th>Actions</th></tr></thead>
@@ -230,6 +231,28 @@ const ManageQuizzes = ({ refreshTrigger }) => {
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+
+                            {/* Card view for Mobile */}
+                            <div className="adm-card-grid mobile-only">
+                                {filteredQuizzes.map((q, i) => (
+                                    <div key={q.id} className="adm-card-simple">
+                                        <div className="adm-card-header">
+                                            <span className={`adm-badge ${q.questions?.length > 0 ? 'adm-badge-success' : 'adm-badge-warning'}`}>
+                                                {q.questions?.length || 0} Qs
+                                            </span>
+                                            <div className="adm-card-actions">
+                                                <button onClick={() => openEdit(q)} className="adm-btn-icon"><Edit2 size={14} /></button>
+                                                <button onClick={() => handleDelete(q.id)} className="adm-btn-icon delete"><Trash2 size={14} /></button>
+                                            </div>
+                                        </div>
+                                        <h4 className="adm-card-q">{q.title}</h4>
+                                        <div className="adm-tags-row">
+                                            <span className="adm-badge adm-badge-primary"><Clock size={10}/> {q.duration}m</span>
+                                            {q.tags?.slice(0, 2).map(t => <span key={t} className="adm-tag">{t}</span>)}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                             {totalPages > 1 && (
                                 <div className="adm-pagination">
@@ -267,27 +290,13 @@ const ManageQuizzes = ({ refreshTrigger }) => {
                                 <div className="adm-field"><label className="adm-label">Duration (Minutes)</label><input type="number" value={formData.duration} onChange={e=>setFormData({...formData,duration:e.target.value})} className="adm-input"/></div>
                                 <div className="adm-field">
                                     <label className="adm-label">Tech Tags (Select Multiple)</label>
-                                    <div className="adm-tags-selector-box" style={{maxHeight:'160px', overflowY:'auto', display:'flex', flexWrap:'wrap', gap:'6px', padding:'8px', background:'var(--iq-surface-2)', borderRadius:'8px', border:'1px solid var(--iq-border)'}}>
+                                    <div className="adm-tags-selector-box">
                                         {availableTopics.map(t => (
                                             <button 
                                                 key={t} 
                                                 type="button" 
                                                 onClick={() => toggleTag(t)} 
                                                 className={`tag-choice-btn ${formData.tags.includes(t)?'selected':''}`}
-                                                style={{
-                                                    padding: '6px 12px',
-                                                    borderRadius: '20px',
-                                                    fontSize: '0.8rem',
-                                                    fontWeight: 700,
-                                                    border: '1px solid var(--iq-border)',
-                                                    background: formData.tags.includes(t) ? 'var(--iq-primary)' : 'var(--iq-surface)',
-                                                    color: formData.tags.includes(t) ? 'white' : 'var(--iq-text-dim)',
-                                                    cursor: 'pointer',
-                                                    transition: 'all 0.2s',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '4px'
-                                                }}
                                             >
                                                 {formData.tags.includes(t) && <CheckCircle size={12}/>}
                                                 {t}
@@ -315,7 +324,7 @@ const ManageQuizzes = ({ refreshTrigger }) => {
                                             <label className="adm-label">Question Prompt</label>
                                             <textarea required value={q.question} onChange={e=>updateQuestionField(qIdx, 'question', e.target.value)} placeholder="Type the technical question..." className="adm-input adm-textarea-minimal" rows={2}/>
                                         </div>
-                                        <div className="options-grid" style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.75rem', marginTop:'1rem'}}>
+                                        <div className="options-grid">
                                             {q.options.map((opt, oIdx) => (
                                                 <div key={oIdx} className="option-field-wrap">
                                                     <label className="adm-label" style={{fontSize:'0.7rem'}}>Option {oIdx+1}</label>
@@ -352,7 +361,7 @@ const ManageQuizzes = ({ refreshTrigger }) => {
                             <p className="adm-step-desc">Bulk publish quizzes or view existing JSON structure.</p>
                         </div>
                     </div>
-                    <div className="batch-import-container" style={{display:'flex', gap:'1.5rem', marginTop:'1.5rem'}}>
+                    <div className="batch-import-container">
                         <div className="json-editor-wrap" style={{flex:1}}>
                             <textarea 
                                 value={jsonInput}
