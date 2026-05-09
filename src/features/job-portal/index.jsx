@@ -41,11 +41,17 @@ const JobPortalApp = () => {
     };
 
     useEffect(() => {
-        // Track unique visit per session
-        if (!sessionStorage.getItem('jp_session_visit')) {
+        // Track unique visit per day per user
+        const lastVisit = localStorage.getItem('jp_last_visit_date');
+        const today = new Date().toISOString().split('T')[0];
+
+        if (lastVisit !== today) {
             const metadata = getBrowserInfo();
-            incrementVisitorCount(metadata).catch(err => console.error("Tracking failed", err));
-            sessionStorage.setItem('jp_session_visit', 'true');
+            incrementVisitorCount(metadata)
+                .then(() => {
+                    localStorage.setItem('jp_last_visit_date', today);
+                })
+                .catch(err => console.error("Tracking failed", err));
         }
     }, []);
 
