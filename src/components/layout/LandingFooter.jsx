@@ -18,6 +18,7 @@ const apps = [
     { name: 'Prep Hub', path: '/job-portal/prep', Icon: Brain },
     { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },
     { name: 'Prompts Gallery', path: '/prompts', Icon: Sparkles },
+    { name: 'Roadmap', path: '/roadmap', Icon: Map },
 ];
 
 const quickLinks = [

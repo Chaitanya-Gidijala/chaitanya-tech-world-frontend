@@ -204,22 +204,15 @@ const PromptsGalleryPage = () => {
       <div className={`pg-sticky-bar ${scrolled ? 'visible' : ''}`}>
         <div className="pg-sticky-inner">
           <span className="pg-sticky-label">Model:</span>
-          <div className="pg-sticky-chips">
-            {availableModels.map(model => {
-              const meta = model !== 'All' ? getModelMeta(model) : null;
-              return (
-                <button
-                  key={model}
-                  className={`pg-sticky-chip ${activeModel === model ? 'active' : ''}`}
-                  onClick={() => setActiveModel(model)}
-                  style={meta && activeModel === model ? { '--c': meta.color } : {}}
-                >
-                  {meta && <span style={{ color: meta.color }}>{meta.icon}</span>}
-                  {model}
-                </button>
-              );
-            })}
-          </div>
+          <select
+            className="pg-category-select"
+            value={activeModel}
+            onChange={(e) => setActiveModel(e.target.value)}
+          >
+            {availableModels.map(model => (
+              <option key={model} value={model}>{model === 'All' ? 'All Models' : model}</option>
+            ))}
+          </select>
           <span className="pg-sticky-label" style={{marginLeft: '16px'}}>Type:</span>
           <select 
             className="pg-category-select"
