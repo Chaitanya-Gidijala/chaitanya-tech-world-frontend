@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Sun, Moon, Menu, X, Camera, Briefcase, Wallet, Globe, Map, Brain, Mail, FileText, Users, LogIn, Heart, BookOpen, Target } from 'lucide-react';
+import { Home, Sun, Moon, Menu, X, Camera, Briefcase, Wallet, Globe, Map, Brain, Mail, FileText, Users, LogIn, Heart, BookOpen, Target, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isAuthenticated, logout, getCurrentUser } from '@/features/job-portal/services/authService';
 import Logo from './Logo';
@@ -37,6 +37,8 @@ const AppHeader = ({ theme, onToggleTheme }) => {
 
     const apps = [
         { name: 'Our Services', path: '/services', Icon: Camera },
+        { name: 'Prompts Gallery', path: '/prompts', Icon: Sparkles },
+        { name: 'Roadmap', path: '/roadmap', Icon: Map },
         { name: 'Job Portal', path: '/job-portal', Icon: Briefcase },
         { name: 'Prep Hub', path: '/job-portal/prep', Icon: Brain },
         { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },

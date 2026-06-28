@@ -118,6 +118,7 @@ const LandingPage = ({ theme, toggleTheme }) => {
                     {[
                         { title: 'AI Resume Builder', desc: 'Craft ATS-friendly, professional resumes in minutes using our intelligent builder and premium templates.', icon: FileText, path: '/ai-resume-builder' },
                         { title: 'Job Portal', desc: 'A sophisticated platform connecting top talent with industry-leading opportunities, featuring advanced filtering.', icon: Briefcase, path: '/job-portal' },
+                        { title: 'Prompts Gallery', desc: 'Explore a curated collection of stunning prompts for AI photo and video generation.', icon: Sparkles, path: '/prompts' },
                         { title: 'Our Services', desc: 'Bespoke web development and high-end digital solutions tailored to elevate your business presence.', icon: Sparkles, path: '/services' }
                     ].map((app, i) => (
                         <motion.div key={i} {...fadeUp(i * 0.1)} className="crope-service-card">

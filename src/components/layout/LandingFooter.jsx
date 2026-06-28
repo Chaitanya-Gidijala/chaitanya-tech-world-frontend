@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Mail, Instagram, Linkedin, Twitter, ArrowUp,
@@ -17,6 +17,7 @@ const apps = [
     { name: 'Job Portal', path: '/job-portal', Icon: Briefcase },
     { name: 'Prep Hub', path: '/job-portal/prep', Icon: Brain },
     { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },
+    { name: 'Prompts Gallery', path: '/prompts', Icon: Sparkles },
 ];
 
 const quickLinks = [
@@ -130,7 +131,44 @@ const ContactItem = ({ Icon, label, value, href, iconColor }) => {
 ────────────────────────────────────────────── */
 
 const LandingFooter = () => {
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
     const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const handleSubscribe = async (e) => {
+        e.preventDefault();
+        if (!email) return;
+
+        setIsLoading(true);
+        setStatus('');
+
+        try {
+            const response = await fetch('http://localhost:8080/api/newsletter/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email })
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                setStatus(data.message || 'Thanks for subscribing!');
+                setEmail('');
+                setTimeout(() => setStatus(''), 3000);
+            } else {
+                setStatus(data.error || 'Something went wrong. Try again.');
+            }
+        } catch (error) {
+            console.error('Subscription error:', error);
+            setStatus('Failed to connect to server.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <footer className="footer-shimmer-bg">
@@ -168,33 +206,32 @@ const LandingFooter = () => {
                                 {profileConfig.contact.availability}
                             </div>
 
-                            <div className="footer-desktop-brand-card" aria-hidden="true">
-                                <div className="footer-desktop-card-top">
-                                    <span>Career stack</span>
-                                    <Sparkles size={15} />
-                                </div>
-                                <h3>Build. Apply. Prepare.</h3>
-                                <div className="footer-desktop-metric-row">
-                                    <span><strong>4</strong> tools</span>
-                                    <span><strong>1</strong> flow</span>
-                                    <span><strong>24/7</strong> access</span>
-                                </div>
-                                <div className="footer-desktop-card-line" />
-                                <p>Move from resume to job search to interview practice without leaving the platform.</p>
+                            {/* Newsletter / Stay Connected */}
+                            <div className="footer-newsletter">
+                                <h4 className="footer-newsletter-title">Stay Updated</h4>
+                                <form className="footer-newsletter-form" onSubmit={handleSubscribe}>
+                                    <input 
+                                        type="email" 
+                                        placeholder="Enter your email" 
+                                        required 
+                                        className="footer-newsletter-input"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        disabled={isLoading}
+                                    />
+                                    <button type="submit" className="footer-newsletter-btn" disabled={isLoading}>
+                                        {isLoading ? 'Wait...' : 'Subscribe'}
+                                    </button>
+                                </form>
+                                {status && <div style={{ fontSize: '0.8rem', color: '#22c55e', marginTop: '0.5rem' }}>{status}</div>}
                             </div>
 
-                            <div className="footer-desktop-brand-glow" aria-hidden="true">
-                                <span />
-                                <span />
-                                <span />
-                            </div>
-
-                            {/* Social links row (uncomment to show) */}
-                            {/* <div className="footer-social-row">
+                            {/* Social links row */}
+                            <div className="footer-social-row">
                                 {socials.map(({ Icon, href, label, color }) => (
                                     <SocialBtn key={label} Icon={Icon} href={href} label={label} color={color} />
                                 ))}
-                            </div> */}
+                            </div>
                         </div>
 
                         {/* ── Applications Column ── */}
@@ -207,30 +244,6 @@ const LandingFooter = () => {
                                     <AppLink key={path} path={path} Icon={Icon} name={name} />
                                 ))}
                             </ul>
-
-                            <div className="footer-desktop-app-card" aria-hidden="true">
-                                <div className="footer-desktop-app-window">
-                                    <div className="footer-desktop-window-dots">
-                                        <span />
-                                        <span />
-                                        <span />
-                                    </div>
-                                    <div className="footer-desktop-window-score">
-                                        <span>Prep score</span>
-                                        <strong>82%</strong>
-                                    </div>
-                                </div>
-                                <div className="footer-desktop-app-bars">
-                                    <span style={{ '--bar-width': '88%' }} />
-                                    <span style={{ '--bar-width': '64%' }} />
-                                    <span style={{ '--bar-width': '74%' }} />
-                                </div>
-                                <div className="footer-desktop-app-pill-row">
-                                    <span>Questions</span>
-                                    <span>Tests</span>
-                                    <span>Resources</span>
-                                </div>
-                            </div>
                         </div>
 
                         {/* ── Quick Links Column ── */}
@@ -276,17 +289,6 @@ const LandingFooter = () => {
                         </div>
 
                     </div>{/* /footer-grid */}
-
-                    {/* ── CTA Banner ── */}
-                    <div className="footer-cta-banner">
-                        <div className="footer-cta-title">
-                            <Sparkles size={18} /> Need a Website?
-                        </div>
-                        <div className="footer-cta-sub">
-                            Let's build something amazing together. Reach out now!
-                        </div>
-                    </div>
-
                 </div>{/* /footer-top-section */}
 
                 {/* ── Divider ── */}

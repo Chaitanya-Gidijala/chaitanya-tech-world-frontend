@@ -35,6 +35,12 @@ const navGroups = [
         ]
     },
     {
+        label: 'Media & Prompts',
+        items: [
+            { id: 'prompts', label: 'Manage Prompts', icon: MessageSquare },
+        ]
+    },
+    {
         label: 'CRM & Users',
         items: [
             { id: 'users', label: 'User Registry', icon: Users },

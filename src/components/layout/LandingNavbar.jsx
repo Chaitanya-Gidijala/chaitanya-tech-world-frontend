@@ -40,6 +40,7 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
         { label: 'Home', action: () => scrollTo('hero') },
         { label: 'Apps', action: () => scrollTo('apps-grid') },
         { label: 'Prep Hub', action: () => scrollTo('prep-hub') },
+        { label: 'Prompts', to: '/prompts' },
         { label: 'Contact', to: '/contact' },
     ];
 
@@ -174,6 +175,7 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
                                     { label: 'Job Portal', to: '/job-portal', Icon: Briefcase },
                                     { label: 'Prep Hub', to: '/job-portal/prep', Icon: Brain },
                                     { label: 'AI Resume Builder', to: '/ai-resume-builder', Icon: FileText },
+                                    { label: 'Prompts Gallery', to: '/prompts', Icon: Sparkles },
                                 ].map((link) => {
                                     const isActive = link.to === '/job-portal'
                                         ? (location.pathname === '/job-portal' || (location.pathname.startsWith('/job-portal') && !location.pathname.startsWith('/job-portal/prep')))

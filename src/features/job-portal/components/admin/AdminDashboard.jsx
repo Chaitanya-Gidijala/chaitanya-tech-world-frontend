@@ -27,6 +27,7 @@ import ManageInquiries from './ManageInquiries';
 import ManageSupport from './ManageSupport';
 import ManageUsers from './ManageUsers';
 import ManageSubscribers from './ManageSubscribers';
+import AdminPromptsPage from '../../../prompts-gallery/pages/AdminPromptsPage';
 import { THEME_KEY } from '@/constants/theme';
 import './AdminLayout.css';
 
@@ -45,6 +46,7 @@ const tabTitles = {
     payments: 'Financial Transactions',
     subscribers: 'Newsletter Subscribers',
     settings: 'Portal Configuration',
+    prompts: 'Manage Prompts Gallery',
 };
 
 const FORM_DEFAULTS = {
@@ -554,6 +556,7 @@ const AdminDashboard = () => {
                             {activeTab === 'payments' && <ManageSupport refreshTrigger={refreshTrigger} />}
                             {activeTab === 'users' && <ManageUsers refreshTrigger={refreshTrigger} />}
                             {activeTab === 'subscribers' && <ManageSubscribers refreshTrigger={refreshTrigger} />}
+                            {activeTab === 'prompts' && <AdminPromptsPage />}
                             
                             {activeTab === 'analytics' && (() => {
                                 const total = stats.totalViews != null ? stats.totalViews : 0;

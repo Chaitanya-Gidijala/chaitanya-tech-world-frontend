@@ -18,6 +18,11 @@ import OurServices from '@/features/our-services/OurServices';
 import AdminPortalApp from '@/features/admin-portal';
 import { isAuthenticated } from '@/features/job-portal/services/authService';
 
+import PromptsApp from '@/features/prompts-gallery/PromptsApp';
+import AdminPromptsPage from '@/features/prompts-gallery/pages/AdminPromptsPage';
+import RoadmapPage from '@/features/roadmap/RoadmapPage';
+import RoadmapHomePage from '@/features/roadmap/RoadmapHomePage';
+
 import MainLayout from '@/layouts/MainLayout';
 import JobPortalExamContainer from '@/features/job-portal/components/prep/ExamContainer';
 
@@ -49,6 +54,17 @@ const AppRoutes = ({ theme, toggleTheme }) => {
         <Route path="/job-portal/prep/results" element={<ResultsPage />} />
         <Route path="/job-portal/*" element={<JobPortalApp />} />
         <Route path="/AdminPortal/*" element={<AdminPortalApp />} />
+        <Route path="/prompts/*" element={<PromptsApp />} />
+        <Route path="/roadmap" element={<RoadmapHomePage />} />
+        <Route path="/roadmap/:tech" element={<RoadmapPage />} />
+        <Route
+          path="/admin-prompts"
+          element={
+            <AuthProtectedRoute>
+              <AdminPromptsPage />
+            </AuthProtectedRoute>
+          }
+        />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/oauth2/callback" element={<OAuth2Callback />} />
