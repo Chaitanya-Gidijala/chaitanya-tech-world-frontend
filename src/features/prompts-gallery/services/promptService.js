@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Get base URL from environment or dynamically build for local network testing
-const API_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8080/api`;
-const PROMPTS_URL = `${API_URL}/prompts`;
+import apiConfig from '../../../config/apiConfig';
+
+const PROMPTS_URL = `${apiConfig.API_BASE_URL}/prompts`;
 
 // Helper to get auth header if using JWT
 const getAuthHeaders = () => {

@@ -1,5 +1,14 @@
-const API_HOST = import.meta.env.VITE_API_HOST || 'http://localhost:8080/api';
-const AUTH_HOST = import.meta.env.VITE_AUTH_HOST || 'http://localhost:8085/api/v1/auth';
+// Dynamically determine the local backend IP if testing on a local network (e.g., from a mobile phone)
+let defaultApiHost = 'http://localhost:8080/api';
+let defaultAuthHost = 'http://localhost:8085/api/v1/auth';
+
+if (import.meta.env.DEV && window.location.hostname !== 'localhost') {
+    defaultApiHost = `http://${window.location.hostname}:8080/api`;
+    defaultAuthHost = `http://${window.location.hostname}:8085/api/v1/auth`;
+}
+
+const API_HOST = import.meta.env.VITE_API_HOST || defaultApiHost;
+const AUTH_HOST = import.meta.env.VITE_AUTH_HOST || defaultAuthHost;
 
 const config = {
     API_BASE_URL: API_HOST,
