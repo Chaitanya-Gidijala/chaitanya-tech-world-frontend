@@ -402,6 +402,7 @@
 [data-theme='light'] .pd-description { color: #475569; }
 [data-theme='light'] .pd-steps-section { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.06); }
 [data-theme='light'] .pd-step-text { color: #64748b; }
+[data-theme='light'] .pd-step-link { color: #6366f1; font-weight: 600; }
 [data-theme='light'] .pd-prompt-box { background: #f1f5f9; border-color: rgba(99,102,241,0.3); }
 [data-theme='light'] .pd-prompt-text { color: #334155; }
 [data-theme='light'] .pd-more-section { border-color: rgba(0,0,0,0.08); }
