@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Get base URL from environment or fallback to localhost
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+// Get base URL from environment or dynamically build for local network testing
+const API_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8080/api`;
 const PROMPTS_URL = `${API_URL}/prompts`;
 
 // Helper to get auth header if using JWT
