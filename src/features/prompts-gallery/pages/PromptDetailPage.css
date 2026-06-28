@@ -397,6 +397,8 @@
 [data-theme='light'] .pd-topbar { background: rgba(248,250,252,0.95); border-color: rgba(0,0,0,0.08); }
 [data-theme='light'] .pd-info-col { background: #f8fafc; }
 [data-theme='light'] .pd-title { color: #0f172a; }
+[data-theme='light'] .pd-steps-title { color: #0f172a; }
+[data-theme='light'] .pd-prompt-heading { color: #0f172a; }
 [data-theme='light'] .pd-description { color: #475569; }
 [data-theme='light'] .pd-steps-section { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.06); }
 [data-theme='light'] .pd-step-text { color: #64748b; }

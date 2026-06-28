@@ -910,6 +910,11 @@ html[data-theme='light'] .pg-hero-wave path {
   fill: #f0f2f7;
 }
 
+/* Light mode Section Label (Headings) */
+html[data-theme='light'] .pg-section-label > span:first-child {
+  color: #0f172a;
+}
+
 /* ── Light mode sticky bar ── */
 html[data-theme='light'] .pg-sticky-bar {
   background: rgba(255,255,255,0.94);
@@ -937,14 +942,16 @@ html[data-theme='light'] .pg-card-media { background: #f1f5f9; }
 }
 @media (max-width: 900px) {
   .pg-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-  .pg-hero { padding: 80px 20px 100px; }
+  .pg-hero { padding: 80px 20px 70px; }
   .pg-hero-pills { flex-wrap: wrap; justify-content: center; border-radius: 20px; }
-  .pg-container { padding: 40px 16px 80px; }
+  .pg-container { padding: 60px 16px 80px; }
   /* Sticky bar: hide label on tablet to save space */
   .pg-sticky-label { display: none; }
 }
 @media (max-width: 600px) {
   .pg-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .pg-hero { padding: 60px 16px 50px; }
+  .pg-container { padding: 70px 16px 60px; }
   .pg-title-line-1, .pg-title-line-2 { font-size: clamp(1.8rem, 8vw, 2.5rem); }
   .pg-card-desc { display: none; }
   .pg-pill { padding: 8px 18px; }
