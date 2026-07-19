@@ -72,7 +72,7 @@ const LoginPage = () => {
 
     const handleOAuth = (provider) => {
         // Construct the base URL for OAuth redirection
-        // config.AUTH_API_URL is typically something like 'http://localhost:8085/api/v1/auth'
+        // config.AUTH_API_URL is typically something like 'https://security-service-chaitanyatechworld.onrender.com/api/v1/auth'
         // Spring Security OAuth2 standard endpoint is base_url + '/oauth2/authorization/{provider}'
         const authBaseUrl = apiConfig.AUTH_API_URL.split('/api')[0];
         window.location.href = `${authBaseUrl}/oauth2/authorization/${provider}`;

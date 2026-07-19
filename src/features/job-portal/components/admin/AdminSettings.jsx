@@ -58,7 +58,7 @@ const AdminSettings = () => {
 
         setPwdLoading(true);
         try {
-            const API_HOST = import.meta.env.VITE_AUTH_HOST || 'http://localhost:8085/api/v1/auth';
+            const API_HOST = import.meta.env.VITE_AUTH_HOST || 'https://security-service-chaitanyatechworld.onrender.com/api/v1/auth';
             const res = await fetch(`${API_HOST.replace('/auth', '/users')}/change-password`, {
                 method: 'PUT',
                 headers: {

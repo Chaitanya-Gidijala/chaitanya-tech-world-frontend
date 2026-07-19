@@ -6,6 +6,7 @@ import {
     Briefcase, Sparkles, ExternalLink, Phone, Heart, FileText
 } from 'lucide-react';
 import { profileConfig } from '../../config/profileConfig';
+import apiConfig from '../../config/apiConfig';
 import './LandingFooter.css';
 
 /* ──────────────────────────────────────────────
@@ -146,7 +147,7 @@ const LandingFooter = () => {
         setStatus('');
 
         try {
-            const response = await fetch('http://localhost:8080/api/newsletter/subscribe', {
+            const response = await fetch(`${apiConfig.API_BASE_URL}/newsletter/subscribe`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

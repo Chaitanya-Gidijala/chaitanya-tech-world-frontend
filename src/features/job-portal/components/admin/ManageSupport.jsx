@@ -23,7 +23,7 @@ const ManageSupport = ({ refreshTrigger }) => {
         else setIsRefreshing(true);
         try {
             // We'll use a fetch directly to the backend to get all payments (Admin only)
-            const API_HOST = import.meta.env.VITE_API_HOST || 'http://localhost:8080/api';
+            const API_HOST = import.meta.env.VITE_API_HOST || 'https://job-portal-backend-world-4ay3.onrender.com/api';
             const response = await fetch(`${API_HOST}/user/profile/payments/all`, {
                 headers: {
                     'Authorization': `Bearer ${getToken()}`

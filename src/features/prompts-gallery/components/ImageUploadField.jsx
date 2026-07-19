@@ -109,7 +109,7 @@ const ImageUploadField = ({ onUploadSuccess, currentUrl, disabled }) => {
       }, 400);
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_HOST || 'http://localhost:8080/api'}/admin/prompts/upload-image`,
+        `${import.meta.env.VITE_API_HOST || 'https://job-portal-backend-world-4ay3.onrender.com/api'}/admin/prompts/upload-image`,
         {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },

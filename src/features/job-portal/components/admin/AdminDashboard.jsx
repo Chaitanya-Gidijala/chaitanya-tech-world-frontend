@@ -173,7 +173,7 @@ const AdminDashboard = () => {
             }));
 
             // Fetch payment stats
-            const API_HOST = import.meta.env.VITE_API_HOST || 'http://localhost:8080/api';
+            const API_HOST = import.meta.env.VITE_API_HOST || 'https://job-portal-backend-world-4ay3.onrender.com/api';
             const r = await fetch(`${API_HOST}/user/profile/payments/all`, {
                 headers: { 'Authorization': `Bearer ${getToken()}` }
             });
