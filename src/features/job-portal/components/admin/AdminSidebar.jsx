@@ -4,7 +4,7 @@ import {
     PlusCircle, List, Settings, BarChart3,
     Globe, HelpCircle, Book, ClipboardCheck,
     Hash, Home, Moon, Sun, MessageSquare, Heart,
-    LogOut, X, ShieldCheck, Menu, CreditCard, Users, Mail
+    LogOut, X, ShieldCheck, Menu, CreditCard, Users, Mail, Image
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { THEME_KEY } from '@/constants/theme';
@@ -37,6 +37,7 @@ const navGroups = [
     {
         label: 'Media & Prompts',
         items: [
+            { id: 'images', label: 'Image Manager', icon: Image },
             { id: 'prompts', label: 'Manage Prompts', icon: MessageSquare },
         ]
     },
@@ -80,7 +81,8 @@ const AdminSidebar = ({ activeTab, onTabChange, isOpen, onToggle }) => {
     };
 
     const handleTabClick = (id) => {
-        onTabChange(id);
+        // Navigate to the URL — AdminDashboard picks up the :tab param
+        navigate(`/AdminPortal/admin/dashboard/${id}`);
         if (window.innerWidth <= 768) onToggle();
     };
 

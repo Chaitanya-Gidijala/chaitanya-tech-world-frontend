@@ -38,6 +38,12 @@ export const incrementVisitorCount = async (metadata = {}) => {
             localStorage.setItem('jp_browser_stats', JSON.stringify(browserStats));
         }
 
+        // Store session in localStorage fallback for display
+        const sessions = JSON.parse(localStorage.getItem('jp_sessions') || '[]');
+        sessions.unshift({ ...metadata, id: Date.now() });
+        // Keep only last 200 sessions in fallback
+        localStorage.setItem('jp_sessions', JSON.stringify(sessions.slice(0, 200)));
+
         return { count };
     }
 };
@@ -75,3 +81,20 @@ export const getVisitorStats = async () => {
         };
     }
 };
+
+// Get detailed visitor sessions list (last N visits)
+export const getVisitorSessions = async (limit = 100) => {
+    try {
+        const response = await fetch(`${config.endpoints.analytics.stats.replace('/stats', '/sessions')}?limit=${limit}`, {
+            headers: getHeaders()
+        });
+        if (!response.ok) throw new Error('Failed to fetch sessions');
+        const apiResponse = await response.json();
+        return apiResponse.data || [];
+    } catch (error) {
+        console.warn("Backend sessions fetch failed, using local fallback:", error);
+        // Return fallback sessions stored locally
+        return JSON.parse(localStorage.getItem('jp_sessions') || '[]');
+    }
+};
+

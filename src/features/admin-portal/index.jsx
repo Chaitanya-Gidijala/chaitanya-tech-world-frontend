@@ -24,6 +24,17 @@ const AdminPortalApp = () => {
                     */}
                     <Route path="/admin/login" element={<Navigate to="/login" replace />} />
                     
+                    {/* Tab-specific URL: /AdminPortal/admin/dashboard/:tab */}
+                    <Route
+                        path="/admin/dashboard/:tab"
+                        element={
+                            <ProtectedRoute>
+                                <AdminDashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* Base dashboard route (defaults to overview) */}
                     <Route
                         path="/admin/dashboard"
                         element={

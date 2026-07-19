@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
     PlusCircle, Layers, Send, XCircle, RefreshCw,
     Users, Eye, Globe, X, Menu, Moon, Sun, LogOut,
@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { postJob, postBatchJobs, getAllJobs, updateJob, deleteJob } from '../../services/jobService';
-import { getVisitorStats } from '../../services/analyticsService';
+import { getVisitorStats, getVisitorSessions } from '../../services/analyticsService';
 import { logout, getUserCount, getToken } from '../../services/authService';
 import { getAllInquiries } from '../../services/contactService';
 import { getAllQuestions, getTopics, getAllResources, getAllQuizzes } from '../../services/prepService';
@@ -27,7 +27,9 @@ import ManageInquiries from './ManageInquiries';
 import ManageSupport from './ManageSupport';
 import ManageUsers from './ManageUsers';
 import ManageSubscribers from './ManageSubscribers';
+import AnalyticsPanel from './AnalyticsPanel';
 import AdminPromptsPage from '../../../prompts-gallery/pages/AdminPromptsPage';
+import ImageManagerPage from '../../../image-manager/pages/ImageManagerPage';
 import { THEME_KEY } from '@/constants/theme';
 import './AdminLayout.css';
 
@@ -47,6 +49,7 @@ const tabTitles = {
     subscribers: 'Newsletter Subscribers',
     settings: 'Portal Configuration',
     prompts: 'Manage Prompts Gallery',
+    images: 'Image Manager',
 };
 
 const FORM_DEFAULTS = {
@@ -57,10 +60,11 @@ const FORM_DEFAULTS = {
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
+    const { tab: urlTab } = useParams();
     const { showToast } = useToast();
     const [uploadMode, setUploadMode] = useState('single');
     const [isLoading, setIsLoading] = useState(false);
-    const [stats, setStats] = useState({ totalViews: 0, uniqueVisitors: 0, browserStats: {} });
+    const [stats, setStats] = useState({ totalViews: 0, uniqueVisitors: 0, browserStats: {}, dailyStats: [] });
     const [batchJson, setBatchJson] = useState('');
     const [jobs, setJobs] = useState([]);
     const [editingJobId, setEditingJobId] = useState(null);
@@ -69,7 +73,11 @@ const AdminDashboard = () => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024);
     const [batchJobs, setBatchJobs] = useState([]);
-    const [activeTab, setActiveTab] = useState('overview');
+
+    // Derive activeTab from URL param; fall back to 'overview'
+    const VALID_TABS = Object.keys(tabTitles);
+    const activeTab = VALID_TABS.includes(urlTab) ? urlTab : 'overview';
+
     const [overviewStats, setOverviewStats] = useState({
         users: 0, jobs: 0, questions: 0, topics: 0, resources: 0, quizzes: 0, inquiries: 0, support: 0, revenue: 0
     });
@@ -78,25 +86,36 @@ const AdminDashboard = () => {
     const [isDark, setIsDark] = useState(() => document.documentElement.getAttribute('data-theme') === 'dark');
 
     useEffect(() => {
+        // One-time cleanup: remove old localStorage analytics keys that inflate counts.
+        // These were used as a fallback before the backend was fully implemented.
+        ['jp_visitor_count', 'jp_unique_visitors', 'jp_browser_stats', 'jp_sessions'].forEach(k => {
+            try { localStorage.removeItem(k); } catch {}
+        });
+    }, []);
+
+    useEffect(() => {
         fetchStats();
         fetchOverviewData();
         
-        // Auto-refresh analytics every 60s when active
+        // Auto-refresh analytics every 60s when analytics tab is active
         let interval;
         if (activeTab === 'analytics') {
-            interval = setInterval(() => {
-                fetchStats();
-            }, 60000);
+            interval = setInterval(fetchStats, 60000);
         }
         
-        return () => {
-            if (interval) clearInterval(interval);
-        };
+        return () => { if (interval) clearInterval(interval); };
     }, [activeTab]);
 
     const fetchStats = () => {
         if (activeTab === 'analytics') {
-            getVisitorStats().then(setStats).catch(console.error);
+            getVisitorStats()
+                .then(data => setStats({
+                    totalViews:    data.totalViews    ?? 0,
+                    uniqueVisitors: data.uniqueVisitors ?? 0,
+                    browserStats:  data.browserStats  ?? {},
+                    dailyStats:    data.dailyStats    ?? [],
+                }))
+                .catch(console.error);
         }
     };
 
@@ -124,7 +143,8 @@ const AdminDashboard = () => {
     }, [activeTab]);
 
     const handleTabChange = (tab) => {
-        setActiveTab(tab);
+        // Navigate to the tab-specific URL — this updates activeTab via useParams
+        navigate(`/AdminPortal/admin/dashboard/${tab}`);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -201,7 +221,7 @@ const AdminDashboard = () => {
             applyLink: job.applyLink || '', salary: job.salary || 'Negotiable',
             companyLogo: job.companyLogo || '', jobType: job.jobType || 'Full-time'
         });
-        setActiveTab('create');
+        navigate('/AdminPortal/admin/dashboard/create');
         setUploadMode('single');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -557,132 +577,9 @@ const AdminDashboard = () => {
                             {activeTab === 'users' && <ManageUsers refreshTrigger={refreshTrigger} />}
                             {activeTab === 'subscribers' && <ManageSubscribers refreshTrigger={refreshTrigger} />}
                             {activeTab === 'prompts' && <AdminPromptsPage />}
+                            {activeTab === 'images' && <ImageManagerPage />}
                             
-                            {activeTab === 'analytics' && (() => {
-                                const total = stats.totalViews != null ? stats.totalViews : 0;
-                                const unique = stats.uniqueVisitors != null ? stats.uniqueVisitors : 0;
-                                const browsers = stats.browserStats || {};
-                                
-                                return (
-                                    <div className="adm-analytics-section">
-                                        <div className="adm-stats-grid" style={{ marginBottom: '1.5rem' }}>
-                                            <div className="adm-stat-card">
-                                                <div className="adm-stat-icon" style={{ background: 'rgba(99,102,241,0.1)', color: '#6366f1' }}>
-                                                    <Eye size={22} />
-                                                </div>
-                                                <div className="adm-stat-info">
-                                                    <h4 className="adm-stat-value">{total.toLocaleString()}</h4>
-                                                    <p className="adm-stat-label">Total Impressions</p>
-                                                </div>
-                                            </div>
-                                            <div className="adm-stat-card">
-                                                <div className="adm-stat-icon" style={{ background: 'rgba(236,72,153,0.1)', color: '#ec4899' }}>
-                                                    <Users size={22} />
-                                                </div>
-                                                <div className="adm-stat-info">
-                                                    <h4 className="adm-stat-value">{unique.toLocaleString()}</h4>
-                                                    <p className="adm-stat-label">Unique Visitors</p>
-                                                </div>
-                                            </div>
-                                            <div className="adm-stat-card">
-                                                <div className="adm-stat-icon" style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981' }}>
-                                                    <Briefcase size={22} />
-                                                </div>
-                                                <div className="adm-stat-info">
-                                                    <h4 className="adm-stat-value">{overviewStats.jobs}</h4>
-                                                    <p className="adm-stat-label">Active Jobs</p>
-                                                </div>
-                                            </div>
-                                            <div className="adm-stat-card">
-                                                <div className="adm-stat-icon" style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}>
-                                                    <RefreshCw size={22} />
-                                                </div>
-                                                <div className="adm-stat-info">
-                                                    <h4 className="adm-stat-value">{overviewStats.users}</h4>
-                                                    <p className="adm-stat-label">Registered Users</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                         <div className="adm-analytics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-                                            {/* Daily Traffic Trend */}
-                                            <div className="adm-card-panel">
-                                                <div className="adm-form-header-fancy" style={{ padding: '0 0 1rem 0', borderBottom: '1px solid var(--jp-border)', marginBottom: '1.25rem' }}>
-                                                    <div className="header-icon-box" style={{ background: 'rgba(99,102,241,0.1)', color: '#6366f1', width: 32, height: 32 }}>
-                                                        <TrendingUp size={16} />
-                                                    </div>
-                                                    <div><h3 className="adm-step-title">7-Day Traffic Trend</h3></div>
-                                                </div>
-                                                
-                                                <div className="adm-trend-chart" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: '140px', padding: '10px 5px', gap: '8px' }}>
-                                                    {(() => {
-                                                        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                                                        const today = new Date().getDay();
-                                                        // Generate semi-random trend based on total views for visualization
-                                                        // In a real app, this would come from a 'daily_stats' endpoint
-                                                        return Array.from({ length: 7 }).map((_, i) => {
-                                                            const dayIdx = (today - (6 - i) + 7) % 7;
-                                                            const isToday = i === 6;
-                                                            // Calculate a pseudo-realistic height percentage
-                                                            const baseHeight = total > 0 ? (total % 100) : 0;
-                                                            const height = Math.max(15, isToday ? 85 : (30 + (Math.sin(i * 1.5) * 20) + (baseHeight / 2)));
-                                                            
-                                                            return (
-                                                                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                                                                    <div style={{ 
-                                                                        width: '100%', 
-                                                                        height: `${height}%`, 
-                                                                        background: isToday ? 'linear-gradient(180deg, #6366f1, #a855f7)' : 'rgba(99,102,241,0.15)',
-                                                                        borderRadius: '4px 4px 2px 2px',
-                                                                        position: 'relative',
-                                                                        transition: 'height 0.6s ease-out'
-                                                                    }}>
-                                                                        {isToday && <div style={{ position: 'absolute', top: -15, width: '100%', textAlign: 'center', fontSize: '0.65rem', fontWeight: 700, color: '#6366f1' }}>Today</div>}
-                                                                    </div>
-                                                                    <span style={{ fontSize: '0.65rem', color: 'var(--jp-text-muted)', fontWeight: isToday ? 700 : 400 }}>{days[dayIdx]}</span>
-                                                                </div>
-                                                            );
-                                                        });
-                                                    })()}
-                                                </div>
-                                                <p style={{ fontSize: '0.75rem', color: 'var(--jp-text-muted)', textAlign: 'center', marginTop: '1rem' }}>
-                                                    Showing total impressions trends based on session activity.
-                                                </p>
-                                            </div>
-
-                                            {/* Browser Distribution */}
-                                            <div className="adm-card-panel">
-                                                <div className="adm-form-header-fancy" style={{ padding: '0 0 1rem 0', borderBottom: '1px solid var(--jp-border)', marginBottom: '1rem' }}>
-                                                    <div className="header-icon-box" style={{ background: 'rgba(59,130,246,0.1)', color: '#3b82f6', width: 32, height: 32 }}>
-                                                        <Globe size={16} />
-                                                    </div>
-                                                    <div><h3 className="adm-step-title">Browser Distribution</h3></div>
-                                                </div>
-                                                <div className="adm-progress-row">
-                                                    {Object.keys(browsers).length === 0 ? (
-                                                        <p style={{ fontSize: '0.8rem', color: 'var(--jp-text-muted)', textAlign: 'center', padding: '2.5rem 0' }}>No browser data recorded yet.</p>
-                                                    ) : (
-                                                        Object.entries(browsers).sort((a,b) => b[1]-a[1]).map(([b, c]) => {
-                                                            const pct = total > 0 ? Math.round((c / total) * 100) : 0;
-                                                            return (
-                                                                <div key={b} className="adm-progress-item">
-                                                                    <div className="adm-progress-meta">
-                                                                        <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{b}</span>
-                                                                        <span style={{ fontSize: '0.8rem', color: 'var(--jp-text-muted)' }}>{pct}% ({c.toLocaleString()})</span>
-                                                                    </div>
-                                                                    <div className="adm-progress-bg" style={{ height: 8, background: 'var(--jp-border)', borderRadius: 4, overflow: 'hidden' }}>
-                                                                        <div className="adm-progress-fill" style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, var(--jp-primary), var(--jp-secondary))', borderRadius: 4 }} />
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        })
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })()}
+                            {activeTab === 'analytics' && <AnalyticsPanel stats={stats} overviewStats={overviewStats} refreshTrigger={refreshTrigger} />}
 
                             {activeTab === 'settings' && <AdminSettings />}
                         </motion.div>

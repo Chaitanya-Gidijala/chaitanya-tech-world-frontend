@@ -162,15 +162,6 @@ const ProfilePage = () => {
         exit: { opacity: 0, y: -8, transition: { duration: 0.12 } }
     };
 
-    const recentActivities = [
-        { icon: Briefcase, text: 'Applied for Senior Java Developer at Google', time: '2h ago', color: '#4f46e5' },
-        { icon: Award, text: 'Scored 92% in Spring Boot Certification Quiz', time: '1d ago', color: '#f59e0b' },
-        { icon: FileText, text: 'Created "My Professional Resume" with Executive Pro', time: '2d ago', color: '#10b981' },
-        { icon: Star, text: 'Unlocked Premium template: ATS Expert Blue', time: '5d ago', color: '#7c3aed' },
-        { icon: BarChart2, text: 'ATS Score improved to 96% on latest resume', time: '1w ago', color: '#06b6d4' },
-    ];
-
-    const profileSkills = ['React.js', 'Java', 'Spring Boot', 'SQL', 'TypeScript', 'Node.js', 'Docker', 'AWS'];
 
     return (
         <div className="profile-container">
@@ -312,46 +303,7 @@ const ProfilePage = () => {
                                             </div>
                                         </div>
 
-                                        <hr className="section-divider" />
 
-                                        {/* Skills */}
-                                        <div className="section-header">
-                                            <h3>Skills</h3>
-                                            <button className="action-btn-sm" onClick={() => setActiveTab('settings')}>
-                                                <Edit3 size={12} /> Edit
-                                            </button>
-                                        </div>
-                                        <div className="skills-wrap">
-                                            {profileSkills.map((s, i) => (
-                                                <span key={i} className="skill-tag">{s}</span>
-                                            ))}
-                                        </div>
-
-                                        <hr className="section-divider" />
-
-                                        {/* Profile Strength */}
-                                        <div className="section-header">
-                                            <h3>Profile Strength</h3>
-                                            <span style={{ fontSize: '0.78rem', color: '#a78bfa', fontWeight: 700 }}>75%</span>
-                                        </div>
-                                        <div className="progress-wrap">
-                                            {[
-                                                { label: 'Basic Info', pct: 100 },
-                                                { label: 'Resume Created', pct: resumes.length > 0 ? 100 : 0 },
-                                                { label: 'Skills Added', pct: 80 },
-                                                { label: 'ATS Optimised', pct: 96 },
-                                            ].map((p, i) => (
-                                                <div key={i} className="progress-item">
-                                                    <div className="progress-label">
-                                                        <span>{p.label}</span>
-                                                        <span>{p.pct}%</span>
-                                                    </div>
-                                                    <div className="progress-bar-bg">
-                                                        <div className="progress-bar-fill" style={{ width: `${p.pct}%` }} />
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
 
                                         <hr className="section-divider" />
 

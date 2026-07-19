@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { promptService } from '../services/promptService';
+import ImageUploadField from '../components/ImageUploadField';
 import './AdminPromptsPage.css';
 
 const AI_MODELS = [
@@ -28,6 +29,8 @@ const AdminPromptsPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [toast, setToast] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  // Tracks the raw GitHub URL returned alongside the CDN URL after upload
+  const [uploadedRawUrl, setUploadedRawUrl] = useState('');
 
   useEffect(() => { fetchPrompts(); }, []);
 
@@ -53,6 +56,7 @@ const AdminPromptsPage = () => {
   const openAdd = () => {
     setFormData(BLANK_FORM);
     setEditingId(null);
+    setUploadedRawUrl('');
     setShowForm(true);
     setTimeout(() => document.getElementById('ap-title')?.focus(), 100);
   };
@@ -65,7 +69,9 @@ const AdminPromptsPage = () => {
       mediaType: prompt.mediaType || 'PHOTO',
       promptText: prompt.promptText || '',
       aiModel: prompt.aiModel || 'ChatGPT',
+      category: prompt.category || 'Men',
     });
+    setUploadedRawUrl('');
     setEditingId(prompt.id);
     setShowForm(true);
     setTimeout(() => document.getElementById('ap-title')?.focus(), 100);
@@ -75,6 +81,20 @@ const AdminPromptsPage = () => {
     setShowForm(false);
     setEditingId(null);
     setFormData(BLANK_FORM);
+    setUploadedRawUrl('');
+  };
+
+  // Called by ImageUploadField after a successful upload
+  const handleUploadSuccess = (result) => {
+    if (result) {
+      // Prefer CDN URL as primary; save raw as fallback in description metadata
+      setFormData(prev => ({ ...prev, mediaUrl: result.imageUrl }));
+      setUploadedRawUrl(result.rawUrl);
+    } else {
+      // User cleared the image
+      setFormData(prev => ({ ...prev, mediaUrl: '' }));
+      setUploadedRawUrl('');
+    }
   };
 
   const handleChange = (e) => {
@@ -330,17 +350,31 @@ const AdminPromptsPage = () => {
               </div>
 
               <div className="ap-field">
-                <label className="ap-label">Media URL <span>*</span></label>
+                <label className="ap-label">Image <span>*</span></label>
+                <ImageUploadField
+                  onUploadSuccess={handleUploadSuccess}
+                  currentUrl={formData.mediaUrl}
+                  disabled={saving}
+                />
+                {/* Manual URL override — auto-filled after upload, editable as fallback */}
                 <input
                   type="url"
                   name="mediaUrl"
                   className="ap-input"
+                  style={{ marginTop: '8px' }}
                   value={formData.mediaUrl}
                   onChange={handleChange}
                   required
-                  placeholder="https://raw.githubusercontent.com/..."
+                  placeholder="CDN URL auto-filled after upload — or paste a URL manually"
                 />
-                <span className="ap-hint">Paste a direct GitHub raw image URL or any public image URL</span>
+                {uploadedRawUrl && (
+                  <span className="ap-hint">
+                    Raw fallback: <a href={uploadedRawUrl} target="_blank" rel="noreferrer" style={{ color: '#818cf8' }}>{uploadedRawUrl}</a>
+                  </span>
+                )}
+                {!uploadedRawUrl && (
+                  <span className="ap-hint">Upload an image above, or paste any public URL directly</span>
+                )}
               </div>
 
               <div className="ap-field">
