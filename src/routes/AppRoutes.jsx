@@ -23,6 +23,7 @@ import AdminPromptsPage from '@/features/prompts-gallery/pages/AdminPromptsPage'
 import RoadmapPage from '@/features/roadmap/RoadmapPage';
 import RoadmapHomePage from '@/features/roadmap/RoadmapHomePage';
 import ImageManagerPage from '@/features/image-manager/pages/ImageManagerPage';
+import PortfolioPage from '@/features/portfolio/PortfolioPage';
 
 import MainLayout from '@/layouts/MainLayout';
 import JobPortalExamContainer from '@/features/job-portal/components/prep/ExamContainer';
@@ -58,6 +59,7 @@ const AppRoutes = ({ theme, toggleTheme }) => {
         <Route path="/prompts/*" element={<PromptsApp />} />
         <Route path="/roadmap" element={<RoadmapHomePage />} />
         <Route path="/roadmap/:tech" element={<RoadmapPage />} />
+        <Route path="/portfolio" element={<PortfolioPage />} />
         <Route
           path="/admin/images"
           element={
