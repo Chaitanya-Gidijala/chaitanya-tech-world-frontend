@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { 
   Github, Linkedin, Mail, Menu, X, Download, Code, Layout, 
   Database, Server, ExternalLink, Send, Phone, MapPin, 
-  Briefcase, GraduationCap, Award, CheckCircle 
+  Briefcase, GraduationCap, Award, CheckCircle, Zap, Layers, ShieldCheck
 } from 'lucide-react';
 import './PortfolioV2Page.css';
 
@@ -153,22 +153,37 @@ const PortfolioV2Page = () => {
 
           <div className="portv2-about-content">
             <motion.div className="portv2-about-image-wrapper" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
-              <div className="portv2-about-accent"></div>
-              <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80" alt="Code Background" className="portv2-about-img" />
+              <div className="portv2-about-glow"></div>
+              <div className="portv2-about-image-inner">
+                <img src="/portfolio-v2-about.png" alt="Tech Abstract" className="portv2-about-img" />
+              </div>
             </motion.div>
             
             <motion.div className="portv2-about-text" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <p>
-                I am a Java Developer with 2+ years of experience building, testing, and operating production Spring Boot microservices on an enterprise platform for GE Aerospace, processing 50,000+ daily transactions across US, UK, and India operations.
+                I am a Java Developer with 2+ years of experience building, testing, and operating production <strong>Spring Boot microservices</strong> on an enterprise platform for <span className="highlight">GE Aerospace</span>, processing <strong>50,000+ daily transactions</strong> across US, UK, and India operations.
               </p>
               <p>
-                I apply AI-assisted development practices daily—using GitHub Copilot and agentic coding workflows for scaffolding, code review, and test generation. I strongly enforce automated quality and deployment gates (SonarQube, Jenkins CI/CD) and actively implement security test cases to catch edge-case vulnerabilities.
+                I apply <strong>AI-assisted development practices</strong> daily—using GitHub Copilot and agentic coding workflows for scaffolding, code review, and test generation. I strongly enforce automated quality and deployment gates (SonarQube, Jenkins CI/CD) and actively implement security test cases to catch edge-case vulnerabilities.
               </p>
               
               <div className="portv2-about-highlights">
-                <div className="portv2-about-highlight"><CheckCircle size={20} /> Delivered 15+ production REST APIs end-to-end</div>
-                <div className="portv2-about-highlight"><CheckCircle size={20} /> Reduced API response latency by 50% through SQL optimization</div>
-                <div className="portv2-about-highlight"><CheckCircle size={20} /> Docker containerization & K8s/Helm deployments</div>
+                <div className="portv2-about-highlight-card">
+                  <div className="portv2-about-highlight-icon"><Server size={18} /></div>
+                  <div className="portv2-about-highlight-text">Delivered 15+ production REST APIs end-to-end</div>
+                </div>
+                <div className="portv2-about-highlight-card">
+                  <div className="portv2-about-highlight-icon"><Zap size={18} /></div>
+                  <div className="portv2-about-highlight-text">Reduced API response latency by 50% via SQL opt.</div>
+                </div>
+                <div className="portv2-about-highlight-card">
+                  <div className="portv2-about-highlight-icon"><Layers size={18} /></div>
+                  <div className="portv2-about-highlight-text">Docker containerization & K8s/Helm deployments</div>
+                </div>
+                <div className="portv2-about-highlight-card">
+                  <div className="portv2-about-highlight-icon"><ShieldCheck size={18} /></div>
+                  <div className="portv2-about-highlight-text">Rigorous security & automated CI/CD pipelines</div>
+                </div>
               </div>
             </motion.div>
           </div>
