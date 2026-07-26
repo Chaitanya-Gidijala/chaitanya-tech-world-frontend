@@ -188,7 +188,7 @@
 }
 
 .port-hero__name {
-  font-size: clamp(3.5rem, 9vw, 6.5rem);
+  font-size: clamp(2.5rem, 10vw, 6.5rem);
   font-weight: 900;
   line-height: 1;
   letter-spacing: -2px;
@@ -966,4 +966,19 @@
   .port-hero__3d-card:hover {
     transform: none;
   }
+}
+
+@media (max-width: 480px) {
+  .port-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn-hero-primary, .btn-hero-ghost {
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+  .port-container { padding: 0 1rem; }
+  .port-hero__name { font-size: 2.2rem; }
+  .port-hero__title { font-size: 1.15rem; }
 }
