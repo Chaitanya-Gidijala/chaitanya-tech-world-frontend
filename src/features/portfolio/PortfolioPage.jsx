@@ -183,6 +183,7 @@ const PortfolioPage = () => {
               initial="hidden"
               animate="visible"
               variants={stagger(0.12)}
+              className="port-hero__text-column"
             >
               <motion.div variants={fadeUp}>
                 <span className="port-hero__eyebrow">
@@ -229,6 +230,37 @@ const PortfolioPage = () => {
                   <Phone size={18} />
                 </a>
               </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeLeft}
+              className="port-hero__visual-column"
+            >
+               <div className="port-hero__3d-card">
+                 <div className="port-hero__3d-card-inner">
+                    <div className="code-header">
+                       <span className="dot dot-red"></span>
+                       <span className="dot dot-yellow"></span>
+                       <span className="dot dot-green"></span>
+                    </div>
+                    <pre className="code-content">
+<code><span className="keyword">package</span> com.portfolio;
+
+<span className="keyword">import</span> org.springframework.boot.SpringApplication;
+<span className="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span className="annotation">@SpringBootApplication</span>
+<span className="keyword">public class</span> <span className="class-name">DeveloperProfile</span> {'{'}
+    <span className="keyword">public static void</span> <span className="method-name">main</span>(String[] args) {'{'}
+        SpringApplication.<span className="method-name">run</span>(DeveloperProfile.class, args);
+        System.out.<span className="method-name">println</span>(<span className="string">"Ready to build scalable systems."</span>);
+    {'}'}
+{'}'}</code>
+                    </pre>
+                 </div>
+               </div>
             </motion.div>
           </div>
         </div>
@@ -475,18 +507,6 @@ const PortfolioPage = () => {
           </Reveal>
         </div>
       </section>
-
-      {/* ══════════════════════════════
-          FOOTER
-      ══════════════════════════════ */}
-      <footer className="port-footer">
-        <div className="port-container">
-          <p>
-            Designed &amp; built by <strong style={{ color: 'var(--accent)' }}>Chaitanya Gidijala</strong>.
-            &nbsp;·&nbsp; © {new Date().getFullYear()}
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };
