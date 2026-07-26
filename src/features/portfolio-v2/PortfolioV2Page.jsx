@@ -139,19 +139,19 @@ const PortfolioV2Page = () => {
 
         {/* ================= ABOUT & SKILLS ================= */}
         <section id="about" className="portv2-section">
-          <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={scrollFade}>
+          <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
             <span className="portv2-section-label">Discover</span>
             <h2 className="portv2-section-title">About <span>Me</span></h2>
             <p className="portv2-section-subtitle">A brief look at who I am and my core technical competencies.</p>
           </motion.div>
 
           <div className="portv2-about-content">
-            <motion.div className="portv2-about-image-wrapper" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-about-image-wrapper" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-about-accent"></div>
               <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80" alt="Code Background" className="portv2-about-img" />
             </motion.div>
             
-            <motion.div className="portv2-about-text" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-about-text" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <p>
                 I am a Java Developer with 2+ years of experience building, testing, and operating production Spring Boot microservices on an enterprise platform for GE Aerospace, processing 50,000+ daily transactions across US, UK, and India operations.
               </p>
@@ -168,7 +168,7 @@ const PortfolioV2Page = () => {
           </div>
 
           <div className="portv2-skills-categories" style={{ marginTop: '4rem' }}>
-            <motion.div className="portv2-skill-cat" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-skill-cat" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-skill-cat-header">
                 <div className="portv2-skill-cat-icon"><Code size={20}/></div>
                 <h3 className="portv2-skill-cat-name">Languages & Frameworks</h3>
@@ -183,7 +183,7 @@ const PortfolioV2Page = () => {
               </div>
             </motion.div>
 
-            <motion.div className="portv2-skill-cat" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-skill-cat" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-skill-cat-header">
                 <div className="portv2-skill-cat-icon"><Server size={20}/></div>
                 <h3 className="portv2-skill-cat-name">Infrastructure, Database & DevOps</h3>
@@ -200,7 +200,7 @@ const PortfolioV2Page = () => {
               </div>
             </motion.div>
 
-            <motion.div className="portv2-skill-cat" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-skill-cat" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-skill-cat-header">
                 <div className="portv2-skill-cat-icon"><Database size={20}/></div>
                 <h3 className="portv2-skill-cat-name">AI, Security & Tools</h3>
@@ -219,7 +219,7 @@ const PortfolioV2Page = () => {
 
         {/* ================= EXPERIENCE ================= */}
         <section id="experience" className="portv2-section">
-          <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={scrollFade}>
+          <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
             <span className="portv2-section-label">Career</span>
             <h2 className="portv2-section-title">Professional <span>Experience</span></h2>
             <p className="portv2-section-subtitle">My journey building enterprise and independent platforms.</p>
@@ -227,7 +227,7 @@ const PortfolioV2Page = () => {
 
           <div className="portv2-timeline">
             
-            <motion.div className="portv2-timeline-item" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-timeline-item" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-timeline-dot"></div>
               <div className="portv2-exp-card">
                 <div className="portv2-exp-top">
@@ -249,7 +249,7 @@ const PortfolioV2Page = () => {
               </div>
             </motion.div>
 
-            <motion.div className="portv2-timeline-item" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-timeline-item" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-timeline-dot"></div>
               <div className="portv2-exp-card">
                 <div className="portv2-exp-top">
@@ -268,7 +268,7 @@ const PortfolioV2Page = () => {
               </div>
             </motion.div>
 
-            <motion.div className="portv2-timeline-item" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-timeline-item" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-timeline-dot"></div>
               <div className="portv2-exp-card">
                 <div className="portv2-exp-top">
@@ -292,7 +292,7 @@ const PortfolioV2Page = () => {
 
         {/* ================= PROJECTS / PORTFOLIO ================= */}
         <section id="projects" className="portv2-section">
-          <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={scrollFade}>
+          <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
             <span className="portv2-section-label">Showcase</span>
             <h2 className="portv2-section-title">Independent <span>Projects</span></h2>
             <p className="portv2-section-subtitle">Highlights from my full-stack independent builds.</p>
@@ -300,7 +300,7 @@ const PortfolioV2Page = () => {
 
           <div className="portv2-portfolio-grid">
             
-            <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-project-img-wrap">
                 <div className="portv2-project-overlay"></div>
                 <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80" alt="Chaitanya Tech World" className="portv2-project-img" />
@@ -319,7 +319,7 @@ const PortfolioV2Page = () => {
               </div>
             </motion.div>
 
-            <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-project-img-wrap">
                 <div className="portv2-project-overlay"></div>
                 <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80" alt="WebMethods AI" className="portv2-project-img" />
@@ -338,7 +338,7 @@ const PortfolioV2Page = () => {
               </div>
             </motion.div>
 
-            <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-project-img-wrap">
                 <div className="portv2-project-overlay"></div>
                 <img src="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=600&q=80" alt="Enterprise Platform" className="portv2-project-img" />
@@ -364,7 +364,7 @@ const PortfolioV2Page = () => {
         <section className="portv2-section">
           <div className="portv2-edu-certs-grid">
             
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-section-header" style={{ textAlign: 'left', marginBottom: '2.5rem' }}>
                 <h2 className="portv2-section-title">Education</h2>
               </div>
@@ -388,7 +388,7 @@ const PortfolioV2Page = () => {
               </div>
             </motion.div>
 
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade} transition={{ delay: 0.1 }}>
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade} transition={{ delay: 0.1 }}>
               <div className="portv2-section-header" style={{ textAlign: 'left', marginBottom: '2.5rem' }}>
                 <h2 className="portv2-section-title">Certifications</h2>
               </div>
@@ -421,14 +421,14 @@ const PortfolioV2Page = () => {
 
         {/* ================= CONTACT SECTION ================= */}
         <section id="contact" className="portv2-section">
-          <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={scrollFade}>
+          <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
             <span className="portv2-section-label">Connect</span>
             <h2 className="portv2-section-title">Contact <span>Me</span></h2>
             <p className="portv2-section-subtitle">Reach out to discuss opportunities or collaboration.</p>
           </motion.div>
 
           <div className="portv2-contact-wrapper">
-            <motion.div className="portv2-contact-info-list" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.div className="portv2-contact-info-list" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-contact-item">
                 <div className="portv2-contact-icon"><Phone size={24} /></div>
                 <div className="portv2-contact-detail">
@@ -459,7 +459,7 @@ const PortfolioV2Page = () => {
               </div>
             </motion.div>
             
-            <motion.form className="portv2-contact-form" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={scrollFade}>
+            <motion.form className="portv2-contact-form" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-form-row">
                 <div className="portv2-form-group">
                   <input type="text" className="portv2-input" placeholder="Your Name" required />
