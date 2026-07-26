@@ -1162,7 +1162,12 @@ html { scroll-behavior: smooth; }
 
   .portv2-section { padding: 3rem 0; }
   .portv2-section-title { font-size: 1.7rem; }
+  .portv2-section-subtitle { font-size: 0.88rem; }
   .portv2-section-header { margin-bottom: 2.5rem; }
+
+  .portv2-about-text p { font-size: 0.9rem; }
+  .portv2-exp-role { font-size: 1rem; }
+  .portv2-project-title { font-size: 1.2rem; }
 
   .portv2-skill-cat { padding: 1.2rem; }
   .portv2-service-card { padding: 1.5rem; }
