@@ -246,18 +246,18 @@ const PortfolioPage = () => {
                        <span className="dot dot-green"></span>
                     </div>
                     <pre className="code-content">
-<code><span className="keyword">package</span> com.portfolio;
-
-<span className="keyword">import</span> org.springframework.boot.SpringApplication;
-<span className="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
-
-<span className="annotation">@SpringBootApplication</span>
-<span className="keyword">public class</span> <span className="class-name">DeveloperProfile</span> {'{'}
-    <span className="keyword">public static void</span> <span className="method-name">main</span>(String[] args) {'{'}
-        SpringApplication.<span className="method-name">run</span>(DeveloperProfile.class, args);
-        System.out.<span className="method-name">println</span>(<span className="string">"Ready to build scalable systems."</span>);
-    {'}'}
-{'}'}</code>
+<code>
+<span className="keyword">package</span> com.portfolio;{"\n\n"}
+<span className="keyword">import</span> org.springframework.boot.SpringApplication;{"\n"}
+<span className="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;{"\n\n"}
+<span className="annotation">@SpringBootApplication</span>{"\n"}
+<span className="keyword">public class</span> <span className="class-name">DeveloperProfile</span> {"{"}{"\n"}
+    <span className="keyword">public static void</span> <span className="method-name">main</span>(String[] args) {"{"}{"\n"}
+        SpringApplication.<span className="method-name">run</span>(DeveloperProfile.class, args);{"\n"}
+        System.out.<span className="method-name">println</span>(<span className="string">"Ready to build scalable systems."</span>);{"\n"}
+    {"}"}{"\n"}
+{"}"}
+</code>
                     </pre>
                  </div>
                </div>
