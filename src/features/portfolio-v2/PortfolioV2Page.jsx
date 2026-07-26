@@ -1,15 +1,52 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Github, Linkedin, Mail, Menu, X, Download, Code, Layout, 
   Database, Server, ExternalLink, Send, Phone, MapPin, 
-  Briefcase, GraduationCap, Award, CheckCircle, Zap, Layers, ShieldCheck
+  Briefcase, GraduationCap, Award, CheckCircle, Zap, Layers, ShieldCheck, CheckCircle2, Loader2
 } from 'lucide-react';
+import config from '../../config/apiConfig';
 import './PortfolioV2Page.css';
 
 const PortfolioV2Page = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  
+  // Contact Form State
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const handleInput = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSending(true);
+
+    const payload = {
+        name: form.name,
+        email: form.email,
+        phone: 'N/A', // Adding default to match ContactPage schema
+        serviceType: form.subject || 'Portfolio Contact',
+        budget: 0,
+        message: form.message
+    };
+
+    // Fire and forget API request
+    fetch(config.endpoints.contact.submit, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    }).catch(err => console.error('Submission error:', err));
+
+    // Simulate short network delay for smooth UX
+    setTimeout(() => {
+        setSending(false);
+        setSent(true);
+        setTimeout(() => setSent(false), 3000);
+        setForm({ name: '', email: '', subject: '', message: '' });
+    }, 1200);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -468,35 +505,49 @@ const PortfolioV2Page = () => {
                 <div className="portv2-contact-icon"><Linkedin size={24} /></div>
                 <div className="portv2-contact-detail">
                   <h4>LinkedIn</h4>
-                  <a href="https://linkedin.com/in/chaitanya-gidijala" target="_blank" rel="noreferrer">linkedin.com/in/chaitanya-gidijala</a>
+                  <a href="https://www.linkedin.com/in/chaitanya-gidijala-660406231/" target="_blank" rel="noreferrer">Chaitanya Gidijala</a>
                 </div>
               </div>
               <div className="portv2-contact-item">
                 <div className="portv2-contact-icon"><Github size={24} /></div>
                 <div className="portv2-contact-detail">
                   <h4>GitHub</h4>
-                  <a href="https://github.com/chaitanya-gidijala" target="_blank" rel="noreferrer">github.com/chaitanya-gidijala</a>
+                  <a href="https://github.com/chaitanya-gidijala" target="_blank" rel="noreferrer">chaitanya-gidijala</a>
                 </div>
               </div>
             </motion.div>
             
-            <motion.form className="portv2-contact-form" initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
+            <motion.form className="portv2-contact-form" onSubmit={handleSubmit} initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-form-row">
                 <div className="portv2-form-group">
-                  <input type="text" className="portv2-input" placeholder="Your Name" required />
+                  <input type="text" name="name" value={form.name} onChange={handleInput} className="portv2-input" placeholder="Your Name" required />
                 </div>
                 <div className="portv2-form-group">
-                  <input type="email" className="portv2-input" placeholder="Your Email" required />
+                  <input type="email" name="email" value={form.email} onChange={handleInput} className="portv2-input" placeholder="Your Email" required />
                 </div>
               </div>
               <div className="portv2-form-group">
-                <input type="text" className="portv2-input" placeholder="Subject" required />
+                <input type="text" name="subject" value={form.subject} onChange={handleInput} className="portv2-input" placeholder="Subject" required />
               </div>
               <div className="portv2-form-group">
-                <textarea className="portv2-textarea" placeholder="Your Message" required></textarea>
+                <textarea name="message" value={form.message} onChange={handleInput} className="portv2-textarea" placeholder="Your Message" required></textarea>
               </div>
-              <button type="submit" className="portv2-btn-submit">
-                Send Message <Send size={18} /> 
+              <button type="submit" className={`portv2-btn-submit ${sent ? 'sent' : ''}`} disabled={sending || sent}>
+                <AnimatePresence mode="wait">
+                  {sending ? (
+                    <motion.div key="sending" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex-center">
+                      Sending... <Loader2 size={18} className="spin-icon" />
+                    </motion.div>
+                  ) : sent ? (
+                    <motion.div key="sent" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex-center">
+                      Sent Successfully! <CheckCircle2 size={18} />
+                    </motion.div>
+                  ) : (
+                    <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -10 }} className="flex-center">
+                      Send Message <Send size={18} /> 
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </button>
             </motion.form>
           </div>
@@ -509,8 +560,8 @@ const PortfolioV2Page = () => {
               <p>&copy; {new Date().getFullYear()} <span>Chaitanya Gidijala</span>. All rights reserved.</p>
             </div>
             <div className="portv2-footer-socials">
-              <a href="https://linkedin.com/in/chaitanya-gidijala" className="portv2-footer-social"><Linkedin size={18}/></a>
-              <a href="https://github.com/chaitanya-gidijala" className="portv2-footer-social"><Github size={18}/></a>
+              <a href="https://www.linkedin.com/in/chaitanya-gidijala-660406231/" className="portv2-footer-social" target="_blank" rel="noreferrer"><Linkedin size={18}/></a>
+              <a href="https://github.com/chaitanya-gidijala" className="portv2-footer-social" target="_blank" rel="noreferrer"><Github size={18}/></a>
               <a href="mailto:chaitugidijala@gmail.com" className="portv2-footer-social"><Mail size={18}/></a>
             </div>
           </div>

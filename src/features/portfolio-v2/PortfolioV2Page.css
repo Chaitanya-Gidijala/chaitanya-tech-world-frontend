@@ -1194,3 +1194,27 @@ html { scroll-behavior: smooth; }
 
   .portv2-mobile-menu a { font-size: 1.4rem; }
 }
+
+/* =========================================
+   UTILITIES
+   ========================================= */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
+.portv2-btn-submit.sent {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
