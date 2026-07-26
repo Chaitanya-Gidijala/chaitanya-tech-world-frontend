@@ -9,9 +9,15 @@ import './PortfolioV2Page.css';
 
 const PortfolioV2Page = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const closeMenu = () => setMobileMenuOpen(false);
@@ -34,7 +40,7 @@ const PortfolioV2Page = () => {
       <div className="portv2-container">
         
         {/* ================= HEADER ================= */}
-        <header className="portv2-header">
+        <header className={`portv2-header ${isScrolled ? 'scrolled' : ''}`}>
           <a href="#" className="portv2-logo">CG.</a>
           
           <nav className="portv2-nav">

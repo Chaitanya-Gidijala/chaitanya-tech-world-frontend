@@ -62,17 +62,27 @@ html { scroll-behavior: smooth; }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.8rem 0;
+  padding: 2.2rem 0;
   position: sticky;
   top: 0;
   z-index: 100;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  margin: 0 -2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  transition: all 0.4s ease-in-out;
+}
+
+.portv2-header.scrolled {
+  padding: 1rem 0;
+  padding-left: 2rem;
+  padding-right: 2rem;
   background: rgba(15,15,15,0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255,255,255,0.04);
-  margin: 0 -2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .portv2-logo {
@@ -1079,7 +1089,8 @@ html { scroll-behavior: smooth; }
    ========================================= */
 @media (max-width: 480px) {
   .portv2-container { padding: 0 1rem; }
-  .portv2-header { padding: 1.2rem 1rem; margin: 0 -1rem; }
+  .portv2-header { padding: 1.5rem 1rem; margin: 0 -1rem; }
+  .portv2-header.scrolled { padding: 0.8rem 1rem; margin: 0 -1rem; }
   .portv2-logo { font-size: 1.2rem; }
 
   .portv2-hero { padding: 2rem 0 3rem; gap: 1.5rem; }
