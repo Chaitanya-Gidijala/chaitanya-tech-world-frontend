@@ -1,42 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 /* =========================================
-   PORTFOLIO V2 - STANDALONE DARK/ORANGE THEME
+   ROOT WRAPPER
    ========================================= */
-
 .portv2-wrapper {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
-  background-color: #111111;
+  background-color: #0f0f0f;
   color: #ffffff;
   min-height: 100vh;
-  width: 100vw;
-  max-width: 100%;
+  width: 100%;
   overflow-x: hidden;
-  position: relative;
 }
 
-/* Subtle background accent gradients if needed */
-.portv2-bg-accents {
+/* Animated background blobs */
+.portv2-bg-blob {
   position: fixed;
-  inset: 0;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
   pointer-events: none;
   z-index: 0;
 }
-.portv2-bg-accents::before,
-.portv2-bg-accents::after {
-  content: '';
-  position: absolute;
-  width: 800px;
-  height: 800px;
-  background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 60%);
+.portv2-bg-blob--1 {
+  width: 600px; height: 600px;
+  background: #f97316;
+  top: -200px; left: -200px;
+  animation: blobFloat1 12s ease-in-out infinite alternate;
 }
-.portv2-bg-accents::before { top: -200px; left: -200px; }
-.portv2-bg-accents::after { bottom: -400px; right: -200px; }
+.portv2-bg-blob--2 {
+  width: 500px; height: 500px;
+  background: #ea580c;
+  bottom: -200px; right: -150px;
+  animation: blobFloat2 15s ease-in-out infinite alternate;
+}
 
-/* Container */
+@keyframes blobFloat1 {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(80px, 80px) scale(1.15); }
+}
+@keyframes blobFloat2 {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-60px, -80px) scale(1.2); }
+}
+
 .portv2-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -45,105 +55,211 @@
   z-index: 10;
 }
 
-/* ================= HEADER ================= */
+/* =========================================
+   HEADER / NAV
+   ========================================= */
 .portv2-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2.5rem 0;
+  padding: 1.8rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15,15,15,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  margin: 0 -2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .portv2-logo {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  color: #f97316; /* Exact orange */
+  color: #f97316;
   text-decoration: none;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .portv2-nav {
   display: flex;
-  gap: 2.5rem;
+  gap: 2.2rem;
 }
 
 .portv2-nav a {
   text-decoration: none;
-  color: #a0a0a0;
-  font-size: 0.95rem;
+  color: #888;
+  font-size: 0.9rem;
   font-weight: 500;
   transition: color 0.3s;
+  position: relative;
 }
 
-.portv2-nav a.active,
-.portv2-nav a:hover {
+.portv2-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0; right: 0;
+  height: 2px;
+  background: #f97316;
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+.portv2-nav a:hover,
+.portv2-nav a.active {
   color: #f97316;
+}
+.portv2-nav a:hover::after,
+.portv2-nav a.active::after {
+  transform: scaleX(1);
 }
 
 .portv2-btn-header {
-  background-color: #f97316;
-  color: #ffffff;
+  background: #f97316;
+  color: #fff;
   border: none;
-  padding: 0.6rem 1.5rem;
+  padding: 0.55rem 1.4rem;
   border-radius: 6px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.3s, background-color 0.3s;
+  transition: background 0.3s, transform 0.2s;
   text-decoration: none;
 }
-
 .portv2-btn-header:hover {
-  background-color: #e8630b;
+  background: #ea580c;
   transform: translateY(-2px);
 }
 
 .portv2-mobile-toggle {
   display: none;
   background: none;
-  border: none;
-  color: #ffffff;
-  font-size: 1.8rem;
+  border: 2px solid #333;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
   cursor: pointer;
 }
 
-/* ================= HERO SECTION ================= */
+/* Mobile menu overlay */
+.portv2-mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,15,15,0.97);
+  z-index: 200;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+}
+.portv2-mobile-menu.open { display: flex; }
+.portv2-mobile-menu a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+.portv2-mobile-menu a:hover { color: #f97316; }
+.portv2-mobile-menu-close {
+  position: absolute;
+  top: 1.5rem; right: 1.5rem;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+/* =========================================
+   HERO SECTION
+   ========================================= */
 .portv2-hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: calc(100vh - 120px);
-  padding: 2rem 0 4rem;
-  gap: 2rem;
+  min-height: calc(100vh - 80px);
+  padding: 4rem 0 5rem;
+  gap: 3rem;
 }
 
-.portv2-hero-left {
-  flex: 1;
-  max-width: 600px;
+.portv2-hero-left { flex: 1; }
+
+.portv2-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #f97316;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.portv2-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 30px; height: 2px;
+  background: #f97316;
 }
 
 .portv2-greeting {
-  color: #8c8c8c;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+  color: #9ca3af;
+  font-size: 1.1rem;
   font-weight: 400;
+  margin-bottom: 0.4rem;
 }
 
 .portv2-name {
-  color: #ffffff;
-  font-size: 3rem;
-  font-weight: 700;
-  margin: 0 0 1rem;
-  line-height: 1.1;
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 0.8rem;
+  background: linear-gradient(135deg, #ffffff 60%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .portv2-role {
+  font-size: 1.5rem;
+  font-weight: 700;
   color: #f97316;
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin: 0 0 2rem;
-  line-height: 1.1;
-  text-transform: capitalize;
+  margin-bottom: 1rem;
+  line-height: 1.3;
 }
+
+.portv2-tagline {
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  max-width: 500px;
+  margin-bottom: 2rem;
+}
+
+.portv2-contact-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.portv2-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #9ca3af;
+  font-size: 0.82rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 20px;
+  padding: 0.3rem 0.9rem;
+  transition: border-color 0.3s, color 0.3s;
+}
+.portv2-chip:hover { border-color: #f97316; color: #f97316; }
+.portv2-chip svg { color: #f97316; }
 
 .portv2-socials {
   display: flex;
@@ -155,146 +271,156 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 45px;
-  height: 45px;
+  width: 44px; height: 44px;
   border-radius: 50%;
-  border: 1px solid #333333;
-  color: #a0a0a0;
+  border: 1px solid #2a2a2a;
+  color: #9ca3af;
   text-decoration: none;
   transition: all 0.3s ease;
 }
-
 .portv2-social-link:hover {
   border-color: #f97316;
   color: #f97316;
+  background: rgba(249,115,22,0.08);
+  transform: translateY(-3px);
 }
 
 .portv2-actions {
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 4rem;
+  gap: 1.2rem;
+  margin-bottom: 3rem;
 }
 
 .portv2-btn-primary {
-  background-color: #f97316;
-  color: #ffffff;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
   border: none;
-  padding: 0.9rem 2.2rem;
-  border-radius: 6px;
-  font-size: 1rem;
+  padding: 0.85rem 2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s, transform 0.3s;
+  transition: transform 0.2s, box-shadow 0.3s;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 20px rgba(249,115,22,0.3);
 }
-
 .portv2-btn-primary:hover {
-  background-color: #e8630b;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(249,115,22,0.45);
 }
 
 .portv2-btn-secondary {
-  background-color: transparent;
-  color: #ffffff;
-  border: 1px solid #666;
-  padding: 0.9rem 2.2rem;
-  border-radius: 6px;
-  font-size: 1rem;
+  background: transparent;
+  color: #fff;
+  border: 1px solid #333;
+  padding: 0.85rem 2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: border-color 0.3s, background 0.3s;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
 }
-
 .portv2-btn-secondary:hover {
-  border-color: #ffffff;
-  background: rgba(255,255,255,0.05);
+  border-color: #f97316;
+  background: rgba(249,115,22,0.05);
 }
 
-/* Stats Block */
+/* Stats */
 .portv2-stats {
-  background-color: #161616;
-  border-radius: 12px;
-  padding: 1.5rem 2.5rem;
   display: inline-flex;
-  gap: 2.5rem;
+  gap: 0;
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .portv2-stat-item {
-  display: flex;
-  flex-direction: column;
+  padding: 1.2rem 2rem;
   position: relative;
 }
-
-.portv2-stat-item:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  right: -1.25rem;
-  top: 15%;
-  bottom: 15%;
-  width: 1px;
-  background-color: #333333;
+.portv2-stat-item:not(:last-child) {
+  border-right: 1px solid #222;
 }
 
 .portv2-stat-number {
   color: #f97316;
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
   margin-bottom: 0.2rem;
 }
 
 .portv2-stat-label {
-  color: #a0a0a0;
-  font-size: 0.85rem;
+  color: #6b7280;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
-/* ================= HERO RIGHT ================= */
+/* Hero right */
 .portv2-hero-right {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
-  position: relative;
 }
 
 .portv2-image-wrapper {
+  width: 460px;
+  height: 460px;
   position: relative;
-  width: 500px;
-  height: 500px;
 }
 
 .portv2-image-bg {
   position: absolute;
   inset: 0;
-  background-color: #1f1f1f;
   border-radius: 50%;
-  z-index: 1;
+  background: radial-gradient(circle at center, #1f1f1f 0%, #141414 100%);
+  border: 2px solid #2a2a2a;
+  animation: pulse-ring 4s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.15); }
+  50%       { box-shadow: 0 0 0 20px rgba(249,115,22,0); }
 }
 
 .portv2-image {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%; 
-  filter: contrast(1.1) brightness(0.9);
+  border-radius: 50%;
+  z-index: 2;
+  filter: drop-shadow(0 20px 60px rgba(249,115,22,0.15));
 }
 
-/* ================= RESPONSIVE ================= */
-html {
-  scroll-behavior: smooth;
+.portv2-image-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 2px dashed rgba(249,115,22,0.3);
+  animation: spin-slow 25s linear infinite;
+  z-index: 1;
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-/* ================= SECTIONS ================= */
+/* =========================================
+   SHARED SECTION STYLES
+   ========================================= */
 .portv2-section {
   padding: 6rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255,255,255,0.04);
 }
 
 .portv2-section-header {
@@ -302,44 +428,127 @@ html {
   margin-bottom: 4rem;
 }
 
-.portv2-section-title {
-  font-size: 2.5rem;
+.portv2-section-label {
+  display: inline-block;
+  color: #f97316;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
 }
 
-.portv2-section-title span {
-  color: #f97316;
+.portv2-section-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 0.8rem;
 }
+
+.portv2-section-title span { color: #f97316; }
 
 .portv2-section-subtitle {
-  color: #8c8c8c;
-  font-size: 1.1rem;
+  color: #6b7280;
+  font-size: 1rem;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.7;
 }
 
-/* ================= SERVICES ================= */
+/* =========================================
+   SKILLS SECTION
+   ========================================= */
+.portv2-skills-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.portv2-skill-cat {
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 14px;
+  padding: 2rem;
+  transition: border-color 0.3s;
+}
+.portv2-skill-cat:hover { border-color: #f97316; }
+
+.portv2-skill-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+.portv2-skill-cat-icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: rgba(249,115,22,0.12);
+  color: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.portv2-skill-cat-name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.portv2-skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.portv2-skill-tag {
+  background: #1f1f1f;
+  border: 1px solid #2d2d2d;
+  color: #d1d5db;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  transition: all 0.25s;
+  cursor: default;
+}
+.portv2-skill-tag:hover {
+  border-color: #f97316;
+  color: #f97316;
+  background: rgba(249,115,22,0.06);
+}
+
+/* =========================================
+   SERVICES SECTION
+   ========================================= */
 .portv2-services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
 
 .portv2-service-card {
-  background-color: #1a1a1a;
-  border-radius: 12px;
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 14px;
   padding: 2.5rem 2rem;
-  border: 1px solid transparent;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
-
-.portv2-service-card:hover {
-  border-color: #f97316;
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(249, 115, 22, 0.1);
+.portv2-service-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #f97316, #ea580c);
+  transform: scaleX(0);
+  transition: transform 0.3s;
 }
+.portv2-service-card:hover {
+  border-color: #333;
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+.portv2-service-card:hover::before { transform: scaleX(1); }
 
 .portv2-service-icon {
   color: #f97316;
@@ -347,310 +556,566 @@ html {
 }
 
 .portv2-service-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
 }
 
 .portv2-service-desc {
-  color: #a0a0a0;
-  font-size: 0.95rem;
-  line-height: 1.6;
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.7;
 }
 
-/* ================= ABOUT ================= */
-.portv2-about-content {
-  display: flex;
-  align-items: center;
-  gap: 4rem;
-}
-
-.portv2-about-image-wrapper {
-  flex: 1;
+/* =========================================
+   EXPERIENCE SECTION (TIMELINE)
+   ========================================= */
+.portv2-timeline {
   position: relative;
-  border-radius: 20px;
-  overflow: hidden;
+  padding-left: 2.5rem;
+}
+.portv2-timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #f97316 0%, rgba(249,115,22,0.1) 100%);
 }
 
-.portv2-about-image-wrapper img {
-  width: 100%;
-  border-radius: 20px;
-  filter: grayscale(100%);
-  transition: filter 0.5s;
+.portv2-timeline-item {
+  position: relative;
+  margin-bottom: 3rem;
+}
+.portv2-timeline-item:last-child { margin-bottom: 0; }
+
+.portv2-timeline-dot {
+  position: absolute;
+  left: -2.5rem;
+  top: 6px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #f97316;
+  border: 3px solid #0f0f0f;
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.3);
 }
 
-.portv2-about-image-wrapper:hover img {
-  filter: grayscale(0%);
+.portv2-exp-card {
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 14px;
+  padding: 2rem;
+  transition: border-color 0.3s;
 }
+.portv2-exp-card:hover { border-color: #f97316; }
 
-.portv2-about-text {
-  flex: 1.2;
-}
-
-.portv2-about-text p {
-  color: #a0a0a0;
-  font-size: 1.05rem;
-  line-height: 1.8;
-  margin-bottom: 1.5rem;
-}
-
-.portv2-about-highlights {
+.portv2-exp-top {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 1rem;
-  margin-top: 2rem;
-}
-
-.portv2-about-highlight {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: #ffffff;
-  font-weight: 500;
-}
-
-.portv2-about-highlight svg {
-  color: #f97316;
-}
-
-/* ================= PORTFOLIO (PROJECTS) ================= */
-.portv2-portfolio-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2.5rem;
-}
-
-.portv2-project-card {
-  background-color: #1a1a1a;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.3s;
-}
-
-.portv2-project-card:hover {
-  transform: translateY(-5px);
-}
-
-.portv2-project-img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  background-color: #222;
-}
-
-.portv2-project-content {
-  padding: 1.5rem;
-}
-
-.portv2-project-title {
-  font-size: 1.3rem;
-  font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
-.portv2-project-desc {
-  color: #a0a0a0;
-  font-size: 0.95rem;
-  margin-bottom: 1.5rem;
+.portv2-exp-role {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
 }
 
+.portv2-exp-company {
+  color: #f97316;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.4rem;
+}
+
+.portv2-exp-client {
+  color: #6b7280;
+  font-size: 0.82rem;
+  font-style: italic;
+  margin-bottom: 1.2rem;
+}
+
+.portv2-exp-date {
+  background: rgba(249,115,22,0.1);
+  color: #f97316;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.portv2-exp-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.portv2-exp-bullets li {
+  color: #9ca3af;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  padding-left: 1.2rem;
+  position: relative;
+}
+.portv2-exp-bullets li::before {
+  content: '▹';
+  color: #f97316;
+  position: absolute;
+  left: 0;
+}
+
+/* =========================================
+   ABOUT SECTION
+   ========================================= */
+.portv2-about-content {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.portv2-about-image-wrapper {
+  position: relative;
+}
+.portv2-about-img {
+  width: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+  aspect-ratio: 4/5;
+  background: #1a1a1a;
+  filter: grayscale(80%);
+  transition: filter 0.4s;
+}
+.portv2-about-image-wrapper:hover .portv2-about-img {
+  filter: grayscale(0%);
+}
+.portv2-about-accent {
+  position: absolute;
+  bottom: -20px; right: -20px;
+  width: 150px; height: 150px;
+  border: 3px solid #f97316;
+  border-radius: 16px;
+  opacity: 0.2;
+}
+
+.portv2-about-text p {
+  color: #9ca3af;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 1.2rem;
+}
+
+.portv2-about-highlights {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.portv2-about-highlight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #d1d5db;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.portv2-about-highlight svg { color: #f97316; flex-shrink: 0; }
+
+/* =========================================
+   PORTFOLIO / PROJECTS SECTION
+   ========================================= */
+.portv2-portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.portv2-project-card {
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.portv2-project-card:hover {
+  transform: translateY(-6px);
+  border-color: #333;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.portv2-project-img-wrap {
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+}
+.portv2-project-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  filter: grayscale(30%);
+}
+.portv2-project-card:hover .portv2-project-img {
+  transform: scale(1.05);
+  filter: grayscale(0%);
+}
+.portv2-project-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(249,115,22,0.08);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.portv2-project-card:hover .portv2-project-overlay { opacity: 1; }
+
+.portv2-project-content { padding: 1.5rem; }
+
+.portv2-project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+.portv2-project-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #f97316;
+  background: rgba(249,115,22,0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.portv2-project-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.portv2-project-desc {
+  color: #6b7280;
+  font-size: 0.87rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
 .portv2-project-links {
   display: flex;
   gap: 1rem;
 }
-
 .portv2-project-link {
   color: #f97316;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
+  transition: gap 0.2s;
+}
+.portv2-project-link:hover { gap: 0.6rem; }
+
+/* =========================================
+   EDUCATION & CERTIFICATIONS
+   ========================================= */
+.portv2-edu-certs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
 }
 
-/* ================= CONTACT ================= */
-.portv2-contact-wrapper {
+.portv2-edu-list, .portv2-cert-list {
   display: flex;
-  gap: 4rem;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.portv2-contact-info {
-  flex: 1;
+.portv2-edu-card, .portv2-cert-card {
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 14px;
+  padding: 1.5rem;
+  transition: border-color 0.3s;
+}
+.portv2-edu-card:hover, .portv2-cert-card:hover { border-color: #f97316; }
+
+.portv2-edu-degree {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.portv2-edu-uni {
+  color: #f97316;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.portv2-edu-meta {
+  color: #6b7280;
+  font-size: 0.82rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.portv2-cert-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.portv2-cert-year {
+  color: #f97316;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* =========================================
+   CONTACT SECTION
+   ========================================= */
+.portv2-contact-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1.8fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.portv2-contact-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .portv2-contact-item {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  align-items: flex-start;
+  gap: 1.2rem;
 }
-
 .portv2-contact-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: rgba(249, 115, 22, 0.1);
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: rgba(249,115,22,0.1);
   color: #f97316;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.3s;
 }
-
+.portv2-contact-item:hover .portv2-contact-icon {
+  background: rgba(249,115,22,0.2);
+}
 .portv2-contact-detail h4 {
-  margin: 0 0 0.2rem;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
 }
-
 .portv2-contact-detail p {
-  margin: 0;
-  color: #a0a0a0;
-  font-size: 0.95rem;
+  color: #6b7280;
+  font-size: 0.85rem;
 }
+.portv2-contact-detail a {
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s;
+}
+.portv2-contact-detail a:hover { color: #f97316; }
 
+/* Form */
 .portv2-contact-form {
-  flex: 1.5;
-  background-color: #1a1a1a;
-  padding: 3rem;
-  border-radius: 12px;
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 16px;
+  padding: 2.5rem;
 }
 
-.portv2-form-group {
-  margin-bottom: 1.5rem;
+.portv2-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
 }
+
+.portv2-form-group { margin-bottom: 1.2rem; }
 
 .portv2-input, .portv2-textarea {
   width: 100%;
-  padding: 1rem 1.5rem;
-  background-color: #111111;
-  border: 1px solid #333333;
-  border-radius: 6px;
-  color: #ffffff;
+  padding: 0.9rem 1.2rem;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  color: #fff;
   font-family: inherit;
-  font-size: 0.95rem;
-  transition: border-color 0.3s;
-}
-
-.portv2-input:focus, .portv2-textarea:focus {
+  font-size: 0.9rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
   outline: none;
-  border-color: #f97316;
 }
-
+.portv2-input::placeholder, .portv2-textarea::placeholder { color: #4b5563; }
+.portv2-input:focus, .portv2-textarea:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+}
 .portv2-textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 130px;
 }
 
 .portv2-btn-submit {
-  background-color: #f97316;
-  color: #ffffff;
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f97316, #ea580c);
   border: none;
-  padding: 1rem 2rem;
-  border-radius: 6px;
+  border-radius: 8px;
+  color: #fff;
+  font-family: inherit;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
-  width: 100%;
+  transition: transform 0.2s, box-shadow 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 20px rgba(249,115,22,0.25);
 }
-
 .portv2-btn-submit:hover {
-  background-color: #e8630b;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(249,115,22,0.4);
 }
 
-/* ================= FOOTER ================= */
+/* =========================================
+   FOOTER
+   ========================================= */
 .portv2-footer {
-  text-align: center;
-  padding: 2rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  margin-top: 2rem;
+  border-top: 1px solid #1a1a1a;
+  padding: 2.5rem 0;
+}
+.portv2-footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.portv2-footer-left p { color: #4b5563; font-size: 0.85rem; }
+.portv2-footer-left span { color: #f97316; }
+.portv2-footer-socials {
+  display: flex;
+  gap: 0.75rem;
+}
+.portv2-footer-social {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid #2a2a2a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.portv2-footer-social:hover {
+  border-color: #f97316;
+  color: #f97316;
 }
 
-.portv2-footer p {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-/* ================= RESPONSIVE ================= */
+/* =========================================
+   RESPONSIVE — 1024px
+   ========================================= */
 @media (max-width: 1024px) {
-  .portv2-role {
-    font-size: 2.8rem;
-  }
-  .portv2-image-wrapper {
-    width: 400px;
-    height: 400px;
-  }
+  .portv2-hero { gap: 2rem; }
+  .portv2-image-wrapper { width: 380px; height: 380px; }
+  .portv2-name { font-size: 2.6rem; }
+  .portv2-role { font-size: 1.25rem; }
+  .portv2-services-grid { grid-template-columns: 1fr 1fr; }
+  .portv2-portfolio-grid { grid-template-columns: 1fr 1fr; }
 }
 
+/* =========================================
+   RESPONSIVE — 992px
+   ========================================= */
 @media (max-width: 992px) {
+  .portv2-nav, .portv2-btn-header { display: none; }
+  .portv2-mobile-toggle { display: flex; }
+
   .portv2-hero {
     flex-direction: column-reverse;
     text-align: center;
-    justify-content: center;
-    padding-top: 2rem;
+    padding: 3rem 0 4rem;
+    gap: 2rem;
+    min-height: auto;
   }
-  .portv2-hero-right {
-    justify-content: center;
-    width: 100%;
-  }
-  .portv2-socials {
-    justify-content: center;
-  }
-  .portv2-actions {
-    justify-content: center;
-  }
-  .portv2-nav {
-    display: none; 
-  }
-  .portv2-btn-header {
-    display: none;
-  }
-  .portv2-mobile-toggle {
-    display: block;
-  }
-  .portv2-about-content {
-    flex-direction: column;
-  }
-  .portv2-contact-wrapper {
-    flex-direction: column;
-  }
-  .portv2-contact-form {
-    padding: 2rem;
-  }
+  .portv2-hero-right { justify-content: center; }
+  .portv2-eyebrow, .portv2-socials, .portv2-actions { justify-content: center; }
+  .portv2-contact-chips { justify-content: center; }
+  .portv2-tagline { margin: 0 auto 2rem; }
+  .portv2-stats { flex-wrap: wrap; justify-content: center; }
+
+  .portv2-about-content { grid-template-columns: 1fr; gap: 2.5rem; }
+  .portv2-about-accent { display: none; }
+  .portv2-edu-certs-grid { grid-template-columns: 1fr; }
+  .portv2-contact-wrapper { grid-template-columns: 1fr; gap: 2.5rem; }
 }
 
-@media (max-width: 640px) {
-  .portv2-role {
-    font-size: 2.2rem;
-  }
-  .portv2-name {
-    font-size: 2.2rem;
-  }
-  .portv2-image-wrapper {
-    width: 300px;
-    height: 300px;
-  }
+/* =========================================
+   RESPONSIVE — 768px
+   ========================================= */
+@media (max-width: 768px) {
+  .portv2-container { padding: 0 1.5rem; }
+  .portv2-image-wrapper { width: 300px; height: 300px; }
+  .portv2-services-grid { grid-template-columns: 1fr; }
+  .portv2-portfolio-grid { grid-template-columns: 1fr; }
+  .portv2-section { padding: 4rem 0; }
+  .portv2-section-title { font-size: 2rem; }
+  .portv2-form-row { grid-template-columns: 1fr; }
+  .portv2-contact-form { padding: 1.5rem; }
+  .portv2-footer-inner { flex-direction: column; text-align: center; }
+  .portv2-footer-socials { justify-content: center; }
+}
+
+/* =========================================
+   RESPONSIVE — 480px SMALL MOBILE
+   ========================================= */
+@media (max-width: 480px) {
+  .portv2-container { padding: 0 1rem; }
+  .portv2-header { padding: 1.2rem 1rem; margin: 0 -1rem; }
+  .portv2-logo { font-size: 1.2rem; }
+
+  .portv2-hero { padding: 2rem 0 3rem; gap: 1.5rem; }
+  .portv2-image-wrapper { width: 240px; height: 240px; }
+  .portv2-name { font-size: 2rem; }
+  .portv2-role { font-size: 1.1rem; }
+  .portv2-tagline { font-size: 0.88rem; }
+  .portv2-eyebrow { font-size: 0.78rem; }
+
+  .portv2-actions { flex-direction: column; width: 100%; gap: 0.8rem; }
+  .portv2-btn-primary, .portv2-btn-secondary { width: 100%; justify-content: center; }
+
+  .portv2-contact-chips { gap: 0.5rem; }
+  .portv2-chip { font-size: 0.75rem; padding: 0.25rem 0.7rem; }
+
   .portv2-stats {
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: center;
-    width: 100%;
-    padding: 1.5rem;
-  }
-  .portv2-stat-item:not(:last-child)::after {
-    right: 0;
-    top: auto;
-    bottom: -0.75rem;
-    width: 50%;
-    height: 1px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  .portv2-actions {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     width: 100%;
   }
-  .portv2-btn-primary, .portv2-btn-secondary {
-    width: 100%;
-  }
+  .portv2-stat-item { border-right: none !important; border-bottom: 1px solid #222; }
+  .portv2-stat-item:nth-child(odd) { border-right: 1px solid #222 !important; }
+  .portv2-stat-item:nth-child(3), .portv2-stat-item:nth-child(4) { border-bottom: none; }
+  .portv2-stat-number { font-size: 1.4rem; }
+
+  .portv2-section { padding: 3rem 0; }
+  .portv2-section-title { font-size: 1.7rem; }
+  .portv2-section-header { margin-bottom: 2.5rem; }
+
+  .portv2-skill-cat { padding: 1.2rem; }
+  .portv2-service-card { padding: 1.5rem; }
+  .portv2-exp-top { flex-direction: column; gap: 0.5rem; }
+  .portv2-exp-card { padding: 1.2rem; }
+  .portv2-exp-bullets li { font-size: 0.83rem; }
+
+  .portv2-edu-card, .portv2-cert-card { padding: 1.2rem; }
+  .portv2-contact-form { padding: 1.2rem; }
+  .portv2-contact-item { flex-direction: column; gap: 0.8rem; }
 }
