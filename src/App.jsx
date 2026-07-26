@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { useTheme } from '@/hooks/useTheme';
 import AppRoutes from '@/routes/AppRoutes';
+import { initGA, logPageView } from '@/utils/analytics';
 import '@/styles/global.css';
 
 const queryClient = new QueryClient();
@@ -16,10 +17,11 @@ function AppContent() {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
 
-  // Scroll to top on route change
+  // Scroll to top and log page view on route change
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location.pathname]);
+    logPageView(location.pathname + location.search);
+  }, [location]);
 
   return <AppRoutes theme={theme} toggleTheme={toggleTheme} />;
 }
@@ -29,6 +31,11 @@ function AppContent() {
  * Root component — provides QueryClient context.
  */
 function App() {
+  // Initialize Google Analytics once when the app starts
+  useEffect(() => {
+    initGA();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AppContent />
