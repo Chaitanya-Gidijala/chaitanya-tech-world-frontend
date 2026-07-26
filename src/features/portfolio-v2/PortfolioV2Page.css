@@ -1,0 +1,362 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* =========================================
+   PORTFOLIO V2 - STANDALONE DARK/ORANGE THEME
+   ========================================= */
+
+.portv2-wrapper {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  background-color: #111111;
+  color: #ffffff;
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Subtle background accent gradients if needed */
+.portv2-bg-accents {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.portv2-bg-accents::before,
+.portv2-bg-accents::after {
+  content: '';
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 60%);
+}
+.portv2-bg-accents::before { top: -200px; left: -200px; }
+.portv2-bg-accents::after { bottom: -400px; right: -200px; }
+
+/* Container */
+.portv2-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* ================= HEADER ================= */
+.portv2-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2.5rem 0;
+}
+
+.portv2-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f97316; /* Exact orange */
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+.portv2-nav {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.portv2-nav a {
+  text-decoration: none;
+  color: #a0a0a0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.portv2-nav a.active,
+.portv2-nav a:hover {
+  color: #f97316;
+}
+
+.portv2-btn-header {
+  background-color: #f97316;
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s, background-color 0.3s;
+  text-decoration: none;
+}
+
+.portv2-btn-header:hover {
+  background-color: #e8630b;
+  transform: translateY(-2px);
+}
+
+.portv2-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+/* ================= HERO SECTION ================= */
+.portv2-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: calc(100vh - 120px);
+  padding: 2rem 0 4rem;
+  gap: 2rem;
+}
+
+.portv2-hero-left {
+  flex: 1;
+  max-width: 600px;
+}
+
+.portv2-greeting {
+  color: #8c8c8c;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+}
+
+.portv2-name {
+  color: #ffffff;
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  line-height: 1.1;
+}
+
+.portv2-role {
+  color: #f97316;
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0 0 2rem;
+  line-height: 1.1;
+  text-transform: capitalize;
+}
+
+.portv2-socials {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.portv2-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 1px solid #333333;
+  color: #a0a0a0;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.portv2-social-link:hover {
+  border-color: #f97316;
+  color: #f97316;
+}
+
+.portv2-actions {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.portv2-btn-primary {
+  background-color: #f97316;
+  color: #ffffff;
+  border: none;
+  padding: 0.9rem 2.2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portv2-btn-primary:hover {
+  background-color: #e8630b;
+  transform: translateY(-2px);
+}
+
+.portv2-btn-secondary {
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid #666;
+  padding: 0.9rem 2.2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portv2-btn-secondary:hover {
+  border-color: #ffffff;
+  background: rgba(255,255,255,0.05);
+}
+
+/* Stats Block */
+.portv2-stats {
+  background-color: #161616;
+  border-radius: 12px;
+  padding: 1.5rem 2.5rem;
+  display: inline-flex;
+  gap: 2.5rem;
+}
+
+.portv2-stat-item {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.portv2-stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -1.25rem;
+  top: 15%;
+  bottom: 15%;
+  width: 1px;
+  background-color: #333333;
+}
+
+.portv2-stat-number {
+  color: #f97316;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.portv2-stat-label {
+  color: #a0a0a0;
+  font-size: 0.85rem;
+}
+
+/* ================= HERO RIGHT ================= */
+.portv2-hero-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.portv2-image-wrapper {
+  position: relative;
+  width: 500px;
+  height: 500px;
+}
+
+.portv2-image-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #1f1f1f;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.portv2-image {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%; 
+  filter: contrast(1.1) brightness(0.9);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+  .portv2-role {
+    font-size: 2.8rem;
+  }
+  .portv2-image-wrapper {
+    width: 400px;
+    height: 400px;
+  }
+}
+
+@media (max-width: 992px) {
+  .portv2-hero {
+    flex-direction: column-reverse;
+    text-align: center;
+    justify-content: center;
+    padding-top: 2rem;
+  }
+  .portv2-hero-right {
+    justify-content: center;
+    width: 100%;
+  }
+  .portv2-socials {
+    justify-content: center;
+  }
+  .portv2-actions {
+    justify-content: center;
+  }
+  .portv2-nav {
+    display: none; 
+  }
+  .portv2-btn-header {
+    display: none;
+  }
+  .portv2-mobile-toggle {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  .portv2-role {
+    font-size: 2.2rem;
+  }
+  .portv2-name {
+    font-size: 2.2rem;
+  }
+  .portv2-image-wrapper {
+    width: 300px;
+    height: 300px;
+  }
+  .portv2-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    width: 100%;
+    padding: 1.5rem;
+  }
+  .portv2-stat-item:not(:last-child)::after {
+    right: 0;
+    top: auto;
+    bottom: -0.75rem;
+    width: 50%;
+    height: 1px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .portv2-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .portv2-btn-primary, .portv2-btn-secondary {
+    width: 100%;
+  }
+}

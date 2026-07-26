@@ -136,14 +136,16 @@
   z-index: 2;
   padding: 6rem 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
   gap: 3rem;
+  max-width: 100%;
 }
 
 @media (max-width: 992px) {
   .port-hero__content {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+
     text-align: center;
     gap: 1.5rem;
   }
@@ -328,6 +330,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .port-hero__3d-card {
@@ -385,7 +389,7 @@
   color: #e2e8f0;
   overflow-x: auto;
   white-space: pre-wrap;
-  word-break: break-word;
+  word-break: break-all;
 }
 
 .code-content .keyword { color: #c678dd; }

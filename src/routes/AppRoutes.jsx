@@ -23,7 +23,7 @@ import AdminPromptsPage from '@/features/prompts-gallery/pages/AdminPromptsPage'
 import RoadmapPage from '@/features/roadmap/RoadmapPage';
 import RoadmapHomePage from '@/features/roadmap/RoadmapHomePage';
 import ImageManagerPage from '@/features/image-manager/pages/ImageManagerPage';
-import PortfolioPage from '@/features/portfolio/PortfolioPage';
+import PortfolioV2Page from '@/features/portfolio-v2/PortfolioV2Page';
 
 import MainLayout from '@/layouts/MainLayout';
 import JobPortalExamContainer from '@/features/job-portal/components/prep/ExamContainer';
@@ -44,6 +44,7 @@ const AppRoutes = ({ theme, toggleTheme }) => {
     <Routes>
       {/* ── STANDALONE ROUTES (No Header/Footer) ── */}
       <Route path="/job-portal/prep/exam/:testId" element={<StandaloneExamWrapper />} />
+      <Route path="/portfolio" element={<PortfolioV2Page />} />
 
       {/* ── STANDARD ROUTES (With MainLayout) ── */}
       <Route element={<MainLayout theme={theme} onToggleTheme={toggleTheme} />}>
@@ -59,7 +60,6 @@ const AppRoutes = ({ theme, toggleTheme }) => {
         <Route path="/prompts/*" element={<PromptsApp />} />
         <Route path="/roadmap" element={<RoadmapHomePage />} />
         <Route path="/roadmap/:tech" element={<RoadmapPage />} />
-        <Route path="/portfolio" element={<PortfolioPage />} />
         <Route
           path="/admin/images"
           element={
