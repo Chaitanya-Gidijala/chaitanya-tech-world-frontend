@@ -287,6 +287,291 @@
 }
 
 /* ================= RESPONSIVE ================= */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ================= SECTIONS ================= */
+.portv2-section {
+  padding: 6rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.portv2-section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.portv2-section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.portv2-section-title span {
+  color: #f97316;
+}
+
+.portv2-section-subtitle {
+  color: #8c8c8c;
+  font-size: 1.1rem;
+}
+
+/* ================= SERVICES ================= */
+.portv2-services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.portv2-service-card {
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.portv2-service-card:hover {
+  border-color: #f97316;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(249, 115, 22, 0.1);
+}
+
+.portv2-service-icon {
+  color: #f97316;
+  margin-bottom: 1.5rem;
+}
+
+.portv2-service-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.portv2-service-desc {
+  color: #a0a0a0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ================= ABOUT ================= */
+.portv2-about-content {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+.portv2-about-image-wrapper {
+  flex: 1;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.portv2-about-image-wrapper img {
+  width: 100%;
+  border-radius: 20px;
+  filter: grayscale(100%);
+  transition: filter 0.5s;
+}
+
+.portv2-about-image-wrapper:hover img {
+  filter: grayscale(0%);
+}
+
+.portv2-about-text {
+  flex: 1.2;
+}
+
+.portv2-about-text p {
+  color: #a0a0a0;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.portv2-about-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.portv2-about-highlight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.portv2-about-highlight svg {
+  color: #f97316;
+}
+
+/* ================= PORTFOLIO (PROJECTS) ================= */
+.portv2-portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.portv2-project-card {
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.portv2-project-card:hover {
+  transform: translateY(-5px);
+}
+
+.portv2-project-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background-color: #222;
+}
+
+.portv2-project-content {
+  padding: 1.5rem;
+}
+
+.portv2-project-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.portv2-project-desc {
+  color: #a0a0a0;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.portv2-project-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.portv2-project-link {
+  color: #f97316;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ================= CONTACT ================= */
+.portv2-contact-wrapper {
+  display: flex;
+  gap: 4rem;
+}
+
+.portv2-contact-info {
+  flex: 1;
+}
+
+.portv2-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.portv2-contact-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(249, 115, 22, 0.1);
+  color: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portv2-contact-detail h4 {
+  margin: 0 0 0.2rem;
+  font-size: 1.1rem;
+}
+
+.portv2-contact-detail p {
+  margin: 0;
+  color: #a0a0a0;
+  font-size: 0.95rem;
+}
+
+.portv2-contact-form {
+  flex: 1.5;
+  background-color: #1a1a1a;
+  padding: 3rem;
+  border-radius: 12px;
+}
+
+.portv2-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.portv2-input, .portv2-textarea {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background-color: #111111;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.3s;
+}
+
+.portv2-input:focus, .portv2-textarea:focus {
+  outline: none;
+  border-color: #f97316;
+}
+
+.portv2-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.portv2-btn-submit {
+  background-color: #f97316;
+  color: #ffffff;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  width: 100%;
+}
+
+.portv2-btn-submit:hover {
+  background-color: #e8630b;
+}
+
+/* ================= FOOTER ================= */
+.portv2-footer {
+  text-align: center;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 2rem;
+}
+
+.portv2-footer p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* ================= RESPONSIVE ================= */
 @media (max-width: 1024px) {
   .portv2-role {
     font-size: 2.8rem;
@@ -322,6 +607,15 @@
   }
   .portv2-mobile-toggle {
     display: block;
+  }
+  .portv2-about-content {
+    flex-direction: column;
+  }
+  .portv2-contact-wrapper {
+    flex-direction: column;
+  }
+  .portv2-contact-form {
+    padding: 2rem;
   }
 }
 
