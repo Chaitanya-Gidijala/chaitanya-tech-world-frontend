@@ -1175,7 +1175,22 @@ html { scroll-behavior: smooth; }
   .portv2-exp-card { padding: 1.2rem; }
   .portv2-exp-bullets li { font-size: 0.83rem; }
 
-  .portv2-edu-card, .portv2-cert-card { padding: 1.2rem; }
+  .portv2-edu-card, .portv2-cert-card { padding: 1rem; }
+  .portv2-edu-card h3, .portv2-cert-card h3 { font-size: 1.05rem; margin-bottom: 0.3rem; }
+  .portv2-edu-uni, .portv2-cert-org { font-size: 0.85rem; margin-bottom: 0.4rem; }
+  .portv2-edu-meta, .portv2-cert-meta { font-size: 0.75rem; }
+  
   .portv2-contact-form { padding: 1.2rem; }
-  .portv2-contact-item { flex-direction: column; gap: 0.8rem; }
+  .portv2-input, .portv2-textarea { padding: 0.7rem 0.9rem; font-size: 0.85rem; }
+  .portv2-form-group label { font-size: 0.8rem; }
+  .portv2-textarea { min-height: 100px; }
+  .portv2-btn-submit { padding: 0.8rem 1.5rem; font-size: 0.9rem; }
+  
+  .portv2-contact-item { flex-direction: row; align-items: flex-start; gap: 1rem; }
+  .portv2-contact-icon { width: 36px; height: 36px; }
+  .portv2-contact-icon svg { width: 16px; height: 16px; }
+  .portv2-contact-detail h4 { font-size: 0.85rem; margin-bottom: 0.2rem; }
+  .portv2-contact-detail p, .portv2-contact-detail a { font-size: 0.75rem; }
+
+  .portv2-mobile-menu a { font-size: 1.4rem; }
 }
