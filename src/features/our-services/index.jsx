@@ -4,6 +4,7 @@ import { motion, useScroll, useSpring } from 'framer-motion';
 import Hero from './components/Hero';
 import Portfolio from './components/Portfolio';
 import WebDev from './components/WebDev';
+import VideoPromotion from './components/VideoPromotion';
 import Process from './components/Process';
 import Testimonials from './components/Testimonials';
 import CtaBanner from './components/CtaBanner';
@@ -36,6 +37,7 @@ const Home = () => {
             <Hero />
             <Portfolio />
             <WebDev />
+            <VideoPromotion />
             <Process />
             {/* <Testimonials /> */}
             <CtaBanner />
