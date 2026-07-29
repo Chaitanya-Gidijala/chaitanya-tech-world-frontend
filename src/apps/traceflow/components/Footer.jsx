@@ -55,8 +55,14 @@ export default function Footer() {
 
         <div className="tf-footer__bottom">
           <div className="tf-footer__copyright">
-            <span className="tf-copyright-text">© {new Date().getFullYear()} Traceflow. Crafted with <Heart size={14} className="tf-heart-icon" /> by</span>
-            <a href="https://www.chaitanyatechworld.com" target="_blank" rel="noopener noreferrer" className="tf-copyright-highlight">Chaitanya Tech World.</a>
+            <div className="tf-footer__copyright-row">
+              <span>© {new Date().getFullYear()} Traceflow. Crafted with</span>
+              <Heart size={14} style={{ color: '#ff4d4f', fill: '#ff4d4f', animation: 'tf-pulse 2s infinite' }} />
+              <span>by</span>
+            </div>
+            <a href="https://www.chaitanyatechworld.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontWeight: 'bold', textDecoration: 'none', letterSpacing: '0.5px' }}>
+              Chaitanya Tech World.
+            </a>
           </div>
           <div className="tf-footer__social">
             <a href="mailto:support@chaitanyatechworld.com" aria-label="Email"><Mail size={18} /></a>
