@@ -28,6 +28,8 @@ import PortfolioV2Page from '@/features/portfolio-v2/PortfolioV2Page';
 import MainLayout from '@/layouts/MainLayout';
 import JobPortalExamContainer from '@/features/job-portal/components/prep/ExamContainer';
 
+import { TraceflowApp } from '@/apps/traceflow';
+
 const AuthProtectedRoute = ({ children }) => {
   if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
@@ -45,6 +47,8 @@ const AppRoutes = ({ theme, toggleTheme }) => {
       {/* ── STANDALONE ROUTES (No Header/Footer) ── */}
       <Route path="/job-portal/prep/exam/:testId" element={<StandaloneExamWrapper />} />
       <Route path="/portfolio" element={<PortfolioV2Page />} />
+      <Route path="/traceflow/*" element={<TraceflowApp />} />
+
 
       {/* ── STANDARD ROUTES (With MainLayout) ── */}
       <Route element={<MainLayout theme={theme} onToggleTheme={toggleTheme} />}>

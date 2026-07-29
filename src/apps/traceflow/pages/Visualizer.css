@@ -1,0 +1,559 @@
+/* ============================================================
+   TRACEFLOW — VISUALIZER PAGE
+   ============================================================ */
+
+[data-tf] .tf-viz-layout {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  background: var(--tf-bg) !important;
+  color: var(--tf-text-primary) !important;
+}
+
+/* ── Navbar ── */
+[data-tf] .tf-viz-nav {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 60px !important;
+  padding: 0 var(--tf-space-4) !important;
+  background: var(--tf-surface-1) !important;
+  border-bottom: 1px solid var(--tf-border) !important;
+  flex-shrink: 0 !important;
+  box-shadow: var(--tf-shadow-sm) !important;
+  z-index: 10 !important;
+}
+
+[data-tf] .tf-viz-nav__left {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--tf-space-4) !important;
+}
+
+[data-tf] .tf-viz-nav__title {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--tf-space-3) !important;
+}
+
+[data-tf] .tf-viz-nav__name {
+  font-size: var(--tf-text-lg) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* ── Main Workspace ── */
+[data-tf] .tf-viz-workspace {
+  display: flex !important;
+  flex: 1 !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* ── Left Column (Canvas & Controls) ── */
+[data-tf] .tf-viz-main {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important; /* Fix flexbox shrinking */
+  position: relative !important;
+  background: var(--tf-surface-base) !important;
+}
+
+[data-tf] .tf-viz-resizer {
+  width: 4px !important;
+  background: var(--tf-border) !important;
+  cursor: col-resize !important;
+  z-index: 10 !important;
+  transition: background var(--tf-duration-fast) !important;
+}
+
+[data-tf] .tf-viz-resizer:hover,
+[data-tf] .tf-viz-resizer:active {
+  background: var(--tf-accent) !important;
+  width: 6px !important;
+  margin-left: -1px !important;
+  margin-right: -1px !important;
+}
+
+[data-tf] .tf-viz-stage {
+  flex: 1 !important;
+  background: radial-gradient(circle at center, var(--tf-surface-2) 0%, var(--tf-bg) 100%) !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+/* Controls Panel */
+[data-tf] .tf-viz-controls-panel {
+  padding: var(--tf-space-4) var(--tf-space-6) !important;
+  background: var(--tf-surface-1) !important;
+  border-top: 1px solid var(--tf-border) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--tf-space-4) !important;
+  flex-shrink: 0 !important;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.1) !important;
+  z-index: 10 !important;
+}
+
+[data-tf] .tf-viz-progress {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--tf-space-4) !important;
+  width: 100% !important;
+}
+
+[data-tf] .tf-viz-progress__track {
+  flex: 1 !important;
+  height: 6px !important;
+  background: var(--tf-surface-3) !important;
+  border-radius: 3px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+[data-tf] .tf-viz-progress__fill {
+  height: 100% !important;
+  background: var(--tf-accent) !important;
+  transition: width var(--tf-duration) linear !important;
+  box-shadow: 0 0 10px rgba(0,229,160,0.5) !important;
+}
+
+[data-tf] .tf-viz-progress__labels {
+  display: flex !important;
+  gap: var(--tf-space-4) !important;
+  font-family: var(--tf-font-mono) !important;
+  font-size: var(--tf-text-xs) !important;
+  color: var(--tf-text-muted) !important;
+  min-width: 110px !important;
+  justify-content: flex-end !important;
+}
+
+[data-tf] .tf-viz-transport {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+[data-tf] .tf-viz-transport__buttons {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--tf-space-3) !important;
+}
+
+/* Force fix the play button sizing issue from global SVG styles */
+[data-tf] .tf-viz-transport__buttons .tf-btn--lg {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 14px rgba(0,229,160,0.3) !important;
+  transition: all var(--tf-duration-fast) var(--tf-ease-spring) !important;
+}
+[data-tf] .tf-viz-transport__buttons .tf-btn--lg:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 6px 20px rgba(0,229,160,0.5) !important;
+}
+[data-tf] .tf-viz-transport__buttons .tf-btn--lg svg {
+  width: 24px !important;
+  height: 24px !important;
+  color: var(--tf-bg) !important;
+}
+
+[data-tf] .tf-viz-transport__buttons .tf-btn--secondary {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+[data-tf] .tf-viz-transport__buttons .tf-btn--secondary svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+[data-tf] .tf-viz-speed {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--tf-space-3) !important;
+}
+[data-tf] .tf-viz-speed__label {
+  font-size: var(--tf-text-sm) !important;
+  color: var(--tf-text-secondary) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-weight: 600 !important;
+}
+[data-tf] .tf-viz-speed__slider {
+  width: 120px !important;
+  accent-color: var(--tf-accent) !important;
+}
+
+/* ── Right Column (Sidebar) ── */
+[data-tf] .tf-viz-sidebar {
+  /* width and min-width are controlled via inline styles */
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--tf-surface-1) !important;
+  border-left: 1px solid var(--tf-border) !important;
+  flex-shrink: 0 !important;
+  overflow-y: auto !important;
+}
+
+[data-tf] .tf-viz-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  border-bottom: 1px solid var(--tf-border) !important;
+}
+[data-tf] .tf-viz-panel:last-child {
+  border-bottom: none !important;
+}
+
+[data-tf] .tf-viz-panel__header {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--tf-space-2) !important;
+  padding: var(--tf-space-3) var(--tf-space-5) !important;
+  background: var(--tf-surface-2) !important;
+  border-bottom: 1px solid var(--tf-border) !important;
+}
+[data-tf] .tf-viz-panel__header h3 {
+  font-size: var(--tf-text-sm) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--tf-text-primary) !important;
+  margin: 0 !important;
+}
+[data-tf] .tf-viz-panel__icon {
+  color: var(--tf-accent) !important;
+}
+
+[data-tf] .tf-viz-panel__content {
+  padding: var(--tf-space-5) !important;
+  flex: 1 !important;
+}
+
+/* Explanation */
+[data-tf] .tf-viz-explanation {
+  flex-shrink: 0 !important;
+  height: 200px !important;
+  overflow-y: auto !important;
+}
+[data-tf] .tf-explanation-title {
+  font-size: var(--tf-text-lg) !important;
+  font-weight: 600 !important;
+  color: var(--tf-accent) !important;
+  margin: 0 0 var(--tf-space-2) 0 !important;
+  animation: tf-fade-in var(--tf-duration) !important;
+}
+[data-tf] .tf-explanation-text {
+  font-size: var(--tf-text-sm) !important;
+  color: var(--tf-text-secondary) !important;
+  line-height: 1.6 !important;
+  margin: 0 0 var(--tf-space-4) 0 !important;
+  animation: tf-fade-in var(--tf-duration) !important;
+}
+[data-tf] .tf-explanation-why,
+[data-tf] .tf-explanation-note {
+  font-size: var(--tf-text-sm) !important;
+  padding: var(--tf-space-3) !important;
+  border-radius: var(--tf-radius-md) !important;
+  margin-bottom: var(--tf-space-2) !important;
+  animation: tf-fade-up var(--tf-duration) !important;
+}
+
+[data-tf] .tf-algo-steps {
+  margin: var(--tf-space-2) 0 0 0 !important;
+  padding-left: var(--tf-space-5) !important;
+  color: var(--tf-text-secondary) !important;
+  font-size: var(--tf-text-sm) !important;
+  line-height: 1.6 !important;
+}
+[data-tf] .tf-algo-steps li {
+  margin-bottom: var(--tf-space-2) !important;
+}
+[data-tf] .tf-algo-steps li:last-child {
+  margin-bottom: 0 !important;
+}
+[data-tf] .tf-explanation-why {
+  background: rgba(168, 85, 247, 0.1) !important; /* Purple */
+  border-left: 3px solid #a855f7 !important;
+  color: #d8b4fe !important;
+}
+[data-tf] .tf-explanation-note {
+  background: rgba(59, 130, 246, 0.1) !important; /* Blue */
+  border-left: 3px solid #3b82f6 !important;
+  color: #93c5fd !important;
+}
+
+/* Code */
+[data-tf] .tf-viz-code {
+  flex-shrink: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+[data-tf] .tf-viz-code-wrapper {
+  flex: 1 !important;
+  height: 100%;
+  position: relative !important;
+  padding-bottom: var(--tf-space-6) !important;
+}
+
+/* Metrics */
+[data-tf] .tf-viz-metrics {
+  flex-shrink: 0 !important;
+}
+[data-tf] .tf-metrics-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: var(--tf-space-4) !important;
+}
+[data-tf] .tf-metric {
+  background: var(--tf-surface-1) !important;
+  padding: var(--tf-space-3) !important;
+  border-radius: var(--tf-radius-sm) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border: 1px solid var(--tf-border) !important;
+  border-left: 3px solid var(--tf-accent) !important;
+  box-shadow: var(--tf-shadow-sm) !important;
+  transition: all var(--tf-duration-fast) !important;
+}
+[data-tf] .tf-metric:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--tf-shadow-md) !important;
+}
+[data-tf] .tf-metric__label {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--tf-text-secondary) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+[data-tf] .tf-metric__val {
+  font-size: var(--tf-text-xl) !important;
+  font-weight: 700 !important;
+  color: var(--tf-text-primary) !important;
+  margin-top: 2px !important;
+  font-family: var(--tf-font-mono) !important;
+}
+
+/* Algorithm Details styling */
+[data-tf] .tf-algo-detail-section h4 {
+  font-size: var(--tf-text-xs) !important;
+  color: var(--tf-accent) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  margin: 0 0 var(--tf-space-2) 0 !important;
+  font-weight: 700 !important;
+}
+[data-tf] .tf-algo-detail-section p {
+  font-size: var(--tf-text-sm) !important;
+  color: var(--tf-text-secondary) !important;
+  line-height: 1.6 !important;
+  margin: 0 !important;
+}
+[data-tf] .tf-algo-steps {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  counter-reset: tf-step-counter !important;
+}
+[data-tf] .tf-algo-steps li {
+  position: relative !important;
+  padding-left: var(--tf-space-8) !important;
+  margin-bottom: var(--tf-space-3) !important;
+  color: var(--tf-text-secondary) !important;
+  font-size: var(--tf-text-sm) !important;
+  line-height: 1.5 !important;
+}
+[data-tf] .tf-algo-steps li:last-child {
+  margin-bottom: 0 !important;
+}
+[data-tf] .tf-algo-steps li::before {
+  counter-increment: tf-step-counter !important;
+  content: counter(tf-step-counter) !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: var(--tf-surface-2) !important;
+  color: var(--tf-text-primary) !important;
+  font-family: var(--tf-font-mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid var(--tf-border) !important;
+}
+
+/* Variables Overlay */
+[data-tf] .tf-viz-variables-overlay {
+  position: absolute !important;
+  top: var(--tf-space-4) !important;
+  left: var(--tf-space-4) !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: var(--tf-space-3) !important;
+  z-index: 5 !important;
+}
+[data-tf] .tf-viz-variable-badge {
+  display: flex !important;
+  align-items: center !important;
+  background: var(--tf-surface-1) !important;
+  border: 1px solid var(--tf-border) !important;
+  border-radius: var(--tf-radius-md) !important;
+  overflow: hidden !important;
+  box-shadow: var(--tf-shadow-sm) !important;
+  font-family: var(--tf-font-mono) !important;
+  font-size: var(--tf-text-sm) !important;
+}
+[data-tf] .tf-viz-variable-name {
+  background: var(--tf-surface-3) !important;
+  color: var(--tf-text-secondary) !important;
+  padding: var(--tf-space-1) var(--tf-space-3) !important;
+  font-weight: 600 !important;
+}
+[data-tf] .tf-viz-variable-value {
+  padding: var(--tf-space-1) var(--tf-space-3) !important;
+  color: var(--tf-accent) !important;
+  font-weight: 700 !important;
+}
+
+@media (max-width: 1024px) {
+  [data-tf] .tf-viz-workspace { 
+    flex-direction: column !important; 
+    overflow-y: auto !important;
+  }
+  [data-tf] .tf-viz-resizer { 
+    display: none !important; 
+  }
+  [data-tf] .tf-viz-sidebar { 
+    width: 100% !important; 
+    height: auto !important; 
+    flex: none !important;
+    border-left: none !important; 
+    border-top: 1px solid var(--tf-border) !important; 
+  }
+  [data-tf] .tf-viz-main { 
+    width: 100% !important;
+    height: auto !important; 
+    min-height: 50vh !important; 
+    flex: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Navbar */
+  [data-tf] .tf-viz-nav {
+    height: auto !important;
+    padding: var(--tf-space-2) var(--tf-space-3) !important;
+    flex-wrap: nowrap !important;
+  }
+  [data-tf] .tf-viz-nav__left .tf-btn {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+  }
+  [data-tf] .tf-viz-nav__title {
+    flex-wrap: nowrap !important;
+    gap: var(--tf-space-2) !important;
+  }
+  [data-tf] .tf-viz-nav__name {
+    font-size: var(--tf-text-sm) !important;
+    white-space: nowrap !important;
+  }
+  [data-tf] .tf-viz-nav__title .tf-badge {
+    display: none !important; /* Hide badge on mobile to save space */
+  }
+
+  /* Stage & Variables */
+  [data-tf] .tf-viz-stage {
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    min-height: 40vh !important;
+  }
+  [data-tf] .tf-viz-variables-overlay {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    padding: var(--tf-space-2) var(--tf-space-3) !important;
+    background: rgba(0,0,0,0.4) !important;
+    justify-content: flex-start !important;
+    border-bottom: 1px solid var(--tf-border) !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  [data-tf] .tf-viz-variables-overlay::-webkit-scrollbar {
+    display: none !important; /* Hide scrollbar for cleaner look */
+  }
+  [data-tf] .tf-viz-variable-badge {
+    font-size: 10px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Controls Panel */
+  [data-tf] .tf-viz-controls-panel {
+    padding: var(--tf-space-3) var(--tf-space-3) !important;
+  }
+  [data-tf] .tf-viz-transport {
+    flex-wrap: wrap !important;
+    gap: var(--tf-space-4) !important;
+    justify-content: center !important;
+  }
+  
+  /* Reduce button sizes */
+  [data-tf] .tf-viz-transport__buttons .tf-btn--lg {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  [data-tf] .tf-viz-transport__buttons .tf-btn--lg svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  [data-tf] .tf-viz-transport__buttons .tf-btn--secondary {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  [data-tf] .tf-viz-transport__buttons .tf-btn--secondary svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  [data-tf] .tf-viz-progress {
+    flex-wrap: wrap !important;
+  }
+  [data-tf] .tf-viz-progress__labels {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+  [data-tf] .tf-viz-header {
+    flex-wrap: wrap !important;
+    gap: var(--tf-space-3) !important;
+  }
+  
+  /* Explanation & Metrics */
+  [data-tf] .tf-explanation-title {
+    font-size: var(--tf-text-base) !important;
+    line-height: 1.4 !important;
+  }
+  [data-tf] .tf-explanation-text {
+    font-size: var(--tf-text-xs) !important;
+  }
+  [data-tf] .tf-metric__val {
+    font-size: var(--tf-text-lg) !important;
+  }
+}

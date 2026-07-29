@@ -1,0 +1,183 @@
+/* ============================================================
+   TRACEFLOW — ARRAY RENDERER
+   ============================================================ */
+
+[data-tf] .tf-array-renderer {
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: var(--tf-space-8) var(--tf-space-4) !important;
+}
+
+[data-tf] .tf-array-bars {
+  position: relative !important;
+  display: flex !important;
+  align-items: flex-end !important; /* Align everything to the bottom of the stage */
+  justify-content: center !important;
+  gap: var(--tf-space-4) !important;
+  height: 65% !important;
+  width: 100% !important;
+  max-width: 800px !important;
+  padding-bottom: 2px !important;
+}
+
+
+
+[data-tf] .tf-array-bar-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important; /* Stack from bottom to top */
+  flex: 1 !important;
+  max-width: 64px !important;
+  height: 100% !important;
+  z-index: 1 !important;
+}
+
+[data-tf] .tf-array-bar__val {
+  font-family: var(--tf-font-mono) !important;
+  font-weight: 700 !important;
+  font-size: var(--tf-text-base) !important;
+  color: var(--tf-text-primary) !important;
+  text-align: center !important;
+  margin-bottom: var(--tf-space-3) !important;
+  transition: color var(--tf-duration) !important;
+}
+
+[data-tf] .tf-array-bar__fill {
+  width: 100% !important;
+  border-radius: var(--tf-radius-md) var(--tf-radius-md) 0 0 !important;
+  transition: height var(--tf-duration) var(--tf-ease-spring),
+              background var(--tf-duration) var(--tf-ease),
+              border-color var(--tf-duration) var(--tf-ease),
+              box-shadow var(--tf-duration) var(--tf-ease),
+              transform var(--tf-duration-fast) !important;
+  min-height: 8px !important;
+}
+
+[data-tf] .tf-array-bar__idx {
+  font-family: var(--tf-font-mono) !important;
+  font-weight: 500 !important;
+  font-size: var(--tf-text-sm) !important;
+  color: var(--tf-text-muted) !important;
+  text-align: center !important;
+  margin-top: var(--tf-space-3) !important;
+}
+
+/* Base Bar States (Applied to Container) */
+[data-tf-theme="dark"] .tf-array-bar-container .tf-array-bar__fill {
+  background: var(--tf-accent) !important;
+  border: none !important;
+  box-shadow: 0 -4px 16px rgba(0, 229, 160, 0.2) !important;
+}
+
+[data-tf-theme="light"] .tf-array-bar-container .tf-array-bar__fill {
+  background: var(--tf-accent) !important;
+  border: none !important;
+  box-shadow: 0 -4px 16px rgba(0, 229, 160, 0.4) !important;
+}
+
+[data-tf] .tf-array-bar--comparing .tf-array-bar__fill {
+  background: var(--tf-viz-comparing) !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 24px rgba(245,158,11,0.5) !important;
+  z-index: 2 !important;
+}
+[data-tf] .tf-array-bar--swapping .tf-array-bar__fill {
+  background: var(--tf-viz-swapping) !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 24px rgba(239,68,68,0.5) !important;
+  z-index: 2 !important;
+  transform: scale(1.05) !important;
+}
+[data-tf] .tf-array-bar--selected .tf-array-bar__fill {
+  background: var(--tf-viz-swapping) !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 20px rgba(239,68,68,0.3) !important;
+}
+[data-tf] .tf-array-bar--sorted .tf-array-bar__fill,
+[data-tf] .tf-array-bar--sorted-new .tf-array-bar__fill {
+  background: var(--tf-viz-sorted) !important;
+  border-color: transparent !important;
+}
+[data-tf] .tf-array-bar--sorted-new .tf-array-bar__fill {
+  box-shadow: 0 0 30px rgba(0,229,160,0.6) !important;
+  animation: tf-glow-pulse 1s ease-out !important;
+}
+[data-tf] .tf-array-bar--found .tf-array-bar__fill {
+  background: var(--tf-viz-sorted) !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 40px rgba(0,229,160,0.8) !important;
+  transform: scale(1.1) !important;
+  z-index: 5 !important;
+}
+[data-tf] .tf-array-bar--discarded .tf-array-bar__fill {
+  background: var(--tf-surface-3) !important;
+  border-color: transparent !important;
+  opacity: 0.3 !important;
+}
+[data-tf] .tf-array-bar--pointer .tf-array-bar__fill {
+  background: var(--tf-viz-comparing) !important;
+}
+
+/* Value text color states */
+[data-tf] .tf-array-bar--comparing .tf-array-bar__val { color: var(--tf-viz-comparing) !important; }
+[data-tf] .tf-array-bar--swapping .tf-array-bar__val { color: var(--tf-viz-swapping) !important; }
+[data-tf] .tf-array-bar--sorted .tf-array-bar__val { color: var(--tf-viz-sorted) !important; }
+
+/* Pointers */
+[data-tf] .tf-array-bar__pointers {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: var(--tf-space-3) !important;
+  min-height: 24px !important; /* Ensure space exists even when empty so layout doesn't jump */
+}
+
+[data-tf] .tf-pointer-label {
+  font-size: 11px !important;
+  font-family: var(--tf-font-mono) !important;
+  font-weight: 700 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  background: var(--tf-surface-elevated) !important;
+  color: var(--tf-text-primary) !important;
+  border: 1px solid var(--tf-border) !important;
+  box-shadow: var(--tf-shadow-sm) !important;
+  white-space: nowrap !important;
+  animation: tf-fade-up var(--tf-duration-fast) !important;
+}
+
+/* Specific Pointers */
+[data-tf] .tf-pointer-label--minIdx,
+[data-tf] .tf-pointer-label--i,
+[data-tf] .tf-pointer-label--j { 
+  background: var(--tf-viz-comparing) !important; 
+  color: #000 !important; 
+  border-color: transparent !important;
+}
+
+[data-tf] .tf-pointer-label--left,
+[data-tf] .tf-pointer-label--right,
+[data-tf] .tf-pointer-label--low,
+[data-tf] .tf-pointer-label--high {
+  background: var(--tf-accent) !important;
+  color: #000 !important;
+  border-color: transparent !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  [data-tf] .tf-array-bar__val { font-size: var(--tf-text-xs) !important; margin-bottom: 4px !important; }
+  [data-tf] .tf-array-bar__idx { font-size: 10px !important; margin-top: 4px !important; }
+  [data-tf] .tf-pointer-label { font-size: 8px !important; padding: 1px 4px !important; }
+  [data-tf] .tf-array-bars { 
+    gap: 4px !important; 
+    height: 250px !important; 
+    margin-top: var(--tf-space-6) !important; 
+  }
+}
