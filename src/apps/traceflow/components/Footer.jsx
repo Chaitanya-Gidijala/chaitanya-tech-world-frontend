@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Twitter, Linkedin, Heart } from 'lucide-react';
+import { Github, Linkedin, Heart, Mail } from 'lucide-react';
 import './Footer.css';
 
 export default function Footer() {
@@ -35,7 +35,7 @@ export default function Footer() {
             <div className="tf-footer__col">
               <h3>Product</h3>
               <Link to="/traceflow/catalogue">Algorithms</Link>
-              <Link to="/traceflow/roadmap">Roadmap</Link>
+              <a href="https://www.chaitanyatechworld.com/roadmap" target="_blank" rel="noopener noreferrer">Roadmap</a>
               <a href="#">Pro Features</a>
             </div>
             <div className="tf-footer__col">
@@ -46,21 +46,22 @@ export default function Footer() {
             </div>
             <div className="tf-footer__col">
               <h3>Company</h3>
-              <a href="#">About Us</a>
-              <a href="#">Careers</a>
-              <a href="#">Contact</a>
+              <a href="https://www.chaitanyatechworld.com/portfolio" target="_blank" rel="noopener noreferrer">About Us</a>
+              <a href="https://www.chaitanyatechworld.com/job-portal" target="_blank" rel="noopener noreferrer">Careers</a>
+              <a href="https://www.chaitanyatechworld.com/contact" target="_blank" rel="noopener noreferrer">Contact</a>
             </div>
           </div>
         </div>
 
         <div className="tf-footer__bottom">
           <div className="tf-footer__copyright">
-            © {new Date().getFullYear()} Traceflow. Crafted with <Heart size={14} className="tf-heart-icon" /> by Chaitanya Tech World.
+            <span className="tf-copyright-text">© {new Date().getFullYear()} Traceflow. Crafted with <Heart size={14} className="tf-heart-icon" /> by</span>
+            <a href="https://www.chaitanyatechworld.com" target="_blank" rel="noopener noreferrer" className="tf-copyright-highlight">Chaitanya Tech World.</a>
           </div>
           <div className="tf-footer__social">
-            <a href="#" aria-label="Twitter"><Twitter size={18} /></a>
-            <a href="#" aria-label="GitHub"><Github size={18} /></a>
-            <a href="#" aria-label="LinkedIn"><Linkedin size={18} /></a>
+            <a href="mailto:support@chaitanyatechworld.com" aria-label="Email"><Mail size={18} /></a>
+            <a href="https://github.com/chaitanya-gidijala" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><Github size={18} /></a>
+            <a href="https://www.linkedin.com/in/chaitanya-gidijala-660406231/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Linkedin size={18} /></a>
           </div>
         </div>
 
