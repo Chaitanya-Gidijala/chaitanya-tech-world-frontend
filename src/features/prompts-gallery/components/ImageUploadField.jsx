@@ -222,7 +222,6 @@ const ImageUploadField = ({ onUploadSuccess, currentUrl, disabled }) => {
         ref={fileInputRef}
         type="file"
         accept={ALLOWED_EXT}
-        capture="environment"
         className="iuf-hidden-input"
         onChange={onFileChange}
         disabled={uploading || disabled}
