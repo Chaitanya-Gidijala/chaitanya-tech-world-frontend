@@ -4,7 +4,6 @@ import Navbar from './components/Navbar.jsx';
 import Home from './pages/Home.jsx';
 import Catalogue from './pages/Catalogue.jsx';
 import AlgorithmDetail from './pages/AlgorithmDetail.jsx';
-import ProblemSolving from './pages/ProblemSolving.jsx';
 import Visualizer from './pages/Visualizer.jsx';
 import Footer from './components/Footer.jsx';
 
@@ -20,9 +19,8 @@ export default function TraceflowApp() {
   return (
     <div data-tf="true" data-tf-theme={theme}>
       <Routes>
-        {/* Full-screen Visualizer & Problem IDE */}
+        {/* Full-screen Visualizer */}
         <Route path="/visualizer/:slug" element={<Visualizer theme={theme} toggleTheme={toggleTheme} />} />
-        <Route path="/problem/:slug" element={<ProblemSolving theme={theme} />} />
 
         {/* Standard Pages */}
         <Route

@@ -99,12 +99,12 @@ export default function Home() {
           >
             <div className="tf-hero__badge-wrapper">
               <span className="tf-badge tf-badge--accent tf-badge--glow">
-                <Zap size={12} className="tf-icon-spin" /> Interactive DSA Learning
+                <Zap size={12} className="tf-icon-spin" /> Interactive Algorithm Learning
               </span>
             </div>
             
             <h1 className="tf-hero__headline">
-              Understand DSA.<br />
+              Understand Algorithms.<br />
               <span className="tf-hero__accent">Don't Memorize It.</span>
             </h1>
             
@@ -216,7 +216,6 @@ export default function Home() {
             <div className="tf-categories-grid">
               {[
                 { tab: 'algorithms', icon: GitBranch, name: 'Algorithms', desc: 'Interactive visualizations of sorting, searching, graphs, and dynamic programming.', count: `${algorithms.length} algorithms`, color: '#6366F1' },
-                { tab: 'problems', icon: Code2, name: 'DSA Problems', desc: 'Practice standard interview problems with step-by-step visual solutions.', count: '20 problems', color: '#10B981' },
                 { tab: 'system-design', icon: Blocks, name: 'System Design', desc: 'Learn how to build scalable systems with interactive architecture diagrams.', count: '12 concepts', color: '#F59E0B' }
               ].map(cat => (
                 <motion.div variants={itemVariants} key={cat.tab} className="tf-cat-wrapper">

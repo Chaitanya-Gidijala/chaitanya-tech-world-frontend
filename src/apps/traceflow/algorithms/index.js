@@ -361,33 +361,6 @@ export const TOPIC_GROUPS = [
 ];
 
 // =========================================================
-// PROBLEM GROUPS
-// =========================================================
-export const PROBLEM_GROUPS = [
-  {
-    id: 'data-structures',
-    label: 'Data Structures',
-    color: '#3B82F6',
-    topics: [
-      { id: 'arrays', label: 'Arrays & Hashing', slugs: [] },
-      { id: 'linked-list', label: 'Linked List', slugs: [] },
-      { id: 'trees', label: 'Trees', slugs: [] },
-    ],
-  },
-  {
-    id: 'algorithmic-paradigms',
-    label: 'Algorithmic Paradigms',
-    color: '#10B981',
-    topics: [
-      { id: 'two-pointers', label: 'Two Pointers', slugs: [] },
-      { id: 'sliding-window', label: 'Sliding Window', slugs: [] },
-      { id: 'binary-search', label: 'Binary Search', slugs: [] },
-      { id: 'dynamic-programming', label: '1D DP', slugs: [] },
-    ],
-  },
-];
-
-// =========================================================
 // SYSTEM DESIGN GROUPS
 // =========================================================
 export const SYSTEM_DESIGN_GROUPS = [
@@ -422,11 +395,6 @@ export const SYSTEM_DESIGN_GROUPS = [
     ],
   },
 ];
-
-// =========================================================
-// DSA PROBLEMS — LeetCode-style practice problems
-// =========================================================
-export { DSA_PROBLEMS } from './problems.js';
 
 // =========================================================
 // SYSTEM DESIGN — concepts and case studies

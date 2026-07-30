@@ -7,7 +7,7 @@ import {
   GitBranch, Box, Code2, Blocks, Cpu
 } from 'lucide-react';
 import { 
-  getAllAlgorithms, CATEGORIES, TOPIC_GROUPS, PROBLEM_GROUPS, SYSTEM_DESIGN_GROUPS, DSA_PROBLEMS, SYSTEM_DESIGN_TOPICS 
+  getAllAlgorithms, CATEGORIES, TOPIC_GROUPS, SYSTEM_DESIGN_GROUPS, SYSTEM_DESIGN_TOPICS 
 } from '../algorithms/index.js';
 import './Catalogue.css';
 
@@ -16,7 +16,6 @@ const DIFFICULTIES = ['beginner', 'intermediate', 'advanced'];
 
 const TABS = [
   { id: 'algorithms', label: 'Algorithms', icon: GitBranch },
-  { id: 'problems', label: 'Problems', icon: Code2 },
   { id: 'system-design', label: 'System Design', icon: Blocks },
 ];
 
@@ -50,7 +49,6 @@ export default function Catalogue() {
   // Data fetching based on active tab
   const getItemsForTab = () => {
     switch (activeTab) {
-      case 'problems': return DSA_PROBLEMS;
       case 'system-design': return SYSTEM_DESIGN_TOPICS;
       case 'algorithms':
       default:
@@ -93,7 +91,6 @@ export default function Catalogue() {
   const hasFilters = query || activeTopic || activeDiff;
 
     let currentGroups = TOPIC_GROUPS;
-  if (activeTab === 'problems') currentGroups = PROBLEM_GROUPS;
   if (activeTab === 'system-design') currentGroups = SYSTEM_DESIGN_GROUPS;
 
   // Render Sidebar Topic Tree
@@ -153,8 +150,8 @@ export default function Catalogue() {
     </motion.div>
   );
 
-  const renderProblemRow = (item, index) => (
-    <motion.div variants={itemVariants} key={item.id} className="tf-list-row tf-list-row--link" onClick={() => window.location.href = `/traceflow/problem/${item.id}`}>
+  const renderTopicRow = (item, index) => (
+    <motion.div variants={itemVariants} key={item.id} className="tf-list-row tf-list-row--link" onClick={() => window.location.href = `/traceflow/system-design/${item.id}`}>
       <div className="tf-list-col tf-list-col--id">{index + 1}</div>
       <div className="tf-list-col tf-list-col--status">
         <Lock size={14} style={{ color: 'var(--tf-text-muted)', opacity: 0.2 }} />
@@ -166,12 +163,14 @@ export default function Catalogue() {
         <span className={`tf-badge tf-badge--sm tf-badge--${difficultyColor[item.difficulty]}`}>{item.difficulty}</span>
       </div>
       <div className="tf-list-col tf-list-col--meta hide-mobile">
-        {item.acceptance ? <span className="tf-text-muted">{item.acceptance}</span> : <span className="tf-text-muted">—</span>}
+        <span className="tf-text-muted">{item.category}</span>
       </div>
       <div className="tf-list-col tf-list-col--meta hide-tablet">
         <span className="tf-text-muted">—</span>
-      </div></motion.div>
+      </div>
+    </motion.div>
   );
+
 
   // Mobile Filter Sheet
   const MobileFilterSheet = () => (
@@ -269,7 +268,7 @@ export default function Catalogue() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
           >
-            The ultimate library for algorithms, DSA problems, and system design concepts.
+            The ultimate library for algorithms and system design concepts.
           </motion.p>
           
           {/* Tabs */}
@@ -383,7 +382,7 @@ export default function Catalogue() {
                       >
                         {activeTab === 'algorithms' 
                           ? filtered.map((item, i) => renderAlgorithmRow(item, i))
-                          : filtered.map((item, i) => renderProblemRow(item, i))
+                          : filtered.map((item, i) => renderTopicRow(item, i))
                         }
                       </motion.div>
                     </div>
