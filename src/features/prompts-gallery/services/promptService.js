@@ -15,9 +15,11 @@ const getAuthHeaders = () => {
 };
 
 export const promptService = {
-    getAllPrompts: async () => {
-        const response = await axios.get(PROMPTS_URL);
-        return response.data; // Expecting { success: true, message: "...", data: [...] } format from backend
+    getAllPrompts: async (page = 0, size = 20) => {
+        const response = await axios.get(PROMPTS_URL, {
+            params: { page, size }
+        });
+        return response.data; // Expecting { success: true, message: "...", data: { content: [...], totalPages: N } } format from backend
     },
     
     getPromptById: async (id) => {

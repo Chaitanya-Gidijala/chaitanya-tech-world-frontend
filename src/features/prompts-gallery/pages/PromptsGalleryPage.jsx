@@ -23,8 +23,8 @@ const getModelMeta = (model) => {
   return { icon: '◉', color: '#6366f1', bg: 'rgba(99,102,241,0.1)', border: 'rgba(99,102,241,0.3)' };
 };
 
-const INITIAL_LOAD = 12;
-const LOAD_MORE_COUNT = 8;
+const INITIAL_LOAD = 20;
+const LOAD_MORE_COUNT = 20;
 
 const PromptsGalleryPage = () => {
   const navigate = useNavigate();
