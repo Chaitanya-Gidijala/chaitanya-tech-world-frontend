@@ -436,15 +436,16 @@
   .pd-image-wrapper {
     height: auto;
     min-height: auto;
-    max-height: 560px;
+    max-height: none;
     display: flex;
     width: 100%;
   }
   .pd-media {
     border-radius: 0;
-    max-height: 560px;
+    max-height: none;
+    height: auto;
     width: 100%;
-    object-fit: cover;
+    object-fit: contain;
   }
   .pd-info-col {
     max-height: none;
@@ -473,15 +474,16 @@
   .pd-image-wrapper {
     height: auto;
     min-height: auto;
-    max-height: 480px;
+    max-height: none;
     display: flex;
     width: 100%;
   }
   .pd-media {
     border-radius: 0;
-    max-height: 480px;
+    max-height: none;
+    height: auto;
     width: 100%;
-    object-fit: cover;
+    object-fit: contain;
   }
 
   .pd-info-col { padding: 24px 20px 60px; }
