@@ -145,7 +145,7 @@ const PortfolioV2Page = () => {
               <a href="#contact" className="portv2-btn-primary">
                 Hire Me <Send size={16}/>
               </a>
-              <a href="/resume.pdf" target="_blank" className="portv2-btn-secondary">
+              <a href="/Chaitanya_Gidijala_Resume.pdf" download="Chaitanya_Gidijala_Resume.pdf" target="_blank" className="portv2-btn-secondary">
                 Download CV <Download size={16}/>
               </a>
             </motion.div>
