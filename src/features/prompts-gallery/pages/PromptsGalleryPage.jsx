@@ -23,8 +23,7 @@ const getModelMeta = (model) => {
   return { icon: '◉', color: '#6366f1', bg: 'rgba(99,102,241,0.1)', border: 'rgba(99,102,241,0.3)' };
 };
 
-const INITIAL_LOAD = 20;
-const LOAD_MORE_COUNT = 20;
+const ITEMS_PER_PAGE = 20;
 
 const PromptsGalleryPage = () => {
   const navigate = useNavigate();
@@ -34,8 +33,7 @@ const PromptsGalleryPage = () => {
   const [error, setError] = useState(null);
   const [activeModel, setActiveModel] = useState('All');
   const [activeCategory, setActiveCategory] = useState('All');
-  const [visibleCount, setVisibleCount] = useState(INITIAL_LOAD);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -64,7 +62,7 @@ const PromptsGalleryPage = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setVisibleCount(INITIAL_LOAD); }, [activeModel, activeCategory]);
+  useEffect(() => { setCurrentPage(1); }, [activeModel, activeCategory]);
 
   const fetchPrompts = async () => {
     try {
@@ -98,15 +96,20 @@ const PromptsGalleryPage = () => {
     });
   }, [prompts, activeModel, activeCategory]);
 
-  const visiblePrompts = filteredPrompts.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredPrompts.length;
+  const totalPages = Math.ceil(filteredPrompts.length / ITEMS_PER_PAGE);
+  const visiblePrompts = filteredPrompts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  const handleLoadMore = () => {
-    setLoadingMore(true);
-    setTimeout(() => {
-      setVisibleCount(v => v + LOAD_MORE_COUNT);
-      setLoadingMore(false);
-    }, 300);
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(p => p + 1);
+    // Scroll to top of gallery smoothly
+    const offset = window.innerWidth > 768 ? 400 : 300;
+    window.scrollTo({ top: offset, behavior: 'smooth' });
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage(p => p - 1);
+    const offset = window.innerWidth > 768 ? 400 : 300;
+    window.scrollTo({ top: offset, behavior: 'smooth' });
   };
 
   if (loading) {
@@ -327,41 +330,53 @@ const PromptsGalleryPage = () => {
               })}
             </div>
 
-            {/* Load More */}
-            {hasMore && (
-              <div className="pg-loadmore">
-                <div className="pg-loadmore-info">
-                  <div className="pg-loadmore-bar">
-                    <div
-                      className="pg-loadmore-fill"
-                      style={{ width: `${(visiblePrompts.length / filteredPrompts.length) * 100}%` }}
-                    />
-                  </div>
-                  <span>{visiblePrompts.length} of {filteredPrompts.length} prompts</span>
-                </div>
-                <button
-                  className={`pg-loadmore-btn ${loadingMore ? 'loading' : ''}`}
-                  onClick={handleLoadMore}
-                  disabled={loadingMore}
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="pg-pagination" style={{
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                gap: '16px', 
+                marginTop: '40px',
+                padding: '20px 0'
+              }}>
+                <button 
+                  onClick={handlePrev} 
+                  disabled={currentPage === 1}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: currentPage === 1 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
+                    color: currentPage === 1 ? '#666' : '#fff',
+                    cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease'
+                  }}
                 >
-                  {loadingMore ? (
-                    <><div className="pg-spin" />Loading...</>
-                  ) : (
-                    <>
-                      Load {Math.min(LOAD_MORE_COUNT, filteredPrompts.length - visibleCount)} More
-                      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                    </>
-                  )}
+                  Previous
                 </button>
-              </div>
-            )}
-
-            {/* All seen */}
-            {!hasMore && filteredPrompts.length > INITIAL_LOAD && (
-              <div className="pg-all-seen">
-                <div className="pg-all-seen-line" />
-                <span>✓ All {filteredPrompts.length} prompts loaded</span>
-                <div className="pg-all-seen-line" />
+                
+                <span style={{ color: '#aaa', fontSize: '0.9rem' }}>
+                  Page <strong style={{ color: '#fff' }}>{currentPage}</strong> of {totalPages}
+                </span>
+                
+                <button 
+                  onClick={handleNext} 
+                  disabled={currentPage === totalPages}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: currentPage === totalPages ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
+                    color: currentPage === totalPages ? '#666' : '#fff',
+                    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  Next
+                </button>
               </div>
             )}
           </>
