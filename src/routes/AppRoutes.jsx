@@ -22,6 +22,7 @@ import PromptsApp from '@/features/prompts-gallery/PromptsApp';
 import AdminPromptsPage from '@/features/prompts-gallery/pages/AdminPromptsPage';
 import RoadmapPage from '@/features/roadmap/RoadmapPage';
 import RoadmapHomePage from '@/features/roadmap/RoadmapHomePage';
+import ClaudeCertPage from '@/features/roadmap/ClaudeCertPage';
 import ImageManagerPage from '@/features/image-manager/pages/ImageManagerPage';
 import PortfolioV2Page from '@/features/portfolio-v2/PortfolioV2Page';
 
@@ -48,6 +49,7 @@ const AppRoutes = ({ theme, toggleTheme }) => {
       <Route path="/job-portal/prep/exam/:testId" element={<StandaloneExamWrapper />} />
       <Route path="/portfolio" element={<PortfolioV2Page />} />
       <Route path="/traceflow/*" element={<TraceflowApp />} />
+      <Route path="/roadmap/certifications/:certName" element={<ClaudeCertPage />} />
 
 
       {/* ── STANDARD ROUTES (With MainLayout) ── */}
