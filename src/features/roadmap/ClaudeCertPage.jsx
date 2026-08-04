@@ -164,6 +164,7 @@ export default function ClaudeCertPage() {
   const [openDomains, setOpenDomains] = useState(new Set([0]));
   const [activeDomain, setActiveDomain] = useState(0);
   const [headerScrolled, setHeaderScrolled] = useState(false);
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark');
 
   // Redirect if not found
   useEffect(() => {
@@ -195,6 +196,12 @@ export default function ClaudeCertPage() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+  };
+
   if (!data) return null;
 
   const totalObjectives = data.domains.reduce((a, d) => a + d.objectives.length, 0);
@@ -222,23 +229,7 @@ export default function ClaudeCertPage() {
     <div className="cc-root">
 
       {/* ── Sticky Mini Header ── */}
-      <header className={`cc-sticky-header ${headerScrolled ? 'visible' : ''}`}>
-        <div className="cc-sticky-inner">
-          <Link to="/roadmap" className="cc-sticky-back">
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-            </svg>
-            Roadmaps
-          </Link>
-          <span className="cc-sticky-title">{data.shortName} — {data.fullName}</span>
-          <a
-            href="https://www.anthropic.com/claude-certification"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cc-sticky-cta"
-          >Register →</a>
-        </div>
-      </header>
+      <StickyHeader data={data} headerScrolled={headerScrolled} theme={theme} toggleTheme={toggleTheme} />
 
       {/* ── HERO ── */}
       <section className="cc-hero">
@@ -257,9 +248,24 @@ export default function ClaudeCertPage() {
             All Roadmaps
           </Link>
           <span className="cc-sep">›</span>
-          <span>Claude Certifications</span>
+          <Link to="/roadmap/certifications/claude" className="cc-back-link">Claude Certifications</Link>
           <span className="cc-sep">›</span>
           <span className="cc-breadcrumb-current">{data.shortName}</span>
+          {/* Theme toggle in breadcrumb row */}
+          <button className="cc-theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+            {theme === 'dark' ? (
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+              </svg>
+            ) : (
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            )}
+            {theme === 'dark' ? 'Light' : 'Dark'}
+          </button>
         </div>
 
         <div className="cc-hero-content">

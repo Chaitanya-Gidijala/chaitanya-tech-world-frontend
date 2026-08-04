@@ -131,6 +131,38 @@ html[data-theme='light'] .cc-sticky-header {
 }
 .cc-sticky-cta:hover { background: #F59E0B22; border-color: #F59E0B88; }
 
+.cc-sticky-theme-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--cc-border-2);
+  background: var(--cc-surface-2);
+  color: var(--cc-text-3);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.cc-sticky-theme-btn:hover { color: var(--cc-text-1); border-color: var(--cc-border-3); }
+
+/* Theme toggle in breadcrumb */
+.cc-theme-toggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cc-text-3);
+  background: var(--cc-surface-2);
+  border: 1px solid var(--cc-border-2);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.cc-theme-toggle:hover { color: var(--cc-text-1); border-color: var(--cc-border-3); }
+
 /* ══════════════════════════════════════
    HERO SECTION
 ══════════════════════════════════════ */

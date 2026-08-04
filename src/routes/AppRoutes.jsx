@@ -23,6 +23,7 @@ import AdminPromptsPage from '@/features/prompts-gallery/pages/AdminPromptsPage'
 import RoadmapPage from '@/features/roadmap/RoadmapPage';
 import RoadmapHomePage from '@/features/roadmap/RoadmapHomePage';
 import ClaudeCertPage from '@/features/roadmap/ClaudeCertPage';
+import ClaudeCertificationsPage from '@/features/roadmap/ClaudeCertificationsPage';
 import ImageManagerPage from '@/features/image-manager/pages/ImageManagerPage';
 import PortfolioV2Page from '@/features/portfolio-v2/PortfolioV2Page';
 
@@ -49,7 +50,10 @@ const AppRoutes = ({ theme, toggleTheme }) => {
       <Route path="/job-portal/prep/exam/:testId" element={<StandaloneExamWrapper />} />
       <Route path="/portfolio" element={<PortfolioV2Page />} />
       <Route path="/traceflow/*" element={<TraceflowApp />} />
+      <Route path="/roadmap" element={<RoadmapHomePage />} />
+      <Route path="/roadmap/certifications/claude" element={<ClaudeCertificationsPage />} />
       <Route path="/roadmap/certifications/:certName" element={<ClaudeCertPage />} />
+      <Route path="/roadmap/:tech" element={<RoadmapPage />} />
 
 
       {/* ── STANDARD ROUTES (With MainLayout) ── */}
@@ -64,8 +68,6 @@ const AppRoutes = ({ theme, toggleTheme }) => {
         <Route path="/job-portal/*" element={<JobPortalApp />} />
         <Route path="/AdminPortal/*" element={<AdminPortalApp />} />
         <Route path="/prompts/*" element={<PromptsApp />} />
-        <Route path="/roadmap" element={<RoadmapHomePage />} />
-        <Route path="/roadmap/:tech" element={<RoadmapPage />} />
         <Route
           path="/admin/images"
           element={

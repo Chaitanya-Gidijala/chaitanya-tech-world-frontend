@@ -1,52 +1,52 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import LandingFooter from '@/components/layout/LandingFooter';
 import './RoadmapHomePage.css';
 
-/* ── Star field ── */
-const StarField = () => {
-  const stars = Array.from({ length: 70 }, (_, i) => ({
-    id: i,
-    left: Math.random() * 100,
-    top: Math.random() * 100,
-    dur: 2 + Math.random() * 4,
-    delay: Math.random() * 5,
-    op: 0.3 + Math.random() * 0.45,
-    size: Math.random() > 0.8 ? 3 : 2,
-  }));
-  return (
-    <div className="rmh-stars" aria-hidden="true">
-      {stars.map(s => (
-        <div key={s.id} className="rmh-star" style={{
-          left: `${s.left}%`, top: `${s.top}%`,
-          width: `${s.size}px`, height: `${s.size}px`,
-          '--dur': `${s.dur}s`, '--delay': `${s.delay}s`, '--op': s.op,
-        }} />
-      ))}
+/* ── Custom Minimal Navbar ── */
+const RoadmapNav = ({ theme, toggleTheme }) => (
+  <nav className="rmh-nav">
+    <div className="rmh-nav-inner">
+      <Link to="/" className="rmh-nav-brand">
+        <span className="rmh-nav-logo">✦</span>
+        <span className="rmh-nav-brand-text">Chaitanya Tech World</span>
+      </Link>
+      <div className="rmh-nav-links">
+        <Link to="/" className="rmh-nav-link">Home</Link>
+        <Link to="/roadmap" className="rmh-nav-link rmh-nav-link--active">Roadmaps</Link>
+        <Link to="/traceflow" className="rmh-nav-link">TraceFlow</Link>
+        <Link to="/prompts" className="rmh-nav-link">AI Prompts</Link>
+      </div>
+      <button className="rmh-nav-theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
+        {theme === 'dark' ? (
+          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        ) : (
+          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        )}
+      </button>
     </div>
-  );
-};
+  </nav>
+);
 
-/* ── Roadmap card definitions ── */
-const roadmaps = [
+/* ── Roadmap data ── */
+const COURSE_ROADMAPS = [
   {
     id: 'java',
     title: 'Java Backend Developer',
     subtitle: 'Core Java → Spring Boot → Microservices → Cloud Deployment',
     icon: '☕',
     gradient: 'linear-gradient(135deg, #f89820, #ef4444)',
-    glow: 'rgba(248,152,32,0.35)',
-    accent: '#f89820',
-    status: 'available',
-    phases: 10,
-    topics: '85+',
-    weeks: '36 weeks',
-    highlights: [
-      { label: '10 Phases' },
-      { label: '85+ Topics' },
-      { label: '36 Weeks' },
-    ],
-    keyTopics: ['Core Java', 'Java 8/17/21', 'Spring Boot', 'Hibernate', 'Microservices', 'Docker'],
-    ctaText: 'Start Java Roadmap',
+    color: '#f89820',
+    status: 'live',
+    stats: [{ label: 'Phases', value: 10 }, { label: 'Topics', value: '85+' }, { label: 'Weeks', value: 36 }],
+    tags: ['Core Java', 'Spring Boot', 'Hibernate', 'Docker'],
   },
   {
     id: 'frontend',
@@ -54,224 +54,231 @@ const roadmaps = [
     subtitle: 'HTML/CSS → JavaScript → React.js → TypeScript → Next.js',
     icon: '⚛️',
     gradient: 'linear-gradient(135deg, #61dafb, #6366f1)',
-    glow: 'rgba(99,102,241,0.3)',
-    accent: '#6366f1',
-    status: 'available',
-    phases: 8,
-    topics: '90+',
-    weeks: '28 weeks',
-    highlights: [
-      { label: '8 Phases' },
-      { label: '90+ Topics' },
-      { label: '28 Weeks' },
-    ],
-    keyTopics: ['HTML & CSS', 'JavaScript ES6+', 'React.js', 'TypeScript', 'Next.js', 'Testing'],
-    ctaText: 'Start Frontend Roadmap',
+    color: '#6366f1',
+    status: 'live',
+    stats: [{ label: 'Phases', value: 8 }, { label: 'Topics', value: '90+' }, { label: 'Weeks', value: 28 }],
+    tags: ['HTML/CSS', 'JavaScript', 'React.js', 'TypeScript'],
   },
   {
     id: 'fullstack',
     title: 'Full Stack Developer',
-    subtitle: 'Combine Java Backend + React Frontend + DevOps in one path',
+    subtitle: 'Java Backend + React Frontend + DevOps in one path',
     icon: '🌐',
     gradient: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
-    glow: 'rgba(139,92,246,0.3)',
-    accent: '#8b5cf6',
-    status: 'coming-soon',
-    phases: 12,
-    topics: '150+',
-    weeks: '52 weeks',
-    highlights: [
-      { label: '12 Phases' },
-      { label: '150+ Topics' },
-      { label: '52 Weeks' },
-    ],
-    keyTopics: ['Java Backend', 'React Frontend', 'REST APIs', 'Databases', 'DevOps', 'Cloud'],
-    ctaText: 'View Full Stack Roadmap',
+    color: '#8b5cf6',
+    status: 'soon',
+    stats: [{ label: 'Phases', value: 12 }, { label: 'Topics', value: '150+' }, { label: 'Weeks', value: 52 }],
+    tags: ['Java', 'React', 'APIs', 'DevOps'],
   },
   {
     id: 'devops',
     title: 'DevOps Engineer',
-    subtitle: 'Linux → Docker → Kubernetes → CI/CD → Cloud (AWS/GCP)',
+    subtitle: 'Linux → Docker → Kubernetes → CI/CD → AWS/GCP',
     icon: '🚀',
     gradient: 'linear-gradient(135deg, #10b981, #06b6d4)',
-    glow: 'rgba(16,185,129,0.3)',
-    accent: '#10b981',
-    status: 'coming-soon',
-    phases: 7,
-    topics: '60+',
-    weeks: '24 weeks',
-    highlights: [
-      { label: '7 Phases' },
-      { label: '60+ Topics' },
-      { label: '24 Weeks' },
-    ],
-    keyTopics: ['Linux', 'Docker', 'Kubernetes', 'CI/CD', 'AWS', 'Terraform'],
-    ctaText: 'View DevOps Roadmap',
+    color: '#10b981',
+    status: 'soon',
+    stats: [{ label: 'Phases', value: 7 }, { label: 'Topics', value: '60+' }, { label: 'Weeks', value: 24 }],
+    tags: ['Linux', 'Docker', 'Kubernetes', 'AWS'],
   },
 ];
 
-/* ── Main Component ── */
-const RoadmapHomePage = () => {
+const AI_CERT_TRACKS = [
+  {
+    id: 'claude',
+    provider: 'Anthropic',
+    title: 'Claude AI Certifications',
+    subtitle: '4 certifications from Associate to Expert',
+    icon: '🤖',
+    gradient: 'linear-gradient(135deg, #D97706, #F59E0B, #FCD34D)',
+    color: '#F59E0B',
+    certCount: 4,
+    levels: ['Foundations', 'Developer', 'Architect', 'Expert'],
+    status: 'live',
+    href: '/roadmap/certifications/claude',
+  },
+];
+
+/* ── Course Card ── */
+const CourseCard = ({ rm }) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    document.title = 'Developer Roadmaps 2026 | Chaitanya Tech World';
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) { meta = document.createElement('meta'); meta.name = 'description'; document.head.appendChild(meta); }
-    meta.content = 'Free, complete developer roadmaps for Java Backend, Frontend, Full Stack and DevOps — from beginner to advanced level.';
-  }, []);
-
-  const handleCardClick = (rm) => {
-    if (rm.status === 'available') navigate(`/roadmap/${rm.id}`);
-  };
-
-  const availableCount = roadmaps.filter(r => r.status === 'available').length;
+  const isLive = rm.status === 'live';
+  const handleClick = () => { if (isLive) navigate(`/roadmap/${rm.id}`); };
 
   return (
-    <div className="rmh-root">
-      <StarField />
-
-      {/* ── HERO ── */}
-      <section className="rmh-hero">
-        <div className="rmh-hero-glow rmh-hero-glow--1" />
-        <div className="rmh-hero-glow rmh-hero-glow--2" />
-
-        <div className="rmh-badge">
-          <span className="rmh-badge-dot" />
-          Developer Roadmaps 2026
-        </div>
-
-        <h1 className="rmh-hero-title">
-          Your Complete Path to<br />
-          <span>Becoming a Developer</span>
-        </h1>
-
-        <p className="rmh-hero-sub">
-          Structured, beginner-to-advanced roadmaps built from real industry experience.
-          Pick your technology and start your journey today — completely free.
-        </p>
-
-        <div className="rmh-stats">
-          <div className="rmh-stat">
-            <span className="rmh-stat-value">{roadmaps.length}</span>
-            <span className="rmh-stat-label">Roadmaps</span>
-          </div>
-          <div className="rmh-stat-sep" />
-          <div className="rmh-stat">
-            <span className="rmh-stat-value">350+</span>
-            <span className="rmh-stat-label">Topics</span>
-          </div>
-          <div className="rmh-stat-sep" />
-          <div className="rmh-stat">
-            <span className="rmh-stat-value">{availableCount}</span>
-            <span className="rmh-stat-label">Live Now</span>
-          </div>
-          <div className="rmh-stat-sep" />
-          <div className="rmh-stat">
-            <span className="rmh-stat-value">Free</span>
-            <span className="rmh-stat-label">Always</span>
+    <div
+      className={`rmh-course-card ${!isLive ? 'rmh-course-card--soon' : ''}`}
+      style={{ '--card-color': rm.color }}
+      onClick={handleClick}
+      role={isLive ? 'button' : undefined}
+      tabIndex={isLive ? 0 : undefined}
+      onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+      aria-label={`${rm.title} roadmap`}
+    >
+      <div className="rmh-course-card__top-bar" style={{ background: rm.gradient }} />
+      <div className="rmh-course-card__body">
+        <div className="rmh-course-card__header">
+          <div className="rmh-course-card__icon">{rm.icon}</div>
+          <div className="rmh-course-card__info">
+            <span className={`rmh-course-card__status ${isLive ? 'live' : 'soon'}`}>
+              {isLive ? '● Live' : '◌ Coming Soon'}
+            </span>
+            <h3 className="rmh-course-card__title">{rm.title}</h3>
+            <p className="rmh-course-card__subtitle">{rm.subtitle}</p>
           </div>
         </div>
-      </section>
 
-      {/* ── Section heading ── */}
-      <div className="rmh-section-head">
-        <div className="rmh-section-label">Choose Your Path</div>
-        <h2 className="rmh-section-title">Pick Your Technology Stack</h2>
-        <p className="rmh-section-sub">
-          Each roadmap guides you step-by-step from absolute beginner to job-ready professional.
-        </p>
-      </div>
-
-      {/* ── CARDS GRID ── */}
-      <div className="rmh-grid-wrapper">
-        {roadmaps.map((rm, idx) => (
-          <div
-            key={rm.id}
-            className={`rmh-card ${rm.status === 'coming-soon' ? 'coming-soon' : ''}`}
-            style={{
-              '--card-grad': rm.gradient,
-              '--card-glow': rm.glow,
-              '--card-accent': rm.accent,
-              '--delay': `${idx * 0.1}s`,
-            }}
-            onClick={() => handleCardClick(rm)}
-            role="button"
-            tabIndex={rm.status === 'available' ? 0 : -1}
-            aria-label={`${rm.title} roadmap — ${rm.status === 'available' ? 'click to view' : 'coming soon'}`}
-            onKeyDown={(e) => e.key === 'Enter' && handleCardClick(rm)}
-          >
-            {/* Gradient top strip */}
-            <div className="rmh-card-strip" />
-
-            <div className="rmh-card-inner">
-              {/* Header */}
-              <div className="rmh-card-header">
-                <div className="rmh-card-icon-wrap">{rm.icon}</div>
-                <div className="rmh-card-info">
-                  <h3 className="rmh-card-title">{rm.title}</h3>
-                  <p className="rmh-card-subtitle">{rm.subtitle}</p>
-                </div>
-                <span className={`rmh-card-status ${rm.status === 'available' ? 'available' : 'soon'}`}>
-                  {rm.status === 'available' ? '● Live' : '◌ Soon'}
-                </span>
-              </div>
-
-              {/* Highlights */}
-              <div className="rmh-card-highlights">
-                {rm.highlights.map((h, i) => (
-                  <div key={i} className="rmh-chip">
-                    <span className="rmh-chip-dot" />
-                    {h.label}
-                  </div>
-                ))}
-              </div>
-
-              {/* Key topics preview */}
-              <div className="rmh-card-topics">
-                {rm.keyTopics.map((t, i) => (
-                  <span key={i} className="rmh-topic-pill">{t}</span>
-                ))}
-              </div>
-
-              {/* CTA row */}
-              <div className="rmh-card-cta">
-                {rm.status === 'available' ? (
-                  <>
-                    <span className="rmh-card-cta-text">
-                      {rm.ctaText}
-                      <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                        <polyline points="12 5 19 12 12 19" />
-                      </svg>
-                    </span>
-                    <div className="rmh-card-cta-arrow">
-                      <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                        <polyline points="12 5 19 12 12 19" />
-                      </svg>
-                    </div>
-                  </>
-                ) : (
-                  <span className="rmh-card-soon-msg">🔔 Coming soon — stay tuned!</span>
-                )}
-              </div>
+        <div className="rmh-course-card__stats">
+          {rm.stats.map((s, i) => (
+            <div key={i} className="rmh-course-stat">
+              <span className="rmh-course-stat__val" style={{ color: rm.color }}>{s.value}</span>
+              <span className="rmh-course-stat__lbl">{s.label}</span>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ── More coming ── */}
-      <div className="rmh-coming-soon-row">
-        <div className="rmh-coming-row-inner">
-          <span className="rmh-coming-dot" />
-          <span className="rmh-coming-dot" />
-          <span className="rmh-coming-dot" />
-          <span>Python, Node.js, Android & more roadmaps coming soon</span>
+          ))}
         </div>
+
+        <div className="rmh-course-card__tags">
+          {rm.tags.map((t, i) => (
+            <span key={i} className="rmh-tag">{t}</span>
+          ))}
+        </div>
+
+        {isLive && (
+          <div className="rmh-course-card__cta">
+            <span>Start {rm.title.split(' ')[0]} Roadmap</span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default RoadmapHomePage;
+/* ── AI Cert Track Card ── */
+const CertTrackCard = ({ track }) => (
+  <Link to={track.href} className="rmh-cert-track-card" style={{ '--track-color': track.color }}>
+    <div className="rmh-cert-track-card__glow" style={{ background: track.color }} />
+    <div className="rmh-cert-track-card__body">
+      <div className="rmh-cert-track-card__header">
+        <div className="rmh-cert-track-card__icon-wrap" style={{ background: track.gradient }}>
+          <span className="rmh-cert-track-card__icon">{track.icon}</span>
+        </div>
+        <div>
+          <p className="rmh-cert-track-card__provider">{track.provider}</p>
+          <h3 className="rmh-cert-track-card__title">{track.title}</h3>
+          <p className="rmh-cert-track-card__subtitle">{track.subtitle}</p>
+        </div>
+        <span className="rmh-cert-track-card__live">● Live</span>
+      </div>
+
+      <div className="rmh-cert-track-card__levels">
+        {track.levels.map((l, i) => (
+          <div key={i} className="rmh-cert-level">
+            <span className="rmh-cert-level__num" style={{ color: track.color }}>{i + 1}</span>
+            <span className="rmh-cert-level__name">{l}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="rmh-cert-track-card__cta">
+        <span>View {track.certCount} Certifications</span>
+        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+    </div>
+  </Link>
+);
+
+/* ══ MAIN ══ */
+export default function RoadmapHomePage() {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark');
+
+  useEffect(() => {
+    document.title = 'Developer Roadmaps & AI Certifications 2026 | Chaitanya Tech World';
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) { meta = document.createElement('meta'); meta.name = 'description'; document.head.appendChild(meta); }
+    meta.content = 'Free structured roadmaps for Java, Frontend, Full Stack, DevOps — plus Claude AI Certification prep guides.';
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+  };
+
+  return (
+    <div className="rmh-root">
+      <RoadmapNav theme={theme} toggleTheme={toggleTheme} />
+
+      {/* ── Background ── */}
+      <div className="rmh-bg-mesh" aria-hidden="true">
+        <div className="rmh-bg-glow rmh-bg-glow--1" />
+        <div className="rmh-bg-glow rmh-bg-glow--2" />
+        <div className="rmh-bg-grid" />
+      </div>
+
+      {/* ── HERO ── */}
+      <section className="rmh-hero">
+        <div className="rmh-hero-badge">
+          <span className="rmh-hero-badge-dot" />
+          Free Learning Paths · 2026
+        </div>
+        <h1 className="rmh-hero-title">
+          Your Complete Path to
+          <br />
+          <span className="rmh-hero-title-accent">Tech Mastery</span>
+        </h1>
+        <p className="rmh-hero-desc">
+          Structured, beginner-to-advanced roadmaps built from real industry experience — 
+          plus official AI certification prep guides. Pick your path and start today.
+        </p>
+        <div className="rmh-hero-stats">
+          {[
+            { val: `${COURSE_ROADMAPS.length + AI_CERT_TRACKS.length}`, lbl: 'Tracks' },
+            { val: '350+', lbl: 'Topics' },
+            { val: '4', lbl: 'AI Certs' },
+            { val: 'Free', lbl: 'Always' },
+          ].map((s, i) => (
+            <div key={i} className="rmh-hero-stat">
+              <span className="rmh-hero-stat-val">{s.val}</span>
+              <span className="rmh-hero-stat-lbl">{s.lbl}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ══ COURSE ROADMAPS ══ */}
+      <section className="rmh-section">
+        <div className="rmh-section-header">
+          <span className="rmh-section-label">Development Paths</span>
+          <h2 className="rmh-section-title">Course Roadmaps</h2>
+          <p className="rmh-section-sub">Step-by-step paths from absolute beginner to job-ready professional.</p>
+        </div>
+        <div className="rmh-course-grid">
+          {COURSE_ROADMAPS.map(rm => <CourseCard key={rm.id} rm={rm} />)}
+        </div>
+        <div className="rmh-more-coming">
+          <span className="rmh-more-dot" /><span className="rmh-more-dot" /><span className="rmh-more-dot" />
+          <span>Python, Node.js, Android & more coming soon</span>
+        </div>
+      </section>
+
+      {/* ══ AI CERTIFICATIONS ══ */}
+      <section className="rmh-section">
+        <div className="rmh-section-header">
+          <span className="rmh-section-label">AI Certifications</span>
+          <h2 className="rmh-section-title">Official Certification Prep</h2>
+          <p className="rmh-section-sub">Curated study guides for official AI certifications — everything you need, in one place.</p>
+        </div>
+        <div className="rmh-cert-tracks">
+          {AI_CERT_TRACKS.map(track => <CertTrackCard key={track.id} track={track} />)}
+        </div>
+      </section>
+
+      <LandingFooter />
+    </div>
+  );
+}
