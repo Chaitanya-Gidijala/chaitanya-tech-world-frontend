@@ -99,6 +99,7 @@ const CertCard = ({ cert, index }) => {
   const isLive = cert.status === 'live';
   return (
     <div
+      id={cert.id}
       className={`ccp-cert-card ${!isLive ? 'ccp-cert-card--soon' : ''}`}
       style={{ '--cert-color': cert.color, animationDelay: `${index * 0.1}s` }}
     >
@@ -228,17 +229,26 @@ export default function ClaudeCertificationsPage() {
         {/* Cert path visual */}
         <div className="ccp-path-visual">
           {CLAUDE_CERTS.map((cert, i) => (
-            <div key={cert.id} className="ccp-path-step">
-              <div className="ccp-path-circle" style={{ background: cert.gradient }}>
-                <span>{cert.levelNum}</span>
-              </div>
+            <React.Fragment key={cert.id}>
+              <button 
+                className="ccp-path-step"
+                onClick={() => {
+                  const el = document.getElementById(cert.id);
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }}
+                aria-label={`Scroll to ${cert.title}`}
+              >
+                <div className="ccp-path-circle" style={{ background: cert.gradient }}>
+                  <span>{cert.levelNum}</span>
+                </div>
+                <span className="ccp-path-label" style={{ color: cert.color }}>{cert.level}</span>
+              </button>
               {i < CLAUDE_CERTS.length - 1 && (
-                <div className="ccp-path-connector">
+                <div className="ccp-path-connector" aria-hidden="true">
                   <div className="ccp-path-connector-line" />
                 </div>
               )}
-              <span className="ccp-path-label" style={{ color: cert.color }}>{cert.level}</span>
-            </div>
+            </React.Fragment>
           ))}
         </div>
       </section>

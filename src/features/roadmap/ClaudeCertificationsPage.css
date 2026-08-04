@@ -206,6 +206,15 @@ html[data-theme='light'] .ccp-bg-grid {
   gap: 8px;
   flex-shrink: 0;
   min-width: 80px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.2s;
+}
+.ccp-path-step:hover {
+  opacity: 0.9;
 }
 .ccp-path-circle {
   width: 52px; height: 52px;
@@ -218,7 +227,7 @@ html[data-theme='light'] .ccp-bg-grid {
   transition: transform 0.2s;
   flex-shrink: 0;
 }
-.ccp-path-circle:hover { transform: scale(1.1); }
+.ccp-path-step:hover .ccp-path-circle { transform: scale(1.1); }
 
 .ccp-path-connector {
   display: flex;
