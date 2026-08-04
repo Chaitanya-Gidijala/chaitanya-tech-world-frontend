@@ -2,36 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { javaRoadmapData } from './data/javaRoadmapData';
 import { frontendRoadmapData } from './data/frontendRoadmapData';
+import LandingFooter from '@/components/layout/LandingFooter';
+import RoadmapNavbar from './RoadmapNavbar';
 import './RoadmapPage.css';
 
 /* ── Roadmap registry ── */
 const ROADMAP_REGISTRY = {
   java: javaRoadmapData,
   frontend: frontendRoadmapData,
-};
-
-/* ── Stars background ── */
-const StarField = () => {
-  const stars = Array.from({ length: 80 }, (_, i) => ({
-    id: i,
-    left: Math.random() * 100,
-    top: Math.random() * 100,
-    dur: 2 + Math.random() * 4,
-    delay: Math.random() * 5,
-    op: 0.3 + Math.random() * 0.5,
-    size: Math.random() > 0.8 ? 3 : 2,
-  }));
-  return (
-    <div className="rm-stars" aria-hidden="true">
-      {stars.map(s => (
-        <div key={s.id} className="rm-star" style={{
-          left: `${s.left}%`, top: `${s.top}%`,
-          width: `${s.size}px`, height: `${s.size}px`,
-          '--dur': `${s.dur}s`, '--delay': `${s.delay}s`, '--op': s.op,
-        }} />
-      ))}
-    </div>
-  );
 };
 
 /* ── Phase card ── */
@@ -114,6 +92,16 @@ const RoadmapPage = () => {
   const [activePhaseIdx, setActivePhaseIdx] = useState(0);
   const phaseRefs = useRef([]);
 
+  const [theme, setTheme] = useState(
+    () => document.documentElement.getAttribute('data-theme') || 'dark'
+  );
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+  };
+
   // Redirect invalid tech params
   useEffect(() => {
     if (!isValidTech && tech) {
@@ -167,7 +155,14 @@ const RoadmapPage = () => {
 
   return (
     <div className="rm-root">
-      <StarField />
+      <RoadmapNavbar theme={theme} toggleTheme={toggleTheme} />
+
+      {/* ── Background Mesh ── */}
+      <div className="rm-bg-mesh" aria-hidden="true">
+        <div className="rm-hero-glow rm-hero-glow--1" style={{ background: data.accentColor }} />
+        <div className="rm-hero-glow rm-hero-glow--2" />
+        <div className="rm-hero-grid" />
+      </div>
 
       {/* ── Back breadcrumb ── */}
       <div className="rm-breadcrumb">
@@ -279,6 +274,8 @@ const RoadmapPage = () => {
           </svg>
         </a>
       </div>
+
+      <LandingFooter />
     </div>
   );
 };

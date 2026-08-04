@@ -189,22 +189,23 @@ html[data-theme='light'] .ccp-bg-grid {
 /* ── Cert Path Visual ── */
 .ccp-path-visual {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 0;
-  flex-wrap: wrap;
   margin-bottom: 56px;
   padding: 28px 32px;
   background: var(--ccp-surface);
   border: 1px solid var(--ccp-border);
   border-radius: var(--ccp-radius);
+  overflow-x: auto;
 }
 .ccp-path-step {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  position: relative;
+  flex-shrink: 0;
+  min-width: 80px;
 }
 .ccp-path-circle {
   width: 52px; height: 52px;
@@ -215,23 +216,27 @@ html[data-theme='light'] .ccp-bg-grid {
   color: #000;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
   transition: transform 0.2s;
+  flex-shrink: 0;
 }
 .ccp-path-circle:hover { transform: scale(1.1); }
 
 .ccp-path-connector {
-  display: flex; align-items: center;
-  padding: 0 12px;
-  margin-top: -32px;
-  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin-top: 26px;
+  flex-shrink: 0;
 }
 .ccp-path-connector-line {
-  width: 48px; height: 2px;
+  width: 40px; height: 2px;
   background: linear-gradient(90deg, var(--ccp-border-2), var(--ccp-border));
 }
 .ccp-path-label {
-  font-size: 0.72rem; font-weight: 700;
+  font-size: 0.68rem; font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
 }
 
 /* ══ Main ══ */

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { claudeFoundationsData } from './data/claudeFoundationsData';
 import LandingFooter from '@/components/layout/LandingFooter';
+import RoadmapNavbar from './RoadmapNavbar';
 import './ClaudeCertPage.css';
 
 /* ── Certification Registry ── */
@@ -32,12 +33,7 @@ const WeightArc = ({ weight, color }) => {
 
 /* ── Resource Link ── */
 const ResourceLink = ({ resource }) => (
-  <a
-    className="cc-resource-link"
-    href={resource.url}
-    target="_blank"
-    rel="noopener noreferrer"
-  >
+  <a className="cc-resource-link" href={resource.url} target="_blank" rel="noopener noreferrer">
     <span className="cc-resource-icon">
       <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -54,11 +50,7 @@ const ObjectiveCard = ({ objective, domainColor, index }) => {
   const [open, setOpen] = useState(false);
   return (
     <div className={`cc-obj-card ${open ? 'cc-obj-card--open' : ''}`} style={{ '--dc': domainColor }}>
-      <button
-        className="cc-obj-header"
-        onClick={() => setOpen(v => !v)}
-        aria-expanded={open}
-      >
+      <button className="cc-obj-header" onClick={() => setOpen(v => !v)} aria-expanded={open}>
         <span className="cc-obj-num" style={{ background: domainColor + '22', color: domainColor }}>
           {String.fromCharCode(64 + index)}
         </span>
@@ -73,9 +65,7 @@ const ObjectiveCard = ({ objective, domainColor, index }) => {
       {open && (
         <div className="cc-obj-body">
           <div className="cc-resource-list">
-            {objective.resources.map((r, i) => (
-              <ResourceLink key={i} resource={r} />
-            ))}
+            {objective.resources.map((r, i) => <ResourceLink key={i} resource={r} />)}
           </div>
         </div>
       )}
@@ -84,58 +74,46 @@ const ObjectiveCard = ({ objective, domainColor, index }) => {
 };
 
 /* ── Domain Section ── */
-const DomainSection = ({ domain, index, isOpen, onToggle }) => {
-  return (
-    <div
-      className={`cc-domain ${isOpen ? 'cc-domain--open' : ''}`}
-      id={`domain-${index}`}
-      style={{ '--dc': domain.color, animationDelay: `${index * 0.1}s` }}
-    >
-      {/* Domain Header */}
-      <button
-        className="cc-domain-header"
-        onClick={onToggle}
-        aria-expanded={isOpen}
-      >
-        <div className="cc-domain-left">
-          <div className="cc-domain-icon-wrap" style={{ background: domain.color + '18', borderColor: domain.color + '40' }}>
-            <span className="cc-domain-emoji">{domain.icon}</span>
-          </div>
-          <div className="cc-domain-info">
-            <span className="cc-domain-label">Domain {domain.number}</span>
-            <h3 className="cc-domain-title">{domain.title}</h3>
-            <span className="cc-domain-objectives-count">{domain.objectives.length} objectives · {domain.objectives.reduce((a,o) => a + o.resources.length, 0)} resources</span>
-          </div>
+const DomainSection = ({ domain, index, isOpen, onToggle }) => (
+  <div
+    className={`cc-domain ${isOpen ? 'cc-domain--open' : ''}`}
+    id={`domain-${index}`}
+    style={{ '--dc': domain.color, animationDelay: `${index * 0.1}s` }}
+  >
+    <button className="cc-domain-header" onClick={onToggle} aria-expanded={isOpen}>
+      <div className="cc-domain-left">
+        <div className="cc-domain-icon-wrap" style={{ background: domain.color + '18', borderColor: domain.color + '40' }}>
+          <span className="cc-domain-emoji">{domain.icon}</span>
         </div>
-        <div className="cc-domain-right">
-          <WeightArc weight={domain.weight} color={domain.color} />
-          <span className={`cc-domain-chevron ${isOpen ? 'open' : ''}`}>
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
+        <div className="cc-domain-info">
+          <span className="cc-domain-label">Domain {domain.number}</span>
+          <h3 className="cc-domain-title">{domain.title}</h3>
+          <span className="cc-domain-objectives-count">
+            {domain.objectives.length} objectives · {domain.objectives.reduce((a, o) => a + o.resources.length, 0)} resources
           </span>
         </div>
-      </button>
-
-      {/* Domain Body */}
-      {isOpen && (
-        <div className="cc-domain-body">
-          <div className="cc-domain-divider" style={{ background: domain.color }} />
-          <div className="cc-objectives-list">
-            {domain.objectives.map((obj, i) => (
-              <ObjectiveCard
-                key={obj.id}
-                objective={obj}
-                domainColor={domain.color}
-                index={i + 1}
-              />
-            ))}
-          </div>
+      </div>
+      <div className="cc-domain-right">
+        <WeightArc weight={domain.weight} color={domain.color} />
+        <span className={`cc-domain-chevron ${isOpen ? 'open' : ''}`}>
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </span>
+      </div>
+    </button>
+    {isOpen && (
+      <div className="cc-domain-body">
+        <div className="cc-domain-divider" style={{ background: domain.color }} />
+        <div className="cc-objectives-list">
+          {domain.objectives.map((obj, i) => (
+            <ObjectiveCard key={obj.id} objective={obj} domainColor={domain.color} index={i + 1} />
+          ))}
         </div>
-      )}
-    </div>
-  );
-};
+      </div>
+    )}
+  </div>
+);
 
 /* ── Floating Progress Nav ── */
 const ProgressNav = ({ domains, activeDomain, onJump }) => (
@@ -153,9 +131,7 @@ const ProgressNav = ({ domains, activeDomain, onJump }) => (
   </nav>
 );
 
-/* ══════════════════════════════════════════
-   MAIN PAGE COMPONENT
-   ══════════════════════════════════════════ */
+
 export default function ClaudeCertPage() {
   const { certName } = useParams();
   const navigate = useNavigate();
@@ -164,14 +140,14 @@ export default function ClaudeCertPage() {
   const [openDomains, setOpenDomains] = useState(new Set([0]));
   const [activeDomain, setActiveDomain] = useState(0);
   const [headerScrolled, setHeaderScrolled] = useState(false);
-  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark');
+  const [theme, setTheme] = useState(
+    () => document.documentElement.getAttribute('data-theme') || 'dark'
+  );
 
-  // Redirect if not found
   useEffect(() => {
     if (!data) navigate('/roadmap', { replace: true });
   }, [data, navigate]);
 
-  // SEO
   useEffect(() => {
     if (data) {
       document.title = `${data.shortName} Study Guide | Chaitanya Tech World`;
@@ -181,7 +157,6 @@ export default function ClaudeCertPage() {
     }
   }, [data]);
 
-  // Scroll tracking
   useEffect(() => {
     const onScroll = () => {
       setHeaderScrolled(window.scrollY > 60);
@@ -228,8 +203,7 @@ export default function ClaudeCertPage() {
   return (
     <div className="cc-root">
 
-      {/* ── Sticky Mini Header ── */}
-      <StickyHeader data={data} headerScrolled={headerScrolled} theme={theme} toggleTheme={toggleTheme} />
+      <RoadmapNavbar theme={theme} toggleTheme={toggleTheme} showCTA={true} />
 
       {/* ── HERO ── */}
       <section className="cc-hero">
@@ -251,41 +225,32 @@ export default function ClaudeCertPage() {
           <Link to="/roadmap/certifications/claude" className="cc-back-link">Claude Certifications</Link>
           <span className="cc-sep">›</span>
           <span className="cc-breadcrumb-current">{data.shortName}</span>
-          {/* Theme toggle in breadcrumb row */}
-          <button className="cc-theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
-            {theme === 'dark' ? (
-              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-              </svg>
-            ) : (
-              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-              </svg>
-            )}
-            {theme === 'dark' ? 'Light' : 'Dark'}
-          </button>
         </div>
 
         <div className="cc-hero-content">
-          {/* Badge */}
           <div className="cc-hero-badge-row">
             <span className="cc-provider-badge">
               <span className="cc-provider-dot" style={{ background: data.accentColor }} />
               Anthropic Official
             </span>
-            <span className="cc-level-badge" style={{ color: data.accentColor, borderColor: data.accentColor + '50', background: data.accentColor + '12' }}>
+            <span className="cc-level-badge" style={{
+              color: data.accentColor,
+              borderColor: data.accentColor + '50',
+              background: data.accentColor + '12'
+            }}>
               {data.level} Level
             </span>
           </div>
 
-          {/* Exam Code */}
           <div className="cc-exam-code" style={{ color: data.accentColor }}>{data.examCode}</div>
 
-          {/* Title */}
           <h1 className="cc-hero-title">
-            <span className="cc-hero-title-accent" style={{ WebkitTextFillColor: 'transparent', backgroundImage: data.gradient, WebkitBackgroundClip: 'text', backgroundClip: 'text' }}>
+            <span className="cc-hero-title-accent" style={{
+              WebkitTextFillColor: 'transparent',
+              backgroundImage: data.gradient,
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text'
+            }}>
               Claude Certified
             </span>
             <br />
@@ -294,7 +259,6 @@ export default function ClaudeCertPage() {
 
           <p className="cc-hero-desc">{data.description}</p>
 
-          {/* Stats Row */}
           <div className="cc-stats-row">
             {[
               { label: 'Domains', value: data.domains.length },
@@ -310,7 +274,6 @@ export default function ClaudeCertPage() {
             ))}
           </div>
 
-          {/* Exam Info Pills */}
           <div className="cc-exam-info-row">
             <span className="cc-pill">⏱ {data.examDuration}</span>
             <span className="cc-pill">📝 {data.questionCount} Questions</span>
@@ -327,10 +290,7 @@ export default function ClaudeCertPage() {
               <div key={d.id} className="cc-domain-bar-item">
                 <span className="cc-domain-bar-icon">{d.icon}</span>
                 <div className="cc-domain-bar-track">
-                  <div
-                    className="cc-domain-bar-fill"
-                    style={{ width: `${d.weight}%`, background: d.color }}
-                  />
+                  <div className="cc-domain-bar-fill" style={{ width: `${d.weight}%`, background: d.color }} />
                 </div>
                 <span className="cc-domain-bar-pct" style={{ color: d.color }}>{d.weight}%</span>
                 <span className="cc-domain-bar-name">{d.title}</span>
@@ -367,7 +327,6 @@ export default function ClaudeCertPage() {
           />
         ))}
 
-        {/* Completion Banner */}
         <div className="cc-completion-banner">
           <div className="cc-completion-inner">
             <span className="cc-completion-icon">🎓</span>
@@ -388,10 +347,8 @@ export default function ClaudeCertPage() {
         </div>
       </main>
 
-      {/* ── Floating Progress Nav ── */}
       <ProgressNav domains={data.domains} activeDomain={activeDomain} onJump={jumpToDomain} />
 
-      {/* ── Footer ── */}
       <LandingFooter />
     </div>
   );

@@ -1,39 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LandingFooter from '@/components/layout/LandingFooter';
+import RoadmapNavbar from './RoadmapNavbar';
 import './RoadmapHomePage.css';
 
-/* ── Custom Minimal Navbar ── */
-const RoadmapNav = ({ theme, toggleTheme }) => (
-  <nav className="rmh-nav">
-    <div className="rmh-nav-inner">
-      <Link to="/" className="rmh-nav-brand">
-        <span className="rmh-nav-logo">✦</span>
-        <span className="rmh-nav-brand-text">Chaitanya Tech World</span>
-      </Link>
-      <div className="rmh-nav-links">
-        <Link to="/" className="rmh-nav-link">Home</Link>
-        <Link to="/roadmap" className="rmh-nav-link rmh-nav-link--active">Roadmaps</Link>
-        <Link to="/traceflow" className="rmh-nav-link">TraceFlow</Link>
-        <Link to="/prompts" className="rmh-nav-link">AI Prompts</Link>
-      </div>
-      <button className="rmh-nav-theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
-        {theme === 'dark' ? (
-          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-          </svg>
-        ) : (
-          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-        )}
-      </button>
-    </div>
-  </nav>
-);
+
 
 /* ── Roadmap data ── */
 const COURSE_ROADMAPS = [
@@ -211,7 +182,7 @@ export default function RoadmapHomePage() {
 
   return (
     <div className="rmh-root">
-      <RoadmapNav theme={theme} toggleTheme={toggleTheme} />
+      <RoadmapNavbar theme={theme} toggleTheme={toggleTheme} />
 
       {/* ── Background ── */}
       <div className="rmh-bg-mesh" aria-hidden="true">

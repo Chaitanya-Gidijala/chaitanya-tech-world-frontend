@@ -97,40 +97,44 @@ html[data-theme='light'] .rm-back-link {
 }
 
 /* ══════════════════════════════════════
-   STAR BACKGROUND (dark only)
+   BACKGROUND MESH
    ══════════════════════════════════════ */
-.rm-stars {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  transition: opacity 0.4s ease;
-}
-html[data-theme='light'] .rm-stars { opacity: 0; }
-
-.rm-star {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--rm-star-bg);
-  animation: rm-twinkle var(--dur, 3s) infinite var(--delay, 0s);
-}
-@keyframes rm-twinkle {
-  0%, 100% { opacity: 0; transform: scale(0.5); }
-  50%       { opacity: var(--op, 0.6); transform: scale(1); }
-}
-
-/* Light mode: soft background pattern instead of stars */
-html[data-theme='light'] .rm-root::before {
-  content: '';
+.rm-bg-mesh {
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(ellipse 80% 40% at 20% 10%, rgba(248,152,32,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 60% at 80% 80%, rgba(99,102,241,0.06) 0%, transparent 60%);
-  pointer-events: none;
   z-index: 0;
+  background: radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+  overflow: hidden;
+  pointer-events: none;
+  transition: background 0.3s ease;
+}
+
+.rm-hero-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  animation: rmGlowFloat 15s ease-in-out infinite alternate;
+}
+.rm-hero-glow--1 { width: 600px; height: 600px; top: -100px; left: -100px; }
+.rm-hero-glow--2 { width: 500px; height: 500px; bottom: -200px; right: -100px; background: rgba(139, 92, 246, 0.4); animation-delay: -5s; }
+html[data-theme='light'] .rm-hero-glow { opacity: 0.12; }
+
+@keyframes rmGlowFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, 40px) scale(1.05); }
+  100% { transform: translate(-20px, 20px) scale(0.95); }
+}
+
+.rm-hero-grid {
+  position: absolute;
+  inset: 0;
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, var(--rm-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--rm-border) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
 }
 
 /* ══════════════════════════════════════

@@ -1,38 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import LandingFooter from '@/components/layout/LandingFooter';
+import RoadmapNavbar from './RoadmapNavbar';
 import './ClaudeCertificationsPage.css';
 
-/* ── Theme-aware nav (reused from RoadmapHomePage) ── */
-const Nav = ({ theme, toggleTheme }) => (
-  <nav className="ccp-nav">
-    <div className="ccp-nav-inner">
-      <Link to="/" className="ccp-nav-brand">
-        <span className="ccp-nav-logo">✦</span>
-        <span className="ccp-nav-brand-text">Chaitanya Tech World</span>
-      </Link>
-      <div className="ccp-nav-links">
-        <Link to="/" className="ccp-nav-link">Home</Link>
-        <Link to="/roadmap" className="ccp-nav-link">Roadmaps</Link>
-        <Link to="/roadmap/certifications/claude" className="ccp-nav-link ccp-nav-link--active">Claude Certs</Link>
-      </div>
-      <button className="ccp-nav-theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
-        {theme === 'dark' ? (
-          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-          </svg>
-        ) : (
-          <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-        )}
-      </button>
-    </div>
-  </nav>
-);
+
 
 /* ── Certification definitions ── */
 const CLAUDE_CERTS = [
@@ -215,7 +187,7 @@ export default function ClaudeCertificationsPage() {
 
   return (
     <div className="ccp-root">
-      <Nav theme={theme} toggleTheme={toggleTheme} />
+      <RoadmapNavbar theme={theme} toggleTheme={toggleTheme} showCTA={true} />
 
       {/* ── Background ── */}
       <div className="ccp-bg" aria-hidden="true">

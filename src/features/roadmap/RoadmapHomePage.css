@@ -644,9 +644,11 @@ html[data-theme='light'] .rmh-bg-grid {
 }
 
 @media (max-width: 480px) {
-  .rmh-hero-stats { flex-direction: column; border-radius: var(--rmh-radius); }
-  .rmh-hero-stat { border-right: none; border-bottom: 1px solid var(--rmh-border); width: 100%; }
-  .rmh-hero-stat:last-child { border-bottom: none; }
+  .rmh-hero-stats { flex-wrap: wrap; }
+  .rmh-hero-stat { flex: 1; min-width: calc(50% - 1px); border-right: 1px solid var(--rmh-border); border-bottom: 1px solid var(--rmh-border); }
+  .rmh-hero-stat:nth-child(even) { border-right: none; }
+  .rmh-hero-stat:nth-child(3),
+  .rmh-hero-stat:nth-child(4) { border-bottom: none; }
 
   .rmh-course-card__header { flex-direction: column; gap: 10px; }
 
