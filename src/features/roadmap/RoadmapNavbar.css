@@ -93,31 +93,48 @@ html[data-theme='light'] .rmnav {
 .rmnav__brand:hover { opacity: 0.85; }
 
 .rmnav__brand-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef);
+  background-size: 200% 200%;
+  animation: rmBrandGradient 5s ease infinite;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  box-shadow: 0 2px 12px rgba(99,102,241,0.4);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.4);
   flex-shrink: 0;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
 }
+@keyframes rmBrandGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.rmnav__brand-svg {
+  color: #fff;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
 .rmnav__brand:hover .rmnav__brand-icon {
-  transform: scale(1.08) rotate(-3deg);
-  box-shadow: 0 4px 20px rgba(99,102,241,0.55);
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 6px 24px rgba(99,102,241,0.55);
+}
+.rmnav__brand:hover .rmnav__brand-svg {
+  transform: rotate(90deg) scale(0.9);
 }
 
 .rmnav__brand-text {
   font-family: 'Sora', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--rmnav-text-dark);
   line-height: 1;
 }
+.desktop-text { display: inline; }
+.mobile-text { display: none; }
 html[data-theme='light'] .rmnav__brand-text { color: var(--rmnav-text-light); }
 
 .rmnav__brand-sub {
@@ -451,4 +468,7 @@ html[data-theme='light'] .rmnav__drawer-divider {
 
 @media (max-width: 480px) {
   .rmnav__brand-sub { display: none; }
+  .desktop-text { display: none; }
+  .mobile-text { display: inline; }
+  .rmnav__brand-text { font-size: 1.1rem; }
 }

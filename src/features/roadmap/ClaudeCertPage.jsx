@@ -335,7 +335,7 @@ export default function ClaudeCertPage() {
               <p>You've covered all 7 domains. Register for the {data.shortName} certification on the official Anthropic portal.</p>
             </div>
             <a
-              href="https://www.anthropic.com/claude-certification"
+              href="https://anthropic-partners.skilljar.com/claude-certified-associate-foundations-certification"
               target="_blank"
               rel="noopener noreferrer"
               className="cc-completion-btn"

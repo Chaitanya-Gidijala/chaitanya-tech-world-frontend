@@ -23,6 +23,12 @@ const MoonIcon = () => (
   </svg>
 );
 
+const BrandIcon = () => (
+  <svg className="rmnav__brand-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+  </svg>
+);
+
 /* ── Nav link definitions ── */
 const NAV_LINKS = [
   { label: 'Home',         href: '/',                             icon: '🏠', exact: true },
@@ -41,7 +47,12 @@ function isActive(href, exact, pathname) {
 /* ══════════════════════════════════════════
    ROADMAP NAVBAR COMPONENT
    ══════════════════════════════════════════ */
-export default function RoadmapNavbar({ theme, toggleTheme, showCTA = false }) {
+export default function RoadmapNavbar({ 
+  theme, 
+  toggleTheme, 
+  showCTA = false, 
+  ctaLink = "https://anthropic-partners.skilljar.com/claude-certified-associate-foundations-certification" 
+}) {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -81,9 +92,12 @@ export default function RoadmapNavbar({ theme, toggleTheme, showCTA = false }) {
 
           {/* ── Brand ── */}
           <Link to="/" className="rmnav__brand" onClick={() => setMenuOpen(false)}>
-            <div className="rmnav__brand-icon" aria-hidden="true">✦</div>
+            <div className="rmnav__brand-icon" aria-hidden="true">
+              <BrandIcon />
+            </div>
             <div>
-              <span className="rmnav__brand-text">Chaitanya</span>
+              <span className="rmnav__brand-text desktop-text">Chaitanya</span>
+              <span className="rmnav__brand-text mobile-text">CTW</span>
               <span className="rmnav__brand-sub">Tech World</span>
             </div>
           </Link>
@@ -118,7 +132,7 @@ export default function RoadmapNavbar({ theme, toggleTheme, showCTA = false }) {
             {/* Register CTA — only on cert pages */}
             {showCTA && (
               <a
-                href="https://www.anthropic.com/claude-certification"
+                href={ctaLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rmnav__cta"
@@ -171,7 +185,7 @@ export default function RoadmapNavbar({ theme, toggleTheme, showCTA = false }) {
               <div className="rmnav__drawer-divider" />
               <div className="rmnav__drawer-actions">
                 <a
-                  href="https://www.anthropic.com/claude-certification"
+                  href={ctaLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rmnav__cta"
