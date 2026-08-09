@@ -9,6 +9,18 @@ import './RoadmapHomePage.css';
 /* ── Roadmap data ── */
 const COURSE_ROADMAPS = [
   {
+    id: 'gen-ai',
+    title: 'Gen AI & Prompt Engineering',
+    subtitle: 'Fundamentals → Prompt Engineering → Advanced Control → MCP',
+    icon: '🧠',
+    gradient: 'linear-gradient(135deg, #059669, #34d399)',
+    color: '#10B981',
+    status: 'live',
+    href: '/tutorial/gen-ai',
+    stats: [{ label: 'Phases', value: 4 }, { label: 'Topics', value: 17 }, { label: 'Style', value: 'Interactive' }],
+    tags: ['Generative AI', 'Prompt Engineering', 'LLMs', 'MCP'],
+  },
+  {
     id: 'java',
     title: 'Java Backend Developer',
     subtitle: 'Core Java → Spring Boot → Microservices → Cloud Deployment',
@@ -74,7 +86,15 @@ const AI_CERT_TRACKS = [
 const CourseCard = ({ rm }) => {
   const navigate = useNavigate();
   const isLive = rm.status === 'live';
-  const handleClick = () => { if (isLive) navigate(`/roadmap/${rm.id}`); };
+  const handleClick = () => { 
+    if (isLive) {
+      if (rm.href) {
+        navigate(rm.href);
+      } else {
+        navigate(`/roadmap/${rm.id}`); 
+      }
+    }
+  };
 
   return (
     <div

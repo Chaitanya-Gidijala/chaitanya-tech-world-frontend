@@ -24,6 +24,7 @@ import RoadmapPage from '@/features/roadmap/RoadmapPage';
 import RoadmapHomePage from '@/features/roadmap/RoadmapHomePage';
 import ClaudeCertPage from '@/features/roadmap/ClaudeCertPage';
 import ClaudeCertificationsPage from '@/features/roadmap/ClaudeCertificationsPage';
+import TutorialLayout from '@/features/roadmap/TutorialLayout';
 import ImageManagerPage from '@/features/image-manager/pages/ImageManagerPage';
 import PortfolioV2Page from '@/features/portfolio-v2/PortfolioV2Page';
 
@@ -54,6 +55,7 @@ const AppRoutes = ({ theme, toggleTheme }) => {
       <Route path="/roadmap/certifications/claude" element={<ClaudeCertificationsPage />} />
       <Route path="/roadmap/certifications/:certName" element={<ClaudeCertPage />} />
       <Route path="/roadmap/:tech" element={<RoadmapPage />} />
+      <Route path="/tutorial/:courseId/:topicId?" element={<TutorialLayout />} />
 
 
       {/* ── STANDARD ROUTES (With MainLayout) ── */}
