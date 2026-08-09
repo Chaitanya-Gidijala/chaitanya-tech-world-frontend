@@ -77,7 +77,16 @@ const TutorialLayout = () => {
 
   if (!currentTopic) return null;
 
-  const content = contentMap[currentTopic.id] || `### Content for ${currentTopic.title} is coming soon!`;
+  const content = contentMap[currentTopic.id] || `
+# ${currentTopic.title}
+
+<br/>
+
+> [!TIP]
+> **Content Coming Soon!** 
+> 
+> We are actively writing this comprehensive guide as part of our massive curriculum expansion. Please check back shortly for the full lesson!
+`;
 
   return (
     <div className="cc-tutorial-root">

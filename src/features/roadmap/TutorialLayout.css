@@ -70,6 +70,21 @@
   z-index: 50;
 }
 
+/* Custom Purple Scrollbar for Sidebar */
+.cc-tutorial-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.cc-tutorial-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.cc-tutorial-sidebar::-webkit-scrollbar-thumb {
+  background: #9333EA; /* Premium glowing purple */
+  border-radius: 10px;
+}
+.cc-tutorial-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a855f7;
+}
+
 /* Light mode overrides for glass */
 html[data-theme='light'] .cc-tutorial-sidebar {
   background: rgba(255, 255, 255, 0.6);
@@ -133,16 +148,20 @@ html[data-theme='light'] .cc-tutorial-sidebar-header {
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--cc-text-muted);
+  color: var(--cc-text); /* Bright text for title */
   margin: 0 0 12px 24px;
-  font-weight: 700;
+  font-weight: 800; /* Extra bold like screenshot */
+  font-family: 'Outfit', sans-serif;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 .cc-phase-num {
   font-size: 0.75rem;
-  color: #10B981;
+  color: #10B981; /* Premium Emerald */
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
 .cc-tutorial-nav-topics {
