@@ -3,20 +3,56 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import RoadmapNavbar from './RoadmapNavbar';
+import LandingFooter from '@/components/layout/LandingFooter';
 import { genAiData } from './data/genAiData';
 import { whatIsGenAiContent } from './data/content/whatIsGenAi';
+import { nextTokenPredictionContent } from './data/content/nextTokenPrediction';
+import { howAiThinksContent } from './data/content/howAiThinks';
+import { tokensAndContextContent } from './data/content/tokensAndContext';
+import { controllingAiContent } from './data/content/controllingAi';
+import { multimodalAiContent } from './data/content/multimodalAi';
+import { anatomyOfAPromptContent } from './data/content/anatomyOfAPrompt';
+import { zeroVsFewShotContent } from './data/content/zeroVsFewShot';
+import { actAsTechniqueContent } from './data/content/actAsTechnique';
+import { chainOfThoughtContent } from './data/content/chainOfThought';
+import { outputFormattingContent } from './data/content/outputFormatting';
+import { providingContextContent } from './data/content/providingContext';
+import { whatIsAnAgentContent } from './data/content/whatIsAnAgent';
+import { introToMcpContent } from './data/content/introToMcp';
+import { mcpExamplesContent } from './data/content/mcpExamples';
 import './TutorialLayout.css';
 
-// A simple map to simulate dynamic imports for our content
+// Map topic IDs to their markdown content
 const contentMap = {
   'what-is-gen-ai': whatIsGenAiContent,
-  // we can add others as we generate them
+  'next-token-prediction': nextTokenPredictionContent,
+  'how-ai-thinks': howAiThinksContent,
+  'tokens-and-context': tokensAndContextContent,
+  'controlling-ai': controllingAiContent,
+  'multimodal-ai': multimodalAiContent,
+  'anatomy-of-a-prompt': anatomyOfAPromptContent,
+  'zero-vs-few-shot': zeroVsFewShotContent,
+  'act-as-technique': actAsTechniqueContent,
+  'chain-of-thought': chainOfThoughtContent,
+  'output-formatting': outputFormattingContent,
+  'providing-context': providingContextContent,
+  'what-is-an-agent': whatIsAnAgentContent,
+  'intro-to-mcp': introToMcpContent,
+  'mcp-examples': mcpExamplesContent,
 };
 
 const TutorialLayout = () => {
   const { topicId } = useParams();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark');
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+  };
 
   const course = genAiData; // Hardcoded to genAiData for now, but could be dynamic based on a courseId param
   
@@ -44,18 +80,21 @@ const TutorialLayout = () => {
   const content = contentMap[currentTopic.id] || `### Content for ${currentTopic.title} is coming soon!`;
 
   return (
-    <div className="cc-tutorial-container">
-      {/* Mobile Header / Menu Toggle */}
-      <div className="cc-tutorial-mobile-header">
-        <button className="cc-tutorial-menu-btn" onClick={() => setIsSidebarOpen(true)}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
-        <span className="cc-tutorial-mobile-title">{course.title}</span>
-      </div>
+    <div className="cc-tutorial-root">
+      <RoadmapNavbar theme={theme} toggleTheme={toggleTheme} />
+      
+      <div className="cc-tutorial-container">
+        {/* Mobile Header / Menu Toggle */}
+        <div className="cc-tutorial-mobile-header">
+          <button className="cc-tutorial-menu-btn" onClick={() => setIsSidebarOpen(true)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <span className="cc-tutorial-mobile-title">{course.title}</span>
+        </div>
 
       {/* Sidebar Navigation */}
       <div className={`cc-tutorial-sidebar ${isSidebarOpen ? 'open' : ''}`}>
@@ -118,7 +157,10 @@ const TutorialLayout = () => {
             <p>End of {currentTopic.title}</p>
           </div>
         </main>
+        
+        <LandingFooter />
       </div>
+    </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
-.cc-tutorial-container {
-  display: flex;
+.cc-tutorial-root {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: var(--cc-bg);
   /* Apply a beautiful subtle mesh background for the whole page */
   background-image: 
@@ -10,6 +11,11 @@
   background-attachment: fixed;
   color: var(--cc-text);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.cc-tutorial-container {
+  display: flex;
+  flex-grow: 1;
 }
 
 /* Mobile Header */
@@ -54,9 +60,9 @@
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-  height: 100vh;
+  height: calc(100vh - 72px); /* Adjust for navbar height approx */
   position: sticky;
-  top: 0;
+  top: 72px; /* Sits below navbar */
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -171,10 +177,14 @@ html[data-theme='light'] .cc-tutorial-sidebar-header {
   flex-grow: 1;
   min-width: 0;
   background: transparent;
+  display: flex;
+  flex-direction: column;
 }
 
 .cc-tutorial-main {
+  flex-grow: 1;
   max-width: 850px;
+  width: 100%;
   margin: 0 auto;
   padding: 40px 60px;
 }

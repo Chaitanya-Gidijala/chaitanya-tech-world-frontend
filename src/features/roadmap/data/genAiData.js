@@ -1,100 +1,45 @@
 export const genAiData = {
   id: 'gen-ai',
   title: 'Generative AI & Prompt Engineering',
-  description: 'Master the fundamentals of Generative AI, prompt engineering, and advanced model control from absolute beginner to expert level.',
-  accentColor: '#10B981',
-  gradient: 'linear-gradient(135deg, #059669, #10B981, #34D399)',
+  description: 'Learn how AI actually works, master prompt engineering, and build AI agents using MCP.',
   phases: [
     {
-      id: 'phase-1',
+      id: 'fundamentals',
       title: 'Generative AI Fundamentals',
       topics: [
-        {
-          id: 'what-is-gen-ai',
-          title: 'What is AI & Gen AI?'
-        },
-        {
-          id: 'how-ai-thinks',
-          title: 'How AI "Thinks" & Generates Text'
-        },
-        {
-          id: 'tokens-and-context',
-          title: 'Tokens & Context Windows'
-        },
-        {
-          id: 'temperature-and-control',
-          title: 'Controlling AI (Temperature & Top-P)'
-        },
-        {
-          id: 'multimodal-ai',
-          title: 'Multimodal AI (Images & Audio)'
-        }
+        { id: 'what-is-gen-ai', title: 'What is AI & Gen AI?' },
+        { id: 'next-token-prediction', title: 'The Prediction Engine' },
+        { id: 'how-ai-thinks', title: 'How AI "Thinks"' },
+        { id: 'tokens-and-context', title: 'Tokens & Context Windows' },
+        { id: 'controlling-ai', title: 'Controlling AI (Temp & Top-P)' },
+        { id: 'multimodal-ai', title: 'Multimodal AI' },
       ]
     },
     {
-      id: 'phase-2',
+      id: 'prompt-engineering',
       title: 'Prompt Engineering Basics',
       topics: [
-        {
-          id: 'anatomy-of-prompt',
-          title: 'Anatomy of a Good Prompt'
-        },
-        {
-          id: 'zero-shot-few-shot',
-          title: 'Zero-Shot vs. Few-Shot'
-        },
-        {
-          id: 'role-playing',
-          title: 'Role-Playing & Personas'
-        },
-        {
-          id: 'formatting-outputs',
-          title: 'Formatting Outputs'
-        }
+        { id: 'anatomy-of-a-prompt', title: 'Anatomy of a Perfect Prompt' },
+        { id: 'zero-vs-few-shot', title: 'Zero-Shot vs. Few-Shot' },
+        { id: 'act-as-technique', title: 'The "Act As..." Technique' },
       ]
     },
     {
-      id: 'phase-3',
-      title: 'Advanced Prompting Techniques',
+      id: 'advanced-prompting',
+      title: 'Advanced Prompting',
       topics: [
-        {
-          id: 'chain-of-thought',
-          title: 'Chain of Thought (CoT)'
-        },
-        {
-          id: 'task-decomposition',
-          title: 'Task Decomposition'
-        },
-        {
-          id: 'xml-tagging',
-          title: 'XML Tagging & Data Separation'
-        },
-        {
-          id: 'self-correction',
-          title: 'Self-Correction & Evaluation'
-        }
+        { id: 'chain-of-thought', title: 'Chain of Thought (CoT)' },
+        { id: 'output-formatting', title: 'Output Formatting' },
+        { id: 'providing-context', title: 'Providing Context & Grounding' },
       ]
     },
     {
-      id: 'phase-4',
-      title: 'Expert Level & MCP',
+      id: 'ai-agents-mcp',
+      title: 'AI Agents & MCP',
       topics: [
-        {
-          id: 'what-is-mcp',
-          title: 'What is MCP?'
-        },
-        {
-          id: 'how-mcp-works',
-          title: 'How MCP Works'
-        },
-        {
-          id: 'real-world-mcp',
-          title: 'Real-world MCP Usage'
-        },
-        {
-          id: 'building-agents',
-          title: 'Building AI Agents'
-        }
+        { id: 'what-is-an-agent', title: 'What is an AI Agent?' },
+        { id: 'intro-to-mcp', title: 'Introduction to MCP' },
+        { id: 'mcp-examples', title: 'Real-world MCP Examples' },
       ]
     }
   ]
