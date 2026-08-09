@@ -21,7 +21,7 @@ Imagine our librarian didn't just sort books, but actually read every book in th
 
 That is Generative AI. 
 
-<img src="/assets/what_is_gen_ai_diagram.jpg" alt="Diagram showing how Generative AI works" className="tutorial-diagram" />
+<img src="/assets/gen_ai_clear_diagram.jpg" alt="Diagram showing how Generative AI works" className="tutorial-diagram" />
 <p className="tutorial-caption">Generative AI takes massive amounts of training data, learns the underlying patterns, and uses those patterns to generate brand new, original outputs like text, images, or code.</p>
 
 ---

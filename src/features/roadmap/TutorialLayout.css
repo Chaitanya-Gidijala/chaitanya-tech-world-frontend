@@ -1,7 +1,13 @@
 .cc-tutorial-container {
   display: flex;
   min-height: 100vh;
-  background-color: var(--cc-bg);
+  background: var(--cc-bg);
+  /* Apply a beautiful subtle mesh background for the whole page */
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 40%),
+    radial-gradient(at 100% 100%, rgba(52, 211, 153, 0.08) 0px, transparent 40%),
+    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
   color: var(--cc-text);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
@@ -39,12 +45,15 @@
   font-size: 1.1rem;
 }
 
-/* Sidebar Navigation */
+/* Sidebar Navigation - Glassmorphism */
 .cc-tutorial-sidebar {
   width: 320px;
   flex-shrink: 0;
-  background: var(--cc-surface-1);
-  border-right: 1px solid var(--cc-border);
+  /* Glassmorphism effect */
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   height: 100vh;
   position: sticky;
   top: 0;
@@ -52,11 +61,22 @@
   flex-direction: column;
   overflow-y: auto;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
+}
+
+/* Light mode overrides for glass */
+html[data-theme='light'] .cc-tutorial-sidebar {
+  background: rgba(255, 255, 255, 0.6);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .cc-tutorial-sidebar-header {
-  padding: 24px;
-  border-bottom: 1px solid var(--cc-border);
+  padding: 32px 24px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+html[data-theme='light'] .cc-tutorial-sidebar-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .cc-tutorial-back-link {
@@ -72,10 +92,15 @@
 }
 
 .cc-tutorial-sidebar-header h2 {
-  font-size: 1.25rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.4rem;
   margin: 0;
   color: var(--cc-text);
-  line-height: 1.4;
+  line-height: 1.3;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--cc-text) 0%, var(--cc-text-muted) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .cc-tutorial-close-btn {
@@ -145,11 +170,7 @@
 .cc-tutorial-content-wrapper {
   flex-grow: 1;
   min-width: 0;
-  background: var(--cc-bg);
-  /* Apply a subtle mesh background for the tutorial pages */
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(52, 211, 153, 0.05) 0px, transparent 50%);
+  background: transparent;
 }
 
 .cc-tutorial-main {
@@ -176,26 +197,31 @@
 }
 
 .cc-tutorial-markdown h1 {
-  font-size: 2.5rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 3rem;
   margin-top: 0;
   margin-bottom: 32px;
-  line-height: 1.2;
+  line-height: 1.15;
   font-weight: 800;
   color: var(--cc-text);
+  letter-spacing: -0.02em;
 }
 
 .cc-tutorial-markdown h2 {
-  font-size: 1.75rem;
-  margin-top: 48px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.85rem;
+  margin-top: 56px;
   margin-bottom: 24px;
   border-bottom: 1px solid var(--cc-border);
-  padding-bottom: 12px;
+  padding-bottom: 16px;
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .cc-tutorial-markdown h3 {
-  font-size: 1.35rem;
-  margin-top: 32px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.45rem;
+  margin-top: 40px;
   margin-bottom: 16px;
   font-weight: 600;
 }
