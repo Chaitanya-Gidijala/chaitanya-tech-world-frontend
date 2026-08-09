@@ -105,6 +105,104 @@ const DomainSection = ({ domain, index, isOpen, onToggle }) => (
     {isOpen && (
       <div className="cc-domain-body">
         <div className="cc-domain-divider" style={{ background: domain.color }} />
+        
+        {/* Enriched Content Sections */}
+        {domain.description && (
+          <div className="cc-domain-enriched-content">
+            <div className="cc-domain-desc-bar">
+              <p className="cc-domain-desc">{domain.description}</p>
+              <span className={`cc-priority-badge cc-priority-${domain.priority}`}>
+                {domain.priority.replace('-', ' ')} Priority
+              </span>
+            </div>
+
+            {domain.topicsToLearn && (
+              <div className="cc-section-block">
+                <h4 className="cc-block-title">Topics to Learn</h4>
+                <div className="cc-topics-grid">
+                  {domain.topicsToLearn.map((t, i) => (
+                    <span key={i} className="cc-topic-chip" style={{ '--dc': domain.color }}>{t}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="cc-two-col-block">
+              {domain.importantConcepts && (
+                <div className="cc-section-block">
+                  <h4 className="cc-block-title">Important Concepts</h4>
+                  <ul className="cc-concepts-list">
+                    {domain.importantConcepts.map((c, i) => <li key={i}>{c}</li>)}
+                  </ul>
+                </div>
+              )}
+              {domain.practicalSkills && (
+                <div className="cc-section-block">
+                  <h4 className="cc-block-title">Practical Skills to Practice</h4>
+                  <ul className="cc-skills-checklist">
+                    {domain.practicalSkills.map((s, i) => (
+                      <li key={i}>
+                        <span className="cc-check-icon">✓</span>
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="cc-two-col-block">
+              {domain.learningOutcomes && (
+                <div className="cc-section-block">
+                  <h4 className="cc-block-title">Learning Outcomes</h4>
+                  <ul className="cc-outcomes-list">
+                    {domain.learningOutcomes.map((o, i) => <li key={i}>{o}</li>)}
+                  </ul>
+                </div>
+              )}
+              {domain.revisionPoints && (
+                <div className="cc-section-block">
+                  <h4 className="cc-block-title">Quick Revision Points</h4>
+                  <ul className="cc-revision-list">
+                    {domain.revisionPoints.map((r, i) => <li key={i}>⚡ {r}</li>)}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {domain.commonMistakes && (
+              <div className="cc-section-block">
+                <h4 className="cc-block-title">Common Exam Traps</h4>
+                <div className="cc-traps-grid">
+                  {domain.commonMistakes.map((m, i) => (
+                    <div key={i} className="cc-trap-card">
+                      <span className="cc-trap-icon">⚠️</span>
+                      <p>{m}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {domain.questionTypes && (
+              <div className="cc-section-block">
+                <h4 className="cc-block-title">Example Question Types</h4>
+                <p className="cc-question-disclaimer">Note: These describe question <i>patterns</i>, not actual exam questions.</p>
+                <div className="cc-questions-grid">
+                  {domain.questionTypes.map((q, i) => (
+                    <div key={i} className="cc-question-card">
+                      <span className="cc-q-icon">❓</span>
+                      <p>{q}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Existing Objectives */}
+        <h4 className="cc-block-title" style={{ marginTop: '32px' }}>Learning Objectives & Resources</h4>
         <div className="cc-objectives-list">
           {domain.objectives.map((obj, i) => (
             <ObjectiveCard key={obj.id} objective={obj} domainColor={domain.color} index={i + 1} />
@@ -160,12 +258,21 @@ export default function ClaudeCertPage() {
   useEffect(() => {
     const onScroll = () => {
       setHeaderScrolled(window.scrollY > 60);
-      const scrollMid = window.scrollY + window.innerHeight / 2;
-      let found = 0;
-      document.querySelectorAll('.cc-domain').forEach((el, i) => {
-        if (scrollMid >= el.offsetTop) found = i;
+      const domainEls = document.querySelectorAll('.cc-domain');
+      if (!domainEls.length) return;
+      const viewportMid = window.innerHeight / 2;
+      let closest = 0;
+      let closestDist = Infinity;
+      domainEls.forEach((el, i) => {
+        const rect = el.getBoundingClientRect();
+        const elMid = rect.top + rect.height / 2;
+        const dist = Math.abs(elMid - viewportMid);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = i;
+        }
       });
-      setActiveDomain(found);
+      setActiveDomain(closest);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -277,7 +384,7 @@ export default function ClaudeCertPage() {
           <div className="cc-exam-info-row">
             <span className="cc-pill">⏱ {data.examDuration}</span>
             <span className="cc-pill">📝 {data.questionCount} Questions</span>
-            <span className="cc-pill">✅ {data.passScore}% to Pass</span>
+            <span className="cc-pill">✅ 720/1000 to Pass</span>
             <span className="cc-pill">🏅 Anthropic Certified</span>
           </div>
         </div>
@@ -296,6 +403,46 @@ export default function ClaudeCertPage() {
                 <span className="cc-domain-bar-name">{d.title}</span>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW TO USE & STRATEGY ── */}
+      <section className="cc-strategy-section">
+        <div className="cc-howto-card">
+          <h2>How to Use This Roadmap</h2>
+          <ol className="cc-howto-list">
+            <li><strong>Learn the concepts</strong>: Read the recommended Anthropic documentation for each domain.</li>
+            <li><strong>Practice the workflows</strong>: Actually use Claude for the specific skills mentioned (e.g., JSON mode, Projects, Artifacts).</li>
+            <li><strong>Review common mistakes</strong>: Be aware of exam traps like blindly trusting outputs or violating Usage Policy.</li>
+            <li><strong>Understand scenario-based decision making</strong>: The exam heavily focuses on applying concepts to real business scenarios.</li>
+            <li><strong>Evaluate outputs</strong>: Get comfortable critically assessing Claude's responses instead of assuming they are perfect.</li>
+            <li><strong>Revise by weight</strong>: Prioritize your study time according to the official domain weighting (highest weight first).</li>
+            <li><strong>Use official resources</strong>: Anthropic's official documentation is your ultimate source of truth.</li>
+          </ol>
+        </div>
+
+        <div className="cc-priority-card">
+          <h2>Domain Priority Guide</h2>
+          <div className="cc-priority-table-wrap">
+            <table className="cc-priority-table">
+              <thead>
+                <tr>
+                  <th>Priority</th>
+                  <th>Domain</th>
+                  <th>Weight</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><span className="cc-priority-badge cc-priority-high">High</span></td><td>Output Evaluation and Validation</td><td>21%</td></tr>
+                <tr><td><span className="cc-priority-badge cc-priority-high">High</span></td><td>Workflow Integration and Solution Design</td><td>16%</td></tr>
+                <tr><td><span className="cc-priority-badge cc-priority-high">High</span></td><td>Governance, Risk, and Responsible Use</td><td>15%</td></tr>
+                <tr><td><span className="cc-priority-badge cc-priority-medium-high">Med-High</span></td><td>Prompting and Task Execution</td><td>14%</td></tr>
+                <tr><td><span className="cc-priority-badge cc-priority-medium">Medium</span></td><td>Product and Model Selection</td><td>12%</td></tr>
+                <tr><td><span className="cc-priority-badge cc-priority-medium">Medium</span></td><td>Configuration and Knowledge Management</td><td>12%</td></tr>
+                <tr><td><span className="cc-priority-badge cc-priority-lower">Lower</span></td><td>Troubleshooting and Optimization</td><td>10%</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -326,6 +473,43 @@ export default function ClaudeCertPage() {
             onToggle={() => toggleDomain(idx)}
           />
         ))}
+
+        {/* ── 2-DAY REVISION & CHECKLIST ── */}
+        <div className="cc-final-prep-section">
+          <div className="cc-revision-card">
+            <h2>2-Day Final Revision Strategy</h2>
+            <div className="cc-days-grid">
+              <div className="cc-day-col">
+                <h3>Day 1: High Priority (52%)</h3>
+                <ul>
+                  <li>Review <strong>Output Evaluation</strong> (21%): Focus on hallucination reduction and success criteria.</li>
+                  <li>Review <strong>Workflow Integration</strong> (16%): Focus on use cases and connectors.</li>
+                  <li>Review <strong>Governance</strong> (15%): Re-read the Acceptable Use Policy and data privacy FAQs.</li>
+                </ul>
+              </div>
+              <div className="cc-day-col">
+                <h3>Day 2: Medium/Lower (48%)</h3>
+                <ul>
+                  <li>Review <strong>Prompting</strong> (14%): Practice XML tags and task decomposition.</li>
+                  <li>Review <strong>Models & Config</strong> (24%): Differentiate Haiku/Sonnet/Opus and Projects/Artifacts.</li>
+                  <li>Review <strong>Troubleshooting</strong> (10%): Focus on diagnosing prompt vs context issues.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="cc-checklist-card">
+            <h2>Final Exam Checklist</h2>
+            <ul className="cc-final-checklist">
+              <li><label><input type="checkbox"/> I understand the differences between Haiku, Sonnet, and Opus.</label></li>
+              <li><label><input type="checkbox"/> I know when to use Projects versus Artifacts.</label></li>
+              <li><label><input type="checkbox"/> I can identify a hallucination and know how to prompt Claude to reduce them.</label></li>
+              <li><label><input type="checkbox"/> I know how to use XML tags to separate context from instructions.</label></li>
+              <li><label><input type="checkbox"/> I understand Anthropic's Acceptable Use Policy regarding sensitive data.</label></li>
+              <li><label><input type="checkbox"/> I know how to define clear success criteria for an evaluation rubric.</label></li>
+            </ul>
+          </div>
+        </div>
 
         <div className="cc-completion-banner">
           <div className="cc-completion-inner">
