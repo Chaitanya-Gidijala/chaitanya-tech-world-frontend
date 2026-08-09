@@ -21,21 +21,83 @@ import { providingContextContent } from './data/content/providingContext';
 import { whatIsAnAgentContent } from './data/content/whatIsAnAgent';
 import { introToMcpContent } from './data/content/introToMcp';
 import { mcpExamplesContent } from './data/content/mcpExamples';
+
+// New Phase 1 Imports
+import { content as aiVsMlVsDlContent } from './data/content/ai-vs-ml-vs-dl';
+import { content as trainingVsInferenceContent } from './data/content/training-vs-inference';
+import { content as pretrainingVsFinetuningContent } from './data/content/pretraining-vs-finetuning';
+import { content as hallucinationsContent } from './data/content/hallucinations';
+
+// New Phase 2 Imports
+import { content as whatIsPromptEngineeringContent } from './data/content/what-is-prompt-engineering';
+import { content as positiveNegativeInstructionsContent } from './data/content/positive-negative-instructions';
+import { content as promptTemplatesContent } from './data/content/prompt-templates';
+import { content as promptChainingContent } from './data/content/prompt-chaining';
+import { content as commonPromptingMistakesContent } from './data/content/common-prompting-mistakes';
+
+// New Phase 3 Imports
+import { introToLlmApisContent } from './data/content/introToLlmApis';
+import { chatVsCompletionsContent } from './data/content/chatVsCompletions';
+import { structuredOutputsContent } from './data/content/structuredOutputs';
+import { contextManagementContent } from './data/content/contextManagement';
+import { streamingResponsesContent } from './data/content/streamingResponses';
+import { requestResponseLifecycleContent } from './data/content/requestResponseLifecycle';
+import { tokenUsageCostContent } from './data/content/tokenUsageCost';
+import { rateLimitsRetriesContent } from './data/content/rateLimitsRetries';
+
+// New Phase 4 Imports
+import { whatAreEmbeddingsContent } from './data/content/whatAreEmbeddings';
+import { textToVectorContent } from './data/content/textToVector';
+import { keywordVsSemanticContent } from './data/content/keywordVsSemantic';
+import { cosineSimilarityContent } from './data/content/cosineSimilarity';
+import { embeddingModelsContent } from './data/content/embeddingModels';
+
 import './TutorialLayout.css';
 
 // Map topic IDs to their markdown content
 const contentMap = {
+  // Phase 1
+  'ai-vs-ml-vs-dl': aiVsMlVsDlContent,
   'what-is-gen-ai': whatIsGenAiContent,
   'next-token-prediction': nextTokenPredictionContent,
   'how-ai-thinks': howAiThinksContent,
   'tokens-and-context': tokensAndContextContent,
   'controlling-ai': controllingAiContent,
+  'training-vs-inference': trainingVsInferenceContent,
+  'pretraining-vs-finetuning': pretrainingVsFinetuningContent,
+  'hallucinations': hallucinationsContent,
   'multimodal-ai': multimodalAiContent,
+
+  // Phase 2
+  'what-is-prompt-engineering': whatIsPromptEngineeringContent,
   'anatomy-of-a-prompt': anatomyOfAPromptContent,
   'zero-vs-few-shot': zeroVsFewShotContent,
   'act-as-technique': actAsTechniqueContent,
   'chain-of-thought': chainOfThoughtContent,
   'output-formatting': outputFormattingContent,
+  'positive-negative-instructions': positiveNegativeInstructionsContent,
+  'prompt-templates': promptTemplatesContent,
+  'prompt-chaining': promptChainingContent,
+  'common-prompting-mistakes': commonPromptingMistakesContent,
+
+  // Phase 3
+  'intro-to-llm-apis': introToLlmApisContent,
+  'request-response-lifecycle': requestResponseLifecycleContent,
+  'chat-vs-completions': chatVsCompletionsContent,
+  'streaming-responses': streamingResponsesContent,
+  'structured-outputs': structuredOutputsContent,
+  'token-usage-cost': tokenUsageCostContent,
+  'context-management': contextManagementContent,
+  'rate-limits-retries': rateLimitsRetriesContent,
+
+  // Phase 4
+  'what-are-embeddings': whatAreEmbeddingsContent,
+  'text-to-vector': textToVectorContent,
+  'keyword-vs-semantic': keywordVsSemanticContent,
+  'cosine-similarity': cosineSimilarityContent,
+  'embedding-models': embeddingModelsContent,
+
+  // Existing Other Phases
   'providing-context': providingContextContent,
   'what-is-an-agent': whatIsAnAgentContent,
   'intro-to-mcp': introToMcpContent,

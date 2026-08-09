@@ -70,25 +70,31 @@
   z-index: 50;
 }
 
-/* Custom Purple Scrollbar for Sidebar */
+/* Custom Elegant Scrollbar for Sidebar */
 .cc-tutorial-sidebar::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 .cc-tutorial-sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
 .cc-tutorial-sidebar::-webkit-scrollbar-thumb {
-  background: #9333EA; /* Premium glowing purple */
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 .cc-tutorial-sidebar::-webkit-scrollbar-thumb:hover {
-  background: #a855f7;
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* Light mode overrides for glass */
+/* Light mode overrides for glass & scrollbar */
 html[data-theme='light'] .cc-tutorial-sidebar {
   background: rgba(255, 255, 255, 0.6);
   border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+html[data-theme='light'] .cc-tutorial-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+html[data-theme='light'] .cc-tutorial-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .cc-tutorial-sidebar-header {
@@ -141,16 +147,16 @@ html[data-theme='light'] .cc-tutorial-sidebar-header {
 }
 
 .cc-tutorial-nav-phase {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .cc-tutorial-nav-phase-title {
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--cc-text); /* Bright text for title */
-  margin: 0 0 12px 24px;
-  font-weight: 800; /* Extra bold like screenshot */
+  color: var(--cc-text); 
+  margin: 0 0 16px 24px;
+  font-weight: 800; 
   font-family: 'Outfit', sans-serif;
   display: flex;
   flex-direction: column;
@@ -158,7 +164,7 @@ html[data-theme='light'] .cc-tutorial-sidebar-header {
 }
 .cc-phase-num {
   font-size: 0.75rem;
-  color: #10B981; /* Premium Emerald */
+  color: #10B981; 
   font-family: 'Inter', sans-serif;
   font-weight: 800;
   letter-spacing: 1px;
@@ -167,28 +173,35 @@ html[data-theme='light'] .cc-tutorial-sidebar-header {
 .cc-tutorial-nav-topics {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 0 24px; /* Align with text */
+  border-left: 1px solid rgba(255, 255, 255, 0.1); /* Timeline effect */
+}
+html[data-theme='light'] .cc-tutorial-nav-topics {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .cc-tutorial-nav-link {
   display: block;
-  padding: 10px 24px 10px 40px;
-  color: var(--cc-text);
+  padding: 10px 16px;
+  margin-left: -1px; /* Overlap timeline border */
+  color: var(--cc-text-muted);
   text-decoration: none;
   font-size: 0.95rem;
-  transition: all 0.2s;
-  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+  border-left: 2px solid transparent;
 }
 
 .cc-tutorial-nav-link:hover {
-  background: var(--cc-surface-2);
+  color: var(--cc-text);
+  transform: translateX(4px);
 }
 
 .cc-tutorial-nav-link.active {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10B981;
-  border-left-color: #10B981;
-  font-weight: 500;
+  color: var(--cc-text);
+  font-weight: 600;
+  border-left-color: #9333EA; /* Premium glowing purple active state */
+  background: linear-gradient(90deg, rgba(147, 51, 234, 0.08) 0%, transparent 100%);
+  transform: translateX(0); /* Reset transform if active */
 }
 
 /* Main Content Area */
