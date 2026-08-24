@@ -37,7 +37,7 @@ const CLAUDE_CERTS = [
     level: 'Developer',
     levelNum: 2,
     description: 'Learn to build Claude-powered applications with the Anthropic API — RAG pipelines, multi-agent systems, tool use, streaming, and production-ready integrations.',
-    status: 'soon',
+    status: 'live',
     gradient: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
     color: '#8B5CF6',
     domains: 8,

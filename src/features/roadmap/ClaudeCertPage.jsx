@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { claudeFoundationsData } from './data/claudeFoundationsData';
+import { claudeDeveloperData } from './data/claudeDeveloperData';
 import LandingFooter from '@/components/layout/LandingFooter';
 import RoadmapNavbar from './RoadmapNavbar';
 import './ClaudeCertPage.css';
@@ -8,6 +9,7 @@ import './ClaudeCertPage.css';
 /* ── Certification Registry ── */
 const CERT_REGISTRY = {
   'claude-certified-associate-foundations': claudeFoundationsData,
+  'claude-certified-developer': claudeDeveloperData,
 };
 
 /* ── Domain Weight Arc ── */
