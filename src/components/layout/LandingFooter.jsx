@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Mail, Instagram, Linkedin, Twitter, ArrowUp,
-    Camera, Wallet, Globe, Map, Github, Brain,
-    Briefcase, Sparkles, ExternalLink, Phone, Heart, FileText
+    Map, Github, Sparkles, ExternalLink, Phone, UserRound, GitBranch
 } from 'lucide-react';
 import { profileConfig } from '../../config/profileConfig';
 import apiConfig from '../../config/apiConfig';
@@ -14,23 +13,19 @@ import './LandingFooter.css';
 ────────────────────────────────────────────── */
 
 const apps = [
-    { name: 'Our Services', path: '/services', Icon: Camera },
-    { name: 'Job Portal', path: '/job-portal', Icon: Briefcase },
-    { name: 'Prep Hub', path: '/job-portal/prep', Icon: Brain },
-    { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },
+    { name: 'Portfolio', path: '/portfolio', Icon: UserRound },
+    { name: 'Traceflow', path: '/traceflow', Icon: GitBranch },
     { name: 'Prompts Gallery', path: '/prompts', Icon: Sparkles },
-    { name: 'Roadmap', path: '/roadmap', Icon: Map },
+    { name: 'Learning Roadmaps', path: '/roadmap', Icon: Map },
 ];
 
 const quickLinks = [
     { label: 'Home', path: '/' },
-    { label: 'AI Resume Builder', path: '/ai-resume-builder' },
-    { label: 'Job Portal', path: '/job-portal' },
-    { label: 'Preparation Hub', path: '/job-portal/prep' },
-    { label: 'Mock Tests', path: '/job-portal/prep/tests' },
-    { label: 'Interview Questions', path: '/job-portal/prep/questions' },
-    { label: 'Learning Resources', path: '/job-portal/prep/resources' },
-    { label: 'Support Me', path: '/support-me' },
+    { label: 'Portfolio', path: '/portfolio' },
+    { label: 'Traceflow', path: '/traceflow' },
+    { label: 'Roadmaps', path: '/roadmap' },
+    { label: 'Claude Certifications', path: '/roadmap/certifications/claude' },
+    { label: 'Prompts Gallery', path: '/prompts' },
     { label: 'Contact', path: '/contact' },
 ];
 
@@ -68,7 +63,7 @@ const SocialBtn = ({ Icon, href, label, color }) => (
             e.currentTarget.style.boxShadow = '';
         }}
     >
-        <Icon size={19} />
+        {React.createElement(Icon, { size: 19 })}
     </a>
 );
 
@@ -77,7 +72,7 @@ const AppLink = ({ path, Icon, name }) => (
     <li style={{ listStyle: 'none' }}>
         <Link to={path} className="footer-app-link">
             <span className="footer-app-icon">
-                <Icon size={14} />
+                {React.createElement(Icon, { size: 14 })}
             </span>
             <span className="footer-app-name">{name}</span>
         </Link>
@@ -118,7 +113,7 @@ const ContactItem = ({ Icon, label, value, href, iconColor }) => {
                 className="footer-contact-icon"
                 style={{ color: iconColor || 'var(--color-primary)' }}
             >
-                <Icon size={16} />
+                {React.createElement(Icon, { size: 16 })}
             </span>
             <div>
                 <div className="footer-contact-label">{label}</div>
@@ -196,9 +191,8 @@ const LandingFooter = () => {
                                     <span className="footer-brand-shine">Tech World</span>
                                 </h2>
                                 <p className="footer-brand-desc">
-                                    Explore innovative web applications crafted with passion — from photo
-                                    editing to smart job tools. Designed to make your digital life easier
-                                    &amp; smarter.
+                                    A focused collection of practical tools for building, learning,
+                                    and exploring modern technology.
                                 </p>
                             </div>
 

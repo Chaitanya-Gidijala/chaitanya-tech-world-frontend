@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-    Sun, Moon, Menu, X, Home, Heart, Mail, Brain, Briefcase,
-    FileText, Sparkles, ArrowRight, Users, LogIn, User, ChevronDown
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { isAuthenticated, getCurrentUser, logout } from '@/features/job-portal/services/authService';
+import { Sun, Moon, Menu, X, Heart, Sparkles, ArrowRight, Map, GitBranch, UserRound } from 'lucide-react';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import './LandingNavbar.css';
 
 const LandingNavbar = ({ theme, onToggleTheme }) => {
     const location = useLocation();
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
-    const loggedIn = isAuthenticated();
-    const user = loggedIn ? getCurrentUser() : null;
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 50);
@@ -38,20 +32,15 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
 
     const navItems = [
         { label: 'Home', action: () => scrollTo('hero') },
-        { label: 'Apps', action: () => scrollTo('apps-grid') },
-        { label: 'Prep Hub', action: () => scrollTo('prep-hub') },
+        { label: 'Explore', action: () => scrollTo('explore') },
+        { label: 'Roadmaps', to: '/roadmap' },
         { label: 'Prompts', to: '/prompts' },
         { label: 'Contact', to: '/contact' },
     ];
 
-    /* User initials for avatar */
-    const initials = user?.name
-        ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
-        : 'U';
-
     return (
         <>
-            <motion.nav
+            <Motion.nav
                 initial={{ y: -80, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -89,30 +78,21 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
                             {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
                         </button>
 
-                        {loggedIn ? (
-                            <Link to="/profile" className="ln__avatar" title={user?.name || 'Profile'}>
-                                {initials}
-                            </Link>
-                        ) : (
-                            <>
-                                <Link to="/login" className="ln__login-link">Log In</Link>
-                                <Link to="/signup" className="ln__cta">
-                                    Get Started <ArrowRight size={14} />
-                                </Link>
-                            </>
-                        )}
+                        <Link to="/portfolio" className="ln__cta">
+                            View Portfolio <ArrowRight size={14} />
+                        </Link>
 
                         <button className="ln__burger" onClick={() => setMobileOpen(true)} aria-label="Menu">
                             <Menu size={22} />
                         </button>
                     </div>
                 </div>
-            </motion.nav>
+            </Motion.nav>
 
             {/* ── Mobile Drawer ── */}
             <AnimatePresence>
                 {mobileOpen && (
-                    <motion.div
+                    <Motion.div
                         key="overlay"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -120,7 +100,7 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
                         className="ln-overlay"
                         onClick={close}
                     >
-                        <motion.aside
+                        <Motion.aside
                             key="drawer"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
@@ -135,24 +115,6 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
                             </div>
 
                             <div className="ln-drawer__body">
-                                {/* User banner */}
-                                {loggedIn ? (
-                                    <div className="ln-drawer__user">
-                                        <div className="ln__avatar ln__avatar--lg">{initials}</div>
-                                        <div>
-                                            <strong>{user?.name || 'User'}</strong>
-                                            <small>{user?.email || ''}</small>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="ln-drawer__auth-btns">
-                                        <Link to="/login" className="ln-drawer__auth-btn" onClick={close}>Log In</Link>
-                                        <Link to="/signup" className="ln-drawer__auth-btn ln-drawer__auth-btn--fill" onClick={close}>Sign Up Free</Link>
-                                    </div>
-                                )}
-
-                                <div className="ln-drawer__divider" />
-
                                 {/* Navigate */}
                                 <span className="ln-drawer__label">Navigate</span>
                                 {navItems.map((item) => {
@@ -172,14 +134,12 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
 
                                 <span className="ln-drawer__label">Quick Access</span>
                                 {[
-                                    { label: 'Job Portal', to: '/job-portal', Icon: Briefcase },
-                                    { label: 'Prep Hub', to: '/job-portal/prep', Icon: Brain },
-                                    { label: 'AI Resume Builder', to: '/ai-resume-builder', Icon: FileText },
+                                    { label: 'Portfolio', to: '/portfolio', Icon: UserRound },
+                                    { label: 'Traceflow', to: '/traceflow', Icon: GitBranch },
+                                    { label: 'Learning Roadmaps', to: '/roadmap', Icon: Map },
                                     { label: 'Prompts Gallery', to: '/prompts', Icon: Sparkles },
                                 ].map((link) => {
-                                    const isActive = link.to === '/job-portal'
-                                        ? (location.pathname === '/job-portal' || (location.pathname.startsWith('/job-portal') && !location.pathname.startsWith('/job-portal/prep')))
-                                        : location.pathname.startsWith(link.to);
+                                    const isActive = location.pathname.startsWith(link.to);
 
                                     return (
                                         <Link key={link.label} className={`ln-drawer__item ${isActive ? 'active' : ''}`} to={link.to} onClick={close}>
@@ -196,23 +156,13 @@ const LandingNavbar = ({ theme, onToggleTheme }) => {
                                     <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
                                 </button>
 
-                                {loggedIn && (
-                                    <>
-                                        <Link to="/profile" className="ln-drawer__item" onClick={close}>
-                                            <User size={15} /><span>My Profile</span>
-                                        </Link>
-                                        <button className="ln-drawer__item" onClick={() => { logout(); close(); window.location.reload(); }}>
-                                            <LogIn size={15} /><span>Sign Out</span>
-                                        </button>
-                                    </>
-                                )}
                             </div>
 
                             <div className="ln-drawer__foot">
                                 <Heart size={9} fill="currentColor" /> By Chaitanya Gidijala
                             </div>
-                        </motion.aside>
-                    </motion.div>
+                        </Motion.aside>
+                    </Motion.div>
                 )}
             </AnimatePresence>
         </>

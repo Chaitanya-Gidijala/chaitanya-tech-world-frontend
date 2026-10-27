@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Sun, Moon, Menu, X, Camera, Briefcase, Wallet, Globe, Map, Brain, Mail, FileText, Users, LogIn, Heart, BookOpen, Target, Sparkles, User } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { isAuthenticated, logout, getCurrentUser } from '@/features/job-portal/services/authService';
-import Logo from './Logo';
+import { Sun, Moon, Menu, X, Map, Heart, Sparkles, UserRound, GitBranch } from 'lucide-react';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import './AppHeader.css';
 
 const AppHeader = ({ theme, onToggleTheme }) => {
@@ -11,13 +9,6 @@ const AppHeader = ({ theme, onToggleTheme }) => {
     const isLanding = location.pathname === '/';
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     
-    const loggedIn = isAuthenticated();
-    const user = loggedIn ? getCurrentUser() : null;
-
-    // initials for avatar
-    const initials = user?.name
-        ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
-        : 'U';
 
     // Lock body scroll when menu is open
     React.useEffect(() => {
@@ -36,20 +27,10 @@ const AppHeader = ({ theme, onToggleTheme }) => {
     }, [isMobileMenuOpen]);
 
     const apps = [
-        { name: 'My Portfolio', path: '/portfolio', Icon: User },
-        { name: 'Our Services', path: '/services', Icon: Camera },
+        { name: 'My Portfolio', path: '/portfolio', Icon: UserRound },
+        { name: 'Traceflow', path: '/traceflow', Icon: GitBranch },
         { name: 'Prompts Gallery', path: '/prompts', Icon: Sparkles },
-        { name: 'Roadmap', path: '/roadmap', Icon: Map },
-        { name: 'Job Portal', path: '/job-portal', Icon: Briefcase },
-        { name: 'Prep Hub', path: '/job-portal/prep', Icon: Brain },
-        { name: 'AI Resume Builder', path: '/ai-resume-builder', Icon: FileText },
-    ];
-
-    const prepLinks = [
-        { name: 'Preparation Hub', path: '/job-portal/prep', Icon: Brain, exact: true },
-        { name: 'Mock Tests', path: '/job-portal/prep/tests', Icon: Target },
-        { name: 'Interview Questions', path: '/job-portal/prep/questions', Icon: BookOpen },
-        { name: 'Learning Resources', path: '/job-portal/prep/resources', Icon: FileText },
+        { name: 'Learning Roadmaps', path: '/roadmap', Icon: Map },
     ];
 
     if (isLanding) return null;
@@ -58,7 +39,7 @@ const AppHeader = ({ theme, onToggleTheme }) => {
 
     return (
         <>
-            <motion.header
+            <Motion.header
                 initial={{ y: -80, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -80,11 +61,11 @@ const AppHeader = ({ theme, onToggleTheme }) => {
                         </button>
                     </div>
                 </div>
-            </motion.header>
+            </Motion.header>
 
             <AnimatePresence>
                 {isMobileMenuOpen && (
-                    <motion.div
+                    <Motion.div
                         key="side-nav-overlay"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -92,7 +73,7 @@ const AppHeader = ({ theme, onToggleTheme }) => {
                         onClick={closeMobileMenu}
                         className="side-nav-overlay"
                     >
-                        <motion.aside
+                        <Motion.aside
                             key="side-nav-menu"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
@@ -107,23 +88,6 @@ const AppHeader = ({ theme, onToggleTheme }) => {
                             </div>
 
                             <div className="side-nav-content">
-                                {loggedIn ? (
-                                    <div className="side-nav-user-banner">
-                                        <div className="user-avatar-initials">{initials}</div>
-                                        <div className="user-info-text">
-                                            <strong>{user?.name || 'User'}</strong>
-                                            <small>{user?.email || ''}</small>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="side-nav-auth-grid">
-                                        <Link to="/login" className="side-nav-auth-btn" onClick={closeMobileMenu}>Log In</Link>
-                                        <Link to="/signup" className="side-nav-auth-btn fill" onClick={closeMobileMenu}>Sign Up</Link>
-                                    </div>
-                                )}
-
-                                <div className="side-nav-divider" />
-
                                 <span className="side-nav-label">Navigate</span>
                                 <Link to="/" className={`side-nav-item ${location.pathname === '/' ? 'active' : ''}`} onClick={closeMobileMenu}>
                                     <span>Home Page</span>
@@ -139,9 +103,7 @@ const AppHeader = ({ theme, onToggleTheme }) => {
 
                                 <span className="side-nav-label">Applications</span>
                                 {apps.map((app) => {
-                                    const isActive = app.path === '/job-portal' 
-                                        ? (location.pathname === '/job-portal' || (location.pathname.startsWith('/job-portal') && !location.pathname.startsWith('/job-portal/prep')))
-                                        : location.pathname.startsWith(app.path);
+                                    const isActive = location.pathname.startsWith(app.path);
                                     
                                     return (
                                         <Link key={app.path} to={app.path} className={`side-nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
@@ -151,41 +113,13 @@ const AppHeader = ({ theme, onToggleTheme }) => {
                                     );
                                 })}
 
-                                <div className="side-nav-divider" />
-
-                                <span className="side-nav-label">Prep Hub</span>
-                                {prepLinks.map((link) => {
-                                    const isActive = link.exact
-                                        ? location.pathname === link.path
-                                        : location.pathname.startsWith(link.path);
-
-                                    return (
-                                        <Link key={link.path} to={link.path} className={`side-nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-                                            <link.Icon size={15} />
-                                            <span>{link.name}</span>
-                                        </Link>
-                                    );
-                                })}
-
-                                {loggedIn && (
-                                    <>
-                                        <div className="side-nav-divider" />
-                                        <span className="side-nav-label">Settings</span>
-                                        <Link to="/profile" className="side-nav-item" onClick={closeMobileMenu}>
-                                            <Users size={15} /><span>My Profile</span>
-                                        </Link>
-                                        <button className="side-nav-item sign-out" onClick={() => { logout(); closeMobileMenu(); window.location.reload(); }}>
-                                            <LogIn size={15} /><span>Sign Out</span>
-                                        </button>
-                                    </>
-                                )}
                             </div>
 
                             <div className="side-nav-footer">
                                 <Heart size={9} fill="currentColor" /> By Chaitanya Gidijala
                             </div>
-                        </motion.aside>
-                    </motion.div>
+                        </Motion.aside>
+                    </Motion.div>
                 )}
             </AnimatePresence>
         </>
