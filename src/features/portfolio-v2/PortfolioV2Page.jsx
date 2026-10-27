@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+// eslint-disable-next-line no-unused-vars -- `motion.*` is used throughout the JSX below.
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Github, Linkedin, Mail, Menu, X, Download, Code, Layout, 
@@ -115,7 +116,7 @@ const PortfolioV2Page = () => {
             variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
           >
             <motion.span className="portv2-eyebrow" variants={fadeUp}>
-              Software Engineer
+              Java Backend Developer
             </motion.span>
             
             <motion.p className="portv2-greeting" variants={fadeUp}>
@@ -127,7 +128,7 @@ const PortfolioV2Page = () => {
             </motion.h1>
             
             <motion.h2 className="portv2-role" variants={fadeUp}>
-              Java Developer <br/>&amp; Full Stack Engineer
+              Spring Boot &amp; Microservices<br/>Engineer
             </motion.h2>
 
             <motion.div className="portv2-contact-chips" variants={fadeUp}>
@@ -156,8 +157,8 @@ const PortfolioV2Page = () => {
                 <div className="portv2-stat-label">Years Exp.</div>
               </div>
               <div className="portv2-stat-item">
-                <div className="portv2-stat-number">15+</div>
-                <div className="portv2-stat-label">REST APIs</div>
+                <div className="portv2-stat-number">10+</div>
+                <div className="portv2-stat-label">REST APIs Built</div>
               </div>
               <div className="portv2-stat-item">
                 <div className="portv2-stat-number">50k+</div>
@@ -198,16 +199,16 @@ const PortfolioV2Page = () => {
             
             <motion.div className="portv2-about-text" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
               <p>
-                I am a Java Developer with 2+ years of experience building, testing, and operating production <strong>Spring Boot microservices</strong> on an enterprise platform for <span className="highlight">GE Aerospace</span>, processing <strong>50,000+ daily transactions</strong> across US, UK, and India operations.
+                I am a Java Developer with 2+ years of experience building and maintaining <strong>Spring Boot microservices and REST APIs</strong> for an enterprise platform supporting <span className="highlight">GE Aerospace</span>, processing <strong>50,000+ daily transactions</strong> across US, UK, and India operations.
               </p>
               <p>
-                I apply <strong>AI-assisted development practices</strong> daily—using GitHub Copilot and agentic coding workflows for scaffolding, code review, and test generation. I strongly enforce automated quality and deployment gates (SonarQube, Jenkins CI/CD) and actively implement security test cases to catch edge-case vulnerabilities.
+                I use <strong>AI-assisted development practices</strong> for code scaffolding, review, documentation, and test generation—while validating every change for quality and security. My work spans API performance optimisation, automated testing, CI/CD, and developer-focused AI tools.
               </p>
               
               <div className="portv2-about-highlights">
                 <div className="portv2-about-highlight-card">
                   <div className="portv2-about-highlight-icon"><Server size={18} /></div>
-                  <div className="portv2-about-highlight-text">Delivered 15+ production REST APIs end-to-end</div>
+                  <div className="portv2-about-highlight-text">Built and maintained 10+ production REST APIs</div>
                 </div>
                 <div className="portv2-about-highlight-card">
                   <div className="portv2-about-highlight-icon"><Zap size={18} /></div>
@@ -215,7 +216,7 @@ const PortfolioV2Page = () => {
                 </div>
                 <div className="portv2-about-highlight-card">
                   <div className="portv2-about-highlight-icon"><Layers size={18} /></div>
-                  <div className="portv2-about-highlight-text">Docker containerization & K8s/Helm deployments</div>
+                  <div className="portv2-about-highlight-text">Jenkins CI/CD, Docker, and Kubernetes fundamentals</div>
                 </div>
                 <div className="portv2-about-highlight-card">
                   <div className="portv2-about-highlight-icon"><ShieldCheck size={18} /></div>
@@ -235,8 +236,10 @@ const PortfolioV2Page = () => {
                 <span className="portv2-skill-tag">Java 17/21</span>
                 <span className="portv2-skill-tag">Spring Boot 3.x</span>
                 <span className="portv2-skill-tag">Spring Data JPA / Hibernate</span>
+                <span className="portv2-skill-tag">Spring MVC</span>
                 <span className="portv2-skill-tag">RESTful APIs</span>
                 <span className="portv2-skill-tag">Microservices</span>
+                <span className="portv2-skill-tag">JDBC</span>
                 <span className="portv2-skill-tag">SQL</span>
               </div>
             </motion.div>
@@ -250,11 +253,11 @@ const PortfolioV2Page = () => {
                 <span className="portv2-skill-tag">MySQL</span>
                 <span className="portv2-skill-tag">Redis</span>
                 <span className="portv2-skill-tag">Apache Kafka</span>
+                <span className="portv2-skill-tag">RabbitMQ</span>
                 <span className="portv2-skill-tag">Docker</span>
-                <span className="portv2-skill-tag">Kubernetes (K8s)</span>
-                <span className="portv2-skill-tag">Helm Charts</span>
+                <span className="portv2-skill-tag">Kubernetes (Basics)</span>
                 <span className="portv2-skill-tag">Jenkins CI/CD</span>
-                <span className="portv2-skill-tag">AWS (EC2, S3, RDS)</span>
+                <span className="portv2-skill-tag">AWS (EC2, S3, RDS, Lambda)</span>
               </div>
             </motion.div>
 
@@ -267,9 +270,10 @@ const PortfolioV2Page = () => {
                 <span className="portv2-skill-tag">GitHub Copilot</span>
                 <span className="portv2-skill-tag">Agentic AI Workflows</span>
                 <span className="portv2-skill-tag">JWT & OAuth 2.0</span>
-                <span className="portv2-skill-tag">SonarQube</span>
                 <span className="portv2-skill-tag">JUnit 5 & Mockito</span>
                 <span className="portv2-skill-tag">Swagger/OpenAPI</span>
+                <span className="portv2-skill-tag">Postman</span>
+                <span className="portv2-skill-tag">Git & GitHub</span>
               </div>
             </motion.div>
           </div>
@@ -280,7 +284,7 @@ const PortfolioV2Page = () => {
           <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
             <span className="portv2-section-label">Career</span>
             <h2 className="portv2-section-title">Professional <span>Experience</span></h2>
-            <p className="portv2-section-subtitle">My journey building enterprise and independent platforms.</p>
+            <p className="portv2-section-subtitle">Experience building reliable backend services for enterprise workflows.</p>
           </motion.div>
 
           <div className="portv2-timeline">
@@ -297,50 +301,12 @@ const PortfolioV2Page = () => {
                 </div>
                 <div className="portv2-exp-client">Client: GE Aerospace - Enterprise Microservices Platform</div>
                 <ul className="portv2-exp-bullets">
-                  <li>Owned end-to-end delivery of a core Spring Boot microservice—architecture, REST API design, and deployment—using GitHub Copilot and agentic AI workflows.</li>
-                  <li>Configured Jenkins CI/CD pipeline with SonarQube as a hard deployment gate, embedding security-and-quality-as-code practices.</li>
+                  <li>Developed and maintained 10+ Spring Boot REST APIs for aircraft-parts tracking and maintenance workflows.</li>
                   <li>Reduced API response latency by 50% (800ms → 400ms) by optimizing SQL queries, adding composite indexing, and tuning connection pooling.</li>
-                  <li>Containerized microservices with Docker multi-stage builds and authored Helm charts for Kubernetes, cutting deployment time by 80%.</li>
-                  <li>Secured REST APIs with JWT authentication, OAuth 2.0, and RBAC for production-facing aerospace endpoints.</li>
-                  <li>Appointed COE Team Lead: ran daily knowledge-transfer sessions on Docker, Kubernetes, Jenkins for 7 junior developers.</li>
-                </ul>
-              </div>
-            </motion.div>
-
-            <motion.div className="portv2-timeline-item" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
-              <div className="portv2-timeline-dot"></div>
-              <div className="portv2-exp-card">
-                <div className="portv2-exp-top">
-                  <div>
-                    <h3 className="portv2-exp-role">Java Backend Developer (Independent)</h3>
-                    <div className="portv2-exp-company"><Briefcase size={14}/> Chaitanya Tech World</div>
-                  </div>
-                  <span className="portv2-exp-date">2024 - Present</span>
-                </div>
-                <ul className="portv2-exp-bullets">
-                  <li>Built Spring Boot REST APIs for a Resume Builder and Job Portal, applying production-level request validation and exception handling.</li>
-                  <li>Used Spring Data JPA with MySQL to model job listings and user profiles with dynamic search queries.</li>
-                  <li>Implemented JWT-based authentication with protected routes for the Job Portal layer.</li>
-                  <li>Integrated iText library for on-the-fly PDF resume generation and configured SLF4J/Logback for request tracing.</li>
-                </ul>
-              </div>
-            </motion.div>
-
-            <motion.div className="portv2-timeline-item" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
-              <div className="portv2-timeline-dot"></div>
-              <div className="portv2-exp-card">
-                <div className="portv2-exp-top">
-                  <div>
-                    <h3 className="portv2-exp-role">AI Developer (Independent)</h3>
-                    <div className="portv2-exp-company"><Briefcase size={14}/> WebMethods AI Automation</div>
-                  </div>
-                  <span className="portv2-exp-date">2026 - Present</span>
-                </div>
-                <ul className="portv2-exp-bullets">
-                  <li>Designed an AI-assisted tool that automatically generates webMethods IS packages and scaffolds structures.</li>
-                  <li>Built an auto-documentation engine parsing package flows to reduce manual documentation efforts.</li>
-                  <li>Developed an AI-driven error analyzer inspecting flow service logs for root cause analysis and suggested fixes.</li>
-                  <li>Built frontend in React.js and backend in Spring Boot integrating LLM-based generation logic.</li>
+                  <li>Implemented Spring Data JPA and Hibernate persistence logic with centralized exception handling and consistent JSON error responses.</li>
+                  <li>Achieved 85%+ unit and integration test coverage with JUnit 5 and Mockito, including validation and negative test scenarios.</li>
+                  <li>Worked with Jenkins CI/CD quality gates and applied JWT authentication and role-based access control to REST APIs.</li>
+                  <li>Led daily knowledge-transfer sessions on Docker, Kubernetes, and Jenkins for 7 junior developers, improving the team's certification pass rate by 85%.</li>
                 </ul>
               </div>
             </motion.div>
@@ -353,7 +319,7 @@ const PortfolioV2Page = () => {
           <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
             <span className="portv2-section-label">Showcase</span>
             <h2 className="portv2-section-title">Independent <span>Projects</span></h2>
-            <p className="portv2-section-subtitle">Highlights from my full-stack independent builds.</p>
+            <p className="portv2-section-subtitle">Developer tools and learning experiences built independently.</p>
           </motion.div>
 
           <div className="portv2-portfolio-grid">
@@ -370,7 +336,7 @@ const PortfolioV2Page = () => {
                   <span className="portv2-project-tag">MySQL</span>
                 </div>
                 <h3 className="portv2-project-title">Chaitanya Tech World</h3>
-                <p className="portv2-project-desc">A complete developer ecosystem featuring a job portal, resume builder, AI prompts, and developer roadmaps.</p>
+                <p className="portv2-project-desc">A personal learning platform with an AI prompts gallery, technology roadmaps, Traceflow DSA visualisations, and system-design learning content.</p>
                 <div className="portv2-project-links">
                   <a href="/" className="portv2-project-link"><ExternalLink size={16}/> Live App</a>
                 </div>
@@ -384,12 +350,12 @@ const PortfolioV2Page = () => {
               </div>
               <div className="portv2-project-content">
                 <div className="portv2-project-tags">
-                  <span className="portv2-project-tag">Java LLM API</span>
+                  <span className="portv2-project-tag">AI Automation</span>
                   <span className="portv2-project-tag">React</span>
-                  <span className="portv2-project-tag">AI Agentic</span>
+                  <span className="portv2-project-tag">webMethods IS</span>
                 </div>
-                <h3 className="portv2-project-title">WebMethods AI Gen</h3>
-                <p className="portv2-project-desc">AI automation tool integrating LLM logic to generate IS packages, auto-document code, and analyze error logs.</p>
+                <h3 className="portv2-project-title">WebMethods AI Expert</h3>
+                <p className="portv2-project-desc">An AI-powered tool for package scaffolding, automated documentation, integration-log analysis, and functional test-case generation.</p>
                 <div className="portv2-project-links">
                   <a href="#" className="portv2-project-link"><Github size={16}/> Source Code</a>
                 </div>
@@ -399,18 +365,18 @@ const PortfolioV2Page = () => {
             <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-project-img-wrap">
                 <div className="portv2-project-overlay"></div>
-                <img src="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=600&q=80" alt="Enterprise Platform" className="portv2-project-img" />
+                <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=600&q=80" alt="System design learning content" className="portv2-project-img" />
               </div>
               <div className="portv2-project-content">
                 <div className="portv2-project-tags">
-                  <span className="portv2-project-tag">Kafka</span>
-                  <span className="portv2-project-tag">Docker/K8s</span>
-                  <span className="portv2-project-tag">OAuth 2.0</span>
+                  <span className="portv2-project-tag">System Design</span>
+                  <span className="portv2-project-tag">Architecture</span>
+                  <span className="portv2-project-tag">Visual Learning</span>
                 </div>
-                <h3 className="portv2-project-title">Enterprise Microservices</h3>
-                <p className="portv2-project-desc">Scalable RESTful microservices architecture using Spring Boot, Kafka event-streaming, JWT/OAuth, and Helm deployments.</p>
+                <h3 className="portv2-project-title">System Design Learning Content</h3>
+                <p className="portv2-project-desc">Visual learning content that breaks down system architecture, components, data flow, and core design concepts.</p>
                 <div className="portv2-project-links">
-                  <a href="#" className="portv2-project-link"><Github size={16}/> Architecture</a>
+                  <a href="/roadmap" className="portv2-project-link"><ExternalLink size={16}/> View Roadmaps</a>
                 </div>
               </div>
             </motion.div>
@@ -431,15 +397,13 @@ const PortfolioV2Page = () => {
                   <h3 className="portv2-edu-degree">Master of Computer Applications (MCA)</h3>
                   <div className="portv2-edu-uni">Andhra University, Visakhapatnam</div>
                   <div className="portv2-edu-meta">
-                    <span>2024 - 2026</span>
                     <span>CGPA: 8.6</span>
                   </div>
                 </div>
                 <div className="portv2-edu-card">
                   <h3 className="portv2-edu-degree">Bachelor of Science, Computer Science</h3>
-                  <div className="portv2-edu-uni">Dr. B.R. Ambedkar University, Rajam</div>
+                  <div className="portv2-edu-uni">Dr. B.R. Ambedkar University, Sri GCSR College, Rajam</div>
                   <div className="portv2-edu-meta">
-                    <span>2019 - 2022</span>
                     <span>CGPA: 8.2</span>
                   </div>
                 </div>
@@ -451,6 +415,16 @@ const PortfolioV2Page = () => {
                 <h2 className="portv2-section-title">Certifications</h2>
               </div>
               <div className="portv2-cert-list">
+                <div className="portv2-cert-card">
+                  <Award size={20} color="#f97316" style={{ marginBottom: '0.5rem' }}/>
+                  <h3 className="portv2-cert-name">Claude Certified Associate (CCAO-F)</h3>
+                  <div className="portv2-cert-year">Anthropic — 2026</div>
+                </div>
+                <div className="portv2-cert-card">
+                  <Award size={20} color="#f97316" style={{ marginBottom: '0.5rem' }}/>
+                  <h3 className="portv2-cert-name">Claude Certified Developer (CCDV-F)</h3>
+                  <div className="portv2-cert-year">Anthropic — 2026</div>
+                </div>
                 <div className="portv2-cert-card">
                   <Award size={20} color="#f97316" style={{ marginBottom: '0.5rem' }}/>
                   <h3 className="portv2-cert-name">Microsoft GitHub Copilot for SE Practitioners</h3>
