@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion as Motion } from 'framer-motion';
 import {
     ArrowRight, GitBranch, Map, Sparkles, UserRound, Mail,
-    Compass, CircleDot, Layers3, Route
+    Award, Code2, Compass, Workflow
 } from 'lucide-react';
 import LandingNavbar from '@/components/layout/LandingNavbar';
 import './LandingPage.css';
@@ -11,35 +11,51 @@ import './LandingPage.css';
 const products = [
     {
         title: 'Portfolio',
-        eyebrow: 'About & work',
-        description: 'Explore selected work, skills, and the thinking behind the projects.',
+        eyebrow: 'Professional profile',
+        description: 'View experience, technical skills, and selected project work.',
         path: '/portfolio',
         icon: UserRound,
         accent: 'violet',
     },
     {
         title: 'Traceflow',
-        eyebrow: 'Visual learning',
-        description: 'Turn complex algorithms into clear, step-by-step visual explanations.',
+        eyebrow: 'Algorithm visualizer',
+        description: 'Understand algorithms through clear, interactive step-by-step visualizations.',
         path: '/traceflow',
         icon: GitBranch,
         accent: 'blue',
     },
     {
         title: 'Learning Roadmaps',
-        eyebrow: 'Build your path',
-        description: 'Follow structured technology roadmaps and Claude certification guides.',
+        eyebrow: 'Structured learning',
+        description: 'Follow practical technology roadmaps designed around real learning goals.',
         path: '/roadmap',
         icon: Map,
         accent: 'orange',
     },
     {
         title: 'Prompts Gallery',
-        eyebrow: 'Creative toolkit',
-        description: 'Browse carefully collected prompts for image and video creation.',
+        eyebrow: 'AI creativity',
+        description: 'Discover useful prompts for AI image and video generation.',
         path: '/prompts',
         icon: Sparkles,
         accent: 'pink',
+    },
+    {
+        title: 'Claude Certifications',
+        eyebrow: 'Certification guides',
+        description: 'Prepare with focused certification pathways and learning resources.',
+        path: '/roadmap/certifications/claude',
+        icon: Award,
+        accent: 'green',
+    },
+    {
+        title: 'Contact',
+        eyebrow: 'Let’s connect',
+        description: 'Reach out for collaboration, project discussions, or questions.',
+        path: '/contact',
+        icon: Mail,
+        accent: 'slate',
     },
 ];
 
@@ -59,37 +75,38 @@ const LandingPage = ({ theme, toggleTheme }) => (
                 <div className="home-aurora home-aurora--two" />
                 <Motion.div {...reveal()} className="home-kicker">
                     <span className="home-kicker-dot" />
-                    A focused digital workspace
+                    Chaitanya Tech World
                 </Motion.div>
                 <Motion.h1 {...reveal(0.08)}>
-                    Explore ideas.<br />
-                    <span>Build with clarity.</span>
+                    Tools for learning,<br />
+                    <span>building, and creating.</span>
                 </Motion.h1>
                 <Motion.p {...reveal(0.16)} className="home-hero-copy">
-                    Chaitanya Tech World brings practical tools for visual learning,
-                    focused growth, and creative exploration into one calm place.
+                    Explore practical technology resources, visual learning tools,
+                    curated AI prompts, and professional work in one place.
                 </Motion.p>
                 <Motion.div {...reveal(0.24)} className="home-hero-actions">
                     <a className="home-button home-button--solid" href="#explore">
-                        Explore the workspace <ArrowRight size={17} />
+                        Explore tools <ArrowRight size={17} />
                     </a>
                     <Link className="home-button home-button--quiet" to="/contact">
                         Get in touch <Mail size={16} />
                     </Link>
                 </Motion.div>
                 <Motion.div {...reveal(0.34)} className="home-signal-row" aria-label="Available experiences">
-                    <span><CircleDot size={14} /> Four focused experiences</span>
-                    <span><Layers3 size={14} /> Built to explore at your pace</span>
+                    <span><Code2 size={14} /> Learning resources</span>
+                    <span><Workflow size={14} /> Interactive tools</span>
+                    <span><Compass size={14} /> Clear next steps</span>
                 </Motion.div>
             </section>
 
             <section id="explore" className="home-products home-shell">
                 <Motion.div {...reveal()} className="home-section-heading">
                     <div>
-                        <span className="home-eyebrow">Start anywhere</span>
-                        <h2>One place. Four directions.</h2>
+                        <span className="home-eyebrow">Explore the platform</span>
+                        <h2>Find exactly what you need.</h2>
                     </div>
-                    <p>Choose an experience based on what you want to discover today.</p>
+                    <p>Each section is designed for a specific purpose, with a direct path to get started.</p>
                 </Motion.div>
 
                 <div className="home-product-grid">
@@ -112,16 +129,13 @@ const LandingPage = ({ theme, toggleTheme }) => (
 
             <section className="home-path home-shell">
                 <div className="home-path-copy">
-                    <span className="home-eyebrow"><Compass size={14} /> Learn by doing</span>
-                    <h2>Find the right next step.</h2>
-                    <p>Visualize a concept in Traceflow, follow a roadmap, then save inspiration from the prompts gallery.</p>
+                    <span className="home-eyebrow"><Compass size={14} /> Simple, focused access</span>
+                    <h2>Learn with a clear direction.</h2>
+                    <p>Use Roadmaps to plan your next skill, Traceflow to understand how it works, and Prompts Gallery to create something new.</p>
                 </div>
                 <div className="home-path-steps">
-                    <span>01 <strong>Explore</strong></span>
-                    <Route size={17} aria-hidden="true" />
-                    <span>02 <strong>Learn</strong></span>
-                    <Route size={17} aria-hidden="true" />
-                    <span>03 <strong>Create</strong></span>
+                    <Link to="/roadmap" className="home-path-link">View Roadmaps <ArrowRight size={16} /></Link>
+                    <Link to="/contact" className="home-path-link home-path-link--quiet">Contact <Mail size={15} /></Link>
                 </div>
             </section>
         </main>
