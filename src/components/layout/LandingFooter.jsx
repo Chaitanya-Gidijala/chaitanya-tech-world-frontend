@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Mail, Instagram, Linkedin, Twitter, ArrowUp,
-    Map, Github, Sparkles, ExternalLink, Phone, UserRound, GitBranch
+    Map, Github, Sparkles, ExternalLink, Phone, Heart, UserRound, GitBranch
 } from 'lucide-react';
 import { profileConfig } from '../../config/profileConfig';
 import apiConfig from '../../config/apiConfig';
