@@ -325,19 +325,16 @@ const PortfolioV2Page = () => {
         {/* ================= PROJECTS / PORTFOLIO ================= */}
         <section id="projects" className="portv2-section">
           <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
-            <span className="portv2-section-label">Showcase</span>
+            <span className="portv2-section-label">Selected work</span>
             <h2 className="portv2-section-title">Independent <span>Projects</span></h2>
-            <p className="portv2-section-subtitle">Developer tools and learning experiences built independently.</p>
+            <p className="portv2-section-subtitle">Purpose-built tools that demonstrate my approach to learning, automation, and developer experience.</p>
           </motion.div>
 
           <div className="portv2-portfolio-grid">
             
             <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
-              <div className="portv2-project-img-wrap">
-                <div className="portv2-project-overlay"></div>
-                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80" alt="Chaitanya Tech World" className="portv2-project-img" />
-              </div>
               <div className="portv2-project-content">
+                <div className="portv2-project-topline"><span>01</span><span>Learning platform</span></div>
                 <div className="portv2-project-tags">
                   <span className="portv2-project-tag">Spring Boot</span>
                   <span className="portv2-project-tag">React</span>
@@ -352,11 +349,8 @@ const PortfolioV2Page = () => {
             </motion.div>
 
             <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
-              <div className="portv2-project-img-wrap">
-                <div className="portv2-project-overlay"></div>
-                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80" alt="WebMethods AI" className="portv2-project-img" />
-              </div>
               <div className="portv2-project-content">
+                <div className="portv2-project-topline"><span>02</span><span>Developer automation</span></div>
                 <div className="portv2-project-tags">
                   <span className="portv2-project-tag">AI Automation</span>
                   <span className="portv2-project-tag">React</span>
@@ -364,18 +358,13 @@ const PortfolioV2Page = () => {
                 </div>
                 <h3 className="portv2-project-title">WebMethods AI Expert</h3>
                 <p className="portv2-project-desc">An AI-powered tool for package scaffolding, automated documentation, integration-log analysis, and functional test-case generation.</p>
-                <div className="portv2-project-links">
-                  <a href="#" className="portv2-project-link"><Github size={16}/> Source Code</a>
-                </div>
+                <div className="portv2-project-private">Private project · Details available on request</div>
               </div>
             </motion.div>
 
             <motion.div className="portv2-project-card" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
-              <div className="portv2-project-img-wrap">
-                <div className="portv2-project-overlay"></div>
-                <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=600&q=80" alt="System design learning content" className="portv2-project-img" />
-              </div>
               <div className="portv2-project-content">
+                <div className="portv2-project-topline"><span>03</span><span>Technical education</span></div>
                 <div className="portv2-project-tags">
                   <span className="portv2-project-tag">System Design</span>
                   <span className="portv2-project-tag">Architecture</span>
@@ -394,11 +383,17 @@ const PortfolioV2Page = () => {
 
         {/* ================= EDUCATION & CERTIFICATIONS ================= */}
         <section className="portv2-section">
+          <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
+            <span className="portv2-section-label">Qualifications</span>
+            <h2 className="portv2-section-title">Education &amp; <span>Certifications</span></h2>
+            <p className="portv2-section-subtitle">Academic foundation and certifications in Java, AI-assisted development, and the Claude ecosystem.</p>
+          </motion.div>
           <div className="portv2-edu-certs-grid">
             
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
-              <div className="portv2-section-header" style={{ textAlign: 'left', marginBottom: '2.5rem' }}>
-                <h2 className="portv2-section-title">Education</h2>
+              <div className="portv2-credential-heading">
+                <span>Education</span>
+                <p>Academic foundation</p>
               </div>
               <div className="portv2-edu-list">
                 <div className="portv2-edu-card">
@@ -419,8 +414,9 @@ const PortfolioV2Page = () => {
             </motion.div>
 
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade} transition={{ delay: 0.1 }}>
-              <div className="portv2-section-header" style={{ textAlign: 'left', marginBottom: '2.5rem' }}>
-                <h2 className="portv2-section-title">Certifications</h2>
+              <div className="portv2-credential-heading">
+                <span>Certifications</span>
+                <p>Selected professional credentials</p>
               </div>
               <div className="portv2-cert-list">
                 <div className="portv2-cert-card">
