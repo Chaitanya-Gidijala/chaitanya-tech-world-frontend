@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { promptService } from '../services/promptService';
 import './PromptsGalleryPage.css';
@@ -27,19 +27,15 @@ const ITEMS_PER_PAGE = 20;
 
 const PromptsGalleryPage = () => {
   const navigate = useNavigate();
-  const heroRef = useRef(null);
   const [prompts, setPrompts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeModel, setActiveModel] = useState('All');
   const [activeCategory, setActiveCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     fetchPrompts();
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', onScroll, { passive: true });
 
     // SEO updates
     document.title = "Best AI Prompts Gallery | Chaitanya Tech World";
@@ -59,7 +55,6 @@ const PromptsGalleryPage = () => {
     }
     metaKeywords.content = "AI prompts, ChatGPT prompts, Midjourney prompts, Gemini prompts, prompt engineering, free prompts, best prompts";
 
-    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   useEffect(() => { setCurrentPage(1); }, [activeModel, activeCategory]);
@@ -160,7 +155,7 @@ const PromptsGalleryPage = () => {
   return (
     <div className="pg-root">
       {/* ─── HERO ─── */}
-      <section className="pg-hero" ref={heroRef}>
+      <section className="pg-hero">
         <div className="pg-hero-inner">
           <div className="pg-hero-copy">
             <span className="pg-hero-kicker">Image generation prompts</span>
@@ -192,33 +187,6 @@ const PromptsGalleryPage = () => {
           </div>
         </div>
       </section>
-
-      {/* ─── STICKY FILTER BAR (shows when scrolled past hero) ─── */}
-      <div className={`pg-sticky-bar ${scrolled ? 'visible' : ''}`}>
-        <div className="pg-sticky-inner">
-          <span className="pg-sticky-label">Model:</span>
-          <select
-            className="pg-category-select"
-            value={activeModel}
-            onChange={(e) => setActiveModel(e.target.value)}
-          >
-            {availableModels.map(model => (
-              <option key={model} value={model}>{model === 'All' ? 'All Models' : model}</option>
-            ))}
-          </select>
-          <span className="pg-sticky-label" style={{marginLeft: '16px'}}>Type:</span>
-          <select 
-            className="pg-category-select"
-            value={activeCategory}
-            onChange={(e) => setActiveCategory(e.target.value)}
-          >
-            {availableCategories.map(cat => (
-              <option key={cat} value={cat}>{cat === 'All' ? 'All Types' : cat}</option>
-            ))}
-          </select>
-          <span className="pg-sticky-count">{filteredPrompts.length} results</span>
-        </div>
-      </div>
 
       {/* ─── GALLERY ─── */}
       <div className="pg-container">
