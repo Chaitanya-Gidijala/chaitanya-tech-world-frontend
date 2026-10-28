@@ -160,59 +160,28 @@ const PromptsGalleryPage = () => {
     <div className="pg-root">
       {/* ─── HERO ─── */}
       <section className="pg-hero" ref={heroRef}>
-        <div className="pg-hero-noise" />
-        <div className="pg-hero-glow pg-hero-glow--1" />
-        <div className="pg-hero-glow pg-hero-glow--2" />
-        <div className="pg-hero-glow pg-hero-glow--3" />
-
-        {/* Floating orbit rings */}
-        <div className="pg-orbit pg-orbit--1" />
-        <div className="pg-orbit pg-orbit--2" />
-
         <div className="pg-hero-inner">
-          <div className="pg-hero-eyebrow">
-            <span className="pg-eyebrow-dot" />
-            AI Prompt Library
+          <div className="pg-hero-copy">
+            <span className="pg-hero-kicker">AI prompt library</span>
+            <h1 className="pg-hero-title">Prompts for better AI output.</h1>
+            <p className="pg-hero-desc">
+              Browse practical prompts for writing, development, image generation, and more.
+            </p>
           </div>
-
-          <h1 className="pg-hero-title">
-            <span className="pg-title-line-1">Creative</span>
-            <span className="pg-title-line-2">
-              Prompts <em>Gallery</em>
-            </span>
-          </h1>
-
-          <p className="pg-hero-desc">
-            Handpicked prompts for ChatGPT, Gemini, Midjourney &amp; more —<br />
-            copy, paste, and create stunning AI outputs instantly.
-          </p>
-
-          {/* Stat pills */}
-          <div className="pg-hero-pills">
-            <div className="pg-pill">
-              <span className="pg-pill-value">{prompts.length}</span>
-              <span className="pg-pill-label">Prompts</span>
+          <div className="pg-hero-stats" aria-label="Prompt library statistics">
+            <div className="pg-hero-stat">
+              <strong>{prompts.length}</strong>
+              <span>Prompts</span>
             </div>
-            <div className="pg-pill-sep" />
-            <div className="pg-pill">
-              <span className="pg-pill-value">{availableModels.length - 1 || '—'}</span>
-              <span className="pg-pill-label">AI Tools</span>
+            <div className="pg-hero-stat">
+              <strong>{availableModels.length - 1 || '—'}</strong>
+              <span>AI models</span>
             </div>
-            <div className="pg-pill-sep" />
-            <div className="pg-pill">
-              <span className="pg-pill-value pg-pill-value--accent">Free</span>
-              <span className="pg-pill-label">Forever</span>
+            <div className="pg-hero-stat">
+              <strong>{availableCategories.length - 1 || '—'}</strong>
+              <span>Categories</span>
             </div>
           </div>
-
-
-        </div>
-
-        {/* Wave divider */}
-        <div className="pg-hero-wave">
-          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" />
-          </svg>
         </div>
       </section>
 

@@ -977,3 +977,67 @@ html[data-theme='light'] .pg-card-media { background: #f1f5f9; }
   .pg-sticky-chip { padding: 4px 10px; font-size: 0.72rem; }
   .pg-sticky-count { display: none; }
 }
+
+/* ─── Simplified library header ─────────────────────────── */
+.pg-hero {
+  padding: 104px 24px 56px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  isolation: auto;
+}
+html[data-theme='dark'] .pg-hero { background: #111827; border-color: #263244; }
+.pg-hero-inner {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 3rem;
+  max-width: 1160px;
+  text-align: left;
+}
+.pg-hero-copy { max-width: 660px; }
+.pg-hero-kicker {
+  display: inline-flex;
+  margin-bottom: 0.9rem;
+  color: #4f46e5;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.pg-hero-title {
+  display: block;
+  margin: 0;
+  color: #0f172a;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(2.25rem, 4.5vw, 3.65rem);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 1.05;
+}
+html[data-theme='dark'] .pg-hero-title { color: #f8fafc; }
+.pg-hero-desc { max-width: 550px; margin: 1rem 0 0; color: #64748b; font-size: 1rem; line-height: 1.65; }
+html[data-theme='dark'] .pg-hero-desc { color: #a7b4c6; }
+.pg-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(78px, 1fr));
+  min-width: 310px;
+  border: 1px solid #dce3ed;
+  border-radius: 10px;
+  background: #fff;
+}
+html[data-theme='dark'] .pg-hero-stats { border-color: #2a3648; background: #151e2d; }
+.pg-hero-stat { display: grid; gap: 0.18rem; padding: 0.85rem 1rem; text-align: center; }
+.pg-hero-stat + .pg-hero-stat { border-left: 1px solid #e2e8f0; }
+html[data-theme='dark'] .pg-hero-stat + .pg-hero-stat { border-color: #2a3648; }
+.pg-hero-stat strong { color: #111827; font-size: 1.15rem; font-weight: 800; line-height: 1.1; }
+html[data-theme='dark'] .pg-hero-stat strong { color: #f8fafc; }
+.pg-hero-stat span { color: #64748b; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+html[data-theme='dark'] .pg-hero-stat span { color: #94a3b8; }
+
+@media (max-width: 760px) {
+  .pg-hero { padding: 88px 20px 38px; }
+  .pg-hero-inner { align-items: flex-start; flex-direction: column; gap: 1.75rem; }
+  .pg-hero-stats { width: 100%; min-width: 0; }
+  .pg-hero-stat { padding: 0.75rem 0.45rem; }
+  .pg-hero-title { font-size: 2.35rem; }
+}
