@@ -1116,3 +1116,46 @@ html[data-theme='dark'] .pg-gallery-select { color: #e2e8f0; border-color: #3341
   .pg-gallery-toolbar { align-items: flex-start; flex-direction: column; }
   .pg-gallery-filters { width: 100%; }.pg-gallery-select { flex: 1; min-width: 0; }
 }
+
+/* ─── Pagination ───────────────────────────────────────── */
+.pg-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2.75rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid #dce3ed;
+}
+.pg-page-nav, .pg-page-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border: 1px solid #d5dce7;
+  border-radius: 7px;
+  color: #334155;
+  background: #fff;
+  font: 700 0.82rem 'Inter', sans-serif;
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease, color .2s ease, transform .2s ease;
+}
+.pg-page-nav { gap: .42rem; padding: 0 .9rem; }
+.pg-page-number { width: 38px; padding: 0; }
+.pg-page-nav:hover:not(:disabled), .pg-page-number:hover:not(.active) { color: #4f46e5; border-color: #a5b4fc; background: #f5f3ff; }
+.pg-page-nav:active:not(:disabled), .pg-page-number:active { transform: translateY(1px); }
+.pg-page-nav:disabled { color: #a7b1c0; border-color: #e5eaf1; background: #f8fafc; cursor: not-allowed; }
+.pg-page-numbers { display: flex; align-items: center; gap: .35rem; }
+.pg-page-number.active { color: #fff; border-color: #4f46e5; background: #4f46e5; box-shadow: 0 4px 10px rgba(79,70,229,.2); }
+html[data-theme='dark'] .pg-pagination { border-color: #2a3648; }
+html[data-theme='dark'] .pg-page-nav, html[data-theme='dark'] .pg-page-number { color: #dbe4f0; border-color: #334155; background: #172033; }
+html[data-theme='dark'] .pg-page-nav:hover:not(:disabled), html[data-theme='dark'] .pg-page-number:hover:not(.active) { color: #c7d2fe; border-color: #6366f1; background: #202b42; }
+html[data-theme='dark'] .pg-page-nav:disabled { color: #64748b; border-color: #263244; background: #121a28; }
+html[data-theme='dark'] .pg-page-number.active { color: #fff; border-color: #6366f1; background: #6366f1; }
+
+@media (max-width: 520px) {
+  .pg-pagination { gap: .45rem; }
+  .pg-page-nav { padding: 0 .65rem; }
+  .pg-page-numbers { gap: .25rem; }
+  .pg-page-number { width: 34px; min-height: 34px; }
+}

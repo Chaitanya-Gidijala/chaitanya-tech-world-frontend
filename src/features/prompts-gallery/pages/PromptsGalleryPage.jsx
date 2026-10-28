@@ -121,6 +121,13 @@ const PromptsGalleryPage = () => {
     window.scrollTo({ top: offset, behavior: 'smooth' });
   };
 
+  const goToPage = (page) => {
+    if (page === currentPage || page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    const offset = window.innerWidth > 768 ? 400 : 300;
+    window.scrollTo({ top: offset, behavior: 'smooth' });
+  };
+
   if (loading) {
     return (
       <div className="pg-root">
@@ -303,54 +310,28 @@ const PromptsGalleryPage = () => {
               })}
             </div>
 
-            {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="pg-pagination" style={{
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                gap: '16px', 
-                marginTop: '40px',
-                padding: '20px 0'
-              }}>
-                <button 
-                  onClick={handlePrev} 
-                  disabled={currentPage === 1}
-                  style={{
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    background: currentPage === 1 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
-                    color: currentPage === 1 ? '#666' : '#fff',
-                    cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  Previous
+              <nav className="pg-pagination" aria-label="Prompt gallery pagination">
+                <button className="pg-page-nav" onClick={handlePrev} disabled={currentPage === 1}>
+                  <span aria-hidden="true">←</span> Previous
                 </button>
-                
-                <span style={{ color: '#aaa', fontSize: '0.9rem' }}>
-                  Page <strong style={{ color: '#fff' }}>{currentPage}</strong> of {totalPages}
-                </span>
-                
-                <button 
-                  onClick={handleNext} 
-                  disabled={currentPage === totalPages}
-                  style={{
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    background: currentPage === totalPages ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
-                    color: currentPage === totalPages ? '#666' : '#fff',
-                    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  Next
+                <div className="pg-page-numbers">
+                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                    <button
+                      key={page}
+                      className={`pg-page-number ${page === currentPage ? 'active' : ''}`}
+                      onClick={() => goToPage(page)}
+                      aria-label={`Go to page ${page}`}
+                      aria-current={page === currentPage ? 'page' : undefined}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                <button className="pg-page-nav" onClick={handleNext} disabled={currentPage === totalPages}>
+                  Next <span aria-hidden="true">→</span>
                 </button>
-              </div>
+              </nav>
             )}
           </>
         )}
