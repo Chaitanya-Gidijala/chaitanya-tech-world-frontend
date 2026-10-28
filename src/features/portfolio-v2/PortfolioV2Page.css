@@ -435,7 +435,7 @@ html { scroll-behavior: smooth; }
 
 .portv2-section-header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3.5rem;
 }
 
 .portv2-section-label {
@@ -469,25 +469,25 @@ html { scroll-behavior: smooth; }
    SKILLS SECTION
    ========================================= */
 .portv2-skills-categories {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
 }
 
 .portv2-skill-cat {
   background: #161616;
   border: 1px solid #222;
-  border-radius: 14px;
-  padding: 2rem;
-  transition: border-color 0.3s;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: border-color 0.25s, transform 0.25s;
 }
-.portv2-skill-cat:hover { border-color: #f97316; }
+.portv2-skill-cat:hover { border-color: rgba(249,115,22,0.65); transform: translateY(-3px); }
 
 .portv2-skill-cat-header {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.1rem;
 }
 .portv2-skill-cat-icon {
   width: 36px; height: 36px;
@@ -499,24 +499,24 @@ html { scroll-behavior: smooth; }
   justify-content: center;
 }
 .portv2-skill-cat-name {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.98rem;
+  font-weight: 700;
 }
 
 .portv2-skill-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.45rem;
 }
 
 .portv2-skill-tag {
-  background: #1f1f1f;
-  border: 1px solid #2d2d2d;
-  color: #d1d5db;
-  font-size: 0.82rem;
-  font-weight: 500;
-  padding: 0.35rem 0.85rem;
-  border-radius: 20px;
+  background: #1b1b1b;
+  border: 1px solid #2b2b2b;
+  color: #c9c9ce;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.32rem 0.65rem;
+  border-radius: 6px;
   transition: all 0.25s;
   cursor: default;
 }
@@ -524,6 +524,23 @@ html { scroll-behavior: smooth; }
   border-color: #f97316;
   color: #f97316;
   background: rgba(249,115,22,0.06);
+}
+
+.portv2-skills-intro {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 4.5rem 0 1.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid #242424;
+}
+.portv2-skills-intro .portv2-section-label { margin: 0; }
+.portv2-skills-intro h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
 }
 
 /* =========================================
@@ -685,44 +702,55 @@ html { scroll-behavior: smooth; }
    ========================================= */
 .portv2-about-content {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 5rem;
+  grid-template-columns: minmax(270px, 0.75fr) minmax(0, 1.55fr);
+  gap: 4.5rem;
   align-items: center;
 }
 
-.portv2-about-image-wrapper {
-  position: relative;
-  border-radius: 24px;
-  padding: 8px;
-  background: linear-gradient(135deg, rgba(249,115,22,0.3) 0%, rgba(249,115,22,0.05) 100%);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+.portv2-profile-panel {
+  padding: 2rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #1a1a1a 0%, #121212 100%);
 }
-.portv2-about-image-inner {
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  background: #111;
-}
-.portv2-about-img {
-  width: 100%;
-  aspect-ratio: 4/5;
-  object-fit: cover;
+.portv2-profile-panel-label {
   display: block;
-  opacity: 0.9;
-  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  margin-bottom: 1.2rem;
+  color: #f97316;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
-.portv2-about-image-wrapper:hover .portv2-about-img {
-  transform: scale(1.05);
+.portv2-profile-panel h3 {
+  margin: 0;
+  color: #f5f5f5;
+  font-size: 1.7rem;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
 }
-.portv2-about-glow {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120%; height: 120%;
-  background: radial-gradient(circle at center, rgba(249,115,22,0.15) 0%, transparent 60%);
-  z-index: -1;
-  filter: blur(40px);
+.portv2-profile-panel h3 span { color: #f97316; }
+.portv2-profile-panel > p {
+  margin: 1rem 0 1.75rem;
+  color: #a1a1aa;
+  font-size: 0.92rem;
+  line-height: 1.65;
 }
+.portv2-profile-list {
+  display: grid;
+  gap: 0.9rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #2a2a2a;
+}
+.portv2-profile-list div { display: grid; gap: 0.2rem; }
+.portv2-profile-list span {
+  color: #777780;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.portv2-profile-list strong { color: #e4e4e7; font-size: 0.85rem; font-weight: 600; }
 
 .portv2-about-text {
   display: flex;
@@ -1084,6 +1112,7 @@ html { scroll-behavior: smooth; }
   .portv2-role { font-size: 1.25rem; }
   .portv2-services-grid { grid-template-columns: 1fr 1fr; }
   .portv2-portfolio-grid { grid-template-columns: 1fr 1fr; }
+  .portv2-skills-categories { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* =========================================
@@ -1120,6 +1149,7 @@ html { scroll-behavior: smooth; }
   .portv2-image-wrapper { width: 300px; height: 300px; }
   .portv2-services-grid { grid-template-columns: 1fr; }
   .portv2-portfolio-grid { grid-template-columns: 1fr; }
+  .portv2-skills-categories { grid-template-columns: 1fr; }
   .portv2-section { padding: 4rem 0; }
   .portv2-section-title { font-size: 2rem; }
   .portv2-form-row { grid-template-columns: 1fr; }

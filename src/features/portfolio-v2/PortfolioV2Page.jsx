@@ -184,18 +184,22 @@ const PortfolioV2Page = () => {
         {/* ================= ABOUT & SKILLS ================= */}
         <section id="about" className="portv2-section">
           <motion.div className="portv2-section-header" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
-            <span className="portv2-section-label">Discover</span>
+            <span className="portv2-section-label">Professional profile</span>
             <h2 className="portv2-section-title">About <span>Me</span></h2>
-            <p className="portv2-section-subtitle">A brief look at who I am and my core technical competencies.</p>
+            <p className="portv2-section-subtitle">Java backend engineer focused on reliable services, practical performance improvements, and clear engineering outcomes.</p>
           </motion.div>
 
           <div className="portv2-about-content">
-            <motion.div className="portv2-about-image-wrapper" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
-              <div className="portv2-about-glow"></div>
-              <div className="portv2-about-image-inner">
-                <img src="/portfolio-v2-about.png" alt="Tech Abstract" className="portv2-about-img" />
+            <motion.aside className="portv2-profile-panel" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
+              <span className="portv2-profile-panel-label">At a glance</span>
+              <h3>Java Backend<br/><span>Developer</span></h3>
+              <p>Building enterprise-grade APIs and developer-focused tools with Java and Spring Boot.</p>
+              <div className="portv2-profile-list">
+                <div><span>Primary focus</span><strong>Spring Boot microservices</strong></div>
+                <div><span>Industry experience</span><strong>GE Aerospace platform</strong></div>
+                <div><span>Based in</span><strong>Hyderabad, India</strong></div>
               </div>
-            </motion.div>
+            </motion.aside>
             
             <motion.div className="portv2-about-text" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
               <p>
@@ -226,7 +230,11 @@ const PortfolioV2Page = () => {
             </motion.div>
           </div>
 
-          <div className="portv2-skills-categories" style={{ marginTop: '4rem' }}>
+          <div className="portv2-skills-intro">
+            <span className="portv2-section-label">Technical expertise</span>
+            <h3>Core skills</h3>
+          </div>
+          <div className="portv2-skills-categories">
             <motion.div className="portv2-skill-cat" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={scrollFade}>
               <div className="portv2-skill-cat-header">
                 <div className="portv2-skill-cat-icon"><Code size={20}/></div>
