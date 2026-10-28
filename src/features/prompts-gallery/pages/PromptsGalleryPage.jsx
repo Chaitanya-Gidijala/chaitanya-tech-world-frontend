@@ -68,7 +68,8 @@ const PromptsGalleryPage = () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await promptService.getAllPrompts();
+      // Fetch the full gallery once so filters and client-side pagination work across all prompts.
+      const res = await promptService.getAllPrompts(0, 500);
       const payload = res?.data ?? res;
       const promptList = Array.isArray(payload)
         ? payload
@@ -162,11 +163,18 @@ const PromptsGalleryPage = () => {
       <section className="pg-hero" ref={heroRef}>
         <div className="pg-hero-inner">
           <div className="pg-hero-copy">
-            <span className="pg-hero-kicker">AI prompt library</span>
-            <h1 className="pg-hero-title">Prompts for better AI output.</h1>
+            <span className="pg-hero-kicker">Image generation prompts</span>
+            <h1 className="pg-hero-title">Create images with intention.</h1>
             <p className="pg-hero-desc">
-              Browse practical prompts for writing, development, image generation, and more.
+              Explore ready-to-use prompts for portraits, product shots, editorial scenes, and visual storytelling.
             </p>
+          </div>
+          <div className="pg-hero-preview" aria-hidden="true">
+            <div className="pg-preview-glow" />
+            <div className="pg-preview-header"><span>Prompt recipe</span><i /></div>
+            <strong>Describe. Direct. Create.</strong>
+            <div className="pg-preview-lines"><span /><span /><span /></div>
+            <div className="pg-preview-tags"><span>Style</span><span>Lighting</span><span>Composition</span></div>
           </div>
           <div className="pg-hero-stats" aria-label="Prompt library statistics">
             <div className="pg-hero-stat">
@@ -221,6 +229,21 @@ const PromptsGalleryPage = () => {
             <button onClick={fetchPrompts}>Retry</button>
           </div>
         )}
+
+        <div className="pg-gallery-toolbar">
+          <div>
+            <span className="pg-gallery-kicker">Browse the collection</span>
+            <h2>Find your next visual direction</h2>
+          </div>
+          <div className="pg-gallery-filters">
+            <select className="pg-gallery-select" value={activeModel} onChange={(e) => setActiveModel(e.target.value)}>
+              {availableModels.map(model => <option key={model} value={model}>{model === 'All' ? 'All models' : model}</option>)}
+            </select>
+            <select className="pg-gallery-select" value={activeCategory} onChange={(e) => setActiveCategory(e.target.value)}>
+              {availableCategories.map(category => <option key={category} value={category}>{category === 'All' ? 'All categories' : category}</option>)}
+            </select>
+          </div>
+        </div>
 
         {visiblePrompts.length === 0 && !error ? (
           <div className="pg-empty">
