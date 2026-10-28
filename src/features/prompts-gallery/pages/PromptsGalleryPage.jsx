@@ -67,12 +67,25 @@ const PromptsGalleryPage = () => {
   const fetchPrompts = async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await promptService.getAllPrompts();
-      const data = res.data || res;
-      setPrompts(Array.isArray(data) ? data : []);
+      const payload = res?.data ?? res;
+      const promptList = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.content)
+          ? payload.content
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : Array.isArray(payload?.data?.content)
+              ? payload.data.content
+              : [];
+      setPrompts(promptList);
     } catch (err) {
       console.error(err);
-      setError('Failed to load prompts. Please try again.');
+      const message = err?.code === 'ECONNABORTED'
+        ? 'The prompts service is taking too long to respond. Please try again shortly.'
+        : 'Unable to load prompts right now. Please try again shortly.';
+      setError(message);
     } finally {
       setLoading(false);
     }

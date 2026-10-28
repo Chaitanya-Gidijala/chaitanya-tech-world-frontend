@@ -3,6 +3,7 @@ import axios from 'axios';
 import apiConfig from '../../../config/apiConfig';
 
 const PROMPTS_URL = `${apiConfig.API_BASE_URL}/prompts`;
+const REQUEST_TIMEOUT_MS = 15000;
 
 // Helper to get auth header if using JWT
 const getAuthHeaders = () => {
@@ -17,13 +18,14 @@ const getAuthHeaders = () => {
 export const promptService = {
     getAllPrompts: async (page = 0, size = 20) => {
         const response = await axios.get(PROMPTS_URL, {
-            params: { page, size }
+            params: { page, size },
+            timeout: REQUEST_TIMEOUT_MS
         });
         return response.data; // Expecting { success: true, message: "...", data: { content: [...], totalPages: N } } format from backend
     },
     
     getPromptById: async (id) => {
-        const response = await axios.get(`${PROMPTS_URL}/${id}`);
+        const response = await axios.get(`${PROMPTS_URL}/${id}`, { timeout: REQUEST_TIMEOUT_MS });
         return response.data;
     },
     
