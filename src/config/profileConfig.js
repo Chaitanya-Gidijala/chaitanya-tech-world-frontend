@@ -11,7 +11,7 @@ export const profileConfig = {
     },
     socialLinks: {
         linkedin: "https://www.linkedin.com/in/chaitanya-gidijala-660406231/",
-        github: "https://github.com/", // Placeholder from AppFooter
+        github: "https://github.com/chaitanya-gidijala",
         twitter: "https://twitter.com/", // Placeholder from LandingFooter
         instagram: "https://instagram.com/", // Placeholder from LandingFooter
         mail: "mailto:support@chaitanyatechworld.com" // Placeholder

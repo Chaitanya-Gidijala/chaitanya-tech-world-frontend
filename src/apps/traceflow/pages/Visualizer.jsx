@@ -1,381 +1,424 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, ChevronLeft, Lightbulb, TrendingUp, Settings, Activity, ArrowRight, Sun, Moon } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link, Navigate, useParams } from 'react-router-dom';
+import clsx from 'clsx';
+import {
+  BookOpen,
+  ChevronLeft,
+  Code2,
+  History,
+  LayoutGrid,
+  MessageSquareText,
+  Moon,
+  Pause,
+  Play,
+  RotateCcw,
+  SkipBack,
+  SkipForward,
+  SlidersHorizontal,
+  Sun,
+} from 'lucide-react';
 import { getAlgorithm } from '../algorithms/index.js';
-import { createTraceEngine } from '../visualization/traceEngine.js';
 import ArrayRenderer from '../visualization/renderers/ArrayRenderer.jsx';
-import CodeEditor from '../components/CodeEditor.jsx';
 import CustomInputModal from '../components/CustomInputModal.jsx';
+import ExplainPanel from '../components/visualizer/ExplainPanel.jsx';
+import CodePanel from '../components/visualizer/CodePanel.jsx';
+import TraceLog from '../components/visualizer/TraceLog.jsx';
+import LearnPanel from '../components/visualizer/LearnPanel.jsx';
+import Legend from '../components/visualizer/Legend.jsx';
+import { presetsFor } from '../utils/inputPresets.js';
+import { DIFFICULTY_TONE, detailPath } from '../utils/algoMeta.js';
 import './Visualizer.css';
+import '../styles/visualizer-extras.css';
 
-export default function Visualizer({ theme, toggleTheme }) {
-  const { slug } = useParams();
+const TABS = [
+  { id: 'explain', label: 'Explain', icon: MessageSquareText },
+  { id: 'code', label: 'Code', icon: Code2 },
+  { id: 'log', label: 'Trace log', icon: History },
+  { id: 'learn', label: 'Learn', icon: BookOpen },
+];
+
+const BADGE_CLASS = { success: 'success', warning: 'warning', danger: 'error' };
+const MIN_SIDEBAR = 320;
+const MAX_SIDEBAR = 760;
+
+/** Stable keys so each bar keeps its identity (and animates) when values move. */
+function toItems(values) {
+  const counts = {};
+  return values.map((val) => {
+    counts[val] = (counts[val] || 0) + 1;
+    return { id: `item-${val}-${counts[val]}`, val };
+  });
+}
+
+/** Resizable sidebar width (drag the divider). */
+function useResizableSidebar(initial = 420) {
+  const [width, setWidth] = useState(initial);
+  const dragging = useRef(false);
+
+  useEffect(() => {
+    const onMove = (e) => {
+      if (!dragging.current) return;
+      const next = window.innerWidth - e.clientX;
+      if (next >= MIN_SIDEBAR && next <= MAX_SIDEBAR) setWidth(next);
+    };
+    const onUp = () => {
+      dragging.current = false;
+      document.body.style.cursor = '';
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, []);
+
+  const startDrag = () => {
+    dragging.current = true;
+    document.body.style.cursor = 'col-resize';
+  };
+  return [width, startDrag];
+}
+
+/**
+ * Visualizer — full-screen workspace for one algorithm.
+ * Stage + transport on the left; Explain / Code / Trace log / Learn tabs on the right.
+ */
+function VisualizerWorkspace({ slug, theme, toggleTheme }) {
   const algo = getAlgorithm(slug);
 
-  const [engine, setEngine] = useState(null);
-  const [state, setState] = useState(null);
-  const [speed, setSpeed] = useState(500); // ms per step
-  const [inputArray, setInputArray] = useState(algo?.defaultInput || []);
-  const [target, setTarget] = useState(algo?.defaultTarget || null);
+  const [input, setInput] = useState(() => ({ array: algo?.defaultInput ?? [], target: algo?.defaultTarget ?? null }));
+  const [stepIndex, setStepIndex] = useState(0); // 0 = initial array, n = after n-th event
   const [isPlaying, setIsPlaying] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(400);
+  const [speed, setSpeed] = useState(550);
+  const [tab, setTab] = useState('explain');
+  const [beginner, setBeginner] = useState(true);
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
-  
-  const isDragging = React.useRef(false);
+  const [activePreset, setActivePreset] = useState(null);
+  const [sidebarWidth, startDrag] = useResizableSidebar();
 
-  const handleMouseDown = useCallback((e) => {
-    isDragging.current = true;
-    document.body.style.cursor = 'col-resize';
-  }, []);
+  // The full execution trace for the current input; the UI is a cursor over it.
+  const trace = useMemo(() => {
+    if (!algo) return [];
+    return algo.hasTarget ? algo.traceGenerator(input.array, input.target) : algo.traceGenerator(input.array);
+  }, [algo, input]);
 
-  const handleMouseUp = useCallback(() => {
-    isDragging.current = false;
-    document.body.style.cursor = 'default';
-  }, []);
+  const totalSteps = trace.length;
+  const isFinished = stepIndex >= totalSteps;
+  const playing = isPlaying && !isFinished;
 
-  const handleMouseMove = useCallback((e) => {
-    if (!isDragging.current) return;
-    const newWidth = window.innerWidth - e.clientX;
-    if (newWidth > 300 && newWidth < 800) {
-      setSidebarWidth(newWidth);
-    }
-  }, []);
+  const goTo = useCallback((i) => setStepIndex(Math.max(0, Math.min(totalSteps, i))), [totalSteps]);
+  const stepForward = useCallback(() => setStepIndex((s) => Math.min(totalSteps, s + 1)), [totalSteps]);
+  const stepBackward = useCallback(() => setStepIndex((s) => Math.max(0, s - 1)), []);
 
+  // Playback loop — advances one step per tick until the end of the trace.
   useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
-
-  // Initialize engine
-  useEffect(() => {
-    if (!algo) return;
-
-    let trace;
-    if (algo.hasTarget) {
-      trace = algo.traceGenerator(inputArray, target);
-    } else {
-      trace = algo.traceGenerator(inputArray);
-    }
-
-    const newEngine = createTraceEngine(trace, {
-      onStateChange: (newState) => setState(newState),
-    });
-
-    setEngine(newEngine);
-    setState(newEngine.getState());
-    setIsPlaying(false);
-
-    return () => newEngine.destroy();
-  }, [algo, inputArray, target]);
-
-  // Playback loop
-  useEffect(() => {
-    if (!isPlaying || !engine) return;
-
-    if (state?.isFinished) {
-      setIsPlaying(false);
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      engine.stepForward();
-    }, speed);
-
+    if (!playing) return undefined;
+    const timer = setTimeout(stepForward, speed);
     return () => clearTimeout(timer);
-  }, [isPlaying, state, engine, speed]);
+  }, [playing, stepIndex, speed, stepForward]);
 
-  const handlePlayPause = useCallback(() => {
-    if (state?.isFinished) {
-      engine.reset();
+  const togglePlay = useCallback(() => {
+    if (isFinished) {
+      setStepIndex(0);
       setIsPlaying(true);
     } else {
-      setIsPlaying(p => !p);
+      setIsPlaying((p) => !p);
     }
-  }, [engine, state]);
+  }, [isFinished]);
 
-  // Compute derived state above early returns to obey Rules of Hooks
-  const currentEvent = state?.currentEvent;
-  const currentArrayState = currentEvent?.arrayState || inputArray;
+  const pauseAnd = useCallback(
+    (fn) => () => {
+      setIsPlaying(false);
+      fn();
+    },
+    [],
+  );
 
-  const stableArrayState = useMemo(() => {
-    const counts = {};
-    return currentArrayState.map(val => {
-      counts[val] = (counts[val] || 0) + 1;
-      return { id: `item-${val}-${counts[val]}`, val };
-    });
-  }, [currentArrayState]);
+  /** Replace the input and rewind to the start. */
+  const changeInput = (next) => {
+    setIsPlaying(false);
+    setStepIndex(0);
+    setInput(next);
+  };
+
+  // Keyboard shortcuts: Space/K play-pause, ←/→ step, Home reset, End jump to finish.
+  useEffect(() => {
+    const onKey = (e) => {
+      // Don't hijack keys while typing in a field or the code editor.
+      if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"], .monaco-editor')) return;
+      const key = e.key.toLowerCase();
+      if (key === ' ' || key === 'k') {
+        e.preventDefault();
+        togglePlay();
+        return;
+      }
+      const actions = { arrowright: stepForward, arrowleft: stepBackward, home: () => goTo(0), end: () => goTo(totalSteps) };
+      if (actions[key]) {
+        setIsPlaying(false);
+        actions[key]();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [togglePlay, stepForward, stepBackward, goTo, totalSteps]);
+
+  const currentEvent = stepIndex > 0 ? trace[stepIndex - 1] : null;
+  const items = useMemo(() => toItems(currentEvent?.arrayState ?? input.array), [currentEvent, input.array]);
 
   if (!algo) return <Navigate to="/traceflow/catalogue" replace />;
-  if (!state) return null; // Loading
 
-  const { isFinished, progress, stepIndex, totalSteps } = state;
-  const currentMetrics = currentEvent?.metrics || { comparisons: 0, swaps: 0, reads: 0, writes: 0, iterations: 0 };
+  const progress = totalSteps === 0 ? 0 : stepIndex / totalSteps;
+  const metrics = currentEvent?.metrics ?? { comparisons: 0, swaps: 0, reads: 0, writes: 0 };
+  const presets = presetsFor(algo);
+  const tone = DIFFICULTY_TONE[algo.difficulty];
+
+  const applyPreset = (preset) => {
+    const n = Math.max(6, Math.min(12, input.array.length || 8));
+    const next = preset.build(n, algo.requiresSorted);
+    setActivePreset(preset.id);
+    changeInput({ array: next.array, target: next.target ?? input.target });
+  };
 
   return (
     <div className="tf-viz-layout">
-      {/* Top Navbar */}
+      {/* Top bar */}
       <div className="tf-viz-nav">
         <div className="tf-viz-nav__left">
-          <Link to={`/traceflow/algorithm/${algo.slug}`} className="tf-btn tf-btn--icon tf-btn--ghost" title="Back to details">
+          <Link to={detailPath(algo.slug)} className="tf-btn tf-btn--icon tf-btn--ghost" title="Back to details" aria-label="Back to details">
             <ChevronLeft size={20} />
           </Link>
           <div className="tf-viz-nav__title">
             <span className="tf-viz-nav__name">{algo.name}</span>
-            <span className={`tf-badge tf-badge--${algo.difficulty === 'advanced' ? 'error' : algo.difficulty === 'intermediate' ? 'warning' : 'success'}`}>
-              {algo.difficulty}
-            </span>
+            <span className={`tf-badge tf-badge--${BADGE_CLASS[tone]}`}>{algo.difficulty}</span>
+            {algo.hasTarget && <span className="tfv-target">target = {input.target}</span>}
           </div>
         </div>
         <div className="tf-viz-nav__right">
-          <button className="tf-btn tf-btn--icon tf-btn--ghost" onClick={() => setIsInputModalOpen(true)} title="Custom Input Settings">
-            <Settings size={18} />
+          <Link to="/traceflow/catalogue" className="tf-btn tf-btn--icon tf-btn--ghost" title="All algorithms" aria-label="All algorithms">
+            <LayoutGrid size={18} />
+          </Link>
+          <button
+            type="button"
+            className="tf-btn tf-btn--icon tf-btn--ghost"
+            onClick={() => setIsInputModalOpen(true)}
+            title="Custom input"
+            aria-label="Custom input"
+          >
+            <SlidersHorizontal size={18} />
           </button>
           {toggleTheme && (
-            <button className="tf-btn tf-btn--icon tf-btn--ghost" onClick={toggleTheme} title="Toggle Theme">
+            <button type="button" className="tf-btn tf-btn--icon tf-btn--ghost" onClick={toggleTheme} title="Toggle theme" aria-label="Toggle theme">
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
           )}
         </div>
       </div>
 
-      {/* Main Workspace */}
       <div className="tf-viz-workspace">
-        {/* Left Column: Visualizer & Controls */}
+        {/* Left: stage + controls */}
         <div className="tf-viz-main" style={{ width: `calc(100% - ${sidebarWidth}px)` }}>
-          
-          {/* Renderer Area */}
+          <div className="tfv-presets" role="group" aria-label="Input presets">
+            <span className="tfv-presets__label">Input</span>
+            {presets.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={clsx('tfv-chip', activePreset === p.id && 'is-active')}
+                onClick={() => applyPreset(p)}
+              >
+                {p.label}
+              </button>
+            ))}
+            <button type="button" className="tfv-chip" onClick={() => setIsInputModalOpen(true)}>
+              Custom…
+            </button>
+          </div>
+
           <div className="tf-viz-stage">
             {currentEvent?.variables && Object.keys(currentEvent.variables).length > 0 && (
               <div className="tf-viz-variables-overlay">
                 {Object.entries(currentEvent.variables).map(([name, val]) => (
                   <div key={name} className="tf-viz-variable-badge">
                     <span className="tf-viz-variable-name">{name}</span>
-                    <span className="tf-viz-variable-value">{val !== undefined ? val : 'null'}</span>
+                    <span className="tf-viz-variable-value">{val !== undefined ? String(val) : 'null'}</span>
                   </div>
                 ))}
               </div>
             )}
-            
-            <ArrayRenderer 
-              array={stableArrayState} 
-              currentEvent={currentEvent} 
-              maxValue={Math.max(...inputArray, 10)} 
-            />
+            <ArrayRenderer array={items} currentEvent={currentEvent} maxValue={Math.max(...input.array, 10)} />
           </div>
 
-          {/* Controls Panel */}
-          <div className="tf-viz-controls-panel">
-            {/* Progress Bar */}
-            <div className="tf-viz-progress">
-              <div className="tf-viz-progress__track">
-                <div 
-                  className="tf-viz-progress__fill" 
-                  style={{ width: `${progress * 100}%` }}
-                />
+          <div className="tfv-statusbar">
+            <Legend category={algo.category} />
+            <dl className="tfv-metrics">
+              <div>
+                <dt>Comparisons</dt>
+                <dd>{metrics.comparisons}</dd>
               </div>
-              <div className="tf-viz-progress__labels">
-                <span>Step {stepIndex + 1} of {totalSteps}</span>
+              {algo.category === 'sorting' && (
+                <div>
+                  <dt>Swaps</dt>
+                  <dd>{metrics.swaps}</dd>
+                </div>
+              )}
+              <div>
+                <dt>Reads</dt>
+                <dd>{metrics.reads}</dd>
+              </div>
+              <div>
+                <dt>Writes</dt>
+                <dd>{metrics.writes}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div className="tf-viz-controls-panel">
+            <div className="tfv-scrub">
+              <input
+                type="range"
+                min={0}
+                max={totalSteps}
+                value={stepIndex}
+                onChange={(e) => {
+                  setIsPlaying(false);
+                  goTo(Number(e.target.value));
+                }}
+                aria-label="Timeline"
+                style={{ '--p': `${progress * 100}%` }}
+              />
+              <div className="tfv-scrub__labels">
+                <span>
+                  Step {stepIndex} of {totalSteps}
+                </span>
                 <span>{Math.round(progress * 100)}%</span>
               </div>
             </div>
 
-            {/* Transport Controls */}
             <div className="tf-viz-transport">
               <div className="tf-viz-transport__buttons">
-                <button 
-                  className="tf-btn tf-btn--icon tf-btn--secondary" 
-                  onClick={() => { setIsPlaying(false); engine.reset(); }}
+                <button
+                  type="button"
+                  className="tf-btn tf-btn--icon tf-btn--secondary"
+                  onClick={pauseAnd(() => goTo(0))}
                   disabled={stepIndex === 0}
-                  title="Reset"
+                  title="Reset (Home)"
+                  aria-label="Reset"
                 >
                   <RotateCcw size={16} />
                 </button>
-                <button 
-                  className="tf-btn tf-btn--icon tf-btn--secondary" 
-                  onClick={() => { setIsPlaying(false); engine.stepBackward(); }}
+                <button
+                  type="button"
+                  className="tf-btn tf-btn--icon tf-btn--secondary"
+                  onClick={pauseAnd(stepBackward)}
                   disabled={stepIndex === 0}
-                  title="Step Backward"
+                  title="Step back (←)"
+                  aria-label="Step back"
                 >
                   <SkipBack size={16} />
                 </button>
-                <button 
-                  className="tf-btn tf-btn--icon tf-btn--primary tf-btn--lg" 
-                  onClick={handlePlayPause}
-                  title={isPlaying ? "Pause" : "Play"}
+                <button
+                  type="button"
+                  className="tf-btn tf-btn--icon tf-btn--primary tf-btn--lg"
+                  onClick={togglePlay}
+                  title={playing ? 'Pause (Space)' : 'Play (Space)'}
+                  aria-label={playing ? 'Pause' : 'Play'}
                 >
-                  {isPlaying ? <Pause size={20} /> : <Play size={20} style={{marginLeft: 2}} />}
+                  {playing ? <Pause size={20} /> : <Play size={20} style={{ marginLeft: 2 }} />}
                 </button>
-                <button 
-                  className="tf-btn tf-btn--icon tf-btn--secondary" 
-                  onClick={() => { setIsPlaying(false); engine.stepForward(); }}
+                <button
+                  type="button"
+                  className="tf-btn tf-btn--icon tf-btn--secondary"
+                  onClick={pauseAnd(stepForward)}
                   disabled={isFinished}
-                  title="Step Forward"
+                  title="Step forward (→)"
+                  aria-label="Step forward"
                 >
                   <SkipForward size={16} />
                 </button>
               </div>
 
-              {/* Speed Control */}
               <div className="tf-viz-speed">
                 <span className="tf-viz-speed__label">Speed</span>
-                <input 
-                  type="range" 
-                  min="50" max="1500" 
+                <input
+                  type="range"
+                  min="50"
+                  max="1500"
                   step="50"
-                  value={1550 - speed} // Invert for slider (right = faster)
+                  value={1550 - speed}
                   onChange={(e) => setSpeed(1550 - Number(e.target.value))}
                   className="tf-viz-speed__slider"
+                  aria-label="Playback speed"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Resizer Handle */}
-        <div 
-          className="tf-viz-resizer" 
-          onMouseDown={handleMouseDown}
-          title="Drag to resize"
-        />
+        <div className="tf-viz-resizer" onMouseDown={startDrag} title="Drag to resize" aria-hidden="true" />
 
-        {/* Right Column: Code & Explanation */}
-        <div className="tf-viz-sidebar" style={{ width: sidebarWidth }}>
-          
-          {/* Explanation Panel */}
-          <div className="tf-viz-panel tf-viz-explanation">
-            <div className="tf-viz-panel__header">
-              <Lightbulb size={16} className="tf-viz-panel__icon" />
-              <h3>Current Step</h3>
-            </div>
-            <div className="tf-viz-panel__content">
-              {currentEvent ? (
-                <>
-                  <h4 className="tf-explanation-title">{currentEvent.description}</h4>
-                  <p className="tf-explanation-text">{currentEvent.explanation}</p>
-                  {currentEvent.whyText && (
-                    <div className="tf-explanation-why">
-                      <strong>Why?</strong> {currentEvent.whyText}
-                    </div>
-                  )}
-                  {currentEvent.beginnerNote && (
-                    <div className="tf-explanation-note">
-                      <strong>💡 Note:</strong> {currentEvent.beginnerNote}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <p className="tf-text-muted">Press play to start the visualization.</p>
-              )}
-            </div>
+        {/* Right: explanation tabs */}
+        <aside className="tf-viz-sidebar tfv-sidebar" style={{ width: sidebarWidth }}>
+          <div className="tfv-tabs" role="tablist" aria-label="Explanation views">
+            {TABS.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={tab === id}
+                className={clsx('tfv-tab', tab === id && 'is-active')}
+                onClick={() => setTab(id)}
+              >
+                <Icon size={15} aria-hidden="true" />
+                {label}
+              </button>
+            ))}
           </div>
 
-          {/* Code Panel */}
-          <div className="tf-viz-panel tf-viz-code">
-            <div className="tf-viz-panel__header">
-              <TrendingUp size={16} className="tf-viz-panel__icon" />
-              <h3>Implementation</h3>
-            </div>
-            <div className="tf-viz-code-wrapper">
-              <CodeEditor 
-                code={algo.codeLines.join('\n')}
-                activeLine={currentEvent?.codeLine !== undefined ? currentEvent.codeLine + 1 : undefined}
-                readOnly={true}
+          <div className="tfv-tabpanel" role="tabpanel">
+            {tab === 'explain' && (
+              <ExplainPanel event={currentEvent} algo={algo} beginner={beginner} onToggleBeginner={setBeginner} />
+            )}
+            {tab === 'code' && (
+              <CodePanel
+                algo={algo}
                 theme={theme}
-                height={algo.codeLines.length * 24 + 32}
+                activeLine={currentEvent?.codeLine !== undefined ? currentEvent.codeLine + 1 : undefined}
               />
-            </div>
+            )}
+            {tab === 'log' && (
+              <TraceLog
+                events={trace}
+                stepIndex={stepIndex}
+                onJump={(i) => {
+                  setIsPlaying(false);
+                  goTo(i);
+                }}
+              />
+            )}
+            {tab === 'learn' && <LearnPanel algo={algo} />}
           </div>
-
-          {/* Metrics Panel */}
-          <div className="tf-viz-panel tf-viz-metrics">
-            <div className="tf-viz-panel__header">
-              <Activity size={16} className="tf-viz-panel__icon" />
-              <h3>Metrics</h3>
-            </div>
-            <div className="tf-viz-panel__content">
-              <div className="tf-metrics-grid">
-                <div className="tf-metric">
-                  <span className="tf-metric__label">Comparisons</span>
-                  <span className="tf-metric__val">{currentMetrics.comparisons}</span>
-                </div>
-                {algo.category === 'sorting' && (
-                  <div className="tf-metric">
-                    <span className="tf-metric__label">Swaps</span>
-                    <span className="tf-metric__val">{currentMetrics.swaps}</span>
-                  </div>
-                )}
-                <div className="tf-metric">
-                  <span className="tf-metric__label">Array Reads</span>
-                  <span className="tf-metric__val">{currentMetrics.reads}</span>
-                </div>
-                <div className="tf-metric">
-                  <span className="tf-metric__label">Array Writes</span>
-                  <span className="tf-metric__val">{currentMetrics.writes}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Algorithm Info Panel */}
-          <div className="tf-viz-panel tf-viz-algo-info">
-            <div className="tf-viz-panel__header">
-              <Activity size={16} className="tf-viz-panel__icon" />
-              <h3>Algorithm Details</h3>
-            </div>
-            <div className="tf-viz-panel__content">
-              <div className="tf-algo-detail-section">
-                <h4>Definition</h4>
-                <p>{algo.summary}</p>
-              </div>
-              
-              {algo.steps && algo.steps.length > 0 && (
-                <div className="tf-algo-detail-section" style={{ marginTop: '1rem' }}>
-                  <h4>Processing Steps</h4>
-                  <ol className="tf-algo-steps">
-                    {algo.steps.map((step, idx) => (
-                      <li key={idx}>{step}</li>
-                    ))}
-                  </ol>
-                </div>
-              )}
-
-              <div className="tf-algo-detail-section" style={{ marginTop: '1rem' }}>
-                <h4>When to Use</h4>
-                <p>{algo.whenToUse}</p>
-              </div>
-
-              <div className="tf-metrics-grid" style={{ marginTop: '1rem' }}>
-                <div className="tf-metric">
-                  <span className="tf-metric__label">Time Complexity</span>
-                  <span className="tf-metric__val" style={{ color: 'var(--tf-viz-swapping)' }}>{algo.timeComplexity}</span>
-                </div>
-                <div className="tf-metric">
-                  <span className="tf-metric__label">Space Complexity</span>
-                  <span className="tf-metric__val" style={{ color: 'var(--tf-accent)' }}>{algo.spaceComplexity}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+        </aside>
       </div>
 
-      <CustomInputModal 
+      <CustomInputModal
         isOpen={isInputModalOpen}
         onClose={() => setIsInputModalOpen(false)}
-        onApply={(newArray, newTarget) => {
-          setInputArray(newArray);
-          setTarget(newTarget);
+        onApply={(array, target) => {
+          setActivePreset(null);
+          changeInput({ array, target });
         }}
-        initialArray={inputArray}
-        initialTarget={target}
+        initialArray={input.array}
+        initialTarget={input.target}
         hasTarget={algo.hasTarget}
         requiresSorted={algo.requiresSorted}
       />
     </div>
   );
+}
+
+/** Route entry — keyed by slug so switching algorithms starts from a clean state. */
+export default function Visualizer(props) {
+  const { slug } = useParams();
+  return <VisualizerWorkspace key={slug} slug={slug} {...props} />;
 }

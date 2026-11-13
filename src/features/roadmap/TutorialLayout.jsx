@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import RoadmapNavbar from './RoadmapNavbar';
+import SiteHeader from '@/components/site/SiteHeader';
 import LandingFooter from '@/components/layout/LandingFooter';
 import { genAiData } from './data/genAiData';
 import { whatIsGenAiContent } from './data/content/whatIsGenAi';
@@ -108,13 +108,6 @@ const TutorialLayout = () => {
   const { topicId } = useParams();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark');
-
-  const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    document.documentElement.setAttribute('data-theme', next);
-  };
 
   const course = genAiData; // Hardcoded to genAiData for now, but could be dynamic based on a courseId param
   
@@ -152,7 +145,7 @@ const TutorialLayout = () => {
 
   return (
     <div className="cc-tutorial-root">
-      <RoadmapNavbar theme={theme} toggleTheme={toggleTheme} />
+      <SiteHeader />
       
       <div className="cc-tutorial-container">
         {/* Mobile Header / Menu Toggle */}

@@ -1,175 +1,141 @@
-import React from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
-import { Play, ArrowLeft, Terminal, Cpu, Info, CheckCircle2, ChevronRight } from 'lucide-react';
-import { getAlgorithm } from '../algorithms/index.js';
-import CodeEditor from '../components/CodeEditor.jsx';
-import './AlgorithmDetail.css';
+import { Navigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Play } from 'lucide-react';
+import { Badge, Button, Container, Reveal, Section, SectionHeader, useDocumentMeta } from '@/design-system';
+import { useTheme } from '@/hooks/useTheme';
+import PageHero from '@/components/site/PageHero';
+import { getAlgorithm, getAllAlgorithms } from '../algorithms/index.js';
+import { DIFFICULTY_TONE, visualizerPath } from '../utils/algoMeta.js';
+import LearnPanel from '../components/visualizer/LearnPanel.jsx';
+import CodePanel from '../components/visualizer/CodePanel.jsx';
+import AlgoCard from '../components/AlgoCard.jsx';
+import MiniBars from '../components/MiniBars.jsx';
+import PlainEnglish from '../components/PlainEnglish.jsx';
+import WorkedExample from '../components/WorkedExample.jsx';
+import '../styles/traceflow-pages.css';
+import '../styles/visualizer-extras.css';
+import '../styles/algorithm-explainer.css';
 
+/** AlgorithmDetail — /traceflow/algorithm/:slug reference page. */
 export default function AlgorithmDetail() {
   const { slug } = useParams();
   const algo = getAlgorithm(slug);
+  const { theme } = useTheme();
 
-  if (!algo) {
-    return <Navigate to="/traceflow/catalogue" replace />;
-  }
+  useDocumentMeta({
+    title: algo ? `${algo.name} — Traceflow | Chaitanya Tech World` : 'Traceflow',
+    description: algo?.summary,
+  });
+
+  if (!algo) return <Navigate to="/traceflow/catalogue" replace />;
+
+  const related = getAllAlgorithms()
+    .filter((a) => a.category === algo.category && a.slug !== algo.slug)
+    .slice(0, 3);
 
   return (
-    <div className="tf-algo-detail tf-page">
-      {/* Premium Hero Header */}
-      <div className="tf-algo-header">
-        <div className="tf-algo-header__glow"></div>
-        <div className="tf-container">
-          <div className="tf-algo-header__breadcrumbs">
-            <Link to="/traceflow/catalogue">Algorithms</Link>
-            <ChevronRight size={14} />
-            <span className="tf-text-primary">{algo.name}</span>
+    <>
+      <PageHero
+        breadcrumbs={[
+          { label: 'Traceflow', to: '/traceflow' },
+          { label: 'Catalogue', to: '/traceflow/catalogue' },
+          { label: algo.name },
+        ]}
+        meta={
+          <>
+            <Badge tone={DIFFICULTY_TONE[algo.difficulty]}>{algo.difficulty}</Badge>
+            <Badge>{algo.category}</Badge>
+            <Badge tone="accent">{algo.complexity?.average ?? algo.timeComplexity} average</Badge>
+          </>
+        }
+        title={algo.name}
+        description={algo.intuition}
+        actions={
+          <>
+            <Button to={visualizerPath(algo.slug)} size="lg" iconStart={<Play size={15} />}>
+              Open in visualiser
+            </Button>
+            <Button to="/traceflow/catalogue" size="lg" variant="secondary" iconStart={<ArrowLeft size={15} />}>
+              All algorithms
+            </Button>
+          </>
+        }
+        aside={
+          <div className="tfp-detail-thumb">
+            <MiniBars values={algo.defaultInput} />
+            <p>
+              Default input: <code>[{algo.defaultInput.join(', ')}]</code>
+              {algo.hasTarget && (
+                <>
+                  {' '}
+                  · target <code>{algo.defaultTarget}</code>
+                </>
+              )}
+            </p>
           </div>
+        }
+      />
 
-          <div className="tf-algo-header__content">
-            <h1 className="tf-algo-header__title">{algo.name}</h1>
-            <p className="tf-algo-header__summary">{algo.summary}</p>
-            
-            <div className="tf-algo-header__badges">
-              <span className={`tf-badge tf-badge--${algo.difficulty === 'advanced' ? 'error' : algo.difficulty === 'intermediate' ? 'warning' : 'success'}`}>
-                {algo.difficulty}
-              </span>
-              <span className="tf-badge tf-badge--accent">{algo.category}</span>
-              {algo.stable && <span className="tf-badge tf-badge--default">Stable</span>}
-              {algo.inPlace && <span className="tf-badge tf-badge--default">In-place</span>}
+      <Section aria-labelledby="tfp-plain-title">
+        <Container>
+          <div className="tfp-explain-grid">
+            <div>
+              <SectionHeader
+                id="tfp-plain-title"
+                eyebrow="Explained simply"
+                title={
+                  <>
+                    {algo.name}, <span className="ds-gradient-text">in plain English</span>
+                  </>
+                }
+                description="Read it, or press Listen to hear it explained out loud."
+              />
+              <Reveal>
+                <PlainEnglish algo={algo} />
+              </Reveal>
             </div>
-
-            <div className="tf-algo-header__actions">
-              <Link to={`/traceflow/visualizer/${algo.slug}`} className="tf-btn tf-btn--primary tf-btn--lg tf-btn--glow tf-launch-btn">
-                <Play size={18} fill="currentColor" /> Launch Visualizer
-              </Link>
+            <div>
+              <SectionHeader
+                eyebrow="Worked example"
+                title="Watch it step by step"
+                description="A real run on a tiny input — every key move, in words."
+              />
+              <Reveal delay={0.1}>
+                <WorkedExample algo={algo} />
+              </Reveal>
             </div>
           </div>
-        </div>
-      </div>
+        </Container>
+      </Section>
 
-      <div className="tf-container">
-        <div className="tf-algo-detail__grid">
-          {/* Main Content */}
-          <div className="tf-algo-detail__main">
-            <section className="tf-detail-card tf-detail-section tf-animate-slide-up" style={{ animationDelay: '0.1s' }}>
-              <div className="tf-detail-section__header">
-                <div className="tf-icon-box tf-icon-box--blue">
-                  <Info size={20} />
-                </div>
-                <h2>Intuition</h2>
-              </div>
-              <div className="tf-detail-section__body">
-                <p className="tf-detail-text">{algo.intuition}</p>
-              </div>
-            </section>
-
-            <section className="tf-detail-card tf-detail-section tf-animate-slide-up" style={{ animationDelay: '0.15s' }}>
-              <div className="tf-detail-section__header">
-                <div className="tf-icon-box tf-icon-box--green">
-                  <CheckCircle2 size={20} />
-                </div>
-                <h2>When to Use</h2>
-              </div>
-              <div className="tf-detail-section__body">
-                <p className="tf-detail-text">{algo.whenToUse}</p>
-              </div>
-            </section>
-
-            {algo.steps && algo.steps.length > 0 && (
-              <section className="tf-detail-card tf-detail-section tf-animate-slide-up" style={{ animationDelay: '0.25s' }}>
-                <div className="tf-detail-section__header">
-                  <div className="tf-icon-box tf-icon-box--purple">
-                    <Terminal size={20} />
-                  </div>
-                  <h2>Steps to Implement</h2>
-                </div>
-                <div className="tf-detail-section__body">
-                  <ol className="tf-detail-list tf-detail-list--ordered">
-                    {algo.steps.map((step, idx) => (
-                      <li key={idx}>
-                        <span className="tf-step-number">{idx + 1}</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              </section>
-            )}
-
-            {algo.goodPractices && algo.goodPractices.length > 0 && (
-              <section className="tf-detail-card tf-detail-section tf-animate-slide-up" style={{ animationDelay: '0.35s' }}>
-                <div className="tf-detail-section__header">
-                  <div className="tf-icon-box tf-icon-box--orange">
-                    <CheckCircle2 size={20} />
-                  </div>
-                  <h2>Good Practices</h2>
-                </div>
-                <div className="tf-detail-section__body">
-                  <ul className="tf-detail-list tf-detail-list--unordered">
-                    {algo.goodPractices.map((practice, idx) => (
-                      <li key={idx}>{practice}</li>
-                    ))}
-                  </ul>
-                </div>
-              </section>
-            )}
-
-            <section className="tf-detail-card tf-detail-section tf-algo-detail__code-section tf-animate-slide-up" style={{ animationDelay: '0.45s' }}>
-              <div className="tf-detail-section__header">
-                <div className="tf-icon-box tf-icon-box--blue">
-                  <Terminal size={20} />
-                </div>
-                <h2>Implementation (Java)</h2>
-              </div>
-              <div className="tf-algo-detail__code">
-                <CodeEditor
-                  code={algo.codeLines.join('\n')}
-                  readOnly={true}
-                  language="java"
-                  height={algo.codeLines.length * 24 + 32}
-                />
-              </div>
-            </section>
+      <Section bordered compact aria-labelledby="tfp-ref-title">
+        <Container>
+          <SectionHeader id="tfp-ref-title" eyebrow="Reference" title="Complexity, trade-offs and code" />
+          <div className="tfp-detail">
+            <Reveal className="tfp-detail__main">
+              <LearnPanel algo={algo} />
+            </Reveal>
+            <Reveal delay={0.1} className="tfp-detail__side">
+              <h2 className="tfp-detail__side-title">Implementation</h2>
+              <CodePanel algo={algo} theme={theme} />
+            </Reveal>
           </div>
+        </Container>
+      </Section>
 
-          {/* Sidebar */}
-          <div className="tf-algo-detail__sidebar tf-animate-slide-up" style={{ animationDelay: '0.4s' }}>
-            <div className="tf-detail-card tf-sidebar-card">
-              <h3 className="tf-detail-card__title">Complexity</h3>
-              <div className="tf-complexity-list">
-                <div className="tf-complexity-row">
-                  <span>Time Complexity</span>
-                  <span className="tf-complexity-val">{algo.timeComplexity}</span>
-                </div>
-                <div className="tf-complexity-row">
-                  <span>Space Complexity</span>
-                  <span className="tf-complexity-val">{algo.spaceComplexity}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="tf-detail-card tf-sidebar-card">
-              <h3 className="tf-detail-card__title">Tags</h3>
-              <div className="tf-detail-tags">
-                {algo.tags.map(tag => (
-                  <span key={tag} className="tf-tag">{tag}</span>
-                ))}
-              </div>
-            </div>
-
-            {algo.interviewQuestions?.length > 0 && (
-              <div className="tf-detail-card tf-sidebar-card">
-                <h3 className="tf-detail-card__title">Interview prep</h3>
-                <ul className="tf-interview-list">
-                  {algo.interviewQuestions.map((q, i) => (
-                    <li key={i}>{q}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+      {related.length > 0 && (
+        <Section bordered compact aria-labelledby="tfp-related-title">
+          <Container>
+            <SectionHeader id="tfp-related-title" eyebrow="Keep going" title={`More ${algo.category} algorithms`} />
+            <ul className="tfp-grid">
+              {related.map((a) => (
+                <li key={a.slug}>
+                  <AlgoCard algo={a} />
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </Section>
+      )}
+    </>
   );
 }

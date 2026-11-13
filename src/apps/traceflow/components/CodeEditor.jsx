@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import Editor, { useMonaco } from '@monaco-editor/react';
+import React, { useRef, useEffect, useState } from 'react';
+import Editor from '@monaco-editor/react';
 import './CodeEditor.css';
 
 // Suppress harmless Monaco Editor promise cancellation warnings caused by React StrictMode double-mounting
@@ -11,62 +11,65 @@ if (typeof window !== 'undefined') {
   });
 }
 
+/**
+ * Registers the Traceflow editor themes. Passed to <Editor beforeMount> so the
+ * themes exist before the first render (otherwise Monaco falls back to white "vs").
+ */
+function defineThemes(monaco) {
+  monaco.editor.defineTheme('traceflow-dark', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'keyword', foreground: 'b4a3ff' },
+      { token: 'type', foreground: 'ffcb6b' },
+      { token: 'string', foreground: '86efac' },
+      { token: 'number', foreground: 'fca5a5' },
+      { token: 'comment', foreground: '6b7190', fontStyle: 'italic' },
+    ],
+    colors: {
+      'editor.background': '#0d0f1a',
+      'editor.foreground': '#d4d8e8',
+      'editorLineNumber.foreground': '#3d4260',
+      'editorLineNumber.activeForeground': '#aab0c6',
+    },
+  });
+
+  monaco.editor.defineTheme('traceflow-light', {
+    base: 'vs',
+    inherit: true,
+    rules: [
+      { token: 'keyword', foreground: '5b3df5' },
+      { token: 'type', foreground: 'b25e09' },
+      { token: 'string', foreground: '12805c' },
+      { token: 'number', foreground: 'd0302f' },
+      { token: 'comment', foreground: '8a90aa', fontStyle: 'italic' },
+    ],
+    colors: {
+      'editor.background': '#ffffff',
+      'editor.foreground': '#2a2f45',
+      'editorLineNumber.foreground': '#b4b9cc',
+      'editorLineNumber.activeForeground': '#0b0d1a',
+    },
+  });
+}
+
 export default function CodeEditor({ code, activeLine, readOnly = false, language = 'java', height = '100%', theme = 'dark' }) {
-  const monaco = useMonaco();
-  const editorRef = useRef(null);
+  // Kept in state (not a ref) so the highlight effect re-runs once the editor mounts —
+  // otherwise opening the code view mid-run shows no active line.
+  const [instance, setInstance] = useState(null);
   const decorationsRef = useRef([]);
 
-  // Setup custom theme once monaco is loaded
-  useEffect(() => {
-    if (monaco) {
-      monaco.editor.defineTheme('traceflow-dark', {
-        base: 'vs-dark',
-        inherit: true,
-        rules: [
-          { token: 'keyword', foreground: 'c792ea' },
-          { token: 'type', foreground: 'ffcb6b' },
-          { token: 'string', foreground: 'c3e88d' },
-          { token: 'number', foreground: 'f78c6c' },
-          { token: 'comment', foreground: '546e7a', fontStyle: 'italic' },
-        ],
-        colors: {
-          'editor.background': '#0f1115',
-          'editor.foreground': '#a6accd',
-          'editorLineNumber.foreground': '#3a3f58',
-          'editorLineNumber.activeForeground': '#a6accd',
-        }
-      });
-      
-      monaco.editor.defineTheme('traceflow-light', {
-        base: 'vs',
-        inherit: true,
-        rules: [
-          { token: 'keyword', foreground: '895dfa' },
-          { token: 'type', foreground: 'd97706' },
-          { token: 'string', foreground: '10b981' },
-          { token: 'number', foreground: 'ef4444' },
-          { token: 'comment', foreground: '9ca3af', fontStyle: 'italic' },
-        ],
-        colors: {
-          'editor.background': '#ffffff',
-          'editor.foreground': '#374151',
-          'editorLineNumber.foreground': '#9ca3af',
-          'editorLineNumber.activeForeground': '#111827',
-        }
-      });
-    }
-  }, [monaco]);
-
   const handleEditorDidMount = (editor, monaco) => {
-    editorRef.current = editor;
+    setInstance({ editor, monaco });
   };
 
   // Handle active line highlighting
   useEffect(() => {
-    if (!editorRef.current || !monaco) return;
+    if (!instance) return;
+    const { editor, monaco } = instance;
 
     if (activeLine === undefined || activeLine === null) {
-      decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, []);
+      decorationsRef.current = editor.deltaDecorations(decorationsRef.current, []);
       return;
     }
 
@@ -81,9 +84,9 @@ export default function CodeEditor({ code, activeLine, readOnly = false, languag
       }
     ];
 
-    decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, decs);
-    editorRef.current.revealLineInCenterIfOutsideViewport(activeLine);
-  }, [activeLine, monaco]);
+    decorationsRef.current = editor.deltaDecorations(decorationsRef.current, decs);
+    editor.revealLineInCenterIfOutsideViewport(activeLine);
+  }, [activeLine, instance]);
 
   const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
 
@@ -100,12 +103,13 @@ export default function CodeEditor({ code, activeLine, readOnly = false, languag
         language={language}
         value={code}
         theme={theme === 'light' ? 'traceflow-light' : 'traceflow-dark'}
+        beforeMount={defineThemes}
         options={{
           readOnly: readOnly,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
           fontSize: isMobile ? 12 : 14,
-          fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+          fontFamily: '"Geist Mono", "JetBrains Mono", ui-monospace, monospace',
           lineHeight: isMobile ? 20 : 24,
           padding: { top: 16, bottom: 16 },
           scrollbar: {

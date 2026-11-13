@@ -1,104 +1,47 @@
-import React from 'react';
+import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import LandingPage from '@/pages/common/LandingPage';
-import ContactPage from '@/pages/common/ContactPage';
-// import SupportPage from '@/pages/common/SupportPage';
-// import NotFound from '@/pages/NotFound';
+import SiteLayout from '@/layouts/SiteLayout';
+import RouteFallback from './RouteFallback';
 
-// import OurServicesApp from '@/features/our-services';
-// import JobPortalApp from '@/features/job-portal';
-// import ResultsPage from '@/features/job-portal/components/prep/ResultsPage';
-// import AIResumeBuilderApp from '@/features/ai-resume-builder';
-// import LoginPage from '@/features/auth/Login';
-// import SignupPage from '@/features/auth/Signup';
-// import ProfilePage from '@/features/auth/Profile';
-// import OAuth2Callback from '@/features/auth/OAuth2Callback';
-// import OurServices from '@/features/our-services/OurServices';
-// import AdminPortalApp from '@/features/admin-portal';
-// import { isAuthenticated } from '@/features/job-portal/services/authService';
+// Route-level code splitting: each page ships in its own chunk.
+const HomePage = lazy(() => import('@/features/home/HomePage'));
+const ContactPage = lazy(() => import('@/pages/common/ContactPage'));
+const PortfolioPage = lazy(() => import('@/features/portfolio-v2/PortfolioPage'));
+const PromptsApp = lazy(() => import('@/features/prompts-gallery/PromptsApp'));
+const RoadmapHomePage = lazy(() => import('@/features/roadmap/RoadmapHomePage'));
+const RoadmapPage = lazy(() => import('@/features/roadmap/RoadmapPage'));
+const ClaudeCertificationsPage = lazy(() => import('@/features/roadmap/ClaudeCertificationsPage'));
+const ClaudeCertPage = lazy(() => import('@/features/roadmap/ClaudeCertPage'));
+const TraceflowApp = lazy(() => import('@/apps/traceflow/App'));
 
-import PromptsApp from '@/features/prompts-gallery/PromptsApp';
-// import AdminPromptsPage from '@/features/prompts-gallery/pages/AdminPromptsPage';
-import RoadmapPage from '@/features/roadmap/RoadmapPage';
-import RoadmapHomePage from '@/features/roadmap/RoadmapHomePage';
-import ClaudeCertPage from '@/features/roadmap/ClaudeCertPage';
-import ClaudeCertificationsPage from '@/features/roadmap/ClaudeCertificationsPage';
-// import TutorialLayout from '@/features/roadmap/TutorialLayout';
-// import ImageManagerPage from '@/features/image-manager/pages/ImageManagerPage';
-import PortfolioV2Page from '@/features/portfolio-v2/PortfolioV2Page';
+/*
+ * Disabled feature routes (kept for reference — re-enable by importing and adding a <Route>):
+ *   /support-me, /our-services, /services/*, /ai-resume-builder/*, /job-portal/*,
+ *   /AdminPortal/*, /admin/images, /admin-prompts, /login, /signup,
+ *   /oauth2/callback, /profile, /tutorial/:courseId/:topicId?
+ */
 
-import MainLayout from '@/layouts/MainLayout';
-// import JobPortalExamContainer from '@/features/job-portal/components/prep/ExamContainer';
-
-import { TraceflowApp } from '@/apps/traceflow';
-
-// const AuthProtectedRoute = ({ children }) => {
-//   if (!isAuthenticated()) {
-//     return <Navigate to="/login" replace />;
-//   }
-//   return children;
-// };
-
-// const StandaloneExamWrapper = () => <JobPortalExamContainer />;
-
-const AppRoutes = ({ theme, toggleTheme }) => {
-  return (
+const AppRoutes = () => (
+  <Suspense fallback={<RouteFallback />}>
     <Routes>
-      {/* ── STANDALONE ROUTES (No Header/Footer) ── */}
-      {/* <Route path="/job-portal/prep/exam/:testId" element={<StandaloneExamWrapper />} /> */}
-      <Route path="/portfolio" element={<PortfolioV2Page />} />
-      <Route path="/traceflow/*" element={<TraceflowApp />} />
-      <Route path="/roadmap" element={<RoadmapHomePage />} />
-      <Route path="/roadmap/certifications/claude" element={<ClaudeCertificationsPage />} />
-      <Route path="/roadmap/certifications/:certName" element={<ClaudeCertPage />} />
-      <Route path="/roadmap/:tech" element={<RoadmapPage />} />
-      {/* <Route path="/tutorial/:courseId/:topicId?" element={<TutorialLayout />} /> */}
+      {/* ── Standalone (own chrome) ── */}
+      {/* /portfolio is intentionally not linked from any navigation yet. */}
+      <Route path="/portfolio" element={<PortfolioPage />} />
 
-
-      {/* ── STANDARD ROUTES (With MainLayout) ── */}
-      <Route element={<MainLayout theme={theme} onToggleTheme={toggleTheme} />}>
-        <Route path="/" element={<LandingPage theme={theme} toggleTheme={toggleTheme} />} />
-        <Route path="/contact" element={<ContactPage />} />
-        {/* <Route path="/support-me" element={<SupportPage />} /> */}
-        {/* <Route path="/our-services" element={<OurServices />} /> */}
-        {/* <Route path="/services/*" element={<OurServicesApp />} /> */}
-        {/* <Route path="/ai-resume-builder/*" element={<AIResumeBuilderApp />} /> */}
-        {/* <Route path="/job-portal/prep/results" element={<ResultsPage />} /> */}
-        {/* <Route path="/job-portal/*" element={<JobPortalApp />} /> */}
-        {/* <Route path="/AdminPortal/*" element={<AdminPortalApp />} /> */}
+      {/* ── Site pages (SiteHeader + SiteFooter) ── */}
+      <Route element={<SiteLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/roadmap" element={<RoadmapHomePage />} />
+        <Route path="/roadmap/certifications/claude" element={<ClaudeCertificationsPage />} />
+        <Route path="/roadmap/certifications/:certName" element={<ClaudeCertPage />} />
+        <Route path="/roadmap/:tech" element={<RoadmapPage />} />
         <Route path="/prompts/*" element={<PromptsApp />} />
-        {/* <Route
-          path="/admin/images"
-          element={
-            <AuthProtectedRoute>
-              <ImageManagerPage />
-            </AuthProtectedRoute>
-          }
-        /> */}
-        {/* <Route
-          path="/admin-prompts"
-          element={
-            <AuthProtectedRoute>
-              <AdminPromptsPage />
-            </AuthProtectedRoute>
-          }
-        /> */}
-        {/* <Route path="/login" element={<LoginPage />} /> */}
-        {/* <Route path="/signup" element={<SignupPage />} /> */}
-        {/* <Route path="/oauth2/callback" element={<OAuth2Callback />} /> */}
-        {/* <Route
-          path="/profile"
-          element={
-            <AuthProtectedRoute>
-              <ProfilePage />
-            </AuthProtectedRoute>
-          }
-        /> */}
-        {/* <Route path="*" element={<NotFound />} /> */}
+        <Route path="/traceflow/*" element={<TraceflowApp />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Route>
     </Routes>
-  );
-};
+  </Suspense>
+);
 
 export default AppRoutes;

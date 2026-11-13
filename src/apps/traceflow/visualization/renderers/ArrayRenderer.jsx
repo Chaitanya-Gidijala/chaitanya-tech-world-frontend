@@ -1,117 +1,94 @@
-import React from 'react';
-import { EventType } from '../../algorithms/types.js';
+import clsx from 'clsx';
+// eslint-disable-next-line no-unused-vars -- `motion.*` is used as JSX member expressions.
 import { motion } from 'framer-motion';
+import { EventType } from '../../algorithms/types.js';
 import './ArrayRenderer.css';
 
+// Variable names rendered as pointer tags under the bars.
+const POINTER_KEYS = new Set([
+  'i', 'j', 'k', 'minIdx', 'low', 'mid', 'high', 'left', 'right',
+  'start', 'end', 'pos', 'mid1', 'mid2', 'prev', 'bound', 'root', 'largest',
+]);
+
+const ACTIVE_STATE = {
+  [EventType.COMPARE]: 'comparing',
+  [EventType.SWAP]: 'swapping',
+  [EventType.SHIFT]: 'swapping',
+  [EventType.SELECT]: 'selected',
+  [EventType.INSERT]: 'selected',
+  [EventType.POINTER_MOVE]: 'pointer',
+  [EventType.MARK_FOUND]: 'found',
+};
+
+/** Visual state of the bar at `index` for the current trace event. */
+function stateFor(index, event) {
+  if (!event) return 'default';
+  const { type, indices = [], sortedIndices = [], discarded = [], foundIndex } = event;
+  if (foundIndex === index) return 'found';
+  if (discarded.includes(index)) return 'discarded';
+  if (sortedIndices.includes(index)) {
+    return type === EventType.MARK_SORTED && indices.includes(index) ? 'sorted-new' : 'sorted';
+  }
+  if (indices.includes(index)) return ACTIVE_STATE[type] ?? 'active';
+  return 'default';
+}
+
+/** Pointer variables (i, j, low, mid…) that currently point at `index`. */
+function pointersFor(index, event) {
+  if (!event?.variables) return [];
+  return Object.entries(event.variables)
+    .filter(([key, val]) => POINTER_KEYS.has(key) && val === index)
+    .map(([key]) => key);
+}
+
 /**
- * Renders an array of numbers as a bar chart.
- * 
- * @param {object} props
- * @param {object[]} props.array - Current state of the array as objects {id, val}
- * @param {import('../../algorithms/types.js').TraceEvent} props.currentEvent - The current event from the trace
- * @param {number} props.maxValue - Maximum possible value in the array for scaling
+ * Height of a bar as a percentage of the slot. Uses log scaling when one value
+ * dwarfs the rest so small bars stay visible.
+ */
+function heightPercent(value, maxValue, logScale) {
+  const v = Math.abs(value);
+  const ratio = logScale ? Math.log1p(v) / Math.log1p(maxValue) : v / Math.max(1, maxValue);
+  return Math.max(4, ratio * 100);
+}
+
+/**
+ * ArrayRenderer — the array as an animated bar chart.
+ *
+ * @param {{id: string, val: number}[]} array  current values with stable ids (for swap animations)
+ * @param {object} currentEvent                current trace event (drives colours and pointers)
+ * @param {number} maxValue                    largest value, for scaling
  */
 export default function ArrayRenderer({ array, currentEvent, maxValue = 100 }) {
   if (!array || array.length === 0) return null;
 
-  // Determine the state of each element based on the current event
-  const getElementState = (index) => {
-    if (!currentEvent) return 'default';
-
-    const { type, indices, sortedIndices, discarded } = currentEvent;
-
-    // Discarded (e.g., binary search halves)
-    if (discarded && discarded.includes(index)) return 'discarded';
-
-    // Sorted items (green)
-    if (sortedIndices && sortedIndices.includes(index)) {
-      // Flash success if it was just marked sorted in this event
-      if (type === EventType.MARK_SORTED && indices.includes(index)) {
-        return 'sorted-new';
-      }
-      return 'sorted';
-    }
-
-    // Active indices for the current event
-    if (indices && indices.includes(index)) {
-      switch (type) {
-        case EventType.COMPARE: return 'comparing';
-        case EventType.SWAP: return 'swapping';
-        case EventType.SELECT: return 'selected';
-        case EventType.POINTER_MOVE: return 'pointer';
-        case EventType.MARK_FOUND: return 'found';
-        case EventType.SHIFT: return 'swapping'; // Use swapping style for moving data
-        case EventType.INSERT: return 'selected';
-        default: return 'active';
-      }
-    }
-
-    return 'default';
-  };
-
-  // Determine pointer labels (e.g., i, j, min, low, mid, high)
-  const getPointers = (index) => {
-    if (!currentEvent || !currentEvent.variables) return [];
-    const pointers = [];
-    Object.entries(currentEvent.variables).forEach(([key, val]) => {
-      // Only show standard index pointers, not array values or temp variables
-      if (['i', 'j', 'minIdx', 'low', 'mid', 'high', 'left', 'right', 'k'].includes(key) && val === index) {
-        pointers.push(key);
-      }
-    });
-    return pointers;
-  };
-
-  const totalVal = array.reduce((acc, curr) => acc + Math.abs(curr.val), 0);
-  const mean = totalVal / array.length;
-  // If the max value is heavily skewed compared to the average, use logarithmic scaling
-  // to prevent the smaller bars from becoming completely flat.
-  const hasExtremeOutlier = maxValue > mean * 3 && maxValue > 100;
-  const maxLog = Math.log1p(maxValue);
+  const mean = array.reduce((sum, item) => sum + Math.abs(item.val), 0) / array.length;
+  const logScale = maxValue > mean * 3 && maxValue > 100;
+  const density = array.length > 14 ? 'dense' : array.length > 9 ? 'medium' : 'roomy';
 
   return (
-    <div className="tf-array-renderer">
+    <div className={clsx('tf-array-renderer', `tf-array-renderer--${density}`)}>
       <div className="tf-array-bars">
         {array.map((item, idx) => {
-          const state = getElementState(idx);
-          const pointers = getPointers(idx);
-          
-          let heightPercent;
-          if (hasExtremeOutlier) {
-            const valLog = Math.log1p(Math.abs(item.val));
-            heightPercent = Math.max((valLog / maxLog) * 100, 5);
-          } else {
-            heightPercent = Math.max((Math.abs(item.val) / Math.max(1, maxValue)) * 100, 5);
-          }
-
-          const barStyle = { 
-            height: `${heightPercent}%`,
-          };
-
+          const state = stateFor(idx, currentEvent);
+          const pointers = pointersFor(idx, currentEvent);
           return (
-            <motion.div 
+            <motion.div
               layout
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              key={item.id} 
-              className={`tf-array-bar-container tf-array-bar--${state}`}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              key={item.id}
+              className={`tf-bar tf-bar--${state}`}
             >
-              {/* Value label */}
-              <div className="tf-array-bar__val">{item.val}</div>
-              
-              {/* Bar */}
-              <div 
-                className="tf-array-bar__fill" 
-                style={barStyle}
-              >
+              <div className="tf-bar__slot">
+                <div className="tf-bar__fill" style={{ height: `${heightPercent(item.val, maxValue, logScale)}%` }}>
+                  <span className="tf-bar__val">{item.val}</span>
+                </div>
               </div>
-              
-              {/* Index label */}
-              <div className="tf-array-bar__idx">{idx}</div>
-
-              {/* Pointer arrows */}
-              <div className="tf-array-bar__pointers">
-                {pointers.map(p => (
-                  <div key={p} className={`tf-pointer-label tf-pointer-label--${p}`}>{p}</div>
+              <span className="tf-bar__idx">{idx}</span>
+              <div className="tf-bar__ptrs">
+                {pointers.slice(0, 2).map((p) => (
+                  <span key={p} className={`tf-pointer-label tf-pointer-label--${p}`}>
+                    {p}
+                  </span>
                 ))}
               </div>
             </motion.div>

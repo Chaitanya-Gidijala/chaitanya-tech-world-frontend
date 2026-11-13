@@ -1,183 +1,262 @@
 /* ============================================================
-   TRACEFLOW — ARRAY RENDERER
+   TRACEFLOW — ARRAY RENDERER (bar chart)
+
+   Each bar is a column:  slot (flexible, holds the fill) → index → pointer tags.
+   Only the slot grows, so bar heights stay proportional at any stage size;
+   the index and pointer rows have fixed heights and never steal space unevenly.
    ============================================================ */
 
 [data-tf] .tf-array-renderer {
+  --bar-gap: clamp(6px, 1.4vw, 16px);
+  --bar-max: 76px;
+  --val-size: clamp(0.8rem, 0.6rem + 0.6vw, 1.05rem);
+  display: flex !important;
   width: 100% !important;
   height: 100% !important;
-  flex: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: var(--tf-space-8) var(--tf-space-4) !important;
+  padding: clamp(12px, 3vh, 32px) clamp(12px, 3vw, 40px) clamp(8px, 1.5vh, 16px) !important;
+}
+
+[data-tf] .tf-array-renderer--medium {
+  --bar-max: 60px;
+  --val-size: clamp(0.72rem, 0.55rem + 0.5vw, 0.95rem);
+}
+
+[data-tf] .tf-array-renderer--dense {
+  --bar-gap: clamp(3px, 0.8vw, 8px);
+  --bar-max: 44px;
+  --val-size: clamp(0.62rem, 0.5rem + 0.35vw, 0.8rem);
 }
 
 [data-tf] .tf-array-bars {
   position: relative !important;
   display: flex !important;
-  align-items: flex-end !important; /* Align everything to the bottom of the stage */
+  align-items: stretch !important;
   justify-content: center !important;
-  gap: var(--tf-space-4) !important;
-  height: 65% !important;
+  gap: var(--bar-gap) !important;
   width: 100% !important;
-  max-width: 800px !important;
-  padding-bottom: 2px !important;
-}
-
-
-
-[data-tf] .tf-array-bar-container {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: flex-end !important; /* Stack from bottom to top */
-  flex: 1 !important;
-  max-width: 64px !important;
+  max-width: 960px !important;
   height: 100% !important;
-  z-index: 1 !important;
+  margin: 0 auto !important;
 }
 
-[data-tf] .tf-array-bar__val {
-  font-family: var(--tf-font-mono) !important;
-  font-weight: 700 !important;
-  font-size: var(--tf-text-base) !important;
-  color: var(--tf-text-primary) !important;
-  text-align: center !important;
-  margin-bottom: var(--tf-space-3) !important;
-  transition: color var(--tf-duration) !important;
-}
+/* ── One bar ─────────────────────────────────────────────── */
 
-[data-tf] .tf-array-bar__fill {
-  width: 100% !important;
-  border-radius: var(--tf-radius-md) var(--tf-radius-md) 0 0 !important;
-  transition: height var(--tf-duration) var(--tf-ease-spring),
-              background var(--tf-duration) var(--tf-ease),
-              border-color var(--tf-duration) var(--tf-ease),
-              box-shadow var(--tf-duration) var(--tf-ease),
-              transform var(--tf-duration-fast) !important;
-  min-height: 8px !important;
-}
-
-[data-tf] .tf-array-bar__idx {
-  font-family: var(--tf-font-mono) !important;
-  font-weight: 500 !important;
-  font-size: var(--tf-text-sm) !important;
-  color: var(--tf-text-muted) !important;
-  text-align: center !important;
-  margin-top: var(--tf-space-3) !important;
-}
-
-/* Base Bar States (Applied to Container) */
-[data-tf-theme="dark"] .tf-array-bar-container .tf-array-bar__fill {
-  background: var(--tf-accent) !important;
-  border: none !important;
-  box-shadow: 0 -4px 16px rgba(0, 229, 160, 0.2) !important;
-}
-
-[data-tf-theme="light"] .tf-array-bar-container .tf-array-bar__fill {
-  background: var(--tf-accent) !important;
-  border: none !important;
-  box-shadow: 0 -4px 16px rgba(0, 229, 160, 0.4) !important;
-}
-
-[data-tf] .tf-array-bar--comparing .tf-array-bar__fill {
-  background: var(--tf-viz-comparing) !important;
-  border-color: transparent !important;
-  box-shadow: 0 0 24px rgba(245,158,11,0.5) !important;
-  z-index: 2 !important;
-}
-[data-tf] .tf-array-bar--swapping .tf-array-bar__fill {
-  background: var(--tf-viz-swapping) !important;
-  border-color: transparent !important;
-  box-shadow: 0 0 24px rgba(239,68,68,0.5) !important;
-  z-index: 2 !important;
-  transform: scale(1.05) !important;
-}
-[data-tf] .tf-array-bar--selected .tf-array-bar__fill {
-  background: var(--tf-viz-swapping) !important;
-  border-color: transparent !important;
-  box-shadow: 0 0 20px rgba(239,68,68,0.3) !important;
-}
-[data-tf] .tf-array-bar--sorted .tf-array-bar__fill,
-[data-tf] .tf-array-bar--sorted-new .tf-array-bar__fill {
-  background: var(--tf-viz-sorted) !important;
-  border-color: transparent !important;
-}
-[data-tf] .tf-array-bar--sorted-new .tf-array-bar__fill {
-  box-shadow: 0 0 30px rgba(0,229,160,0.6) !important;
-  animation: tf-glow-pulse 1s ease-out !important;
-}
-[data-tf] .tf-array-bar--found .tf-array-bar__fill {
-  background: var(--tf-viz-sorted) !important;
-  border-color: transparent !important;
-  box-shadow: 0 0 40px rgba(0,229,160,0.8) !important;
-  transform: scale(1.1) !important;
-  z-index: 5 !important;
-}
-[data-tf] .tf-array-bar--discarded .tf-array-bar__fill {
-  background: var(--tf-surface-3) !important;
-  border-color: transparent !important;
-  opacity: 0.3 !important;
-}
-[data-tf] .tf-array-bar--pointer .tf-array-bar__fill {
-  background: var(--tf-viz-comparing) !important;
-}
-
-/* Value text color states */
-[data-tf] .tf-array-bar--comparing .tf-array-bar__val { color: var(--tf-viz-comparing) !important; }
-[data-tf] .tf-array-bar--swapping .tf-array-bar__val { color: var(--tf-viz-swapping) !important; }
-[data-tf] .tf-array-bar--sorted .tf-array-bar__val { color: var(--tf-viz-sorted) !important; }
-
-/* Pointers */
-[data-tf] .tf-array-bar__pointers {
+[data-tf] .tf-bar {
   display: flex !important;
+  flex: 1 1 0 !important;
   flex-direction: column !important;
   align-items: center !important;
-  gap: 4px !important;
-  margin-top: var(--tf-space-3) !important;
-  min-height: 24px !important; /* Ensure space exists even when empty so layout doesn't jump */
+  min-width: 0 !important;
+  max-width: var(--bar-max) !important;
+  height: 100% !important;
 }
+
+/* Full-height track: a faint column showing the scale, with the fill at the bottom */
+[data-tf] .tf-bar__slot {
+  position: relative !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  padding-top: calc(var(--val-size) * 1.9) !important;
+  border-bottom: 2px solid var(--tf-border) !important;
+}
+
+[data-tf] .tf-bar__slot::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--val-size) * 1.9) 0 0;
+  border-radius: 10px 10px 0 0;
+  background: var(--tf-viz-default);
+  opacity: 0.55;
+}
+
+[data-tf] .tf-bar__fill {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 6px !important;
+  border-radius: 10px 10px 3px 3px !important;
+  background: linear-gradient(180deg, var(--ds-accent-hover), var(--ds-accent)) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  transition:
+    height 420ms var(--tf-ease-spring),
+    background 200ms var(--tf-ease),
+    box-shadow 200ms var(--tf-ease),
+    transform 160ms var(--tf-ease) !important;
+}
+
+[data-tf] .tf-bar__val {
+  position: absolute !important;
+  bottom: 100% !important;
+  left: 50% !important;
+  margin-bottom: 6px !important;
+  transform: translateX(-50%) !important;
+  color: var(--tf-text-primary) !important;
+  font-family: var(--tf-font-mono) !important;
+  font-size: var(--val-size) !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transition: color 200ms var(--tf-ease) !important;
+}
+
+[data-tf] .tf-bar__idx {
+  flex-shrink: 0 !important;
+  height: 22px !important;
+  padding-top: 6px !important;
+  color: var(--tf-text-muted) !important;
+  font-family: var(--tf-font-mono) !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+[data-tf] .tf-bar__ptrs {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-shrink: 0 !important;
+  align-items: center !important;
+  gap: 3px !important;
+  height: 42px !important;
+}
+
+/* ── States ──────────────────────────────────────────────── */
+
+[data-tf] .tf-bar--comparing .tf-bar__fill {
+  background: var(--tf-viz-comparing) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tf-viz-comparing) 25%, transparent), 0 10px 30px -8px var(--tf-viz-comparing) !important;
+}
+
+[data-tf] .tf-bar--swapping .tf-bar__fill {
+  background: var(--tf-viz-swapping) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tf-viz-swapping) 25%, transparent), 0 10px 30px -8px var(--tf-viz-swapping) !important;
+  transform: translateY(-4px) !important;
+}
+
+[data-tf] .tf-bar--selected .tf-bar__fill,
+[data-tf] .tf-bar--pointer .tf-bar__fill,
+[data-tf] .tf-bar--active .tf-bar__fill {
+  background: var(--tf-viz-selected) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tf-viz-selected) 22%, transparent) !important;
+}
+
+[data-tf] .tf-bar--sorted .tf-bar__fill,
+[data-tf] .tf-bar--sorted-new .tf-bar__fill {
+  background: var(--tf-viz-sorted) !important;
+}
+
+[data-tf] .tf-bar--sorted-new .tf-bar__fill {
+  animation: tf-bar-settle 600ms var(--tf-ease) !important;
+}
+
+[data-tf] .tf-bar--found .tf-bar__fill {
+  background: var(--tf-viz-sorted) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--tf-viz-sorted) 30%, transparent), 0 14px 36px -8px var(--tf-viz-sorted) !important;
+  transform: translateY(-6px) !important;
+}
+
+[data-tf] .tf-bar--discarded .tf-bar__fill {
+  background: var(--tf-border-hover) !important;
+  box-shadow: none !important;
+  opacity: 0.35 !important;
+}
+
+[data-tf] .tf-bar--discarded .tf-bar__val,
+[data-tf] .tf-bar--discarded .tf-bar__idx {
+  opacity: 0.4 !important;
+}
+
+[data-tf] .tf-bar--comparing .tf-bar__val { color: var(--tf-viz-comparing) !important; }
+[data-tf] .tf-bar--swapping .tf-bar__val { color: var(--tf-viz-swapping) !important; }
+[data-tf] .tf-bar--selected .tf-bar__val,
+[data-tf] .tf-bar--pointer .tf-bar__val { color: var(--tf-viz-selected) !important; }
+[data-tf] .tf-bar--sorted .tf-bar__val,
+[data-tf] .tf-bar--sorted-new .tf-bar__val,
+[data-tf] .tf-bar--found .tf-bar__val { color: var(--tf-viz-sorted) !important; }
+
+[data-tf] .tf-bar--comparing .tf-bar__idx,
+[data-tf] .tf-bar--swapping .tf-bar__idx,
+[data-tf] .tf-bar--found .tf-bar__idx {
+  color: var(--tf-text-primary) !important;
+  font-weight: 700 !important;
+}
+
+@keyframes tf-bar-settle {
+  0% { transform: translateY(-8px); }
+  60% { transform: translateY(2px); }
+  100% { transform: none; }
+}
+
+/* ── Pointer tags ────────────────────────────────────────── */
 
 [data-tf] .tf-pointer-label {
-  font-size: 11px !important;
-  font-family: var(--tf-font-mono) !important;
-  font-weight: 700 !important;
   padding: 2px 6px !important;
-  border-radius: 4px !important;
+  border-radius: 5px !important;
   background: var(--tf-surface-elevated) !important;
   color: var(--tf-text-primary) !important;
-  border: 1px solid var(--tf-border) !important;
-  box-shadow: var(--tf-shadow-sm) !important;
+  font-family: var(--tf-font-mono) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
   white-space: nowrap !important;
   animation: tf-fade-up var(--tf-duration-fast) !important;
 }
 
-/* Specific Pointers */
 [data-tf] .tf-pointer-label--minIdx,
 [data-tf] .tf-pointer-label--i,
-[data-tf] .tf-pointer-label--j { 
-  background: var(--tf-viz-comparing) !important; 
-  color: #000 !important; 
-  border-color: transparent !important;
+[data-tf] .tf-pointer-label--j {
+  background: var(--tf-viz-comparing) !important;
+  color: #1a1206 !important;
 }
 
 [data-tf] .tf-pointer-label--left,
 [data-tf] .tf-pointer-label--right,
 [data-tf] .tf-pointer-label--low,
-[data-tf] .tf-pointer-label--high {
+[data-tf] .tf-pointer-label--high,
+[data-tf] .tf-pointer-label--start,
+[data-tf] .tf-pointer-label--end,
+[data-tf] .tf-pointer-label--prev,
+[data-tf] .tf-pointer-label--bound {
   background: var(--tf-accent) !important;
-  color: #000 !important;
-  border-color: transparent !important;
+  color: var(--tf-on-accent) !important;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  [data-tf] .tf-array-bar__val { font-size: var(--tf-text-xs) !important; margin-bottom: 4px !important; }
-  [data-tf] .tf-array-bar__idx { font-size: 10px !important; margin-top: 4px !important; }
-  [data-tf] .tf-pointer-label { font-size: 8px !important; padding: 1px 4px !important; }
-  [data-tf] .tf-array-bars { 
-    gap: 4px !important; 
-    height: 250px !important; 
-    margin-top: var(--tf-space-6) !important; 
+[data-tf] .tf-pointer-label--mid,
+[data-tf] .tf-pointer-label--mid1,
+[data-tf] .tf-pointer-label--mid2,
+[data-tf] .tf-pointer-label--pos {
+  background: var(--tf-info) !important;
+  color: #fff !important;
+}
+
+[data-tf] .tf-pointer-label--root,
+[data-tf] .tf-pointer-label--largest,
+[data-tf] .tf-pointer-label--k {
+  background: var(--tf-warning) !important;
+  color: #1a1206 !important;
+}
+
+/* ── Small screens ───────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  [data-tf] .tf-array-renderer {
+    min-height: 260px !important;
+  }
+  [data-tf] .tf-bar__slot::before {
+    border-radius: 6px 6px 0 0;
+  }
+  [data-tf] .tf-bar__fill {
+    border-radius: 6px 6px 2px 2px !important;
+  }
+  [data-tf] .tf-pointer-label {
+    padding: 1px 4px !important;
+    font-size: 9px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tf] .tf-bar__fill {
+    transition: none !important;
+    animation: none !important;
   }
 }

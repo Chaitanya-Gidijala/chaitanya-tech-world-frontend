@@ -15,6 +15,25 @@ const getAuthHeaders = () => {
     };
 };
 
+/**
+ * Unwraps the various response envelopes the backend has used
+ * (`[]`, `{ data: [] }`, `{ content: [] }`, `{ data: { content: [] } }`).
+ */
+export function normalizePromptList(res) {
+    const payload = res?.data ?? res;
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload?.content)) return payload.content;
+    if (Array.isArray(payload?.data)) return payload.data;
+    if (Array.isArray(payload?.data?.content)) return payload.data.content;
+    return [];
+}
+
+/** Unwraps a single prompt from `{ data: {...} }` or a bare object. */
+export function normalizePrompt(res) {
+    if (!res) return null;
+    return res.data && typeof res.data === 'object' && !Array.isArray(res.data) ? res.data : res;
+}
+
 export const promptService = {
     getAllPrompts: async (page = 0, size = 20) => {
         const response = await axios.get(PROMPTS_URL, {

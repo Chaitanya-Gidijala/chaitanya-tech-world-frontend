@@ -1,429 +1,214 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, Play, BookOpen, Filter, X, ArrowRight, TrendingUp, SlidersHorizontal,
-  ChevronRight, ChevronDown, List as ListIcon, Grid as GridIcon, Lock, CheckCircle2,
-  GitBranch, Box, Code2, Blocks, Cpu
-} from 'lucide-react';
-import { 
-  getAllAlgorithms, CATEGORIES, TOPIC_GROUPS, SYSTEM_DESIGN_GROUPS, SYSTEM_DESIGN_TOPICS 
-} from '../algorithms/index.js';
-import './Catalogue.css';
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import clsx from 'clsx';
+import { LayoutGrid, Rows3, Search } from 'lucide-react';
+import {
+  Button,
+  Container,
+  EmptyState,
+  Reveal,
+  Section,
+  SelectField,
+  TextField,
+  useDocumentMeta,
+} from '@/design-system';
+import PageHero from '@/components/site/PageHero';
+import { CATEGORIES, COMING_NEXT, getAllAlgorithms } from '../algorithms/index.js';
+import { DIFFICULTY_ORDER, complexityRank } from '../utils/algoMeta.js';
+import AlgoCard from '../components/AlgoCard.jsx';
+import ComplexityTable from '../components/ComplexityTable.jsx';
+import '../styles/traceflow-pages.css';
 
-const difficultyColor = { beginner: 'success', intermediate: 'warning', advanced: 'error' };
+const ALL = 'all';
 const DIFFICULTIES = ['beginner', 'intermediate', 'advanced'];
-
-const TABS = [
-  { id: 'algorithms', label: 'Algorithms', icon: GitBranch },
-  { id: 'system-design', label: 'System Design', icon: Blocks },
-];
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+const SORTS = {
+  difficulty: { label: 'Difficulty', fn: (a, b) => DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty] },
+  name: { label: 'Name (A–Z)', fn: (a, b) => a.name.localeCompare(b.name) },
+  speed: { label: 'Fastest average case', fn: (a, b) => complexityRank(a.complexity.average) - complexityRank(b.complexity.average) },
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-};
+function Chips({ label, options, value, onChange }) {
+  return (
+    <div className="tfp-chips" role="group" aria-label={label}>
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          className={clsx('tfp-chip', value === o.value && 'is-active')}
+          aria-pressed={value === o.value}
+          onClick={() => onChange(o.value)}
+        >
+          {o.label}
+          {o.count != null && <span className="tfp-chip__count">{o.count}</span>}
+        </button>
+      ))}
+    </div>
+  );
+}
 
+/** Catalogue — /traceflow/catalogue. Filters live in the URL so they survive navigation. */
 export default function Catalogue() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [query, setQuery] = useState('');
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'grid'
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const algorithms = getAllAlgorithms();
+  const [params, setParams] = useSearchParams();
+  const q = params.get('q') ?? '';
+  const category = params.get('category') ?? ALL;
+  const difficulty = params.get('level') ?? ALL;
+  const sort = SORTS[params.get('sort')] ? params.get('sort') : 'difficulty';
+  const view = params.get('view') === 'table' ? 'table' : 'grid';
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const activeTab = searchParams.get('tab') || 'algorithms';
-  const activeTopic = searchParams.get('topic') || '';
-  const activeDiff = searchParams.get('diff') || '';
-
-  // Data fetching based on active tab
-  const getItemsForTab = () => {
-    switch (activeTab) {
-      case 'system-design': return SYSTEM_DESIGN_TOPICS;
-      case 'algorithms':
-      default:
-        return getAllAlgorithms();
-    }
+  const update = (patch) => {
+    const next = new URLSearchParams(params);
+    Object.entries(patch).forEach(([k, v]) => {
+      if (!v || v === ALL || (k === 'sort' && v === 'difficulty') || (k === 'view' && v === 'grid')) next.delete(k);
+      else next.set(k, v);
+    });
+    setParams(next, { replace: true });
   };
 
-  const allItems = getItemsForTab();
+  useDocumentMeta({
+    title: 'Algorithm Catalogue — Traceflow | Chaitanya Tech World',
+    description: 'Browse every Traceflow algorithm by category, difficulty and complexity, then open it in the step-by-step visualiser.',
+  });
 
   const filtered = useMemo(() => {
-    return allItems.filter(item => {
-      const matchQuery = !query || item.name?.toLowerCase().includes(query.toLowerCase()) || item.title?.toLowerCase().includes(query.toLowerCase()) || (item.tags && item.tags.some(t => t.includes(query.toLowerCase())));
-      
-      const matchTopic = !activeTopic || item.category === activeTopic;
-      const matchDiff = !activeDiff || item.difficulty === activeDiff;
-      return matchQuery && matchTopic && matchDiff;
-    });
-  }, [query, activeTopic, activeDiff, allItems, activeTab]);
+    const query = q.trim().toLowerCase();
+    return algorithms
+      .filter(
+        (a) =>
+          (category === ALL || a.category === category) &&
+          (difficulty === ALL || a.difficulty === difficulty) &&
+          (!query || `${a.name} ${a.tags.join(' ')} ${a.summary}`.toLowerCase().includes(query)),
+      )
+      .sort(SORTS[sort].fn);
+  }, [algorithms, q, category, difficulty, sort]);
 
-  const setFilter = (key, val) => {
-    const p = new URLSearchParams(searchParams);
-    if (val) p.set(key, val); else p.delete(key);
-    setSearchParams(p);
-  };
-
-  const setTab = (tabId) => {
-    const p = new URLSearchParams(searchParams);
-    p.set('tab', tabId);
-    p.delete('topic'); // Reset topic on tab change
-    setSearchParams(p);
-  };
-
-  const clearAll = () => { 
-    setQuery(''); 
-    const p = new URLSearchParams();
-    p.set('tab', activeTab);
-    setSearchParams(p);
-  };
-  
-  const hasFilters = query || activeTopic || activeDiff;
-
-    let currentGroups = TOPIC_GROUPS;
-  if (activeTab === 'system-design') currentGroups = SYSTEM_DESIGN_GROUPS;
-
-  // Render Sidebar Topic Tree
-  const SidebarTree = () => {
-    return (
-      <div className="tf-catalogue__sidebar">
-        <div className="tf-sidebar-section">
-          <h3 className="tf-sidebar-title">Topic Groups</h3>
-          <div className="tf-sidebar-tree">
-            {currentGroups.map(group => (
-              <div key={group.id} className="tf-tree-group">
-                <div className="tf-tree-group-header">
-                  <div className="tf-tree-group-icon" style={{ backgroundColor: `${group.color}20`, color: group.color }}>
-                    <Box size={14} />
-                  </div>
-                  <span className="tf-tree-group-label">{group.label}</span>
-                </div>
-                <div className="tf-tree-group-items">
-                  {group.topics.map(topic => (
-                    <button
-                      key={topic.id}
-                      className={`tf-tree-item ${activeTopic === topic.id ? 'tf-tree-item--active' : ''} ${topic.comingSoon ? 'tf-tree-item--disabled' : ''}`}
-                      onClick={() => !topic.comingSoon && setFilter('topic', activeTopic === topic.id ? '' : topic.id)}
-                      disabled={topic.comingSoon}
-                    >
-                      <span className="tf-tree-item-label">{topic.label}</span>
-                      {topic.comingSoon && <Lock size={12} className="tf-tree-item-lock" />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderAlgorithmRow = (algo, index) => (
-    <motion.div variants={itemVariants} key={algo.slug} className="tf-list-row tf-list-row--link" onClick={() => window.location.href = `/traceflow/algorithm/${algo.slug}`}>
-      <div className="tf-list-col tf-list-col--id">{index + 1}</div>
-      <div className="tf-list-col tf-list-col--status">
-        <CheckCircle2 size={16} style={{ color: 'var(--tf-text-muted)', opacity: 0.3 }} />
-      </div>
-      <div className="tf-list-col tf-list-col--title">
-        <span className="tf-list-title">{algo.name}</span>
-      </div>
-      <div className="tf-list-col tf-list-col--diff">
-        <span className={`tf-badge tf-badge--sm tf-badge--${difficultyColor[algo.difficulty]}`}>{algo.difficulty}</span>
-      </div>
-      <div className="tf-list-col tf-list-col--meta hide-mobile">
-        <span className="tf-text-mono">{algo.timeComplexity}</span>
-      </div>
-      <div className="tf-list-col tf-list-col--meta hide-tablet">
-        <span className="tf-text-mono">{algo.spaceComplexity || '—'}</span>
-      </div>
-    </motion.div>
-  );
-
-  const renderTopicRow = (item, index) => (
-    <motion.div variants={itemVariants} key={item.id} className="tf-list-row tf-list-row--link" onClick={() => window.location.href = `/traceflow/system-design/${item.id}`}>
-      <div className="tf-list-col tf-list-col--id">{index + 1}</div>
-      <div className="tf-list-col tf-list-col--status">
-        <Lock size={14} style={{ color: 'var(--tf-text-muted)', opacity: 0.2 }} />
-      </div>
-      <div className="tf-list-col tf-list-col--title">
-        <span className="tf-list-title">{item.title}</span>
-      </div>
-      <div className="tf-list-col tf-list-col--diff">
-        <span className={`tf-badge tf-badge--sm tf-badge--${difficultyColor[item.difficulty]}`}>{item.difficulty}</span>
-      </div>
-      <div className="tf-list-col tf-list-col--meta hide-mobile">
-        <span className="tf-text-muted">{item.category}</span>
-      </div>
-      <div className="tf-list-col tf-list-col--meta hide-tablet">
-        <span className="tf-text-muted">—</span>
-      </div>
-    </motion.div>
-  );
-
-
-  // Mobile Filter Sheet
-  const MobileFilterSheet = () => (
-    <AnimatePresence>
-      {filterOpen && (
-        <motion.div 
-          className="tf-filter-sheet tf-filter-sheet--open"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <div className="tf-filter-sheet__overlay" onClick={() => setFilterOpen(false)} />
-          <motion.div 
-            className="tf-filter-sheet__content"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          >
-            <div className="tf-filter-sheet__header">
-              <h3>Filters</h3>
-              <button className="tf-btn tf-btn--icon tf-btn--ghost" onClick={() => setFilterOpen(false)}><X size={18}/></button>
-            </div>
-            <div className="tf-filter-sheet__body">
-              <div className="tf-filter-group">
-                <h4>Difficulty</h4>
-                <div className="tf-filter-chips">
-                  {DIFFICULTIES.map(d => (
-                    <button
-                      key={d}
-                      className={`tf-filter-chip tf-filter-chip--${d} ${activeDiff === d ? 'tf-filter-chip--active' : ''}`}
-                      onClick={() => setFilter('diff', activeDiff === d ? '' : d)}
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="tf-filter-group">
-                <h4>Topic</h4>
-                <div className="tf-sidebar-tree">
-                  {currentGroups.map(group => (
-                    <div key={group.id} className="tf-tree-group">
-                      <div className="tf-tree-group-header">
-                        <span className="tf-tree-group-label">{group.label}</span>
-                      </div>
-                      <div className="tf-tree-group-items">
-                        {group.topics.map(topic => (
-                          <button
-                            key={topic.id}
-                            className={`tf-tree-item ${activeTopic === topic.id ? 'tf-tree-item--active' : ''} ${topic.comingSoon ? 'tf-tree-item--disabled' : ''}`}
-                            onClick={() => { if(!topic.comingSoon) { setFilter('topic', activeTopic === topic.id ? '' : topic.id); setFilterOpen(false); } }}
-                            disabled={topic.comingSoon}
-                          >
-                            <span className="tf-tree-item-label">{topic.label}</span>
-                            {topic.comingSoon && <Lock size={12} className="tf-tree-item-lock" />}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            {hasFilters && (
-              <div className="tf-filter-sheet__footer">
-                <button className="tf-btn tf-btn--secondary" onClick={() => { clearAll(); setFilterOpen(false); }} style={{width: '100%'}}>
-                  Clear Filters
-                </button>
-              </div>
-            )}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
+  const hasFilters = q || category !== ALL || difficulty !== ALL;
+  const count = (key, val) => algorithms.filter((a) => a[key] === val).length;
 
   return (
-    <div className="tf-catalogue">
-      
-      {/* Hero Header */}
-      <div className="tf-catalogue-hero">
-        <div className="tf-container">
-          <motion.h1 
-            className="tf-catalogue-hero__title"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          >
-            Explore & Master
-          </motion.h1>
-          <motion.p 
-            className="tf-catalogue-hero__sub"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-          >
-            The ultimate library for algorithms and system design concepts.
-          </motion.p>
-          
-          {/* Tabs */}
-          <div className="tf-catalogue-tabs-wrapper">
-            <div className="tf-catalogue-tabs">
-              {TABS.map(tab => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <button 
-                    key={tab.id}
-                    className={`tf-tab-btn ${isActive ? 'tf-tab-btn--active' : ''}`}
-                    onClick={() => setTab(tab.id)}
-                  >
-                    <tab.icon size={16} /> 
-                    <span>{tab.label}</span>
-                    {isActive && (
-                      <motion.div 
-                        layoutId="activeTabIndicator" 
-                        className="tf-tab-indicator"
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
-                  </button>
-                );
-              })}
+    <>
+      <PageHero
+        breadcrumbs={[{ label: 'Traceflow', to: '/traceflow' }, { label: 'Catalogue' }]}
+        eyebrow={`${algorithms.length} algorithms · all free`}
+        title={
+          <>
+            The algorithm <span className="ds-gradient-text">catalogue</span>
+          </>
+        }
+        description="Filter by category or difficulty, compare complexities, and open any algorithm in the visualiser."
+      />
+
+      <Section compact>
+        <Container>
+          <div className="tfp-toolbar">
+            <TextField
+              className="tfp-toolbar__search"
+              type="search"
+              label="Search"
+              placeholder="Name, tag or idea — e.g. “heap”, “stable”"
+              value={q}
+              onChange={(e) => update({ q: e.target.value })}
+            />
+            <SelectField
+              label="Sort by"
+              value={sort}
+              onChange={(e) => update({ sort: e.target.value })}
+              options={Object.entries(SORTS).map(([value, s]) => ({ value, label: s.label }))}
+            />
+          </div>
+
+          <div className="tfp-filters">
+            <Chips
+              label="Category"
+              value={category}
+              onChange={(v) => update({ category: v })}
+              options={[
+                { value: ALL, label: 'All', count: algorithms.length },
+                ...CATEGORIES.map((c) => ({ value: c.id, label: c.name, count: count('category', c.id) })),
+              ]}
+            />
+            <Chips
+              label="Difficulty"
+              value={difficulty}
+              onChange={(v) => update({ level: v })}
+              options={[
+                { value: ALL, label: 'Any level' },
+                ...DIFFICULTIES.map((d) => ({ value: d, label: d[0].toUpperCase() + d.slice(1), count: count('difficulty', d) })),
+              ]}
+            />
+            <div className="tfp-view" role="group" aria-label="View">
+              <button
+                type="button"
+                className={clsx('tfp-view__btn', view === 'grid' && 'is-active')}
+                aria-pressed={view === 'grid'}
+                aria-label="Card view"
+                onClick={() => update({ view: 'grid' })}
+              >
+                <LayoutGrid size={16} />
+              </button>
+              <button
+                type="button"
+                className={clsx('tfp-view__btn', view === 'table' && 'is-active')}
+                aria-pressed={view === 'table'}
+                aria-label="Table view"
+                onClick={() => update({ view: 'table' })}
+              >
+                <Rows3 size={16} />
+              </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="tf-container tf-catalogue-main">
-        
-        {/* Left Sidebar */}
-        <div className="tf-catalogue-layout">
-          <SidebarTree />
-          
-          {/* Content Area */}
-          <div className="tf-catalogue-content">
-            
-            {/* Toolbar */}
-            <div className="tf-catalogue-toolbar">
-              <div className="tf-search-bar tf-search-bar--compact">
-                <Search size={15} className="tf-search-bar__icon" />
-                <input
-                  className="tf-input tf-search-bar__input"
-                  placeholder={`Search ${activeTab.replace('-', ' ')}…`}
-                  value={query}
-                  onChange={e => setQuery(e.target.value)}
-                />
-                {query && <button className="tf-btn tf-btn--icon tf-btn--ghost tf-search-bar__clear" onClick={() => setQuery('')}><X size={14}/></button>}
-              </div>
-
-              <div className="tf-toolbar-actions">
-                {/* Desktop Difficulty Filter */}
-                <div className="tf-toolbar-filters hide-mobile">
-                  {DIFFICULTIES.map(d => (
-                    <button
-                      key={d}
-                      className={`tf-filter-chip tf-filter-chip--sm tf-filter-chip--${d} ${activeDiff === d ? 'tf-filter-chip--active' : ''}`}
-                      onClick={() => setFilter('diff', activeDiff === d ? '' : d)}
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="tf-toolbar-divider hide-mobile" />
-                
-                {/* View Toggle */}
-                <div className="tf-view-toggle hide-mobile">
-                  <button className={`tf-btn tf-btn--icon tf-btn--ghost ${viewMode === 'list' ? 'tf-btn--active' : ''}`} onClick={() => setViewMode('list')} title="List View"><ListIcon size={16}/></button>
-                  <button className={`tf-btn tf-btn--icon tf-btn--ghost ${viewMode === 'grid' ? 'tf-btn--active' : ''}`} onClick={() => setViewMode('grid')} title="Grid View" disabled={activeTab !== 'algorithms'}><GridIcon size={16}/></button>
-                </div>
-
-                {/* Mobile Filter Button */}
-                <button 
-                  className={`tf-btn tf-btn--secondary tf-btn--sm show-mobile ${hasFilters ? 'tf-btn--active' : ''}`}
-                  onClick={() => setFilterOpen(true)}
-                >
-                  <Filter size={14} /> Filters {hasFilters && <span className="tf-filter-badge" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Results */}
-            <div className="tf-catalogue-results">
-              {filtered.length === 0 ? (
-                <div className="tf-catalogue__empty">
-                  <Search size={28} />
-                  <p>No {activeTab.replace('-', ' ')} match your filters.</p>
-                  <button className="tf-btn tf-btn--secondary" onClick={clearAll}>Clear filters</button>
-                </div>
-              ) : (
-                <>
-                  {viewMode === 'list' || activeTab !== 'algorithms' || isMobile ? (
-                    <div className="tf-list-view">
-                      <div className="tf-list-header">
-                        <div className="tf-list-col tf-list-col--id">#</div>
-                        <div className="tf-list-col tf-list-col--status">Status</div>
-                        <div className="tf-list-col tf-list-col--title">Title</div>
-                        <div className="tf-list-col tf-list-col--diff">Difficulty</div>
-                        <div className="tf-list-col tf-list-col--meta hide-mobile">{activeTab === 'algorithms' ? 'Time' : 'Acceptance'}</div>
-                        <div className="tf-list-col tf-list-col--meta hide-tablet">{activeTab === 'algorithms' ? 'Space' : '—'}</div>
-                      </div>
-                      <motion.div 
-                        className="tf-list-body"
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="show"
-                        key={activeTab} // re-trigger animation on tab change
-                      >
-                        {activeTab === 'algorithms' 
-                          ? filtered.map((item, i) => renderAlgorithmRow(item, i))
-                          : filtered.map((item, i) => renderTopicRow(item, i))
-                        }
-                      </motion.div>
-                    </div>
-                  ) : (
-                    <motion.div 
-                      className="tf-algo-grid"
-                      variants={containerVariants}
-                      initial="hidden"
-                      animate="show"
-                      key={activeTab + viewMode}
-                    >
-                      {filtered.map(algo => (
-                        <motion.div variants={itemVariants} key={algo.slug} className="tf-algo-card tf-card">
-                          <div className="tf-algo-card__header">
-                            <div className="tf-algo-card__badges">
-                              <span className={`tf-badge tf-badge--${difficultyColor[algo.difficulty]}`}>{algo.difficulty}</span>
-                            </div>
-                          </div>
-                          <h2 className="tf-algo-card__name">{algo.name}</h2>
-                          <p className="tf-algo-card__summary">{algo.summary}</p>
-                          <div className="tf-algo-card__actions">
-                            <Link to={`/traceflow/algorithm/${algo.slug}`} className="tf-btn tf-btn--secondary tf-btn--sm">
-                              <BookOpen size={13} /> Learn
-                            </Link>
-                            <Link to={`/traceflow/visualizer/${algo.slug}`} className="tf-btn tf-btn--primary tf-btn--sm">
-                              <Play size={13} /> Visualize
-                            </Link>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  )}
-                </>
-              )}
-            </div>
-
+          <div className="tfp-results-bar">
+            <p aria-live="polite">
+              {filtered.length} {filtered.length === 1 ? 'algorithm' : 'algorithms'}
+            </p>
+            {hasFilters && (
+              <Button variant="ghost" size="sm" onClick={() => update({ q: '', category: ALL, level: ALL })}>
+                Clear filters
+              </Button>
+            )}
           </div>
-        </div>
-      </div>
-      
-      <MobileFilterSheet />
-    </div>
+
+          {filtered.length === 0 ? (
+            <EmptyState
+              icon={<Search size={20} />}
+              title="No algorithms match"
+              description="Try a different search term or remove a filter."
+              action={
+                <Button variant="secondary" onClick={() => update({ q: '', category: ALL, level: ALL })}>
+                  Show all algorithms
+                </Button>
+              }
+            />
+          ) : view === 'table' ? (
+            <ComplexityTable algorithms={filtered} />
+          ) : (
+            <ul className="tfp-grid">
+              {filtered.map((algo, i) => (
+                <Reveal as="li" key={algo.slug} delay={(i % 3) * 0.05}>
+                  <AlgoCard algo={algo} />
+                </Reveal>
+              ))}
+            </ul>
+          )}
+        </Container>
+      </Section>
+
+      <Section bordered compact aria-labelledby="tfp-next-title">
+        <Container>
+          <h2 id="tfp-next-title" className="tfp-next__title">
+            Coming next
+          </h2>
+          <ul className="tfp-next">
+            {COMING_NEXT.map((g) => (
+              <li key={g.id} className="tfp-next__item">
+                <h3>{g.name}</h3>
+                <p>{g.items.join(' · ')}</p>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </Section>
+    </>
   );
 }

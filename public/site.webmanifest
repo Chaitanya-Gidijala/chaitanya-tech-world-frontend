@@ -1,0 +1,14 @@
+{
+  "name": "Chaitanya Tech World",
+  "short_name": "CTW",
+  "description": "Developer roadmaps, algorithm visualisations, Claude certification guides and AI prompts.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06070d",
+  "theme_color": "#06070d",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

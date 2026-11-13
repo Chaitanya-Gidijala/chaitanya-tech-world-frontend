@@ -1,283 +1,154 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Navigate, useParams } from 'react-router-dom';
+import { ArrowRight, Clock } from 'lucide-react';
+import { Button, Callout, Container, Disclosure, Section, useDocumentMeta } from '@/design-system';
+import PageHero from '@/components/site/PageHero';
+import ROUTES from '@/constants/routes';
+import OutlineLayout from './components/OutlineLayout';
+import ExpandAllButton from './components/ExpandAllButton';
+import { useExpandableSet } from './hooks/useExpandableSet';
 import { javaRoadmapData } from './data/javaRoadmapData';
 import { frontendRoadmapData } from './data/frontendRoadmapData';
-import LandingFooter from '@/components/layout/LandingFooter';
-import RoadmapNavbar from './RoadmapNavbar';
-import './RoadmapPage.css';
+import './roadmap.css';
 
-/* ── Roadmap registry ── */
 const ROADMAP_REGISTRY = {
   java: javaRoadmapData,
   frontend: frontendRoadmapData,
 };
 
-/* ── Phase card ── */
-const PhaseCard = ({ phase, index, isOpen, onToggle }) => {
-  const phaseGradient = `linear-gradient(135deg, ${phase.color}, ${phase.color}99)`;
+const LEVELS = [
+  { id: 'beginner', label: 'Beginner' },
+  { id: 'intermediate', label: 'Intermediate' },
+  { id: 'advanced', label: 'Advanced' },
+];
+
+function countTopics(phases) {
+  return phases.reduce((sum, ph) => sum + ph.sections.reduce((a, s) => a + s.topics.length, 0), 0);
+}
+
+function PhaseSummary({ phase }) {
+  return (
+    <span className="rm-item-summary">
+      <span className="rm-item-summary__label">Phase {String(phase.phase).padStart(2, '0')}</span>
+      <span className="rm-item-summary__title">{phase.title}</span>
+      <span className="rm-item-summary__sub">{phase.subtitle}</span>
+      <span className="rm-item-summary__meta">
+        <Clock size={13} aria-hidden="true" /> {phase.estimatedWeeks}
+      </span>
+    </span>
+  );
+}
+
+function PhaseBody({ phase }) {
+  return (
+    <div className="rm-topic-groups">
+      {phase.sections.map((section) => (
+        <section key={section.id} className="rm-topic-group">
+          <header className="rm-topic-group__head">
+            <h3>{section.title}</h3>
+            <span className="ds-meta">{section.topics.length}</span>
+          </header>
+          <ul className="rm-topics">
+            {section.topics.map((topic, i) => (
+              <li key={`${topic.name}-${i}`} className="rm-topic">
+                <span className={`rm-level-dot rm-level-dot--${topic.level}`} aria-hidden="true" />
+                <span className="rm-topic__name">{topic.name}</span>
+                <span className="ds-visually-hidden">— {topic.level}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function RoadmapDetail({ data }) {
+  const phaseIds = useMemo(() => data.phases.map((p) => p.id), [data]);
+  const { isOpen, setItem, allOpen, toggleAll } = useExpandableSet(phaseIds, [phaseIds[0]]);
+  const totalTopics = countTopics(data.phases);
+
+  useDocumentMeta({
+    title: `${data.title} Roadmap 2026 | Chaitanya Tech World`,
+    description: data.description,
+  });
 
   return (
-    <div
-      className="rm-phase"
-      id={`phase-${index}`}
-      style={{
-        '--phase-color': phase.color,
-        '--phase-glow': phase.glow,
-        '--phase-gradient': phaseGradient,
-        animationDelay: `${index * 0.08}s`,
-      }}
-    >
-      <div className="rm-phase-connector" />
+    <>
+      <PageHero
+        breadcrumbs={[{ label: 'Roadmaps', to: ROUTES.ROADMAPS }, { label: data.title }]}
+        eyebrow="Developer roadmap"
+        title={data.title}
+        description={data.description}
+        stats={[
+          { label: 'Phases', value: data.phases.length },
+          { label: 'Topics', value: `${totalTopics}+` },
+          { label: 'Duration', value: `${data.estimatedWeeks} wks` },
+          { label: 'Cost', value: 'Free' },
+        ]}
+      />
 
-      {/* Header */}
-      <div
-        className={`rm-phase-header ${isOpen ? 'open' : ''}`}
-        onClick={onToggle}
-        role="button"
-        aria-expanded={isOpen}
-      >
-        <div className="rm-phase-num">{phase.icon}</div>
-        <div className="rm-phase-meta">
-          <div className="rm-phase-label">Phase {phase.phase}</div>
-          <h3 className="rm-phase-title">{phase.title}</h3>
-          <p className="rm-phase-subtitle">{phase.subtitle}</p>
-        </div>
-        <div className="rm-phase-right">
-          <span className="rm-phase-weeks">⏱ {phase.estimatedWeeks}</span>
-          <div className={`rm-phase-chevron ${isOpen ? 'open' : ''}`}>
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      {/* Body */}
-      {isOpen && (
-        <div className="rm-phase-body">
-          {phase.sections.map((sec) => (
-            <div className="rm-section-card" key={sec.id} style={{ '--phase-gradient': phaseGradient }}>
-              <div className="rm-section-header">
-                <div className="rm-section-icon">{sec.icon}</div>
-                <div className="rm-section-title">{sec.title}</div>
-                <div className="rm-section-count">{sec.topics.length}</div>
-              </div>
-              <div className="rm-topics">
-                {sec.topics.map((topic, ti) => (
-                  <div className="rm-topic" key={`${sec.id}-${ti}`} style={{ '--delay': `${ti * 0.04}s` }}>
-                    <span className={`rm-topic-dot ${topic.level}`} />
-                    <span className="rm-topic-name">{topic.name}</span>
-                    <span className={`rm-topic-badge ${topic.level}`}>{topic.level}</span>
-                  </div>
-                ))}
-              </div>
+      <Section>
+        <Container>
+          <OutlineLayout
+            title="Phases"
+            items={data.phases.map((p) => ({ id: p.id, label: p.title }))}
+            onSelect={(id) => setItem(id, true)}
+            toolbar={
+              <>
+                <ul className="rm-legend" aria-label="Topic level legend">
+                  {LEVELS.map((l) => (
+                    <li key={l.id}>
+                      <span className={`rm-level-dot rm-level-dot--${l.id}`} aria-hidden="true" />
+                      {l.label}
+                    </li>
+                  ))}
+                </ul>
+                <ExpandAllButton allOpen={allOpen} onClick={toggleAll} />
+              </>
+            }
+          >
+            <div className="rm-stack">
+              {data.phases.map((phase) => (
+                <Disclosure
+                  key={phase.id}
+                  id={phase.id}
+                  className="rm-item"
+                  headingLevel={2}
+                  open={isOpen(phase.id)}
+                  onOpenChange={(v) => setItem(phase.id, v)}
+                  summary={<PhaseSummary phase={phase} />}
+                >
+                  <PhaseBody phase={phase} />
+                </Disclosure>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
 
-/* ── Main Detail Page ── */
-const RoadmapPage = () => {
-  const navigate = useNavigate();
+            <Callout
+              tone="accent"
+              className="rm-cta"
+              title="While you learn, create"
+              action={
+                <Button to={ROUTES.PROMPTS} size="sm" iconEnd={<ArrowRight size={14} />}>
+                  Browse prompts
+                </Button>
+              }
+            >
+              Explore a curated library of image-generation prompts for ChatGPT, Gemini, Midjourney and more.
+            </Callout>
+          </OutlineLayout>
+        </Container>
+      </Section>
+    </>
+  );
+}
+
+export default function RoadmapPage() {
   const { tech } = useParams();
+  const data = ROADMAP_REGISTRY[tech];
 
-  // Look up roadmap by URL param — default to java if not found
-  const data = ROADMAP_REGISTRY[tech] || ROADMAP_REGISTRY['java'];
-  const isValidTech = !!ROADMAP_REGISTRY[tech];
+  if (!data) return <Navigate to={ROUTES.ROADMAPS} replace />;
 
-  const [openPhases, setOpenPhases] = useState(new Set([0]));
-  const [activePhaseIdx, setActivePhaseIdx] = useState(0);
-  const phaseRefs = useRef([]);
-
-  const [theme, setTheme] = useState(
-    () => document.documentElement.getAttribute('data-theme') || 'dark'
-  );
-
-  const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    document.documentElement.setAttribute('data-theme', next);
-  };
-
-  // Redirect invalid tech params
-  useEffect(() => {
-    if (!isValidTech && tech) {
-      navigate('/roadmap', { replace: true });
-    }
-  }, [tech, isValidTech, navigate]);
-
-  // SEO
-  useEffect(() => {
-    document.title = `${data.title} Roadmap 2026 | Chaitanya Tech World`;
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) { meta = document.createElement('meta'); meta.name = 'description'; document.head.appendChild(meta); }
-    meta.content = data.description;
-  }, [data]);
-
-  // Scroll tracking
-  useEffect(() => {
-    const onScroll = () => {
-      const scrollY = window.scrollY + window.innerHeight / 2;
-      let found = 0;
-      document.querySelectorAll('.rm-phase').forEach((el, i) => {
-        if (scrollY >= el.offsetTop) found = i;
-      });
-      setActivePhaseIdx(found);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const togglePhase = (idx) => {
-    setOpenPhases(prev => {
-      const next = new Set(prev);
-      if (next.has(idx)) next.delete(idx); else next.add(idx);
-      return next;
-    });
-  };
-
-  const expandAll = () => setOpenPhases(new Set(data.phases.map((_, i) => i)));
-  const collapseAll = () => setOpenPhases(new Set());
-  const allOpen = openPhases.size === data.phases.length;
-
-  const scrollToPhase = (idx) => {
-    const el = document.getElementById(`phase-${idx}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    if (!openPhases.has(idx)) setOpenPhases(prev => { const n = new Set(prev); n.add(idx); return n; });
-  };
-
-  const totalTopics = data.phases.reduce(
-    (acc, ph) => acc + ph.sections.reduce((a, s) => a + s.topics.length, 0), 0
-  );
-
-  return (
-    <div className="rm-root">
-      <RoadmapNavbar theme={theme} toggleTheme={toggleTheme} />
-
-      {/* ── Background Mesh ── */}
-      <div className="rm-bg-mesh" aria-hidden="true">
-        <div className="rm-hero-glow rm-hero-glow--1" style={{ background: data.accentColor }} />
-        <div className="rm-hero-glow rm-hero-glow--2" />
-        <div className="rm-hero-grid" />
-      </div>
-
-      {/* ── Back breadcrumb ── */}
-      <div className="rm-breadcrumb">
-        <Link to="/roadmap" className="rm-back-link">
-          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
-          </svg>
-          All Roadmaps
-        </Link>
-        <span className="rm-breadcrumb-sep">›</span>
-        <span className="rm-breadcrumb-current">{data.title}</span>
-      </div>
-
-      {/* ── HERO ── */}
-      <section className="rm-hero">
-        <div className="rm-hero-glow rm-hero-glow--1" />
-        <div className="rm-hero-glow rm-hero-glow--2" />
-
-        <div className="rm-hero-badge">
-          <span className="rm-badge-dot" />
-          Developer Roadmaps 2026
-        </div>
-
-        <h1 className="rm-hero-title">
-          <span className="rm-title-word-2">{data.icon} {data.title}</span>
-          <br />
-          <span className="rm-title-word-1" style={{ fontSize: '55%', letterSpacing: '-0.5px', color: '#94a3b8', fontWeight: 700 }}>
-            {data.subtitle}
-          </span>
-        </h1>
-
-        <p className="rm-hero-sub">{data.description}</p>
-
-        {/* Stats */}
-        <div className="rm-hero-stats">
-          <div className="rm-stat">
-            <span className="rm-stat-value">{data.phases.length}</span>
-            <span className="rm-stat-label">Phases</span>
-          </div>
-          <div className="rm-stat-sep" />
-          <div className="rm-stat">
-            <span className="rm-stat-value">{totalTopics}+</span>
-            <span className="rm-stat-label">Topics</span>
-          </div>
-          <div className="rm-stat-sep" />
-          <div className="rm-stat">
-            <span className="rm-stat-value">{data.estimatedWeeks}w</span>
-            <span className="rm-stat-label">Duration</span>
-          </div>
-          <div className="rm-stat-sep" />
-          <div className="rm-stat">
-            <span className="rm-stat-value">Free</span>
-            <span className="rm-stat-label">Always</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Legend + Controls ── */}
-      <div className="rm-controls">
-        <div className="rm-legend">
-          <div className="rm-legend-item"><span className="rm-legend-dot beginner" />Beginner</div>
-          <div className="rm-legend-item"><span className="rm-legend-dot intermediate" />Intermediate</div>
-          <div className="rm-legend-item"><span className="rm-legend-dot advanced" />Advanced</div>
-        </div>
-        <button className="rm-expand-btn" onClick={allOpen ? collapseAll : expandAll}>
-          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            {allOpen ? <polyline points="18 15 12 9 6 15" /> : <polyline points="6 9 12 15 18 9" />}
-          </svg>
-          {allOpen ? 'Collapse All' : 'Expand All'}
-        </button>
-      </div>
-
-      {/* ── Roadmap phases ── */}
-      <div className="rm-body">
-        {data.phases.map((phase, idx) => (
-          <PhaseCard
-            key={phase.id}
-            phase={phase}
-            index={idx}
-            isOpen={openPhases.has(idx)}
-            onToggle={() => togglePhase(idx)}
-          />
-        ))}
-      </div>
-
-      {/* ── Floating progress dots ── */}
-      <nav className="rm-progress-track" aria-label="Phase progress">
-        {data.phases.map((phase, idx) => (
-          <div
-            key={phase.id}
-            className={`rm-progress-dot ${activePhaseIdx === idx ? 'active' : ''}`}
-            style={{ '--c': phase.color }}
-            data-label={`${idx + 1}. ${phase.title}`}
-            onClick={() => scrollToPhase(idx)}
-            role="button"
-            aria-label={`Go to Phase ${phase.phase}: ${phase.title}`}
-          />
-        ))}
-      </nav>
-
-      {/* ── Footer CTA ── */}
-      <div className="rm-footer-cta">
-        <h2>While You Learn, Create! 🎨</h2>
-        <p>Explore our curated AI prompt gallery — handpicked prompts to generate stunning images &amp; videos using ChatGPT, Gemini, Midjourney &amp; more.</p>
-        <a href="/prompts" className="rm-cta-btn">
-          Browse AI Prompts Gallery
-          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-          </svg>
-        </a>
-      </div>
-
-      <LandingFooter />
-    </div>
-  );
-};
-
-export default RoadmapPage;
+  // `key` resets expanded state when navigating between roadmaps.
+  return <RoadmapDetail key={tech} data={data} />;
+}

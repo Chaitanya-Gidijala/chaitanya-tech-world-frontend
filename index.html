@@ -3,28 +3,53 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/CTW.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Primary Meta Tags -->
-  <title>Chaitanya Tech World | Portfolio by Chaitanya Gidijala</title>
-  <meta name="title" content="Chaitanya Tech World | Portfolio by Chaitanya Gidijala">
-  <meta name="description" content="Welcome to Chaitanya Tech World (TechWorld) by Chaitanya Gidijala. Explore premium applications including an AI Resume Builder, Job Search Portal, Photo Editor, and Custom Business Website Development services.">
-  <meta name="keywords" content="chaitanya gidijala, chaitanya tech world, techworld, chaitanya, job search, ai resume builder, photo editor, business website development, web applications, full stack developer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#06070d" />
+
+  <!-- Brand icons (source artwork: public/favicon.svg, src/components/site/BrandLogo.jsx) -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <!-- Fonts: Geist / Geist Mono (UI), Syne (display — brand, portfolio, signature) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" />
+
+  <!-- Apply saved theme before first paint to avoid a light/dark flash -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ctw-theme-preference');
+        if (t !== 'light' && t !== 'dark') t = 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        if (t === 'dark') document.documentElement.classList.add('dark');
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Primary meta -->
+  <title>Chaitanya Tech World — Learn. Visualise. Build.</title>
+  <meta name="title" content="Chaitanya Tech World — Learn. Visualise. Build.">
+  <meta name="description" content="Free developer roadmaps, animated algorithm visualisations, Claude certification study guides and a curated AI image prompt library — by Chaitanya Gidijala.">
+  <meta name="keywords" content="chaitanya tech world, chaitanya gidijala, developer roadmap, java roadmap, frontend roadmap, claude certification, algorithm visualizer, dsa, ai prompts">
   <meta name="author" content="Chaitanya Gidijala">
   <meta name="robots" content="index, follow">
-  <meta name="language" content="English">
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Chaitanya Tech World">
   <meta property="og:url" content="https://chaitanyatechworld.com/">
-  <meta property="og:title" content="Chaitanya Tech World | Applications by Chaitanya Gidijala">
-  <meta property="og:description" content="Explore premium applications including an AI Resume Builder, Job Search Portal, Photo Editor, and Custom Business Website Development services.">
+  <meta property="og:title" content="Chaitanya Tech World — Learn. Visualise. Build.">
+  <meta property="og:description" content="Free developer roadmaps, animated algorithm visualisations, Claude certification study guides and a curated AI image prompt library.">
+  <meta property="og:image" content="https://chaitanyatechworld.com/icon-512.png">
 
   <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://chaitanyatechworld.com/">
-  <meta property="twitter:title" content="Chaitanya Tech World | Applications by Chaitanya Gidijala">
-  <meta property="twitter:description" content="Explore premium applications including an AI Resume Builder, Job Search Portal, Photo Editor, and Custom Business Website Development services.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Chaitanya Tech World — Learn. Visualise. Build.">
+  <meta name="twitter:description" content="Free developer roadmaps, animated algorithm visualisations, Claude certification study guides and a curated AI image prompt library.">
+  <meta name="twitter:image" content="https://chaitanyatechworld.com/icon-512.png">
 </head>
 
 <body>

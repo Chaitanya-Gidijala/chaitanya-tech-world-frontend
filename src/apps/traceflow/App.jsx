@@ -1,42 +1,38 @@
-import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './components/Navbar.jsx';
+import { useTheme } from '@/hooks/useTheme';
 import Home from './pages/Home.jsx';
 import Catalogue from './pages/Catalogue.jsx';
 import AlgorithmDetail from './pages/AlgorithmDetail.jsx';
 import Visualizer from './pages/Visualizer.jsx';
-import Footer from './components/Footer.jsx';
 
-// Core Styles — tokens first, then base
+// Core styles — tokens (aliases of the CTW design system) first, then base.
 import './styles/tokens.css';
 import './styles/base.css';
 
+/**
+ * TraceflowApp — mounted at /traceflow/* inside the shared SiteLayout, so it uses
+ * the same SiteHeader and SiteFooter as the rest of the site. The visualiser is
+ * a full-screen workspace and renders without site chrome (see SiteLayout).
+ */
 export default function TraceflowApp() {
-  const [theme, setTheme] = useState('dark');
-
-  const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'));
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <div data-tf="true" data-tf-theme={theme}>
       <Routes>
-        {/* Full-screen Visualizer */}
         <Route path="/visualizer/:slug" element={<Visualizer theme={theme} toggleTheme={toggleTheme} />} />
-
-        {/* Standard Pages */}
         <Route
           path="/*"
           element={
-            <div className="tf-page" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-              <Navbar theme={theme} toggleTheme={toggleTheme} />
-              <main style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <div className="tf-page tf-shell">
+              <div className="tf-shell__main">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/catalogue" element={<Catalogue />} />
                   <Route path="/algorithm/:slug" element={<AlgorithmDetail />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
+                  <Route path="*" element={<Navigate to="/traceflow" replace />} />
                 </Routes>
-              </main>
-              <Footer />
+              </div>
             </div>
           }
         />

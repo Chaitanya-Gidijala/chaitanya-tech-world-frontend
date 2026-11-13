@@ -1,14 +1,22 @@
 /**
  * constants/routes.js
  *
- * Centralized route path strings.
- * Use these constants everywhere instead of hard-coding path strings
- * so renaming a route only requires a change in one place.
+ * Centralised route path strings. Use these everywhere instead of hard-coding
+ * paths so renaming a route only requires a change in one place.
  */
-
 const ROUTES = {
   HOME: '/',
   CONTACT: '/contact',
+  PORTFOLIO: '/portfolio',
+  ROADMAPS: '/roadmap',
+  ROADMAP_DETAIL: (tech) => `/roadmap/${tech}`,
+  CLAUDE_CERTS: '/roadmap/certifications/claude',
+  CERT_DETAIL: (slug) => `/roadmap/certifications/${slug}`,
+  TRACEFLOW: '/traceflow',
+  PROMPTS: '/prompts',
+  PROMPT_DETAIL: (id) => `/prompts/${id}`,
+
+  // Legacy (routes currently disabled in AppRoutes)
   OUR_SERVICES: '/services/*',
   OUR_SERVICES_PAGE: '/our-services',
   JOB_PORTAL: '/job-portal/*',

@@ -1,343 +1,191 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { promptService } from '../services/promptService';
-import './PromptsGalleryPage.css';
+import { useMemo, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { ImageOff, RotateCw, Search } from 'lucide-react';
+import {
+  Button,
+  Callout,
+  Container,
+  EmptyState,
+  Section,
+  SelectField,
+  TextField,
+  useDocumentMeta,
+} from '@/design-system';
+import PageHero from '@/components/site/PageHero';
+import PromptCard, { PromptCardSkeleton } from '../components/PromptCard';
+import Pagination from '../components/Pagination';
+import { promptErrorMessage, usePrompts } from '../hooks/usePrompts';
+import '../prompts.css';
 
-const MODEL_META = {
-  chatgpt: { icon: '◎', color: '#10a37f', bg: 'rgba(16,163,127,0.1)', border: 'rgba(16,163,127,0.3)' },
-  gpt:     { icon: '◎', color: '#10a37f', bg: 'rgba(16,163,127,0.1)', border: 'rgba(16,163,127,0.3)' },
-  gemini:  { icon: '✦', color: '#4285f4', bg: 'rgba(66,133,244,0.1)', border: 'rgba(66,133,244,0.3)' },
-  midjourney: { icon: '⬡', color: '#9146ff', bg: 'rgba(145,70,255,0.1)', border: 'rgba(145,70,255,0.3)' },
-  'dall·e':{ icon: '◈', color: '#f97316', bg: 'rgba(249,115,22,0.1)',  border: 'rgba(249,115,22,0.3)' },
-  dalle:   { icon: '◈', color: '#f97316', bg: 'rgba(249,115,22,0.1)',  border: 'rgba(249,115,22,0.3)' },
-  claude:  { icon: '◆', color: '#d4a46a', bg: 'rgba(212,164,106,0.1)', border: 'rgba(212,164,106,0.3)' },
-  'stable diffusion': { icon: '❋', color: '#a855f7', bg: 'rgba(168,85,247,0.1)', border: 'rgba(168,85,247,0.3)' },
-};
+const PAGE_SIZE = 20;
+const ALL = 'all';
 
-const getModelMeta = (model) => {
-  if (!model) return { icon: '◉', color: '#6366f1', bg: 'rgba(99,102,241,0.1)', border: 'rgba(99,102,241,0.3)' };
-  const key = model.toLowerCase();
-  for (const [k, v] of Object.entries(MODEL_META)) {
-    if (key.includes(k)) return v;
-  }
-  return { icon: '◉', color: '#6366f1', bg: 'rgba(99,102,241,0.1)', border: 'rgba(99,102,241,0.3)' };
-};
+const uniqueSorted = (values) => [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
-const ITEMS_PER_PAGE = 20;
-
-const PromptsGalleryPage = () => {
-  const navigate = useNavigate();
-  const [prompts, setPrompts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [activeModel, setActiveModel] = useState('All');
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() => {
-    fetchPrompts();
-
-    // SEO updates
-    document.title = "Best AI Prompts Gallery | Chaitanya Tech World";
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta');
-      metaDesc.name = "description";
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.content = "Discover the best handpicked AI prompts for ChatGPT, Gemini, Midjourney, and more. Copy, paste, and create stunning AI outputs instantly.";
-
-    let metaKeywords = document.querySelector('meta[name="keywords"]');
-    if (!metaKeywords) {
-      metaKeywords = document.createElement('meta');
-      metaKeywords.name = "keywords";
-      document.head.appendChild(metaKeywords);
-    }
-    metaKeywords.content = "AI prompts, ChatGPT prompts, Midjourney prompts, Gemini prompts, prompt engineering, free prompts, best prompts";
-
-  }, []);
-
-  useEffect(() => { setCurrentPage(1); }, [activeModel, activeCategory]);
-
-  const fetchPrompts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      // Fetch the full gallery once so filters and client-side pagination work across all prompts.
-      const res = await promptService.getAllPrompts(0, 500);
-      const payload = res?.data ?? res;
-      const promptList = Array.isArray(payload)
-        ? payload
-        : Array.isArray(payload?.content)
-          ? payload.content
-          : Array.isArray(payload?.data)
-            ? payload.data
-            : Array.isArray(payload?.data?.content)
-              ? payload.data.content
-              : [];
-      setPrompts(promptList);
-    } catch (err) {
-      console.error(err);
-      const message = err?.code === 'ECONNABORTED'
-        ? 'The prompts service is taking too long to respond. Please try again shortly.'
-        : 'Unable to load prompts right now. Please try again shortly.';
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
+/** Filter state is kept in the URL so it survives navigation to a prompt and back. */
+function useGalleryParams() {
+  const [params, setParams] = useSearchParams();
+  const state = {
+    q: params.get('q') ?? '',
+    model: params.get('model') ?? ALL,
+    category: params.get('category') ?? ALL,
+    page: Math.max(1, Number(params.get('page')) || 1),
   };
 
-  const availableModels = useMemo(() => {
-    const models = new Set(prompts.map(p => p.aiModel).filter(Boolean));
-    return ['All', ...Array.from(models)];
-  }, [prompts]);
-
-  const availableCategories = useMemo(() => {
-    const cats = new Set(prompts.map(p => p.category).filter(Boolean));
-    return ['All', ...Array.from(cats)];
-  }, [prompts]);
-
-  const filteredPrompts = useMemo(() => {
-    return prompts.filter(p => {
-      const matchModel = activeModel === 'All' || p.aiModel?.toLowerCase() === activeModel.toLowerCase();
-      const matchCat = activeCategory === 'All' || p.category?.toLowerCase() === activeCategory.toLowerCase();
-      return matchModel && matchCat;
-    });
-  }, [prompts, activeModel, activeCategory]);
-
-  const totalPages = Math.ceil(filteredPrompts.length / ITEMS_PER_PAGE);
-  const visiblePrompts = filteredPrompts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(p => p + 1);
-    // Scroll to top of gallery smoothly
-    const offset = window.innerWidth > 768 ? 400 : 300;
-    window.scrollTo({ top: offset, behavior: 'smooth' });
+  const update = (patch) => {
+    const next = { ...state, page: 1, ...patch };
+    const out = new URLSearchParams();
+    if (next.q) out.set('q', next.q);
+    if (next.model !== ALL) out.set('model', next.model);
+    if (next.category !== ALL) out.set('category', next.category);
+    if (next.page > 1) out.set('page', String(next.page));
+    setParams(out, { replace: true });
   };
 
-  const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage(p => p - 1);
-    const offset = window.innerWidth > 768 ? 400 : 300;
-    window.scrollTo({ top: offset, behavior: 'smooth' });
-  };
+  return [state, update];
+}
 
-  const goToPage = (page) => {
-    if (page === currentPage || page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-    const offset = window.innerWidth > 768 ? 400 : 300;
-    window.scrollTo({ top: offset, behavior: 'smooth' });
-  };
+export default function PromptsGalleryPage() {
+  const { data: prompts = [], isPending, isError, error, refetch, isFetching } = usePrompts();
+  const [{ q, model, category, page }, update] = useGalleryParams();
+  const galleryRef = useRef(null);
 
-  if (loading) {
-    return (
-      <div className="pg-root">
-        {/* Hero skeleton */}
-        <div className="pg-hero">
-          <div className="pg-hero-noise" />
-          <div className="pg-hero-glow pg-hero-glow--1" />
-          <div className="pg-hero-glow pg-hero-glow--2" />
-          <div className="pg-hero-inner">
-            <div className="pg-skeleton-badge" />
-            <div className="pg-skeleton-h1" />
-            <div className="pg-skeleton-sub" />
-          </div>
-        </div>
-        <div className="pg-container">
-          <div className="pg-grid">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="pg-skeleton-card" style={{ '--i': i }}>
-                <div className="pg-skeleton-img" />
-                <div className="pg-skeleton-body">
-                  <div className="pg-skeleton-line" style={{ width: '75%' }} />
-                  <div className="pg-skeleton-line" style={{ width: '55%', height: '10px' }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+  useDocumentMeta({
+    title: 'AI Image Prompt Library | Chaitanya Tech World',
+    description:
+      'Hand-picked image-generation prompts for ChatGPT, Gemini, Midjourney and more. Copy, paste and create.',
+    keywords: 'AI prompts, ChatGPT prompts, Midjourney prompts, Gemini prompts, image prompts, prompt engineering',
+  });
+
+  const models = useMemo(() => uniqueSorted(prompts.map((p) => p.aiModel)), [prompts]);
+  const categories = useMemo(() => uniqueSorted(prompts.map((p) => p.category)), [prompts]);
+
+  const filtered = useMemo(() => {
+    const query = q.trim().toLowerCase();
+    return prompts.filter(
+      (p) =>
+        (model === ALL || p.aiModel?.toLowerCase() === model.toLowerCase()) &&
+        (category === ALL || p.category?.toLowerCase() === category.toLowerCase()) &&
+        (!query || `${p.title} ${p.description ?? ''}`.toLowerCase().includes(query)),
     );
-  }
+  }, [prompts, q, model, category]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const visible = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const hasFilters = q || model !== ALL || category !== ALL;
+
+  const goToPage = (p) => {
+    update({ page: p });
+    galleryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
-    <div className="pg-root">
-      {/* ─── HERO ─── */}
-      <section className="pg-hero">
-        <div className="pg-hero-inner">
-          <div className="pg-hero-copy">
-            <span className="pg-hero-kicker">Image generation prompts</span>
-            <h1 className="pg-hero-title">Create images with intention.</h1>
-            <p className="pg-hero-desc">
-              Explore ready-to-use prompts for portraits, product shots, editorial scenes, and visual storytelling.
+    <>
+      <PageHero
+        eyebrow="Prompt library"
+        title="Image prompts, ready to use"
+        description="Prompts for portraits, product shots, editorial scenes and visual storytelling. Open one, copy it, and make it your own."
+        stats={[
+          { label: 'Prompts', value: isPending || isError ? '—' : prompts.length },
+          { label: 'AI models', value: isPending || isError ? '—' : models.length },
+          { label: 'Categories', value: isPending || isError ? '—' : categories.length },
+        ]}
+      />
+
+      <Section compact>
+        <Container>
+          <div className="pr-toolbar" ref={galleryRef}>
+            <TextField
+              className="pr-toolbar__search"
+              type="search"
+              label="Search"
+              placeholder="Search by title or description"
+              value={q}
+              onChange={(e) => update({ q: e.target.value })}
+            />
+            <SelectField
+              label="Model"
+              value={model}
+              onChange={(e) => update({ model: e.target.value })}
+              options={[{ value: ALL, label: 'All models' }, ...models.map((m) => ({ value: m, label: m }))]}
+            />
+            <SelectField
+              label="Category"
+              value={category}
+              onChange={(e) => update({ category: e.target.value })}
+              options={[{ value: ALL, label: 'All categories' }, ...categories.map((c) => ({ value: c, label: c }))]}
+            />
+          </div>
+
+          <div className="pr-results-bar">
+            <p className="ds-meta" aria-live="polite">
+              {isPending ? 'Loading prompts…' : `${filtered.length} ${filtered.length === 1 ? 'prompt' : 'prompts'}`}
             </p>
-          </div>
-          <div className="pg-hero-preview" aria-hidden="true">
-            <div className="pg-preview-glow" />
-            <div className="pg-preview-header"><span>Prompt recipe</span><i /></div>
-            <strong>Describe. Direct. Create.</strong>
-            <div className="pg-preview-lines"><span /><span /><span /></div>
-            <div className="pg-preview-tags"><span>Style</span><span>Lighting</span><span>Composition</span></div>
-          </div>
-          <div className="pg-hero-stats" aria-label="Prompt library statistics">
-            <div className="pg-hero-stat">
-              <strong>{prompts.length}</strong>
-              <span>Prompts</span>
-            </div>
-            <div className="pg-hero-stat">
-              <strong>{availableModels.length - 1 || '—'}</strong>
-              <span>AI models</span>
-            </div>
-            <div className="pg-hero-stat">
-              <strong>{availableCategories.length - 1 || '—'}</strong>
-              <span>Categories</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── GALLERY ─── */}
-      <div className="pg-container">
-        {error && (
-          <div className="pg-error">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span>{error}</span>
-            <button onClick={fetchPrompts}>Retry</button>
-          </div>
-        )}
-
-        <div className="pg-gallery-toolbar">
-          <div>
-            <span className="pg-gallery-kicker">Browse the collection</span>
-            <h2>Find your next visual direction</h2>
-          </div>
-          <div className="pg-gallery-filters">
-            <select className="pg-gallery-select" value={activeModel} onChange={(e) => setActiveModel(e.target.value)}>
-              {availableModels.map(model => <option key={model} value={model}>{model === 'All' ? 'All models' : model}</option>)}
-            </select>
-            <select className="pg-gallery-select" value={activeCategory} onChange={(e) => setActiveCategory(e.target.value)}>
-              {availableCategories.map(category => <option key={category} value={category}>{category === 'All' ? 'All categories' : category}</option>)}
-            </select>
-          </div>
-        </div>
-
-        {visiblePrompts.length === 0 && !error ? (
-          <div className="pg-empty">
-            <div className="pg-empty-art">
-              <div className="pg-empty-circle" />
-              <span className="pg-empty-icon">🎨</span>
-            </div>
-            <h3>No prompts found</h3>
-            <p>No prompts found for <strong>"{activeModel}"</strong> and <strong>"{activeCategory}"</strong> type.<br />Try a different filter or check back soon.</p>
-            <button className="pg-reset-btn" onClick={() => {setActiveModel('All'); setActiveCategory('All');}}>
-              ← Show all prompts
-            </button>
-          </div>
-        ) : (
-          <>
-            {/* Section label */}
-            <div className="pg-section-label">
-              <span>{activeModel === 'All' ? 'All Prompts' : `${activeModel} Prompts`}</span>
-              <div className="pg-section-line" />
-              <span className="pg-section-count">{filteredPrompts.length}</span>
-            </div>
-
-            <div className="pg-grid">
-              {visiblePrompts.map((prompt, index) => {
-                const meta = getModelMeta(prompt.aiModel);
-                return (
-                  <article
-                    key={prompt.id}
-                    className="pg-card"
-                    onClick={() => navigate(`/prompts/${prompt.id}`)}
-                    style={{ '--i': index % 12, '--c': meta.color }}
-                    tabIndex={0}
-                    onKeyDown={e => e.key === 'Enter' && navigate(`/prompts/${prompt.id}`)}
-                    aria-label={`View prompt: ${prompt.title}`}
-                  >
-                    {/* Image */}
-                    <div className="pg-card-media">
-                      {prompt.mediaType === 'VIDEO' ? (
-                        <video src={prompt.mediaUrl} className="pg-card-img" muted playsInline />
-                      ) : (
-                        <img src={prompt.mediaUrl} alt={prompt.title} className="pg-card-img" loading="lazy" />
-                      )}
-
-                      {/* Gradient overlay */}
-                      <div className="pg-card-gradient" />
-
-                      {/* Media type tag — icon only */}
-                      <div className="pg-card-media-tag" title={prompt.mediaType}>
-                        {prompt.mediaType === 'VIDEO' ? (
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                        ) : (
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        )}
-                      </div>
-
-                      {/* Top-right: AI model */}
-                      {prompt.aiModel && (
-                        <div
-                          className="pg-card-model"
-                          style={{ '--c': meta.color, '--bg': meta.bg, '--bd': meta.border }}
-                        >
-                          <span className="pg-card-model-icon">{meta.icon}</span>
-                          {prompt.aiModel}
-                        </div>
-                      )}
-
-                      {/* Hover CTA */}
-                      <div className="pg-card-cta">
-                        <span className="pg-card-cta-btn">
-                          View Prompt
-                          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Body */}
-                    <div className="pg-card-body">
-                      <h3 className="pg-card-title">{prompt.title}</h3>
-                      {prompt.description && (
-                        <p className="pg-card-desc">{prompt.description}</p>
-                      )}
-                      <div className="pg-card-footer">
-                        <div className="pg-card-dot" style={{ background: meta.color }} />
-                        <span className="pg-card-copy-hint">Click to copy &amp; use</span>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-
-            {totalPages > 1 && (
-              <nav className="pg-pagination" aria-label="Prompt gallery pagination">
-                <button className="pg-page-nav" onClick={handlePrev} disabled={currentPage === 1}>
-                  <span aria-hidden="true">←</span> Previous
-                </button>
-                <div className="pg-page-numbers">
-                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                    <button
-                      key={page}
-                      className={`pg-page-number ${page === currentPage ? 'active' : ''}`}
-                      onClick={() => goToPage(page)}
-                      aria-label={`Go to page ${page}`}
-                      aria-current={page === currentPage ? 'page' : undefined}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-                <button className="pg-page-nav" onClick={handleNext} disabled={currentPage === totalPages}>
-                  Next <span aria-hidden="true">→</span>
-                </button>
-              </nav>
+            {hasFilters && (
+              <Button variant="ghost" size="sm" onClick={() => update({ q: '', model: ALL, category: ALL })}>
+                Clear filters
+              </Button>
             )}
-          </>
-        )}
-      </div>
-    </div>
-  );
-};
+          </div>
 
-export default PromptsGalleryPage;
+          {isError && (
+            <Callout
+              tone="danger"
+              title="Couldn’t load the prompt library"
+              action={
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => refetch()}
+                  loading={isFetching}
+                  iconStart={<RotateCw size={14} />}
+                >
+                  Retry
+                </Button>
+              }
+            >
+              {promptErrorMessage(error)}
+            </Callout>
+          )}
+
+          {isPending ? (
+            <div className="pr-grid">
+              {Array.from({ length: 8 }, (_, i) => (
+                <PromptCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : visible.length > 0 ? (
+            <>
+              <ul className="pr-grid">
+                {visible.map((p) => (
+                  <li key={p.id}>
+                    <PromptCard prompt={p} />
+                  </li>
+                ))}
+              </ul>
+              <Pagination page={currentPage} totalPages={totalPages} onChange={goToPage} />
+            </>
+          ) : (
+            !isError && (
+              <EmptyState
+                icon={hasFilters ? <Search size={20} /> : <ImageOff size={20} />}
+                title="No prompts found"
+                description={
+                  hasFilters ? 'Try a different search or filter.' : 'The library is empty right now — check back soon.'
+                }
+                action={
+                  hasFilters && (
+                    <Button variant="secondary" onClick={() => update({ q: '', model: ALL, category: ALL })}>
+                      Show all prompts
+                    </Button>
+                  )
+                }
+              />
+            )
+          )}
+        </Container>
+      </Section>
+    </>
+  );
+}

@@ -17,6 +17,43 @@ export const claudeFoundationsData = {
   gradient: 'linear-gradient(135deg, #D97706, #F59E0B, #FCD34D)',
   description:
     'Master the fundamentals of working with Claude AI — from prompt engineering and output validation to governance and workflow integration. This certification validates your ability to effectively leverage Claude for real-world business and technical tasks.',
+  registerUrl: 'https://anthropic-partners.skilljar.com/claude-certified-associate-foundations-certification',
+  passingNote: '720 / 1000 to pass',
+  howToUse: [
+    { title: 'Learn the concepts', text: 'Read the recommended Anthropic documentation for each domain.' },
+    { title: 'Practise the workflows', text: 'Use Claude for the specific skills mentioned (e.g. JSON mode, Projects, Artifacts).' },
+    { title: 'Review common mistakes', text: 'Know the exam traps, like blindly trusting outputs or violating the Usage Policy.' },
+    { title: 'Think in scenarios', text: 'The exam focuses on applying concepts to real business scenarios.' },
+    { title: 'Evaluate outputs', text: 'Get comfortable critically assessing Claude’s responses instead of assuming they are perfect.' },
+    { title: 'Revise by weight', text: 'Prioritise study time by the official domain weighting — highest weight first.' },
+    { title: 'Use official resources', text: 'Anthropic’s documentation is the source of truth.' },
+  ],
+  revisionPlan: [
+    {
+      title: 'Day 1 — High priority (52%)',
+      items: [
+        '**Output Evaluation** (21%): hallucination reduction and success criteria.',
+        '**Workflow Integration** (16%): use cases and connectors.',
+        '**Governance** (15%): re-read the Acceptable Use Policy and data-privacy FAQs.',
+      ],
+    },
+    {
+      title: 'Day 2 — Medium / lower (48%)',
+      items: [
+        '**Prompting** (14%): XML tags and task decomposition.',
+        '**Models & configuration** (24%): Haiku vs Sonnet vs Opus; Projects vs Artifacts.',
+        '**Troubleshooting** (10%): diagnosing prompt vs context issues.',
+      ],
+    },
+  ],
+  examChecklist: [
+    'I understand the differences between Haiku, Sonnet and Opus.',
+    'I know when to use Projects versus Artifacts.',
+    'I can identify a hallucination and know how to prompt Claude to reduce them.',
+    'I know how to use XML tags to separate context from instructions.',
+    'I understand Anthropic’s Acceptable Use Policy regarding sensitive data.',
+    'I know how to define clear success criteria for an evaluation rubric.',
+  ],
   domains: [
     {
       id: 'domain-2',

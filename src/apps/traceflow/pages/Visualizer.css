@@ -78,7 +78,7 @@
 
 [data-tf] .tf-viz-stage {
   flex: 1 !important;
-  background: radial-gradient(circle at center, var(--tf-surface-2) 0%, var(--tf-bg) 100%) !important;
+  background: var(--tf-bg) !important;
   position: relative !important;
   display: flex !important;
   align-items: center !important;
@@ -118,7 +118,7 @@
   height: 100% !important;
   background: var(--tf-accent) !important;
   transition: width var(--tf-duration) linear !important;
-  box-shadow: 0 0 10px rgba(0,229,160,0.5) !important;
+  box-shadow: var(--tf-shadow-sm);
 }
 
 [data-tf] .tf-viz-progress__labels {
@@ -152,12 +152,12 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: 0 4px 14px rgba(0,229,160,0.3) !important;
+  box-shadow: var(--tf-shadow-sm);
   transition: all var(--tf-duration-fast) var(--tf-ease-spring) !important;
 }
 [data-tf] .tf-viz-transport__buttons .tf-btn--lg:hover {
   transform: scale(1.1) !important;
-  box-shadow: 0 6px 20px rgba(0,229,160,0.5) !important;
+  box-shadow: var(--tf-shadow-sm);
 }
 [data-tf] .tf-viz-transport__buttons .tf-btn--lg svg {
   width: 24px !important;
@@ -284,14 +284,14 @@
   margin-bottom: 0 !important;
 }
 [data-tf] .tf-explanation-why {
-  background: rgba(168, 85, 247, 0.1) !important; /* Purple */
-  border-left: 3px solid #a855f7 !important;
-  color: #d8b4fe !important;
+  background: var(--ds-accent-soft) !important;
+  border-left: 3px solid var(--ds-accent) !important;
+  color: var(--ds-text) !important;
 }
 [data-tf] .tf-explanation-note {
-  background: rgba(59, 130, 246, 0.1) !important; /* Blue */
-  border-left: 3px solid #3b82f6 !important;
-  color: #93c5fd !important;
+  background: var(--ds-info-soft) !important;
+  border-left: 3px solid var(--ds-info) !important;
+  color: var(--ds-text) !important;
 }
 
 /* Code */

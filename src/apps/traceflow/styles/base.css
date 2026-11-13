@@ -11,6 +11,12 @@
 [data-tf] *::before,
 [data-tf] *::after {
   box-sizing: border-box !important;
+}
+
+/* Zero-specificity reset so any class (design-system or tf-) can set spacing. */
+:where([data-tf]) *,
+:where([data-tf]) *::before,
+:where([data-tf]) *::after {
   margin: 0;
   padding: 0;
 }
@@ -23,12 +29,12 @@
   background: var(--tf-bg) !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Block ALL Tailwind/Bootstrap overrides inside our scope */
+/* Block ALL Tailwind/Bootstrap overrides inside our scope.
+   Element resets below use :where() so any class (design-system or tf-) overrides them. */
 [data-tf] h1,
 [data-tf] h2,
 [data-tf] h3,
@@ -38,25 +44,29 @@
   font-family: var(--tf-font-ui) !important;
   color: var(--tf-text-primary) !important;
   line-height: var(--tf-leading-tight) !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
+  letter-spacing: var(--ds-tracking-snug);
   margin: 0 !important;
   border: none !important;
 }
 
 [data-tf] p {
   margin: 0 !important;
-  color: var(--tf-text-secondary);
   font-family: var(--tf-font-ui) !important;
 }
 
-[data-tf] ul,
-[data-tf] ol {
+:where([data-tf]) p {
+  color: var(--tf-text-secondary);
+}
+
+:where([data-tf]) ul,
+:where([data-tf]) ol {
   list-style: none !important;
   margin: 0 !important;
   padding: 0 !important;
 }
 
-[data-tf] button {
+:where([data-tf]) button {
   font-family: var(--tf-font-ui) !important;
   cursor: pointer;
   border: none;
@@ -64,7 +74,7 @@
   color: inherit;
 }
 
-[data-tf] a {
+:where([data-tf]) a {
   text-decoration: none !important;
   color: inherit;
 }
@@ -80,8 +90,8 @@
 /* Scrollbars */
 [data-tf] ::-webkit-scrollbar { width: 5px; height: 5px; }
 [data-tf] ::-webkit-scrollbar-track { background: transparent; }
-[data-tf] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
-[data-tf] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+[data-tf] ::-webkit-scrollbar-thumb { background: var(--tf-border-hover); border-radius: 99px; }
+[data-tf] ::-webkit-scrollbar-thumb:hover { background: var(--tf-text-muted); }
 
 /* ── Layout & Structure ─────────────────────────────────── */
 [data-tf] .tf-page {
@@ -140,14 +150,14 @@
 
 [data-tf] .tf-btn--primary {
   background: var(--tf-accent) !important;
-  color: #0a0b0d !important;
+  color: var(--tf-on-accent) !important;
   border-color: var(--tf-accent) !important;
-  box-shadow: 0 0 0 0 rgba(0,229,160,0.3);
+  box-shadow: var(--tf-shadow-sm);
 }
 [data-tf] .tf-btn--primary:hover {
   background: var(--tf-accent-hover) !important;
   border-color: var(--tf-accent-hover) !important;
-  box-shadow: 0 0 24px rgba(0,229,160,0.35) !important;
+  box-shadow: var(--tf-shadow-sm);
   transform: translateY(-1px);
 }
 
@@ -158,7 +168,7 @@
 }
 [data-tf] .tf-btn--secondary:hover {
   background: var(--tf-surface-elevated) !important;
-  border-color: rgba(255,255,255,0.15) !important;
+  border-color: var(--tf-border-hover) !important;
   transform: translateY(-1px);
 }
 
@@ -214,14 +224,14 @@
   white-space: nowrap;
 }
 
-[data-tf] .tf-badge--accent   { background: var(--tf-accent-muted) !important; color: var(--tf-accent) !important; border-color: var(--tf-accent-border) !important; }
+[data-tf] .tf-badge--accent   { background: var(--tf-accent-muted) !important; color: var(--ds-accent-text) !important; border-color: var(--tf-accent-border) !important; }
 [data-tf] .tf-badge--default  { background: var(--tf-surface-3) !important; color: var(--tf-text-secondary) !important; border-color: var(--tf-border) !important; }
-[data-tf] .tf-badge--success  { background: rgba(34,197,94,0.1) !important; color: #22c55e !important; border-color: rgba(34,197,94,0.2) !important; }
-[data-tf] .tf-badge--warning  { background: rgba(245,158,11,0.1) !important; color: #f59e0b !important; border-color: rgba(245,158,11,0.2) !important; }
-[data-tf] .tf-badge--error    { background: rgba(239,68,68,0.1) !important; color: #ef4444 !important; border-color: rgba(239,68,68,0.2) !important; }
-[data-tf] .tf-badge--beginner     { background: rgba(34,197,94,0.1) !important; color: #22c55e !important; border-color: rgba(34,197,94,0.2) !important; }
-[data-tf] .tf-badge--intermediate { background: rgba(245,158,11,0.1) !important; color: #f59e0b !important; border-color: rgba(245,158,11,0.2) !important; }
-[data-tf] .tf-badge--advanced     { background: rgba(239,68,68,0.1) !important; color: #ef4444 !important; border-color: rgba(239,68,68,0.2) !important; }
+[data-tf] .tf-badge--success,
+[data-tf] .tf-badge--beginner     { background: var(--ds-success-soft) !important; color: var(--ds-success) !important; border-color: transparent !important; }
+[data-tf] .tf-badge--warning,
+[data-tf] .tf-badge--intermediate { background: var(--ds-warning-soft) !important; color: var(--ds-warning) !important; border-color: transparent !important; }
+[data-tf] .tf-badge--error,
+[data-tf] .tf-badge--advanced     { background: var(--ds-danger-soft) !important; color: var(--ds-danger) !important; border-color: transparent !important; }
 
 /* ── Tags ───────────────────────────────────────────────── */
 [data-tf] .tf-tag {
@@ -249,7 +259,7 @@
 }
 
 [data-tf] .tf-card--hoverable:hover {
-  border-color: rgba(255,255,255,0.14) !important;
+  border-color: var(--tf-border-hover) !important;
   background: var(--tf-surface-2) !important;
   transform: translateY(-2px);
   box-shadow: var(--tf-shadow-md);
@@ -296,8 +306,8 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes tf-glow-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,160,0); }
-  50%       { box-shadow: 0 0 32px 4px rgba(0,229,160,0.2); }
+  0%, 100% { box-shadow: var(--tf-shadow-sm); }
+  50%       { box-shadow: var(--tf-shadow-sm); }
 }
 @keyframes tf-float {
   0%, 100% { transform: translateY(0); }
@@ -345,4 +355,17 @@
 }
 @media (max-width: 480px) {
   [data-tf] .tf-container { padding: 0 var(--tf-space-3) !important; }
+}
+
+/* ── App shell ── */
+/* Rendered inside SiteLayout's <main>, which already fills the viewport. */
+[data-tf] .tf-shell {
+  display: flex;
+  flex-direction: column;
+}
+
+[data-tf] .tf-shell__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }

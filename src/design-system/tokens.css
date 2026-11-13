@@ -1,0 +1,206 @@
+/* ==========================================================================
+   CTW Design System — Tokens
+   --------------------------------------------------------------------------
+   Bold, dark-first product UI: deep space neutrals, a violet → cyan signature
+   gradient, Geist for UI and Geist Mono for code. Every colour, size and
+   duration used by feature styles must come from this file.
+
+   Themes are driven by <html data-theme="light|dark"> (see ThemeContext).
+   ========================================================================== */
+
+:root {
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  --ds-font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ds-font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --ds-text-2xs: 0.6875rem;
+  --ds-text-xs: 0.75rem;
+  --ds-text-sm: 0.875rem;
+  --ds-text-base: 1rem;
+  --ds-text-lg: 1.125rem;
+  --ds-text-xl: 1.25rem;
+  --ds-text-2xl: 1.5rem;
+  --ds-text-3xl: clamp(1.875rem, 1.4rem + 1.6vw, 2.75rem);
+  --ds-text-4xl: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
+  --ds-text-5xl: clamp(2.75rem, 1.6rem + 5vw, 5.25rem);
+
+  --ds-leading-tight: 1.05;
+  --ds-leading-snug: 1.25;
+  --ds-leading-normal: 1.6;
+  --ds-leading-relaxed: 1.7;
+
+  --ds-tracking-tight: -0.035em;
+  --ds-tracking-snug: -0.015em;
+  --ds-tracking-label: 0.06em;
+
+  --ds-weight-regular: 400;
+  --ds-weight-medium: 500;
+  --ds-weight-semibold: 600;
+  --ds-weight-bold: 700;
+
+  /* ── Spacing (4px grid) ─────────────────────────────────────────────── */
+  --ds-space-0-5: 0.125rem;
+  --ds-space-1: 0.25rem;
+  --ds-space-1-5: 0.375rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-2-5: 0.625rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.25rem;
+  --ds-space-6: 1.5rem;
+  --ds-space-8: 2rem;
+  --ds-space-10: 2.5rem;
+  --ds-space-12: 3rem;
+  --ds-space-16: 4rem;
+  --ds-space-20: 5rem;
+  --ds-space-24: 6rem;
+
+  --ds-section-y: clamp(4.5rem, 3rem + 5vw, 8rem);
+  --ds-gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
+
+  /* ── Layout ─────────────────────────────────────────────────────────── */
+  --ds-container: 74rem;
+  --ds-container-wide: 82rem;
+  --ds-container-narrow: 48rem;
+  --ds-header-height: 4.5rem;
+
+  /* ── Radius ─────────────────────────────────────────────────────────── */
+  --ds-radius-xs: 4px;
+  --ds-radius-sm: 8px;
+  --ds-radius-md: 12px;
+  --ds-radius-lg: 18px;
+  --ds-radius-xl: 28px;
+  --ds-radius-full: 999px;
+
+  /* ── Motion ─────────────────────────────────────────────────────────── */
+  --ds-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ds-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ds-duration-fast: 150ms;
+  --ds-duration: 260ms;
+  --ds-duration-slow: 500ms;
+
+  /* ── Layers ─────────────────────────────────────────────────────────── */
+  --ds-z-sticky: 100;
+  --ds-z-overlay: 200;
+  --ds-z-modal: 300;
+
+  /* ── Brand (theme-independent) ──────────────────────────────────────── */
+  --ds-brand-violet: #7c5cff;
+  --ds-brand-indigo: #5b6cff;
+  --ds-brand-cyan: #22d3ee;
+  --ds-brand-pink: #f472b6;
+
+  /* ── Colour: light ──────────────────────────────────────────────────── */
+  --ds-bg: #f7f8fc;
+  --ds-bg-inset: #eef0f7;
+  --ds-surface: #ffffff;
+  --ds-surface-raised: #ffffff;
+  --ds-surface-hover: #f2f3fa;
+  --ds-glass: rgba(255, 255, 255, 0.72);
+
+  --ds-border: #e4e6f0;
+  --ds-border-strong: #cfd3e3;
+  --ds-grid-line: rgba(15, 18, 40, 0.06);
+
+  --ds-text: #0b0d1a;
+  --ds-text-secondary: #474d66;
+  --ds-text-muted: #6b7190;
+  --ds-text-inverse: #f7f8fc;
+
+  --ds-accent: #5b3df5;
+  --ds-accent-hover: #4a2ee0;
+  --ds-accent-2: #0891b2;
+  --ds-accent-soft: rgba(91, 61, 245, 0.08);
+  --ds-accent-border: rgba(91, 61, 245, 0.28);
+  --ds-accent-text: #4c2fe0;
+  --ds-on-accent: #ffffff;
+
+  --ds-gradient: linear-gradient(120deg, #6d4cff 0%, #4f6bff 45%, #0ea5c6 100%);
+  --ds-gradient-text: linear-gradient(110deg, #5b3df5 0%, #4f6bff 40%, #0891b2 100%);
+  --ds-gradient-border: linear-gradient(135deg, rgba(124, 92, 255, 0.6), rgba(34, 211, 238, 0.5));
+  --ds-aurora-1: rgba(124, 92, 255, 0.22);
+  --ds-aurora-2: rgba(34, 211, 238, 0.18);
+  --ds-aurora-3: rgba(244, 114, 182, 0.12);
+  --ds-spotlight: rgba(91, 61, 245, 0.08);
+
+  --ds-success: #12805c;
+  --ds-success-soft: rgba(18, 128, 92, 0.1);
+  --ds-warning: #b25e09;
+  --ds-warning-soft: rgba(178, 94, 9, 0.1);
+  --ds-danger: #d0302f;
+  --ds-danger-soft: rgba(208, 48, 47, 0.09);
+  --ds-info: #2563eb;
+  --ds-info-soft: rgba(37, 99, 235, 0.09);
+
+  --ds-focus-ring: 0 0 0 2px var(--ds-bg), 0 0 0 4px var(--ds-accent);
+
+  --ds-shadow-sm: 0 1px 2px rgba(15, 18, 40, 0.06);
+  --ds-shadow-md: 0 2px 6px rgba(15, 18, 40, 0.04), 0 12px 28px -10px rgba(15, 18, 40, 0.14);
+  --ds-shadow-lg: 0 4px 10px rgba(15, 18, 40, 0.04), 0 28px 60px -18px rgba(15, 18, 40, 0.24);
+  --ds-shadow-glow: 0 10px 40px -10px rgba(91, 61, 245, 0.55);
+
+  --ds-header-bg: rgba(255, 255, 255, 0.7);
+
+  color-scheme: light;
+}
+
+/* ── Colour: dark ─────────────────────────────────────────────────────── */
+:root[data-theme='dark'] {
+  --ds-bg: #06070d;
+  --ds-bg-inset: #0b0d17;
+  --ds-surface: #0d0f1a;
+  --ds-surface-raised: #131627;
+  --ds-surface-hover: #171a2e;
+  --ds-glass: rgba(16, 18, 32, 0.6);
+
+  --ds-border: rgba(255, 255, 255, 0.08);
+  --ds-border-strong: rgba(255, 255, 255, 0.16);
+  --ds-grid-line: rgba(255, 255, 255, 0.05);
+
+  --ds-text: #f4f5fb;
+  --ds-text-secondary: #aab0c6;
+  --ds-text-muted: #767d98;
+  --ds-text-inverse: #06070d;
+
+  --ds-accent: #7c5cff;
+  --ds-accent-hover: #9479ff;
+  --ds-accent-2: #22d3ee;
+  --ds-accent-soft: rgba(124, 92, 255, 0.14);
+  --ds-accent-border: rgba(124, 92, 255, 0.4);
+  --ds-accent-text: #a995ff;
+  --ds-on-accent: #ffffff;
+
+  --ds-gradient: linear-gradient(120deg, #7c5cff 0%, #5b6cff 45%, #22d3ee 100%);
+  --ds-gradient-text: linear-gradient(110deg, #c4b5ff 0%, #8f9bff 40%, #5ee7f7 100%);
+  --ds-gradient-border: linear-gradient(135deg, rgba(124, 92, 255, 0.8), rgba(34, 211, 238, 0.6));
+  --ds-aurora-1: rgba(124, 92, 255, 0.35);
+  --ds-aurora-2: rgba(34, 211, 238, 0.22);
+  --ds-aurora-3: rgba(244, 114, 182, 0.16);
+  --ds-spotlight: rgba(124, 92, 255, 0.14);
+
+  --ds-success: #34d399;
+  --ds-success-soft: rgba(52, 211, 153, 0.12);
+  --ds-warning: #fbbf24;
+  --ds-warning-soft: rgba(251, 191, 36, 0.12);
+  --ds-danger: #fb7185;
+  --ds-danger-soft: rgba(251, 113, 133, 0.12);
+  --ds-info: #60a5fa;
+  --ds-info-soft: rgba(96, 165, 250, 0.12);
+
+  --ds-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --ds-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.4), 0 16px 36px -12px rgba(0, 0, 0, 0.7);
+  --ds-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4), 0 30px 70px -20px rgba(0, 0, 0, 0.85);
+  --ds-shadow-glow: 0 12px 48px -10px rgba(124, 92, 255, 0.65);
+
+  --ds-header-bg: rgba(10, 11, 20, 0.62);
+
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ds-duration-fast: 0ms;
+    --ds-duration: 0ms;
+    --ds-duration-slow: 0ms;
+  }
+}

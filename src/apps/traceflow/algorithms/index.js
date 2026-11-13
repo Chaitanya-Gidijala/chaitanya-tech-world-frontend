@@ -5,12 +5,15 @@ import { generateMergeSortTrace, MERGE_SORT_CODE } from './sorting/mergeSort.js'
 import { generateQuickSortTrace, QUICK_SORT_CODE } from './sorting/quickSort.js';
 import { generateBinarySearchTrace, BINARY_SEARCH_CODE } from './searching/binarySearch.js';
 import { generateLinearSearchTrace, LINEAR_SEARCH_CODE } from './searching/linearSearch.js';
+import { EXTENDED_ALGORITHMS } from './extendedCatalog.js';
+import { EXPLANATIONS } from './explanations.js';
+import { PLAIN_ENGLISH } from './plainEnglish.js';
 
 // =========================================================
 // ALGORITHM REGISTRY — content + trace generators
 // =========================================================
 
-export const ALGORITHMS = {
+const BASE_ALGORITHMS = {
   'bubble-sort': {
     id: 'bubble-sort',
     slug: 'bubble-sort',
@@ -271,147 +274,28 @@ export const ALGORITHMS = {
   },
 };
 
+// =========================================================
+// REGISTRY — base + extended algorithms, enriched with learning material
+// =========================================================
+export const ALGORITHMS = Object.fromEntries(
+  Object.entries({ ...BASE_ALGORITHMS, ...EXTENDED_ALGORITHMS }).map(([slug, algo]) => [
+    slug,
+    { ...algo, ...EXPLANATIONS[slug], plainEnglish: PLAIN_ENGLISH[slug] },
+  ]),
+);
+
+/** Categories shown in the catalogue. */
 export const CATEGORIES = [
-  {
-    id: 'sorting',
-    name: 'Sorting',
-    icon: 'ArrowUpDown',
-    description: 'Algorithms that arrange elements in a specific order.',
-    color: '#6366F1',
-    algorithms: ['bubble-sort', 'selection-sort', 'insertion-sort'],
-  },
-  {
-    id: 'searching',
-    name: 'Searching',
-    icon: 'Search',
-    description: 'Techniques to find elements within data structures.',
-    color: '#10B981',
-    algorithms: ['linear-search', 'binary-search'],
-  },
+  { id: 'sorting', name: 'Sorting', description: 'Arrange elements in order — from simple swaps to divide-and-conquer.' },
+  { id: 'searching', name: 'Searching', description: 'Find a value fast — from a simple scan to logarithmic strategies.' },
 ];
 
-// =========================================================
-// TOPIC GROUPS — sidebar navigation tree
-// =========================================================
-export const TOPIC_GROUPS = [
-  {
-    id: 'sorting',
-    label: 'Sorting Algorithms',
-    color: '#6366F1',
-    topics: [
-      { id: 'basic-sorting', label: 'Basic Sorts', slugs: ['bubble-sort', 'selection-sort', 'insertion-sort'] },
-      { id: 'advanced-sorting', label: 'Advanced Sorts', slugs: [], comingSoon: true },
-      { id: 'hybrid-sorting', label: 'Hybrid Sorts', slugs: [], comingSoon: true },
-    ],
-  },
-  {
-    id: 'searching',
-    label: 'Searching Algorithms',
-    color: '#10B981',
-    topics: [
-      { id: 'linear', label: 'Linear Search', slugs: ['linear-search'] },
-      { id: 'binary', label: 'Binary Search', slugs: ['binary-search'] },
-      { id: 'advanced-search', label: 'Advanced Search', slugs: [], comingSoon: true },
-    ],
-  },
-  {
-    id: 'graphs',
-    label: 'Graph Algorithms',
-    color: '#F59E0B',
-    comingSoon: true,
-    topics: [
-      { id: 'traversal', label: 'BFS & DFS', slugs: [], comingSoon: true },
-      { id: 'shortest-path', label: 'Shortest Path', slugs: [], comingSoon: true },
-      { id: 'mst', label: 'Minimum Spanning Tree', slugs: [], comingSoon: true },
-    ],
-  },
-  {
-    id: 'dynamic-programming',
-    label: 'Dynamic Programming',
-    color: '#EF4444',
-    comingSoon: true,
-    topics: [
-      { id: 'dp-1d', label: '1D DP', slugs: [], comingSoon: true },
-      { id: 'dp-2d', label: '2D DP', slugs: [], comingSoon: true },
-      { id: 'dp-knapsack', label: 'Knapsack Problems', slugs: [], comingSoon: true },
-    ],
-  },
-  {
-    id: 'trees',
-    label: 'Trees & Tries',
-    color: '#8B5CF6',
-    comingSoon: true,
-    topics: [
-      { id: 'bst', label: 'Binary Search Tree', slugs: [], comingSoon: true },
-      { id: 'heap', label: 'Heaps & Priority Queue', slugs: [], comingSoon: true },
-      { id: 'trie', label: 'Tries', slugs: [], comingSoon: true },
-    ],
-  },
-  {
-    id: 'data-structures',
-    label: 'Data Structures',
-    color: '#06B6D4',
-    comingSoon: true,
-    topics: [
-      { id: 'arrays', label: 'Arrays & Hashing', slugs: [], comingSoon: true },
-      { id: 'linked-list', label: 'Linked Lists', slugs: [], comingSoon: true },
-      { id: 'stack-queue', label: 'Stack & Queue', slugs: [], comingSoon: true },
-    ],
-  },
-];
-
-// =========================================================
-// SYSTEM DESIGN GROUPS
-// =========================================================
-export const SYSTEM_DESIGN_GROUPS = [
-  {
-    id: 'fundamentals',
-    label: 'Fundamentals',
-    color: '#8B5CF6',
-    topics: [
-      { id: 'networking', label: 'Networking Basics', slugs: [] },
-      { id: 'performance', label: 'Performance Metrics', slugs: [] },
-    ],
-  },
-  {
-    id: 'core-components',
-    label: 'Core Components',
-    color: '#F59E0B',
-    topics: [
-      { id: 'load-balancers', label: 'Load Balancers', slugs: [] },
-      { id: 'caching', label: 'Caching', slugs: [] },
-      { id: 'databases', label: 'Databases', slugs: [] },
-      { id: 'message-queues', label: 'Message Queues', slugs: [] },
-    ],
-  },
-  {
-    id: 'case-studies',
-    label: 'System Case Studies',
-    color: '#EC4899',
-    topics: [
-      { id: 'social-media', label: 'Social Media', slugs: [] },
-      { id: 'streaming', label: 'Video Streaming', slugs: [] },
-      { id: 'ecommerce', label: 'E-commerce', slugs: [] },
-    ],
-  },
-];
-
-// =========================================================
-// SYSTEM DESIGN — concepts and case studies
-// =========================================================
-export const SYSTEM_DESIGN_TOPICS = [
-  { id: 'sd-001', title: 'Design a URL Shortener', category: 'basics', difficulty: 'intermediate', tags: ['hashing', 'databases', 'scalability'], status: 'coming-soon' },
-  { id: 'sd-002', title: 'Design a Rate Limiter', category: 'basics', difficulty: 'intermediate', tags: ['algorithms', 'redis', 'api-design'], status: 'coming-soon' },
-  { id: 'sd-003', title: 'Design Twitter / X Feed', category: 'social', difficulty: 'advanced', tags: ['feed', 'fanout', 'caching'], status: 'coming-soon' },
-  { id: 'sd-004', title: 'Design YouTube', category: 'media', difficulty: 'advanced', tags: ['cdn', 'video-streaming', 'encoding'], status: 'coming-soon' },
-  { id: 'sd-005', title: 'Design WhatsApp', category: 'messaging', difficulty: 'advanced', tags: ['websockets', 'end-to-end-encryption', 'presence'], status: 'coming-soon' },
-  { id: 'sd-006', title: 'Design a Key-Value Store', category: 'basics', difficulty: 'intermediate', tags: ['consistent-hashing', 'replication', 'cap-theorem'], status: 'coming-soon' },
-  { id: 'sd-007', title: 'Design Uber / Lyft', category: 'location', difficulty: 'advanced', tags: ['geospatial', 'real-time', 'matching'], status: 'coming-soon' },
-  { id: 'sd-008', title: 'Load Balancing Strategies', category: 'fundamentals', difficulty: 'beginner', tags: ['round-robin', 'least-connections', 'consistent-hashing'], status: 'coming-soon' },
-  { id: 'sd-009', title: 'Caching Strategies & Patterns', category: 'fundamentals', difficulty: 'beginner', tags: ['redis', 'memcached', 'cdn', 'eviction'], status: 'coming-soon' },
-  { id: 'sd-010', title: 'SQL vs NoSQL Databases', category: 'fundamentals', difficulty: 'beginner', tags: ['mysql', 'mongodb', 'trade-offs'], status: 'coming-soon' },
-  { id: 'sd-011', title: 'Design a Notification System', category: 'basics', difficulty: 'intermediate', tags: ['message-queues', 'push-pull', 'fanout'], status: 'coming-soon' },
-  { id: 'sd-012', title: 'Design Google Search', category: 'search', difficulty: 'advanced', tags: ['crawling', 'indexing', 'ranking', 'pagerank'], status: 'coming-soon' },
+/** Topics planned next (they need new graph / tree / grid renderers). */
+export const COMING_NEXT = [
+  { id: 'graphs', name: 'Graph algorithms', items: ['BFS & DFS', 'Dijkstra', 'Topological sort'] },
+  { id: 'trees', name: 'Trees & heaps', items: ['Binary search tree', 'Heap operations', 'Tries'] },
+  { id: 'dp', name: 'Dynamic programming', items: ['Fibonacci', 'Knapsack', 'Longest common subsequence'] },
+  { id: 'ds', name: 'Data structures', items: ['Linked lists', 'Stacks & queues', 'Hash tables'] },
 ];
 
 export function getAlgorithm(slug) {
