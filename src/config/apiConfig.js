@@ -56,6 +56,11 @@ const config = {
             all: `${API_HOST}/contact/all`,
             byId: (id) => `${API_HOST}/contact/${id}`
         },
+        engagement: {
+            dailyStats: (day) => `${API_HOST}/engagement/daily/${day}/stats`,
+            dailyResults: (day) => `${API_HOST}/engagement/daily/${day}/results`,
+            dailyLive: (day) => `${API_HOST}/engagement/daily/${day}/live`,
+        },
         analytics: {
             visit: `${API_HOST}/analytics/visit`,
             stats: `${API_HOST}/analytics/stats`

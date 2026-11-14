@@ -14,6 +14,9 @@ const RoadmapPage = lazy(() => import('@/features/roadmap/RoadmapPage'));
 const ClaudeCertificationsPage = lazy(() => import('@/features/roadmap/ClaudeCertificationsPage'));
 const ClaudeCertPage = lazy(() => import('@/features/roadmap/ClaudeCertPage'));
 const TraceflowApp = lazy(() => import('@/apps/traceflow/App'));
+const DailyChallengePage = lazy(() => import('@/features/daily-challenge/DailyChallengePage'));
+const ProgressPage = lazy(() => import('@/features/engagement/pages/ProgressPage'));
+const AdminApp = lazy(() => import('@/apps/admin/AdminApp'));
 
 /*
  * Disabled feature routes (kept for reference — re-enable by importing and adding a <Route>):
@@ -28,6 +31,8 @@ const AppRoutes = () => (
       {/* ── Standalone (own chrome) ── */}
       {/* /portfolio is intentionally not linked from any navigation yet. */}
       <Route path="/portfolio" element={<PortfolioPage />} />
+      {/* Admin dashboard — own chrome, reached only by typing /admin/login. */}
+      <Route path="/admin/*" element={<AdminApp />} />
 
       {/* ── Site pages (SiteHeader + SiteFooter) ── */}
       <Route element={<SiteLayout />}>
@@ -38,6 +43,8 @@ const AppRoutes = () => (
         <Route path="/roadmap/:tech" element={<RoadmapPage />} />
         <Route path="/prompts/*" element={<PromptsApp />} />
         <Route path="/traceflow/*" element={<TraceflowApp />} />
+        <Route path="/daily" element={<DailyChallengePage />} />
+        <Route path="/progress" element={<ProgressPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Route>
     </Routes>

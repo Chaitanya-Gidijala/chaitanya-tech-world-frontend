@@ -7,6 +7,7 @@ import { ArrowRight, Menu, X } from 'lucide-react';
 import { Button, IconButton, ThemeToggle } from '@/design-system';
 import { HEADER_CTA, PRIMARY_NAV } from '@/config/navigation';
 import BrandMark from './BrandMark';
+import StreakBadge from '@/features/engagement/components/StreakBadge';
 import './site.css';
 
 /** True when `item` is the active route (mirrors NavLink's matching). */
@@ -73,12 +74,16 @@ export default function SiteHeader() {
                     transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                   />
                 )}
-                <span className="site-nav__label">{item.label}</span>
+                <span className="site-nav__label">
+                  {item.label}
+                  {item.badge && <span className="site-nav__new">{item.badge}</span>}
+                </span>
               </NavLink>
             ))}
           </nav>
 
           <div className="site-header__actions">
+            <StreakBadge />
             <ThemeToggle />
             <Button to={HEADER_CTA.to} size="sm" iconEnd={<ArrowRight size={14} />} className="site-header__cta">
               {HEADER_CTA.label}

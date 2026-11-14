@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@/context/ThemeContext';
 import AppRoutes from '@/routes/AppRoutes';
 import { initGA, logPageView } from '@/utils/analytics';
+import AchievementToaster from '@/features/engagement/components/AchievementToaster';
+import { trackPage } from '@/features/monitoring/tracker';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +20,9 @@ function AppContent() {
   useEffect(() => {
     // Keep in-page anchor navigation (e.g. #section links) working.
     if (!location.hash) window.scrollTo(0, 0);
-    logPageView(location.pathname + location.search);
+    // Admin pages are private: no analytics, no monitoring of the admin's own browsing.
+    if (!location.pathname.startsWith('/admin')) logPageView(location.pathname + location.search);
+    trackPage(location.pathname);
   }, [location]);
 
   return <AppRoutes />;
@@ -33,6 +37,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AppContent />
+        <AchievementToaster />
       </ThemeProvider>
     </QueryClientProvider>
   );

@@ -1,5 +1,6 @@
 import { Container, Marquee, useDocumentMeta } from '@/design-system';
 import HomeHero from './components/HomeHero';
+import TodayPanel from '@/features/engagement/components/TodayPanel';
 import ProductShowcase from './components/ProductShowcase';
 import FeaturedPaths from './components/FeaturedPaths';
 import Benefits from './components/Benefits';
@@ -24,6 +25,7 @@ export default function HomePage() {
   return (
     <>
       <HomeHero />
+      <TodayPanel />
 
       <section className="hp-marquee" aria-label="Technologies covered">
         <Container>

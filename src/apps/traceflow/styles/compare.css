@@ -1,0 +1,59 @@
+/* Traceflow — algorithm comparison pages (/traceflow/compare/:a-vs-:b) */
+
+.tfc-table-wrap { overflow-x: auto; border: 1px solid var(--ds-border); border-radius: var(--ds-radius-lg); background: var(--ds-surface); }
+.tfc-table { width: 100%; border-collapse: collapse; font-size: var(--ds-text-sm); }
+.tfc-table th, .tfc-table td { padding: var(--ds-space-3) var(--ds-space-4); text-align: left; border-bottom: 1px solid var(--ds-border); }
+.tfc-table tbody tr:last-child th, .tfc-table tbody tr:last-child td { border-bottom: 0; }
+.tfc-table thead th { font-size: var(--ds-text-base); color: var(--ds-text); background: var(--ds-bg-inset); }
+.tfc-table tbody th { color: var(--ds-text-secondary); font-weight: var(--ds-weight-medium); width: 34%; }
+.tfc-table td { font-family: var(--ds-font-mono); color: var(--ds-text); }
+.tfc-yes, .tfc-no { display: inline-flex; align-items: center; gap: var(--ds-space-1); font-family: var(--ds-font-sans); }
+.tfc-yes { color: var(--ds-success); }
+.tfc-no { color: var(--ds-text-muted); }
+
+.tfc-bench { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: var(--ds-space-4); }
+.tfc-bench__card { display: grid; gap: var(--ds-space-3); }
+.tfc-bench__card .tfp-minibars { height: 44px; }
+.tfc-bench__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--ds-space-2); }
+.tfc-bench__head h3 { font-size: var(--ds-text-base); }
+.tfc-bench__row { display: grid; grid-template-columns: minmax(0, 8.5rem) 1fr 2.5rem; align-items: center; gap: var(--ds-space-2); font-size: var(--ds-text-sm); }
+.tfc-bench__name { display: inline-flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ds-text-secondary); }
+.tfc-bench__track { height: 10px; border-radius: var(--ds-radius-full); background: var(--ds-bg-inset); overflow: hidden; }
+.tfc-bench__track > span { display: block; height: 100%; width: max(var(--w), 3px); border-radius: inherit; background: var(--ds-border-strong); }
+.tfc-bench__num { text-align: right; font-family: var(--ds-font-mono); font-variant-numeric: tabular-nums; }
+.tfc-bench__row.is-winner .tfc-bench__name { color: var(--ds-text); font-weight: var(--ds-weight-semibold); }
+.tfc-bench__row.is-winner .tfc-bench__name svg { color: var(--ds-warning); }
+.tfc-bench__row.is-winner .tfc-bench__track > span { background: var(--ds-gradient); }
+.tfc-bench__foot { margin: 0; font-size: var(--ds-text-xs); }
+
+.tfc-sides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ds-space-4); }
+.tfc-side { display: grid; gap: var(--ds-space-2); align-content: start; }
+.tfc-side h3 { font-size: var(--ds-text-xl); }
+.tfc-side h4 { margin-top: var(--ds-space-3); font-size: var(--ds-text-xs); text-transform: uppercase; letter-spacing: var(--ds-tracking-label); color: var(--ds-text-muted); }
+.tfc-side__intuition, .tfc-side__when { margin: 0; color: var(--ds-text-secondary); font-size: var(--ds-text-sm); line-height: var(--ds-leading-relaxed); }
+.tfc-side__actions { display: flex; gap: var(--ds-space-2); margin-top: var(--ds-space-3); }
+.tfc-list { display: grid; gap: var(--ds-space-1-5); margin: 0; padding: 0; list-style: none; font-size: var(--ds-text-sm); color: var(--ds-text-secondary); }
+.tfc-list li { position: relative; padding-left: var(--ds-space-5); }
+.tfc-list li::before { position: absolute; left: 0; font-weight: var(--ds-weight-bold); }
+.tfc-list--pro li::before { content: '+'; color: var(--ds-success); }
+.tfc-list--con li::before { content: '−'; color: var(--ds-danger); }
+
+.tfc-related { display: flex; flex-wrap: wrap; gap: var(--ds-space-2); margin: 0; padding: 0; list-style: none; }
+.tfc-related a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1-5);
+  padding: var(--ds-space-2) var(--ds-space-4);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-surface);
+  color: var(--ds-text);
+  font-size: var(--ds-text-sm);
+  text-decoration: none;
+  transition: border-color var(--ds-duration-fast) var(--ds-ease);
+}
+.tfc-related a:hover { border-color: var(--ds-accent-border); color: var(--ds-accent-text); }
+
+@media (max-width: 760px) {
+  .tfc-sides { grid-template-columns: 1fr; }
+}

@@ -7,6 +7,7 @@ import { profileConfig } from '@/config/profileConfig';
  */
 export const PRIMARY_NAV = [
   { label: 'Home', to: ROUTES.HOME, end: true },
+  { label: 'Daily', to: ROUTES.DAILY, badge: 'New' },
   { label: 'Roadmaps', to: ROUTES.ROADMAPS, end: true },
   { label: 'Certifications', to: ROUTES.CLAUDE_CERTS },
   { label: 'Traceflow', to: ROUTES.TRACEFLOW },
@@ -33,6 +34,8 @@ export const FOOTER_NAV = [
       { label: 'Traceflow visualiser', to: ROUTES.TRACEFLOW },
       { label: 'Algorithm catalogue', to: `${ROUTES.TRACEFLOW}/catalogue` },
       { label: 'Image prompt library', to: ROUTES.PROMPTS },
+      { label: 'Daily algorithm puzzle', to: ROUTES.DAILY },
+      { label: 'Your progress', to: ROUTES.PROGRESS },
     ],
   },
   {

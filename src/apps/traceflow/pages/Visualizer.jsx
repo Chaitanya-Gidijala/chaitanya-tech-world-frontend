@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import clsx from 'clsx';
 import {
   BookOpen,
@@ -18,6 +18,7 @@ import {
   Sun,
 } from 'lucide-react';
 import { getAlgorithm } from '../algorithms/index.js';
+import { recordVisualize } from '@/features/engagement/lib/store';
 import ArrayRenderer from '../visualization/renderers/ArrayRenderer.jsx';
 import CustomInputModal from '../components/CustomInputModal.jsx';
 import ExplainPanel from '../components/visualizer/ExplainPanel.jsx';
@@ -84,10 +85,26 @@ function useResizableSidebar(initial = 420) {
  * Visualizer — full-screen workspace for one algorithm.
  * Stage + transport on the left; Explain / Code / Trace log / Learn tabs on the right.
  */
+/**
+ * Optional deep-link input: ?input=5,3,8&target=8 (used by the Daily Challenge
+ * "Step through it" links). Invalid values fall back to the algorithm defaults.
+ */
+function inputFromQuery(algo, params) {
+  const fallback = { array: algo?.defaultInput ?? [], target: algo?.defaultTarget ?? null };
+  const raw = params.get('input');
+  if (!algo || !raw) return fallback;
+  const array = raw.split(',').map((v) => Number(v.trim()));
+  if (array.length < 2 || array.length > 30 || array.some((v) => !Number.isFinite(v))) return fallback;
+  const sortedArray = algo.requiresSorted ? [...array].sort((a, b) => a - b) : array;
+  const t = Number(params.get('target'));
+  return { array: sortedArray, target: algo.hasTarget ? (Number.isFinite(t) && params.has('target') ? t : fallback.target) : null };
+}
+
 function VisualizerWorkspace({ slug, theme, toggleTheme }) {
   const algo = getAlgorithm(slug);
+  const [searchParams] = useSearchParams();
 
-  const [input, setInput] = useState(() => ({ array: algo?.defaultInput ?? [], target: algo?.defaultTarget ?? null }));
+  const [input, setInput] = useState(() => inputFromQuery(algo, searchParams));
   const [stepIndex, setStepIndex] = useState(0); // 0 = initial array, n = after n-th event
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(550);
@@ -105,6 +122,11 @@ function VisualizerWorkspace({ slug, theme, toggleTheme }) {
 
   const totalSteps = trace.length;
   const isFinished = stepIndex >= totalSteps;
+
+  // Running an algorithm (a few steps in) counts as today's learning activity.
+  useEffect(() => {
+    if (algo && stepIndex >= 3) recordVisualize(algo.slug);
+  }, [algo, stepIndex]);
   const playing = isPlaying && !isFinished;
 
   const goTo = useCallback((i) => setStepIndex(Math.max(0, Math.min(totalSteps, i))), [totalSteps]);

@@ -15,6 +15,9 @@ const ROUTES = {
   TRACEFLOW: '/traceflow',
   PROMPTS: '/prompts',
   PROMPT_DETAIL: (id) => `/prompts/${id}`,
+  DAILY: '/daily',
+  PROGRESS: '/progress',
+  ALGO_COMPARE: (a, b) => `/traceflow/compare/${a}-vs-${b}`,
 
   // Legacy (routes currently disabled in AppRoutes)
   OUR_SERVICES: '/services/*',

@@ -186,3 +186,14 @@
   animation: ds-rise 600ms var(--ds-ease) both;
   box-shadow: var(--ds-shadow-glow);
 }
+
+/* Static prerendered content (scripts/prerender.mjs) shown until React boots — crawlers read this. */
+.prerender { padding-block: calc(var(--ds-header-height) + var(--ds-space-12)) var(--ds-space-16); line-height: var(--ds-leading-relaxed); color: var(--ds-text-secondary); }
+.prerender h1 { margin-bottom: var(--ds-space-4); font-size: var(--ds-text-4xl); color: var(--ds-text); letter-spacing: var(--ds-tracking-tight); line-height: var(--ds-leading-tight); }
+.prerender h2 { margin: var(--ds-space-8) 0 var(--ds-space-3); font-size: var(--ds-text-2xl); color: var(--ds-text); }
+.prerender h3 { margin: var(--ds-space-4) 0 var(--ds-space-2); font-size: var(--ds-text-lg); color: var(--ds-text); }
+.prerender .ds-section { padding: 0; }
+.prerender ul, .prerender ol { padding-left: var(--ds-space-6); }
+.prerender a { color: var(--ds-accent-text); }
+.prerender table { border-collapse: collapse; }
+.prerender th, .prerender td { padding: var(--ds-space-2) var(--ds-space-4); border: 1px solid var(--ds-border); text-align: left; }

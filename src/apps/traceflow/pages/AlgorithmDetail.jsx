@@ -1,6 +1,8 @@
-import { Navigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Play } from 'lucide-react';
+import { Link, Navigate, useParams } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Play } from 'lucide-react';
 import { Badge, Button, Container, Reveal, Section, SectionHeader, useDocumentMeta } from '@/design-system';
+import { SITE_URL } from '@/design-system/hooks/useDocumentMeta';
+import { algorithmJsonLd, algorithmMeta, comparePairs, compareUrl } from '../seo.js';
 import { useTheme } from '@/hooks/useTheme';
 import PageHero from '@/components/site/PageHero';
 import { getAlgorithm, getAllAlgorithms } from '../algorithms/index.js';
@@ -14,6 +16,7 @@ import WorkedExample from '../components/WorkedExample.jsx';
 import '../styles/traceflow-pages.css';
 import '../styles/visualizer-extras.css';
 import '../styles/algorithm-explainer.css';
+import '../styles/compare.css';
 
 /** AlgorithmDetail — /traceflow/algorithm/:slug reference page. */
 export default function AlgorithmDetail() {
@@ -21,12 +24,11 @@ export default function AlgorithmDetail() {
   const algo = getAlgorithm(slug);
   const { theme } = useTheme();
 
-  useDocumentMeta({
-    title: algo ? `${algo.name} — Traceflow | Chaitanya Tech World` : 'Traceflow',
-    description: algo?.summary,
-  });
+  useDocumentMeta(algo ? { ...algorithmMeta(algo), jsonLd: algorithmJsonLd(algo, SITE_URL) } : { title: 'Traceflow' });
 
   if (!algo) return <Navigate to="/traceflow/catalogue" replace />;
+
+  const comparisons = comparePairs().filter(([x, y]) => x.slug === algo.slug || y.slug === algo.slug);
 
   const related = getAllAlgorithms()
     .filter((a) => a.category === algo.category && a.slug !== algo.slug)
@@ -121,6 +123,31 @@ export default function AlgorithmDetail() {
           </div>
         </Container>
       </Section>
+
+      {comparisons.length > 0 && (
+        <Section bordered compact aria-labelledby="tfp-compare-title">
+          <Container>
+            <SectionHeader
+              id="tfp-compare-title"
+              eyebrow="Head to head"
+              title={`Compare ${algo.name} with…`}
+              description="Side-by-side complexity plus real operation counts on identical inputs."
+            />
+            <ul className="tfc-related">
+              {comparisons.map(([x, y]) => {
+                const other = x.slug === algo.slug ? y : x;
+                return (
+                  <li key={other.slug}>
+                    <Link to={compareUrl(x.slug, y.slug)}>
+                      {algo.name} vs {other.name} <ArrowRight size={14} aria-hidden="true" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </Container>
+        </Section>
+      )}
 
       {related.length > 0 && (
         <Section bordered compact aria-labelledby="tfp-related-title">

@@ -4,6 +4,7 @@ import Home from './pages/Home.jsx';
 import Catalogue from './pages/Catalogue.jsx';
 import AlgorithmDetail from './pages/AlgorithmDetail.jsx';
 import Visualizer from './pages/Visualizer.jsx';
+import Compare from './pages/Compare.jsx';
 
 // Core styles — tokens (aliases of the CTW design system) first, then base.
 import './styles/tokens.css';
@@ -30,6 +31,7 @@ export default function TraceflowApp() {
                   <Route path="/" element={<Home />} />
                   <Route path="/catalogue" element={<Catalogue />} />
                   <Route path="/algorithm/:slug" element={<AlgorithmDetail />} />
+                  <Route path="/compare/:pair" element={<Compare />} />
                   <Route path="*" element={<Navigate to="/traceflow" replace />} />
                 </Routes>
               </div>

@@ -2,10 +2,10 @@ import { Outlet, useMatch } from 'react-router-dom';
 import { useSpotlight } from '@/design-system';
 import SiteHeader from '@/components/site/SiteHeader';
 import SiteFooter from '@/components/site/SiteFooter';
-import useVisitorTracker from '@/hooks/useVisitorTracker';
 
 /**
  * layouts/SiteLayout.jsx
+ * (Visitor tracking now lives in features/monitoring/tracker.js, started from App.)
  *
  * Shell for every page built on the CTW design system:
  * skip link → SiteHeader → page (<Outlet/>) → SiteFooter.
@@ -13,7 +13,6 @@ import useVisitorTracker from '@/hooks/useVisitorTracker';
  * Full-screen tools (the Traceflow visualiser) render without site chrome.
  */
 export default function SiteLayout() {
-  useVisitorTracker();
   useSpotlight();
   const isFullscreenTool = useMatch('/traceflow/visualizer/*');
 
