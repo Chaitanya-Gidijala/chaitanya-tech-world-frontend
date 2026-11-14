@@ -59,6 +59,12 @@ export default function OverviewPage() {
         description={new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
       />
       <ErrorBanner error={error} onRetry={refetch} />
+      {data?.errors && Object.keys(data.errors).length > 0 && (
+        <ErrorBanner
+          error={new Error(`Some sections are unavailable: ${Object.keys(data.errors).join(', ')}. Details are in the server log.`)}
+          onRetry={refetch}
+        />
+      )}
 
       <div className="ad-stats">
         <StatTile

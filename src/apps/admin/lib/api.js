@@ -41,7 +41,10 @@ export async function request(url, { method = 'GET', body, signal } = {}) {
   } catch {
     json = null;
   }
-  if (!res.ok) throw new ApiError(json?.message || `Request failed (${res.status})`, res.status);
+  if (!res.ok) {
+    const detail = json?.message || (!json && text ? text.slice(0, 300) : '');
+    throw new ApiError(detail ? `${detail} (${res.status})` : `Request failed (${res.status})`, res.status);
+  }
   return json && typeof json === 'object' && 'data' in json ? json.data : json;
 }
 
