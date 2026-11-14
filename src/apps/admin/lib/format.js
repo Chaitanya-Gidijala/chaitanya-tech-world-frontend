@@ -56,6 +56,13 @@ export function flag(code) {
   return String.fromCodePoint(...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
 }
 
+/** Display name for a signed-in user: "username · email" (or whichever exists). */
+export function who(x) {
+  if (!x) return null;
+  const parts = [x.username, x.userEmail ?? x.email].filter(Boolean);
+  return parts.length ? [...new Set(parts)].join(' · ') : null;
+}
+
 export function place(s) {
   const parts = [s?.city, s?.region, s?.country].filter(Boolean);
   if (parts.length) return [...new Set(parts)].join(', ');

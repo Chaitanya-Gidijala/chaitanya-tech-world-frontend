@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { ThemeToggle } from '@/design-system';
 import BrandLogo from '@/components/site/BrandLogo';
+import RouteErrorBoundary from '@/components/common/RouteErrorBoundary';
 import { refreshSession, signOut, useAdminSession } from '../lib/auth';
 import { reconnectNow, startLiveMonitor, stopLiveMonitor, useLiveMonitor } from '../lib/liveMonitor';
 import { duration } from '../lib/format';
@@ -115,6 +116,7 @@ function Sidebar({ onNavigate }) {
 export default function AdminShell() {
   const session = useAdminSession();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const now = useNow(30_000);
 
@@ -204,7 +206,9 @@ export default function AdminShell() {
           </div>
         </header>
         <main id="ad-main" className="ad-main">
-          <Outlet />
+          <RouteErrorBoundary resetKey={location.pathname}>
+            <Outlet />
+          </RouteErrorBoundary>
         </main>
       </div>
     </div>

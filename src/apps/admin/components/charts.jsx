@@ -11,10 +11,10 @@ import clsx from 'clsx';
 
 function useWidth() {
   const ref = useRef(null);
-  const [width, setWidth] = useState(600);
+  const [width, setWidth] = useState(0);
   useEffect(() => {
     if (!ref.current) return undefined;
-    const ro = new ResizeObserver(([entry]) => setWidth(Math.max(120, Math.round(entry.contentRect.width))));
+    const ro = new ResizeObserver(([entry]) => setWidth(Math.max(60, Math.round(entry.contentRect.width))));
     ro.observe(ref.current);
     return () => ro.disconnect();
   }, []);
@@ -85,7 +85,7 @@ export function AreaChart({
     <div ref={ref} className="ad-chart" style={{ height }}>
       {!data?.length ? (
         <div className="ad-chart__empty">{emptyText}</div>
-      ) : (
+      ) : !width ? null : (
         <>
           <svg
             width={width}
@@ -163,7 +163,7 @@ export function AreaChart({
 /** Sparkline — tiny trend inside a stat tile (no axes; the tile states the value). */
 export function Sparkline({ values, series = 1, height = 36 }) {
   const [ref, width] = useWidth();
-  if (!values?.length || values.length < 2) return <div ref={ref} className="ad-spark" style={{ height }} />;
+  if (!width || !values?.length || values.length < 2) return <div ref={ref} className="ad-spark" style={{ height }} />;
   // Headroom keeps a flat series as a line in the upper part of the tile, not a solid block.
   const max = Math.max(...values, 1) * 1.25;
   const min = Math.min(...values, 0);

@@ -17,7 +17,7 @@ export default function UsersPage() {
     queryFn: ({ signal }) => adminApi.users({ signal }),
   });
 
-  const users = useMemo(() => [...(data ?? [])].sort((a, b) => new Date(b.createdAt ?? 0) - new Date(a.createdAt ?? 0)), [data]);
+  const users = useMemo(() => [...(Array.isArray(data) ? data : data?.content ?? data?.users ?? [])].sort((a, b) => new Date(b.createdAt ?? 0) - new Date(a.createdAt ?? 0)), [data]);
   const admins = users.filter(isAdminUser).length;
   const active = users.filter((u) => u.active).length;
   const list = users.filter((u) => {

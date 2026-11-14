@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Download, Pause, Play, ScrollText, Search, T
 import { useDocumentMeta } from '@/design-system';
 import { adminApi } from '../lib/api';
 import { clearLogs, useLiveMonitor } from '../lib/liveMonitor';
-import { dateTime, ms, num, time, visitorName } from '../lib/format';
+import { dateTime, ms, num, time, visitorName, who } from '../lib/format';
 import { download, logText, logTitle, toCsv } from '../lib/logs';
 import { Drawer, EmptyState, ErrorBanner, PageHeader, Panel, Segmented, SkeletonRows } from '../components/ui';
 import { KindBadge, LogDetail, StatusBadge } from '../components/LogParts';
@@ -62,7 +62,7 @@ function LogRows({ rows, onOpen, onVisitor }) {
                 <td className="is-num">{l.durationMs != null ? ms(l.durationMs) : ''}</td>
                 <td>
                   {l.username ? (
-                    <strong>{l.username}</strong>
+                    <strong title={who(l)}>{l.userEmail ?? l.username}</strong>
                   ) : l.visitorId ? (
                     <button
                       type="button"
@@ -96,7 +96,7 @@ function LogRows({ rows, onOpen, onVisitor }) {
               </div>
               <span className="ad-card-btn__path">{logTitle(l)}</span>
               <span className="ad-card-btn__meta">
-                {l.username ?? visitorName(l.visitorId)} · {[l.city, l.country].filter(Boolean).join(', ') || l.ip || '—'}
+                {l.userEmail ?? l.username ?? visitorName(l.visitorId)} · {[l.city, l.country].filter(Boolean).join(', ') || l.ip || '—'}
                 {l.durationMs != null && ` · ${ms(l.durationMs)}`}
               </span>
             </button>
@@ -302,7 +302,11 @@ export default function LogsPage() {
   const [visitor, setVisitor] = useState(null);
   const top = useRef(null);
 
-  useEffect(() => top.current?.scrollIntoView({ block: 'nearest' }), [tab]);
+  useEffect(() => {
+    // Braces matter: scrollIntoView() returns a Promise in newer browsers, and an effect
+    // must return nothing or a cleanup function — returning a Promise crashed on unmount.
+    top.current?.scrollIntoView({ block: 'nearest' });
+  }, [tab]);
 
   return (
     <div className="ad-page" ref={top}>

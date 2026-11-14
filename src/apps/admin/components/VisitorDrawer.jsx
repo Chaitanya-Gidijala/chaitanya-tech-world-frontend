@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../lib/api';
 import { useNow } from '../lib/useNow';
 import { useLiveMonitor } from '../lib/liveMonitor';
-import { ago, dateTime, duration, flag, place, time, visitorName } from '../lib/format';
+import { ago, dateTime, duration, flag, place, time, visitorName, who } from '../lib/format';
 import { logTitle } from '../lib/logs';
 import { Drawer, KeyValues, SkeletonRows, StatusPill } from './ui';
 import { KindBadge } from './LogParts';
@@ -38,7 +38,7 @@ export default function VisitorDrawer({ visitorId, onClose }) {
       <div className="ad-stack">
         <div className="ad-detail-head">
           {session ? <StatusPill tone="success">Online now</StatusPill> : <StatusPill tone="muted">Offline</StatusPill>}
-          {session?.username && <StatusPill tone="info">{session.username}</StatusPill>}
+          {who(session) && <StatusPill tone="info">{who(session)}</StatusPill>}
           <code className="ad-muted">{visitorId}</code>
         </div>
 
@@ -46,7 +46,9 @@ export default function VisitorDrawer({ visitorId, onClose }) {
           <>
             <KeyValues
               items={[
-                ['Location', `${flag(session.countryCode)} ${place(session)}`],
+                ['Approx. location (IP)', `${flag(session.countryCode)} ${place(session)}`],
+                ['Internet provider', session.isp],
+                ['Browser timezone', session.timezone],
                 ['Now viewing', <code key="p">{session.path}</code>],
                 ['Page title', session.title],
                 ['On this page', duration(now - session.pageSince)],
@@ -55,8 +57,7 @@ export default function VisitorDrawer({ visitorId, onClose }) {
                 ['Came from', session.referrer || 'Direct'],
                 ['Device', `${session.device} · ${session.os} · ${session.browser}`],
                 ['Screen', session.screen],
-                ['Language · timezone', [session.language, session.timezone].filter(Boolean).join(' · ')],
-                ['Network', session.isp],
+                ['Language', session.language],
                 ['IP address', session.ip],
                 ['App version', session.appVersion],
                 ['Tab visible', session.visible ? 'Yes' : 'No (background tab)'],

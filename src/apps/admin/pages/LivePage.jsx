@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { Monitor, RadioTower, Search, Smartphone, Tablet, TrendingUp, UsersRound } from 'lucide-react';
 import { useDocumentMeta } from '@/design-system';
 import { useLiveMonitor } from '../lib/liveMonitor';
-import { ago, duration, flag, num, place, refHost, visitorName } from '../lib/format';
+import { ago, duration, flag, num, place, refHost, visitorName, who } from '../lib/format';
 import { BarList } from '../components/charts';
 import { EmptyState, PageHeader, Panel, StatTile, StatusPill } from '../components/ui';
 import VisitorDrawer from '../components/VisitorDrawer';
@@ -18,7 +18,7 @@ function VisitorCell({ s }) {
         {flag(s.countryCode)}
       </span>
       <span>
-        <strong>{s.username ?? visitorName(s.visitorId)}</strong>
+        <strong>{who(s) ?? visitorName(s.visitorId)}</strong>
         <span className="ad-visitor__sub">
           {s.returning ? 'Returning today' : 'New today'}
           {!s.visible && ' · background tab'}
@@ -56,7 +56,7 @@ export default function LivePage() {
     <div className="ad-page">
       <PageHeader
         title="Live visitors"
-        description="Everyone with the website open right now. Updates in real time; a visitor drops off ~45s after closing the tab."
+        description="Everyone with the website open right now. Updates in real time; a visitor drops off ~45s after closing the tab. Locations are approximate (IP-based)."
         actions={<StatusPill tone={status === 'live' ? 'success' : 'warning'}>{status === 'live' ? 'Streaming' : 'Reconnecting'}</StatusPill>}
       />
 
@@ -104,9 +104,9 @@ export default function LivePage() {
                         <td>
                           <VisitorCell s={s} />
                         </td>
-                        <td>
-                          <span className="ad-cell-main">{place(s)}</span>
-                          <span className="ad-cell-sub">{s.ip}</span>
+                        <td title="Approximate: IP geolocation usually resolves to the internet provider's network location, not the visitor's exact city.">
+                          <span className="ad-cell-main">≈ {place(s)}</span>
+                          <span className="ad-cell-sub">{[s.isp, s.ip].filter(Boolean).join(' · ')}</span>
                         </td>
                         <td className="ad-cell-path">
                           <code>{s.path}</code>

@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import { installStaleChunkHandler } from './utils/lazyWithRetry';
+
+installStaleChunkHandler();
 
 // Legacy global styles (landing / contact pages)
 import './styles/colors.css';

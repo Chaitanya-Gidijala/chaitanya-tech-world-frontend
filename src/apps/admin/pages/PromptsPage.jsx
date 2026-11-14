@@ -1,9 +1,10 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { lazyWithRetry } from '@/utils/lazyWithRetry';
 import { useDocumentMeta } from '@/design-system';
 import { PageHeader, Panel, SkeletonRows } from '../components/ui';
 
 // The existing prompt manager (create / edit / delete, image upload) — reused as-is.
-const AdminPromptsPage = lazy(() => import('@/features/prompts-gallery/pages/AdminPromptsPage'));
+const AdminPromptsPage = lazyWithRetry(() => import('@/features/prompts-gallery/pages/AdminPromptsPage'));
 
 export default function PromptsPage() {
   useDocumentMeta({ title: 'Prompt library | CTW Control', robots: 'noindex, nofollow' });

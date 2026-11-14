@@ -27,7 +27,7 @@ export default function InquiriesPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'inquiries'] }),
   });
 
-  const all = useMemo(() => [...(data ?? [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)), [data]);
+  const all = useMemo(() => [...(Array.isArray(data) ? data : data?.content ?? [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)), [data]);
   const unread = all.filter((i) => !isRead(i)).length;
   const list = all.filter((i) => {
     if (filter === 'unread' && isRead(i)) return false;

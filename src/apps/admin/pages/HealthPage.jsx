@@ -216,6 +216,63 @@ export default function HealthPage() {
         </Panel>
       </div>
 
+      <div className="ad-grid ad-grid--3">
+        <Panel title="Database tables" subtitle="Tables the dashboard depends on">
+          {data?.tables ? (
+            <ul className="ad-check-list">
+              {data.tables.map((t) => (
+                <li key={t.name}>
+                  <code>{t.name}</code>
+                  <span className="ad-muted">{t.ok ? `${num(t.rows)} rows` : ''}</span>
+                  <StatusPill tone={t.ok ? 'success' : 'danger'}>{t.ok ? 'OK' : 'Missing'}</StatusPill>
+                  {!t.ok && <span className="ad-error__msg">{t.error}</span>}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <SkeletonRows rows={5} />
+          )}
+        </Panel>
+
+        <Panel title="Log storage" subtitle="Batched writes of monitoring logs">
+          {data?.pipeline ? (
+            <div className="ad-stack">
+              <StatusPill tone={data.pipeline.healthy ? 'success' : 'danger'}>{data.pipeline.healthy ? 'Writing normally' : 'Write failures'}</StatusPill>
+              <KeyValues
+                items={[
+                  ['Stored since start', num(data.pipeline.written)],
+                  ['Waiting to write', num(data.pipeline.pending)],
+                  ['Dropped', num(data.pipeline.dropped)],
+                  ['Last successful write', data.pipeline.lastSuccessAt ? ago(data.pipeline.lastSuccessAt) : 'None yet'],
+                  ['Retention', `${data.pipeline.retentionDays} days`],
+                  data.pipeline.lastError && ['Last error', <span key="e" className="ad-break">{data.pipeline.lastError} ({ago(data.pipeline.lastErrorAt)})</span>],
+                ]}
+              />
+            </div>
+          ) : (
+            <SkeletonRows rows={5} />
+          )}
+        </Panel>
+
+        <Panel title="Location lookups" subtitle="IP → approximate city / country">
+          {data?.geo ? (
+            <KeyValues
+              items={[
+                ['Status', data.geo.enabled ? 'Enabled' : 'Disabled'],
+                ['IPs cached', num(data.geo.cachedIps)],
+                ['Lookups since start', num(data.geo.lookups)],
+                ['Failed lookups', num(data.geo.failures)],
+                ['Rate-limited (retried later)', num(data.geo.rateLimited)],
+                ['Limit', `${data.geo.perMinuteLimit} / minute`],
+                ['Accuracy', 'City or provider hub; mobile and broadband IPs often resolve to the ISP’s location'],
+              ]}
+            />
+          ) : (
+            <SkeletonRows rows={5} />
+          )}
+        </Panel>
+      </div>
+
       <Panel title="Recent errors" subtitle="Latest server 5xx responses and front-end JavaScript errors">
         {data?.recentErrors?.length ? (
           <ul className="ad-feed">

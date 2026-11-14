@@ -1,22 +1,24 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Suspense } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { lazyWithRetry } from '@/utils/lazyWithRetry';
+import RouteErrorBoundary from '@/components/common/RouteErrorBoundary';
 
 import SiteLayout from '@/layouts/SiteLayout';
 import RouteFallback from './RouteFallback';
 
 // Route-level code splitting: each page ships in its own chunk.
-const HomePage = lazy(() => import('@/features/home/HomePage'));
-const ContactPage = lazy(() => import('@/pages/common/ContactPage'));
-const PortfolioPage = lazy(() => import('@/features/portfolio-v2/PortfolioPage'));
-const PromptsApp = lazy(() => import('@/features/prompts-gallery/PromptsApp'));
-const RoadmapHomePage = lazy(() => import('@/features/roadmap/RoadmapHomePage'));
-const RoadmapPage = lazy(() => import('@/features/roadmap/RoadmapPage'));
-const ClaudeCertificationsPage = lazy(() => import('@/features/roadmap/ClaudeCertificationsPage'));
-const ClaudeCertPage = lazy(() => import('@/features/roadmap/ClaudeCertPage'));
-const TraceflowApp = lazy(() => import('@/apps/traceflow/App'));
-const DailyChallengePage = lazy(() => import('@/features/daily-challenge/DailyChallengePage'));
-const ProgressPage = lazy(() => import('@/features/engagement/pages/ProgressPage'));
-const AdminApp = lazy(() => import('@/apps/admin/AdminApp'));
+const HomePage = lazyWithRetry(() => import('@/features/home/HomePage'));
+const ContactPage = lazyWithRetry(() => import('@/pages/common/ContactPage'));
+const PortfolioPage = lazyWithRetry(() => import('@/features/portfolio-v2/PortfolioPage'));
+const PromptsApp = lazyWithRetry(() => import('@/features/prompts-gallery/PromptsApp'));
+const RoadmapHomePage = lazyWithRetry(() => import('@/features/roadmap/RoadmapHomePage'));
+const RoadmapPage = lazyWithRetry(() => import('@/features/roadmap/RoadmapPage'));
+const ClaudeCertificationsPage = lazyWithRetry(() => import('@/features/roadmap/ClaudeCertificationsPage'));
+const ClaudeCertPage = lazyWithRetry(() => import('@/features/roadmap/ClaudeCertPage'));
+const TraceflowApp = lazyWithRetry(() => import('@/apps/traceflow/App'));
+const DailyChallengePage = lazyWithRetry(() => import('@/features/daily-challenge/DailyChallengePage'));
+const ProgressPage = lazyWithRetry(() => import('@/features/engagement/pages/ProgressPage'));
+const AdminApp = lazyWithRetry(() => import('@/apps/admin/AdminApp'));
 
 /*
  * Disabled feature routes (kept for reference — re-enable by importing and adding a <Route>):
@@ -25,7 +27,10 @@ const AdminApp = lazy(() => import('@/apps/admin/AdminApp'));
  *   /oauth2/callback, /profile, /tutorial/:courseId/:topicId?
  */
 
-const AppRoutes = () => (
+const AppRoutes = () => {
+  const { pathname } = useLocation();
+  return (
+  <RouteErrorBoundary resetKey={pathname}>
   <Suspense fallback={<RouteFallback />}>
     <Routes>
       {/* ── Standalone (own chrome) ── */}
@@ -49,6 +54,8 @@ const AppRoutes = () => (
       </Route>
     </Routes>
   </Suspense>
-);
+  </RouteErrorBoundary>
+  );
+};
 
 export default AppRoutes;
