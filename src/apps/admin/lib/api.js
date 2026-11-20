@@ -42,7 +42,7 @@ export async function request(url, { method = 'GET', body, signal } = {}) {
     json = null;
   }
   if (!res.ok) {
-    const detail = json?.message || (!json && text ? text.slice(0, 300) : '');
+    const detail = json?.message || (!json && text ? text.slice(0, 500) : '');
     throw new ApiError(detail ? `${detail} (${res.status})` : `Request failed (${res.status})`, res.status);
   }
   return json && typeof json === 'object' && 'data' in json ? json.data : json;
@@ -70,6 +70,13 @@ export const adminApi = {
   streamUrl: (ticket) => `${API}/admin/monitor/stream?ticket=${encodeURIComponent(ticket)}`,
   inquiries: (o) => request(`${API}/contact/all`, o),
   markInquiry: (id, read) => request(`${API}/admin/monitor/inquiries/${id}/read?read=${read}`, { method: 'PATCH' }),
+  directory: (params, o) => request(`${API}/admin/monitor/visitors/directory${qs(params)}`, o),
+  profile: (visitorId, o) => request(`${API}/admin/monitor/visitors/${encodeURIComponent(visitorId)}/profile`, o),
+  visitorSummary: (o) => request(`${API}/admin/monitor/visitors/summary`, o),
+  notifications: (o) => request(`${API}/admin/monitor/notifications`, o),
+  saveNotificationSettings: (settings) => request(`${API}/admin/monitor/notifications/settings`, { method: 'PUT', body: settings }),
+  testNotification: () => request(`${API}/admin/monitor/notifications/test`, { method: 'POST' }),
+  ignoreVisitor: (visitorId) => request(`${API}/admin/monitor/notifications/ignore`, { method: 'POST', body: { visitorId } }),
   users: (o) => request(USERS, o),
   apiPing: () => fetch(`${API}/health`).then((r) => r.ok),
 };

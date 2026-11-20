@@ -178,7 +178,12 @@ export default function OverviewPage() {
       <h2 className="ad-section-title">Last 24 hours</h2>
       <div className="ad-stats ad-stats--6">
         <StatTile label="Sessions" icon={Layers} value={num(t24?.sessions)} hint={`${num(t24?.pagesPerSession)} pages / session`} />
-        <StatTile label="Visitors" icon={Users} value={num(t24?.visitors)} hint={`${num(data?.today?.uniqueVisitors)} unique today`} />
+        <StatTile
+          label="Visitors"
+          icon={Users}
+          value={num(t24?.visitors)}
+          hint={data?.visitors ? `${num(data.visitors.new24h)} new · ${num(data.visitors.returning24h)} returning` : `${num(data?.today?.uniqueVisitors)} unique today`}
+        />
         <StatTile label="Page views" icon={Eye} value={num(t24?.pageViews)} hint={`${num(data?.today?.views)} today · ${compact(data?.allTimeViews)} all time`} />
         <StatTile
           label="Bounce rate"

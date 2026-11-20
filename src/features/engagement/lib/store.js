@@ -57,6 +57,16 @@ function load() {
 }
 
 let state = typeof window === 'undefined' ? emptyState() : load();
+
+// Persist a brand-new learner straight away: the id is also the anonymous visitor id used by
+// site analytics, and it must survive reloads even before the first learning action.
+if (typeof window !== 'undefined') {
+  try {
+    if (!localStorage.getItem(STORAGE_KEY)) localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    /* storage unavailable — id lives for this page only */
+  }
+}
 let summaryCache = null;
 const listeners = new Set();
 const achievementListeners = new Set();

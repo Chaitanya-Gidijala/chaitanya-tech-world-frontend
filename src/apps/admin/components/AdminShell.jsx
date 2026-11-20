@@ -3,6 +3,8 @@ import { Link, NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react
 import clsx from 'clsx';
 import {
   Activity,
+  BellRing,
+  Contact,
   ExternalLink,
   Gauge,
   HeartPulse,
@@ -29,6 +31,7 @@ const ADMIN_NAV = [
     items: [
       { to: '/admin', label: 'Overview', icon: Gauge, end: true },
       { to: '/admin/live', label: 'Live visitors', icon: RadioTower, live: true },
+      { to: '/admin/visitors', label: 'All visitors', icon: Contact },
       { to: '/admin/logs', label: 'Activity logs', icon: ScrollText },
       { to: '/admin/health', label: 'System health', icon: HeartPulse },
     ],
@@ -37,6 +40,7 @@ const ADMIN_NAV = [
     group: 'Manage',
     items: [
       { to: '/admin/inquiries', label: 'Inquiries', icon: Inbox },
+      { to: '/admin/notifications', label: 'Notifications', icon: BellRing },
       { to: '/admin/users', label: 'Users', icon: Users },
       { to: '/admin/prompts', label: 'Prompt library', icon: ImageIcon },
     ],

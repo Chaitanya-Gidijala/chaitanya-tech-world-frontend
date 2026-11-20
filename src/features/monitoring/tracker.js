@@ -27,6 +27,9 @@ let heartbeat = null;
 let flushTimer = null;
 let queue = [];
 const firstReferrer = typeof document !== 'undefined' ? document.referrer : '';
+// The URL this page load started on: landing page + campaign (UTM) tags.
+const LANDING = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '';
+let clientSent = false;
 
 const privacyMode = () =>
   typeof navigator !== 'undefined' && (navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' || window.doNotTrack === '1');
@@ -62,6 +65,44 @@ function post(path, payload, { beacon = false } = {}) {
   }
 }
 
+/** Device / browser capabilities sent once per page load (no fingerprinting, no form data). */
+function clientDetails() {
+  try {
+    const conn = navigator.connection || {};
+    const params = new URLSearchParams(LANDING.split('?')[1] || '');
+    const mq = (q) => (window.matchMedia ? window.matchMedia(q).matches : false);
+    const raw = {
+      viewport: `${window.innerWidth}x${window.innerHeight}`,
+      dpr: window.devicePixelRatio || 1,
+      platform: navigator.userAgentData?.platform || navigator.platform,
+      languages: (navigator.languages || []).slice(0, 4).join(', '),
+      cores: navigator.hardwareConcurrency,
+      memory: navigator.deviceMemory ? `${navigator.deviceMemory} GB` : null,
+      connection: conn.effectiveType,
+      downlink: conn.downlink ? `${conn.downlink} Mbps` : null,
+      saveData: conn.saveData ? 'on' : null,
+      touch: navigator.maxTouchPoints > 0 ? 'yes' : 'no',
+      colorScheme: mq('(prefers-color-scheme: dark)') ? 'dark' : 'light',
+      reducedMotion: mq('(prefers-reduced-motion: reduce)') ? 'yes' : null,
+      pwa: mq('(display-mode: standalone)') ? 'installed app' : null,
+      cookies: navigator.cookieEnabled ? 'enabled' : 'disabled',
+      landing: LANDING,
+      utmSource: params.get('utm_source'),
+      utmMedium: params.get('utm_medium'),
+      utmCampaign: params.get('utm_campaign'),
+      utmTerm: params.get('utm_term'),
+      utmContent: params.get('utm_content'),
+    };
+    const out = {};
+    Object.entries(raw).forEach(([k, v]) => {
+      if (v != null && v !== '') out[k] = String(v).slice(0, 200);
+    });
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 function presence(extra = {}) {
   if (!currentPath || isAdminPath(currentPath)) return;
   post('/monitor/presence', {
@@ -75,8 +116,10 @@ function presence(extra = {}) {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     appVersion: APP_VERSION,
     visible: document.visibilityState === 'visible',
+    ...(clientSent ? {} : { client: clientDetails() }),
     ...extra,
   });
+  clientSent = true;
 }
 
 function enqueue(event) {
