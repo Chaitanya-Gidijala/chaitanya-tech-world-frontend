@@ -3,6 +3,7 @@ import { Link, NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react
 import clsx from 'clsx';
 import {
   Activity,
+  Rocket,
   BellRing,
   Contact,
   ExternalLink,
@@ -32,6 +33,7 @@ const ADMIN_NAV = [
       { to: '/admin', label: 'Overview', icon: Gauge, end: true },
       { to: '/admin/live', label: 'Live visitors', icon: RadioTower, live: true },
       { to: '/admin/visitors', label: 'All visitors', icon: Contact },
+      { to: '/admin/growth', label: 'Growth', icon: Rocket },
       { to: '/admin/logs', label: 'Activity logs', icon: ScrollText },
       { to: '/admin/health', label: 'System health', icon: HeartPulse },
     ],

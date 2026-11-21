@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { getLearnerId } from '@/features/engagement/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Mail, Phone, Linkedin, Instagram, Github,
@@ -161,7 +162,9 @@ const ContactPage = () => {
             phone: form.phone,
             serviceType: selectedService || 'Not Selected',
             budget: budget,
-            message: form.message
+            message: form.message,
+            // Links the inquiry to this visitor's profile in the admin dashboard.
+            visitorId: getLearnerId(),
         };
 
         // Fire and forget the API request so the user doesn't wait

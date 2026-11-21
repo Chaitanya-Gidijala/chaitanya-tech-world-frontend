@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Play } from 'lucide-react';
 import { Badge, Button, Container, Reveal, Section, SectionHeader, useDocumentMeta } from '@/design-system';
 import { SITE_URL } from '@/design-system/hooks/useDocumentMeta';
 import { algorithmJsonLd, algorithmMeta, comparePairs, compareUrl } from '../seo.js';
+import ShareBar from '@/features/growth/ShareBar';
 import { useTheme } from '@/hooks/useTheme';
 import PageHero from '@/components/site/PageHero';
 import { getAlgorithm, getAllAlgorithms } from '../algorithms/index.js';
@@ -121,6 +122,12 @@ export default function AlgorithmDetail() {
               <CodePanel algo={algo} theme={theme} />
             </Reveal>
           </div>
+        </Container>
+      </Section>
+
+      <Section compact>
+        <Container>
+          <ShareBar url={`/traceflow/algorithm/${algo.slug}`} text={`${algo.name}, explained step by step with an animation 👇`} campaign={`algo-${algo.slug}`} title="Share this explanation" />
         </Container>
       </Section>
 

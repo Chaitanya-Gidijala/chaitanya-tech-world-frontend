@@ -63,7 +63,7 @@ export default function VisitorDrawer({ visitorId, onClose }) {
 
   const p = stored?.profile;
   const details = { ...(stored?.details ?? {}), ...(session?.details ?? {}) };
-  const identity = who(session) ?? who(p);
+  const identity = p?.name ?? session?.name ?? who(session) ?? who(p);
 
   return (
     <Drawer open={Boolean(visitorId)} onClose={onClose} title={identity ?? visitorName(visitorId)} wide>
@@ -115,7 +115,9 @@ export default function VisitorDrawer({ visitorId, onClose }) {
                 p.utmCampaign && ['Campaign', [p.source, p.utmMedium, p.utmCampaign].filter(Boolean).join(' / ')],
                 ['Landing page', <code key="l">{p.landingPage}</code>],
                 ['Last page', <code key="lp">{p.lastPage}</code>],
-                identity && ['Signed in as', identity],
+                p.name && ['Name', p.name],
+                p.email && ['Email', <a key="m" className="ad-link" href={`mailto:${p.email}`}>{p.email}</a>],
+                p.identitySource && ['Identified via', `${{ google: 'Google sign-in', github: 'GitHub sign-in', account: 'Email account', newsletter: 'Newsletter', contact: 'Contact form' }[p.identitySource] ?? p.identitySource} · ${ago(ts(p.identifiedAt), now)}`],
               ]}
             />
           ) : (

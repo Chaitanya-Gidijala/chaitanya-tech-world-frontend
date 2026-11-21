@@ -15,6 +15,7 @@ const UsersPage = lazyWithRetry(() => import('./pages/UsersPage'));
 const PromptsPage = lazyWithRetry(() => import('./pages/PromptsPage'));
 const VisitorsPage = lazyWithRetry(() => import('./pages/VisitorsPage'));
 const NotificationsPage = lazyWithRetry(() => import('./pages/NotificationsPage'));
+const GrowthPage = lazyWithRetry(() => import('./pages/GrowthPage'));
 
 const page = (Component) => (
   <Suspense
@@ -48,6 +49,7 @@ export default function AdminApp() {
           <Route path="live" element={page(LivePage)} />
           <Route path="visitors" element={page(VisitorsPage)} />
           <Route path="notifications" element={page(NotificationsPage)} />
+          <Route path="growth" element={page(GrowthPage)} />
           <Route path="logs" element={page(LogsPage)} />
           <Route path="health" element={page(HealthPage)} />
           <Route path="inquiries" element={page(InquiriesPage)} />

@@ -1,11 +1,14 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { ThemeProvider } from '@/context/ThemeContext';
 import AppRoutes from '@/routes/AppRoutes';
 import { initGA, logPageView } from '@/utils/analytics';
-import AchievementToaster from '@/features/engagement/components/AchievementToaster';
+import AuthDialog from '@/features/account/AuthDialog';
+
+// Toasts (sonner) load on demand, keeping them out of the first-paint bundle.
+const AchievementToaster = lazy(() => import('@/features/engagement/components/AchievementToaster'));
 import { trackPage } from '@/features/monitoring/tracker';
 
 const queryClient = new QueryClient();
@@ -37,7 +40,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AppContent />
-        <AchievementToaster />
+        <Suspense fallback={null}>
+          <AchievementToaster />
+        </Suspense>
+        <AuthDialog />
       </ThemeProvider>
     </QueryClientProvider>
   );

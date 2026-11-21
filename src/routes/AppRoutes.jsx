@@ -19,6 +19,12 @@ const TraceflowApp = lazyWithRetry(() => import('@/apps/traceflow/App'));
 const DailyChallengePage = lazyWithRetry(() => import('@/features/daily-challenge/DailyChallengePage'));
 const ProgressPage = lazyWithRetry(() => import('@/features/engagement/pages/ProgressPage'));
 const AdminApp = lazyWithRetry(() => import('@/apps/admin/AdminApp'));
+const LeaderboardPage = lazyWithRetry(() => import('@/features/growth/LeaderboardPage'));
+const CertificatePage = lazyWithRetry(() => import('@/features/growth/CertificatePage'));
+const NewsletterPage = lazyWithRetry(() => import('@/features/growth/NewsletterPage'));
+const DailyArchivePage = lazyWithRetry(() => import('@/features/daily-challenge/DailyArchivePage'));
+const PracticePuzzlePage = lazyWithRetry(() => import('@/features/daily-challenge/DailyChallengePage').then((m) => ({ default: m.PracticePuzzlePage })));
+const OAuthCallbackPage = lazyWithRetry(() => import('@/features/account/OAuthCallbackPage'));
 
 /*
  * Disabled feature routes (kept for reference — re-enable by importing and adding a <Route>):
@@ -49,6 +55,12 @@ const AppRoutes = () => {
         <Route path="/prompts/*" element={<PromptsApp />} />
         <Route path="/traceflow/*" element={<TraceflowApp />} />
         <Route path="/daily" element={<DailyChallengePage />} />
+        <Route path="/daily/archive" element={<DailyArchivePage />} />
+        <Route path="/daily/practice/:n" element={<PracticePuzzlePage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/certificate/:code" element={<CertificatePage />} />
+        <Route path="/newsletter" element={<NewsletterPage />} />
+        <Route path="/oauth2/callback" element={<OAuthCallbackPage />} />
         <Route path="/progress" element={<ProgressPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Route>

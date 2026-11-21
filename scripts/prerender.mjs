@@ -52,6 +52,8 @@ const SITE_NAV = list([
   link('/roadmap/certifications/claude', 'Claude certifications'),
   link('/traceflow', 'Traceflow algorithm visualiser'),
   link('/prompts', 'AI image prompt library'),
+  link('/traceflow/interview-questions', 'Algorithm interview questions'),
+  link('/leaderboard', 'Leaderboards'),
 ]);
 
 /* ── Routes ───────────────────────────────────────────────────────────── */
@@ -309,9 +311,78 @@ add({
   body: shell('Your progress', 'Your learning streak, activity calendar, roadmap progress and achievements.'),
 });
 
+add({
+  path: '/daily/archive',
+  priority: 0.6,
+  changefreq: 'daily',
+  title: 'Daily Puzzle Archive — Replay Every Past Algorithm Puzzle | Chaitanya Tech World',
+  description: 'Every past Traceflow Daily algorithm puzzle. Replay any day for practice, see how you did and keep sharpening your sorting and searching intuition.',
+  body: shell(
+    'Daily puzzle archive',
+    'Every past Traceflow Daily puzzle, ready to replay for practice.',
+    section('Play', list([link('/daily', "Today's puzzle"), link('/leaderboard', 'Leaderboards')])),
+  ),
+});
+
+add({
+  path: '/leaderboard',
+  priority: 0.6,
+  changefreq: 'daily',
+  title: 'Leaderboard — Top Daily Puzzle Players & Streaks | Chaitanya Tech World',
+  description: "Today's fastest perfect scores, this week's best players and the longest daily streaks on the Traceflow Daily algorithm puzzle.",
+  body: shell(
+    'Leaderboards',
+    "Today's fastest perfect scores, this week's best players and the longest daily streaks.",
+    section('Join in', list([link('/daily', "Play today's puzzle"), link('/daily/archive', 'Practice past puzzles')])),
+  ),
+});
+
+add({
+  path: '/newsletter',
+  priority: 0.4,
+  changefreq: 'monthly',
+  title: 'Daily Puzzle Email & Weekly Recap | Chaitanya Tech World',
+  description: 'Get the daily algorithm puzzle in your inbox and a short weekly recap of new roadmaps, visualisations and interview questions. Free, one click to unsubscribe.',
+  body: shell('Email updates', 'The daily algorithm puzzle in your inbox, plus a short weekly recap. Free, one click to unsubscribe.'),
+});
+
+{
+  const withQs = algorithms.filter((a) => a.interviewQuestions?.length);
+  const total = withQs.reduce((n, a) => n + a.interviewQuestions.length, 0);
+  add({
+    path: '/traceflow/interview-questions',
+    priority: 0.8,
+    title: `${total} Sorting & Searching Interview Questions (with Visual Explanations) | Traceflow`,
+    description: `Common DSA interview questions on ${withQs.length} sorting and searching algorithms — with complexity facts, trade-offs and a step-by-step visualisation for each.`,
+    keywords: ['sorting interview questions', 'searching interview questions', 'dsa interview questions', 'binary search interview', 'quick sort interview questions'],
+    body: shell(
+      'Sorting & searching interview questions',
+      `${total} common interview questions across ${withQs.length} algorithms, each linked to a visual, step-by-step explanation.`,
+      withQs
+        .map((a) => section(a.name, list(a.interviewQuestions.map((q) => esc(q)).concat(link(seo.detailUrl(a.slug), `Visualise ${a.name}`)))))
+        .join(''),
+    ),
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Sorting & searching interview questions',
+      itemListElement: withQs.map((a, i) => ({ '@type': 'ListItem', position: i + 1, name: a.name, url: `${SITE_URL}${seo.detailUrl(a.slug)}` })),
+    },
+  });
+}
+
 /* ── Render ───────────────────────────────────────────────────────────── */
 
-const template = await readFile(path.join(dist, 'index.html'), 'utf8');
+let template = await readFile(path.join(dist, 'index.html'), 'utf8');
+{
+  const verify = [
+    ['google-site-verification', process.env.VITE_GOOGLE_SITE_VERIFICATION],
+    ['msvalidate.01', process.env.VITE_BING_SITE_VERIFICATION],
+  ].filter(([, v]) => v);
+  if (verify.length) {
+    template = template.replace('</head>', `${verify.map(([n, v]) => `  <meta name="${n}" content="${esc(v)}">`).join('\n')}\n</head>`);
+  }
+}
 
 function setTag(html, regex, replacement) {
   if (!regex.test(html)) throw new Error(`prerender: template is missing ${regex}`);

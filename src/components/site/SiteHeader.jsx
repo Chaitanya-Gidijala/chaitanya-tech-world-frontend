@@ -8,6 +8,7 @@ import { Button, IconButton, ThemeToggle } from '@/design-system';
 import { HEADER_CTA, PRIMARY_NAV } from '@/config/navigation';
 import BrandMark from './BrandMark';
 import StreakBadge from '@/features/engagement/components/StreakBadge';
+import AccountMenu from '@/features/account/AccountMenu';
 import './site.css';
 
 /** True when `item` is the active route (mirrors NavLink's matching). */
@@ -84,6 +85,7 @@ export default function SiteHeader() {
 
           <div className="site-header__actions">
             <StreakBadge />
+            <AccountMenu />
             <ThemeToggle />
             <Button to={HEADER_CTA.to} size="sm" iconEnd={<ArrowRight size={14} />} className="site-header__cta">
               {HEADER_CTA.label}

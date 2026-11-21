@@ -28,6 +28,20 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        // Long-lived vendor chunks: app deploys don't invalidate the cached framework code.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined
+          if (/[/\\]node_modules[/\\](react|react-dom|scheduler|react-router|react-router-dom)[/\\]/.test(id)) return 'vendor-react'
+          if (id.includes('framer-motion') || id.includes('motion-dom') || id.includes('motion-utils')) return 'vendor-motion'
+          if (id.includes('@tanstack')) return 'vendor-query'
+          return undefined
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

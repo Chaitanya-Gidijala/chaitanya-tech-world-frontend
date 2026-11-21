@@ -325,3 +325,23 @@ kbd {
   .dc-option.is-wrong,
   .dc-pulse { animation: none; }
 }
+
+/* ── Growth additions: save prompt, social row, archive ────────────────── */
+.dc-result__social { width: 100%; justify-items: center; }
+.dc-result__social .gr-share__buttons { justify-content: center; }
+.dc-save { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--ds-space-3); border-color: var(--ds-accent-border); background: var(--ds-accent-soft); }
+.dc-save strong { color: var(--ds-text); }
+.dc-save p { margin: 2px 0 0; }
+
+.dc-archive { display: grid; gap: var(--ds-space-2); margin: 0 0 var(--ds-space-8); padding: 0; list-style: none; }
+.dc-archive__item { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: var(--ds-space-3); padding: var(--ds-space-3) var(--ds-space-4); border: 1px solid var(--ds-border); border-radius: var(--ds-radius-md); background: var(--ds-surface); color: inherit; text-decoration: none; transition: border-color var(--ds-duration-fast) var(--ds-ease), transform var(--ds-duration-fast) var(--ds-ease); }
+.dc-archive__item:hover { border-color: var(--ds-accent-border); transform: translateY(-1px); }
+.dc-archive__item:focus-visible { outline: none; box-shadow: var(--ds-focus-ring); }
+.dc-archive__n { font-family: var(--ds-font-mono); color: var(--ds-text-secondary); font-weight: var(--ds-weight-semibold); }
+.dc-archive__body { display: grid; gap: 2px; min-width: 0; }
+.dc-archive__body strong { color: var(--ds-text); font-size: var(--ds-text-sm); }
+.dc-archive__body .ds-meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dc-archive__score { display: inline-flex; gap: 3px; }
+.dc-archive__play { display: inline-flex; align-items: center; gap: var(--ds-space-1); color: var(--ds-accent-text); font-size: var(--ds-text-sm); font-weight: var(--ds-weight-medium); }
+.dc-archive__more { display: flex; justify-content: center; margin-bottom: var(--ds-space-8); }
+@media (max-width: 480px) { .dc-archive__item { grid-template-columns: 44px minmax(0, 1fr); } .dc-archive__score, .dc-archive__play { grid-column: 2; } }

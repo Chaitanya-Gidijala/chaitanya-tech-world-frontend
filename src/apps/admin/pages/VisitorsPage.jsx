@@ -18,6 +18,7 @@ const TYPES = [
   { value: 'new', label: 'New' },
   { value: 'returning', label: 'Returning' },
   { value: 'signedIn', label: 'Signed in' },
+  { value: 'identified', label: 'Identified' },
 ];
 
 const SORTS = [
@@ -172,7 +173,8 @@ export default function VisitorsPage() {
                             {flag(v.countryCode)}
                           </span>
                           <span>
-                            <strong>{who(v) ?? visitorName(v.visitorId)}</strong>
+                            <strong>{v.name ?? who(v) ?? visitorName(v.visitorId)}</strong>
+                            {v.name && v.email && <span className="ad-visitor__sub">{v.email}</span>}
                             <span className="ad-visitor__sub">
                               {online.has(v.visitorId) ? <StatusPill tone="success">Online</StatusPill> : v.visits > 1 ? 'Returning' : 'New'}
                             </span>
@@ -210,7 +212,7 @@ export default function VisitorsPage() {
                   <button type="button" className="ad-card-btn" onClick={() => open(v.visitorId)}>
                     <div className="ad-card-btn__top">
                       <strong>
-                        {flag(v.countryCode)} {who(v) ?? visitorName(v.visitorId)}
+                        {flag(v.countryCode)} {v.name ?? who(v) ?? visitorName(v.visitorId)}
                       </strong>
                       <span className="ad-muted">{online.has(v.visitorId) ? 'Online' : ago(ts(v.lastSeen), now)}</span>
                     </div>

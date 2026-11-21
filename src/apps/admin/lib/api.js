@@ -77,6 +77,12 @@ export const adminApi = {
   saveNotificationSettings: (settings) => request(`${API}/admin/monitor/notifications/settings`, { method: 'PUT', body: settings }),
   testNotification: () => request(`${API}/admin/monitor/notifications/test`, { method: 'POST' }),
   ignoreVisitor: (visitorId) => request(`${API}/admin/monitor/notifications/ignore`, { method: 'POST', body: { visitorId } }),
+  growth: (o) => request(`${API}/admin/growth/overview`, o),
+  digestTest: (kind) => request(`${API}/admin/growth/digest/test?kind=${kind}`, { method: 'POST' }),
+  digestSend: (kind) => request(`${API}/admin/growth/digest/send?kind=${kind}`, { method: 'POST' }),
+  digestPreviewUrl: (kind) => `${API}/admin/growth/digest/preview?kind=${kind}`,
+  pushBroadcast: (payload) => request(`${API}/admin/growth/push/broadcast`, { method: 'POST', body: payload }),
+  indexNow: () => request(`${API}/admin/growth/indexnow`, { method: 'POST' }),
   users: (o) => request(USERS, o),
   apiPing: () => fetch(`${API}/health`).then((r) => r.ok),
 };

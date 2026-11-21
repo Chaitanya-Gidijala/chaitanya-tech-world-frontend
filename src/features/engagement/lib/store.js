@@ -191,6 +191,20 @@ export function recordVisualize(slug) {
   });
 }
 
+/**
+ * Adopt progress merged by the server (cross-device sync). Keeps this browser's
+ * learner id; never re-announces achievements the learner already has.
+ */
+export function replaceProgress(merged) {
+  if (!merged || typeof merged !== 'object') return;
+  const learnerId = state.learnerId;
+  const next = { ...emptyState(), ...merged, v: VERSION, learnerId };
+  if (JSON.stringify(next) === JSON.stringify(state)) return;
+  state = next;
+  persist();
+  emit();
+}
+
 export function resetProgress() {
   const learnerId = state.learnerId; // keep the id so server-side results stay de-duplicated
   state = { ...emptyState(), learnerId };

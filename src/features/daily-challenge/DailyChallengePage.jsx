@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import clsx from 'clsx';
 // eslint-disable-next-line no-unused-vars -- `motion.*` is used as JSX member expressions.
 import { AnimatePresence, motion } from 'framer-motion';
@@ -28,6 +28,11 @@ import { celebrate } from '@/features/engagement/lib/celebrate';
 import { generateChallenge, verifyLink } from './lib/generateChallenge';
 import { downloadShareCard, formatStanding, shareResult, shareText } from './lib/share';
 import ArrayTiles from './components/ArrayTiles';
+import ShareBar from '@/features/growth/ShareBar';
+import Leaderboard from '@/features/growth/Leaderboard';
+import NewsletterSignup from '@/features/growth/NewsletterSignup';
+import PushOptIn from '@/features/growth/PushOptIn';
+import { openAuth, useAccount } from '@/features/account/session';
 import LiveStats, { LiveIndicator } from './components/LiveStats';
 import './daily.css';
 
@@ -187,6 +192,22 @@ function RoundView({ round, index, total, pick, onPick, onNext }) {
   );
 }
 
+function SaveStreakPrompt({ streak }) {
+  const account = useAccount();
+  if (account) return null;
+  return (
+    <Card className="dc-save" padding="md">
+      <div>
+        <strong>Don’t lose your {streak > 1 ? `${streak}-day ` : ''}streak</strong>
+        <p className="ds-meta">Sign in to keep your progress on every device, appear on the leaderboard by name and earn certificates.</p>
+      </div>
+      <Button onClick={() => openAuth('Sign in to save your streak and join the leaderboard.')} size="sm">
+        Save my progress
+      </Button>
+    </Card>
+  );
+}
+
 function ResultView({ challenge, result, summary, stats, status, standing }) {
   const answers = result.answers.map(Boolean);
   const shareData = {
@@ -267,15 +288,86 @@ function ResultView({ challenge, result, summary, stats, status, standing }) {
           </Button>
         </div>
 
+        <ShareBar
+          url="/daily"
+          text={shareText(shareData).split('\n').slice(0, 2).join('\n')}
+          campaign={`daily-${challenge.number}`}
+          title="Challenge your friends"
+          className="dc-result__social"
+        />
+
         <p className="dc-result__next">
           Next puzzle in <Countdown />
         </p>
+        <PushOptIn />
+      </Card>
+
+      <SaveStreakPrompt streak={summary.streak.current} />
+
+      <Card padding="md">
+        <h3 className="dc-review__title">Leaderboard</h3>
+        <Leaderboard compact />
       </Card>
 
       <LiveStats stats={stats} status={status} myScore={result.score} />
 
+      <NewsletterSignup source="daily-result" title="Get tomorrow’s puzzle by email" />
+
       <Card className="dc-review" padding="md">
         <h3 className="dc-review__title">Review today’s rounds</h3>
+        <ul>
+          {challenge.rounds.map((r, i) => (
+            <li key={r.id}>
+              <span className={clsx('dc-square dc-square--sm', answers[i] ? 'is-right' : 'is-wrong')}>
+                {answers[i] ? <Check size={12} /> : <X size={12} />}
+              </span>
+              <span className="dc-review__text">
+                <strong>{r.kicker}</strong> — {r.explain}
+              </span>
+              <Link to={verifyLink(r.verify)} className="dc-review__link">
+                Replay <ArrowRight size={13} aria-hidden="true" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Card>
+    </div>
+  );
+}
+
+function PracticeResult({ challenge, result, onAgain }) {
+  const answers = result.answers.map(Boolean);
+  return (
+    <div className="dc-result">
+      <Card className="dc-result__card" padding="lg">
+        <p className="ds-eyebrow">
+          <Trophy size={14} aria-hidden="true" /> Practice · Puzzle #{challenge.number}
+        </p>
+        <div className="dc-result__score">
+          <span className="dc-result__big">{result.score}/3</span>
+          <div className="dc-result__squares" aria-label={`${result.score} of 3 correct`}>
+            {answers.map((ok, i) => (
+              <span key={i} className={clsx('dc-square', ok ? 'is-right' : 'is-wrong')}>
+                {ok ? <Check size={20} /> : <X size={20} />}
+              </span>
+            ))}
+          </div>
+        </div>
+        <p className="ds-meta">Practice runs don’t count towards your streak or the leaderboard.</p>
+        <div className="dc-result__share">
+          <Button onClick={onAgain} variant="secondary">
+            Try again
+          </Button>
+          <Button to="/daily/archive" variant="secondary">
+            More past puzzles
+          </Button>
+          <Button to="/daily" iconEnd={<ArrowRight size={15} />}>
+            Today’s puzzle
+          </Button>
+        </div>
+      </Card>
+      <Card className="dc-review" padding="md">
+        <h3 className="dc-review__title">Review</h3>
         <ul>
           {challenge.rounds.map((r, i) => (
             <li key={r.id}>
@@ -305,27 +397,43 @@ export default function DailyChallengePage() {
   return <DailyChallenge key={number} number={number} />;
 }
 
-function DailyChallenge({ number }) {
+/** /daily/practice/:n — replay a past puzzle without affecting streaks or leaderboards. */
+export function PracticePuzzlePage() {
+  const { n } = useParams();
+  const today = useToday();
+  const number = Number(n);
+  const latest = challengeNumber(today) - 1;
+  if (!Number.isInteger(number) || number < 1 || number > latest) return <Navigate to="/daily/archive" replace />;
+  return <DailyChallenge key={number} number={number} practice />;
+}
+
+function DailyChallenge({ number, practice = false }) {
   const challenge = useMemo(() => generateChallenge(number), [number]);
   const progress = useProgressState();
   const summary = useProgressSummary();
-  const result = progress.challenges[number];
+  const [practiceResult, setPracticeResult] = useState(null);
+  const result = practice ? practiceResult : progress.challenges[number];
 
-  const [run, setRun] = useState(() => loadRun(number));
+  const [run, setRun] = useState(() => (practice ? null : loadRun(number)));
   const [standing, setStanding] = useState(null);
-  const { stats, status, setStats } = useLiveDailyStats(number);
+  const { stats, status, setStats } = useLiveDailyStats(number, { enabled: !practice });
   const submitted = useRef(false);
 
   useDocumentMeta({
-    title: `Traceflow Daily #${number} — Algorithm puzzle of the day | Chaitanya Tech World`,
+    title: practice
+      ? `Practice Traceflow Daily #${number} — Past algorithm puzzle | Chaitanya Tech World`
+      : `Traceflow Daily #${number} — Algorithm puzzle of the day | Chaitanya Tech World`,
     description:
       'A new 3-round algorithm puzzle every day. Predict the next swap, fast-forward a sort and count binary-search steps — then share your score and keep your streak alive.',
   });
 
-  const persistRun = useCallback((next) => {
-    setRun(next);
-    saveRun(next);
-  }, []);
+  const persistRun = useCallback(
+    (next) => {
+      setRun(next);
+      if (!practice) saveRun(next);
+    },
+    [practice],
+  );
 
   const start = () => persistRun({ number, startedAt: Date.now(), current: 0, picks: [null, null, null] });
 
@@ -333,6 +441,12 @@ function DailyChallenge({ number }) {
     (finalRun) => {
       const answers = challenge.rounds.map((r, i) => finalRun.picks[i] === r.correctIndex);
       const durationMs = Math.min(Date.now() - finalRun.startedAt, 3_600_000);
+      if (practice) {
+        setPracticeResult({ answers, durationMs, score: answers.filter(Boolean).length });
+        setRun(null);
+        if (answers.every(Boolean)) celebrate();
+        return;
+      }
       const isNew = recordChallenge(number, { answers, durationMs });
       saveRun(null);
       setRun(null);
@@ -352,7 +466,7 @@ function DailyChallenge({ number }) {
           .catch(() => {});
       }
     },
-    [challenge, number, setStats],
+    [challenge, number, setStats, practice],
   );
 
   const onPick = useCallback(
@@ -391,14 +505,18 @@ function DailyChallenge({ number }) {
     <>
       <PageHero
         className="dc-hero"
-        breadcrumbs={[{ label: 'Traceflow', to: '/traceflow' }, { label: `Daily #${number}` }]}
+        breadcrumbs={
+          practice
+            ? [{ label: 'Traceflow Daily', to: '/daily' }, { label: 'Archive', to: '/daily/archive' }, { label: `Practice #${number}` }]
+            : [{ label: 'Traceflow', to: '/traceflow' }, { label: `Daily #${number}` }]
+        }
         meta={
           <>
             <Badge tone="accent" dot>
-              Daily #{number}
+              {practice ? `Practice #${number}` : `Daily #${number}`}
             </Badge>
-            <Badge>{dateLabel}</Badge>
-            <LiveIndicator status={status} liveNow={stats?.liveNow} />
+            {!practice && <Badge>{dateLabel}</Badge>}
+            {!practice && <LiveIndicator status={status} liveNow={stats?.liveNow} />}
           </>
         }
         title={
@@ -419,7 +537,7 @@ function DailyChallenge({ number }) {
         <Container size="narrow">
           {phase === 'intro' && (
             <Card className="dc-intro" padding="lg">
-              <h2 className="dc-intro__title">Today’s puzzle</h2>
+              <h2 className="dc-intro__title">{practice ? `Puzzle #${number}` : 'Today’s puzzle'}</h2>
               <ol className="dc-intro__rounds">
                 {challenge.rounds.map((r, i) => (
                   <li key={r.id}>
@@ -435,7 +553,7 @@ function DailyChallenge({ number }) {
                 One attempt per round. The clock starts when you press start. Use keys <kbd>1</kbd>–<kbd>4</kbd> to answer.
               </p>
               <Button onClick={start} size="lg" iconStart={<Play size={16} />}>
-                Start Daily #{number}
+                {practice ? 'Start practice' : `Start Daily #${number}`}
               </Button>
             </Card>
           )}
@@ -460,7 +578,9 @@ function DailyChallenge({ number }) {
             </Card>
           )}
 
-          {phase === 'done' && (
+          {phase === 'done' && practice && <PracticeResult challenge={challenge} result={result} onAgain={() => setPracticeResult(null)} />}
+
+          {phase === 'done' && !practice && (
             <ResultView
               challenge={challenge}
               result={result}
@@ -471,7 +591,7 @@ function DailyChallenge({ number }) {
             />
           )}
 
-          {phase !== 'done' && (
+          {phase !== 'done' && !practice && (
             <div className="dc-side">
               <LiveStats stats={stats} status={status} />
             </div>

@@ -484,3 +484,6 @@
 @media (max-width: 1100px) {
   .site-nav__new { display: none; }
 }
+
+/* Newsletter band in the footer */
+.site-footer__news { max-width: 760px; margin: 0 auto var(--ds-space-12); }

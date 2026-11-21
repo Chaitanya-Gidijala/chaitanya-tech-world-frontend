@@ -6,6 +6,7 @@ import ROUTES from '@/constants/routes';
 import BrandMark from './BrandMark';
 import DeveloperSignature from './DeveloperSignature';
 import SocialIcon from './SocialIcon';
+import NewsletterSignup from '@/features/growth/NewsletterSignup';
 import './site.css';
 
 /** SiteFooter — CTA band, grouped links, socials and a compact signature bar. */
@@ -29,6 +30,10 @@ export default function SiteFooter() {
             </Button>
           </div>
         </Reveal>
+
+        <div className="site-footer__news">
+          <NewsletterSignup source="footer" />
+        </div>
 
         <div className="site-footer__top">
           <div className="site-footer__intro">

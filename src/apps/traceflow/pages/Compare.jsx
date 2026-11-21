@@ -19,6 +19,7 @@ import {
 } from '../seo.js';
 import '../styles/traceflow-pages.css';
 import '../styles/compare.css';
+import ShareBar from '@/features/growth/ShareBar';
 
 const yesNo = (v) =>
   v ? (
@@ -212,6 +213,12 @@ export default function Compare() {
             description="Both algorithms run on exactly the same arrays inside Traceflow’s tracer. Fewer comparisons wins the round."
           />
           <BenchmarkTable a={a} b={b} rows={rows} />
+        </Container>
+      </Section>
+
+      <Section compact>
+        <Container>
+          <ShareBar url={resolved.canonical} text={`${a.name} vs ${b.name} — which is faster? Real operation counts compared`} campaign="compare" title="Share this comparison" />
         </Container>
       </Section>
 

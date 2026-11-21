@@ -35,6 +35,9 @@ export const FOOTER_NAV = [
       { label: 'Algorithm catalogue', to: `${ROUTES.TRACEFLOW}/catalogue` },
       { label: 'Image prompt library', to: ROUTES.PROMPTS },
       { label: 'Daily algorithm puzzle', to: ROUTES.DAILY },
+      { label: 'Leaderboard', to: '/leaderboard' },
+      { label: 'Puzzle archive', to: '/daily/archive' },
+      { label: 'Interview questions', to: '/traceflow/interview-questions' },
       { label: 'Your progress', to: ROUTES.PROGRESS },
     ],
   },
@@ -42,6 +45,7 @@ export const FOOTER_NAV = [
     title: 'Company',
     links: [
       { label: 'Home', to: ROUTES.HOME },
+      { label: 'Daily puzzle by email', to: '/newsletter' },
       { label: 'Contact', to: ROUTES.CONTACT },
     ],
   },

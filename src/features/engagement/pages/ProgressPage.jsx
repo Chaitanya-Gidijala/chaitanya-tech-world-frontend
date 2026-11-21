@@ -9,7 +9,38 @@ import { ACHIEVEMENTS } from '../lib/achievements';
 import { challengeNumber, formatDuration, todayKey } from '../lib/dates';
 import { resetProgress } from '../lib/store';
 import ActivityHeatmap from '../components/ActivityHeatmap';
+import CertificatesPanel from '@/features/growth/CertificatesPanel';
+import NewsletterSignup from '@/features/growth/NewsletterSignup';
+import PushOptIn from '@/features/growth/PushOptIn';
+import { openAuth, useAccount } from '@/features/account/session';
 import '../engagement.css';
+
+function AccountBanner() {
+  const account = useAccount();
+  if (account) {
+    return (
+      <Card padding="md" className="eg-account is-synced">
+        <Check size={18} aria-hidden="true" />
+        <div>
+          <strong>Synced to {account.name}</strong>
+          <p className="ds-meta">Your streak, XP and roadmap progress are saved to your account{account.email ? ` (${account.email})` : ''} and follow you to every device.</p>
+        </div>
+      </Card>
+    );
+  }
+  return (
+    <Card padding="md" className="eg-account">
+      <Flame size={18} aria-hidden="true" />
+      <div>
+        <strong>Your progress lives only in this browser</strong>
+        <p className="ds-meta">Sign in to keep it safe, use it on your phone and laptop, appear on the leaderboard and earn certificates.</p>
+      </div>
+      <Button size="sm" onClick={() => openAuth('Sign in to save your progress to your account.')}>
+        Save my progress
+      </Button>
+    </Card>
+  );
+}
 
 function StreakHero({ summary }) {
   const { streak, level, totalXp } = summary;
@@ -147,6 +178,19 @@ export default function ProgressPage() {
         </Container>
       </Section>
 
+      <Section compact>
+        <Container>
+          <AccountBanner />
+        </Container>
+      </Section>
+
+      <Section bordered compact id="certificates">
+        <Container>
+          <SectionHeader eyebrow="Certificates" title="Show what you’ve achieved" description="Verifiable certificates you can add to your LinkedIn profile." />
+          <CertificatesPanel />
+        </Container>
+      </Section>
+
       <Section bordered compact>
         <Container>
           <SectionHeader eyebrow="Consistency" title="Activity" description="One square per day. Darker means more XP earned." />
@@ -177,6 +221,16 @@ export default function ProgressPage() {
                 </Card>
               );
             })}
+          </div>
+        </Container>
+      </Section>
+
+      <Section bordered compact>
+        <Container>
+          <SectionHeader eyebrow="Reminders" title="Never miss a day" description="A gentle nudge when the new puzzle is live." />
+          <div className="eg-reminders">
+            <PushOptIn />
+            <NewsletterSignup source="progress" />
           </div>
         </Container>
       </Section>
